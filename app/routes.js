@@ -4,14 +4,12 @@ import { Switch, Route } from 'react-router';
 import App from './containers/App';
 
 import HomePage from './containers/HomePage';
-import SetupPage from './containers/SetupPage';
+import EnvironmentsPage from './containers/EnvironmentsPage';
 
 export default () => (
   <App>
     <Switch>
-      <Route path="/setup/environments/{name}" component={SetupPage} />
-      <Route path="/setup/environments" component={SetupPage} />
-      <Route path="/setup" component={SetupPage} />
+      <Route path="/environments" component={EnvironmentsPage} />
       <Route path="/" component={HomePage} />
     </Switch>
   </App>

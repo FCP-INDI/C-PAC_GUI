@@ -6,7 +6,7 @@ import { withStyles } from 'material-ui/styles';
 
 type Props = {};
 
-class HomePage extends Component<Props> {
+class TemplatePage extends Component<Props> {
   props: Props;
 
   static styles = theme => ({
@@ -24,7 +24,7 @@ function mapStateToProps(state) {
 }
 
 function mapDispatchToProps(dispatch) {
-    return {};
+  return {};
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(withStyles(HomePage.styles)(HomePage));
+export default connect(mapStateToProps, mapDispatchToProps)(withStyles(TemplatePage.styles)(TemplatePage));

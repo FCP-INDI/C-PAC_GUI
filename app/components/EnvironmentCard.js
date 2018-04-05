@@ -6,15 +6,19 @@ import classnames from 'classnames';
 import { withStyles } from 'material-ui/styles';
 
 import Card, { CardHeader, CardMedia, CardContent, CardActions } from 'material-ui/Card';
-import Avatar from 'material-ui/Avatar';
-import Collapse from 'material-ui/transitions/Collapse';
-import IconButton from 'material-ui/IconButton';
+import List, { ListItem, ListItemSecondaryAction, ListItemText } from 'material-ui/List';
 import Typography from 'material-ui/Typography';
+import Avatar from 'material-ui/Avatar';
+import Badge from 'material-ui/Badge';
+import Popover from 'material-ui/Popover';
+import Collapse from 'material-ui/transitions/Collapse';
 import blue from 'material-ui/colors/blue';
-import FavoriteIcon from 'material-ui-icons/Favorite';
-import ShareIcon from 'material-ui-icons/Share';
-import ExpandMoreIcon from 'material-ui-icons/ExpandMore';
+import IconButton from 'material-ui/IconButton';
+import DeviceHub from 'material-ui-icons/DeviceHub';
+import RemoveCircle from 'material-ui-icons/RemoveCircle';
+import LaunchIcon from 'material-ui-icons/Launch';
 import MoreVertIcon from 'material-ui-icons/MoreVert';
+import { CircularProgress } from 'material-ui/Progress';
 
 type Props = {};
 
@@ -22,31 +26,45 @@ class EnvironmentCard extends Component<Props> {
 
   static styles = theme => ({
     card: {
-      maxWidth: 400,
     },
     actions: {
       display: 'flex',
     },
     expand: {
-      transform: 'rotate(0deg)',
-      transition: theme.transitions.create('transform', {
-        duration: theme.transitions.duration.shortest,
-      }),
       marginLeft: 'auto',
     },
     avatar: {
       backgroundColor: blue[500],
     },
+    details: {
+      padding: 10
+    }
   });
 
-  state = { expanded: false };
+  state = { expanded: false, details: false };
 
   handleExpandClick = () => {
     this.setState({ expanded: !this.state.expanded });
   };
 
+  handleClickButton = () => {
+    this.setState({
+      details: true,
+    });
+  };
+
+  handleClose = () => {
+    this.setState({
+      details: false,
+    });
+  };
+
   render() {
     const { classes } = this.props;
+
+    const {
+      details,
+    } = this.state;
 
     return (
       <Card className={classes.card}>
@@ -56,20 +74,84 @@ class EnvironmentCard extends Component<Props> {
           }
           title="My Docker Environment"
           subheader="Docker"
-          action={
-            <IconButton>
-              <MoreVertIcon />
-            </IconButton>
-          }
         />
         <CardActions className={classes.actions} disableActionSpacing>
-          <IconButton aria-label="Add to favorites">
-            <FavoriteIcon />
+          <Popover
+            open={details}
+            anchorEl={this.anchorEl}
+            anchorReference={'anchorEl'}
+            onClose={this.handleClose}
+            anchorOrigin={{
+              vertical: 'center',
+              horizontal: 'center',
+            }}
+            transformOrigin={{
+              vertical: 'top',
+              horizontal: 'left',
+            }}
+            classes={{
+              paper: classes.details
+            }}
+          >
+            <List>
+              <ListItem dense button>
+                <CircularProgress
+                  className={classes.progress}
+                  variant="determinate"
+                  value={70}
+                />
+                <ListItemText primary="Pipeline test_pipeline.yaml" secondary="ABIDE" />
+              </ListItem>
+              <ListItem dense button>
+                <CircularProgress
+                  className={classes.progress}
+                  variant="determinate"
+                  value={50}
+                />
+                <ListItemText primary="Pipeline test_pipeline.yaml" secondary="ADHD" />
+              </ListItem>
+              <ListItem dense button>
+                <CircularProgress
+                  className={classes.progress}
+                  variant="determinate"
+                  value={70}
+                />
+                <ListItemText primary="Pipeline test_pipeline.yaml" secondary="ABIDE" />
+              </ListItem>
+              <ListItem dense button>
+                <CircularProgress
+                  className={classes.progress}
+                  variant="determinate"
+                  value={50}
+                />
+                <ListItemText primary="Pipeline test_pipeline.yaml" secondary="ADHD" />
+              </ListItem>
+            </List>
+          </Popover>
+          <IconButton 
+            onClick={this.handleClickButton}
+            buttonRef={node => { this.anchorEl = node; }}
+            aria-label="4 Pipelines Running"
+          >
+            <Badge badgeContent={4} color="primary">
+              <DeviceHub />
+            </Badge>
           </IconButton>
-          <IconButton aria-label="Share">
-            <ShareIcon />
+          <IconButton aria-label="Remove" className={classes.expand}>
+            <RemoveCircle />
           </IconButton>
         </CardActions>
+        <Collapse in={this.state.expanded} timeout="auto" unmountOnExit>
+          <CardContent>
+            <Typography paragraph variant="body2">
+              Method:
+            </Typography>
+            <Typography paragraph>
+              Heat 1/2 cup of the broth in a pot until simmering, add saffron and set aside for 10
+              minutes.
+            </Typography>
+          </CardContent>
+        </Collapse>
       </Card>
     );
   }
