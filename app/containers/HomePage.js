@@ -7,6 +7,7 @@ import Paper from 'material-ui/Paper';
 
 import Home from '../components/Home';
 import EnvironmentSelector from '../components/EnvironmentSelector';
+import EnvironmentCard from '../components/EnvironmentCard';
 
 type Props = {};
 
@@ -27,6 +28,7 @@ class HomePage extends Component<Props> {
       <div>
         <Paper className={classes.paper}>
           <EnvironmentSelector />
+          <EnvironmentCard />
         </Paper>
         {
           !!main.environment
@@ -45,8 +47,8 @@ class HomePage extends Component<Props> {
 const mapStateToProps = (state) => ({
   main: state.main,
 })
-  
+
 const mapDispatchToProps = {
 }
-  
+
 export default connect(mapStateToProps, mapDispatchToProps)(withStyles(HomePage.styles)(HomePage));
