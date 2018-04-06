@@ -128,7 +128,7 @@ class EnvironmentCard extends Component<Props> {
               </ListItem>
             </List>
           </Popover>
-          <IconButton 
+          <IconButton
             onClick={this.handleClickButton}
             buttonRef={node => { this.anchorEl = node; }}
             aria-label="4 Pipelines Running"

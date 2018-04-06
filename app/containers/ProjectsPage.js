@@ -7,11 +7,11 @@ import Paper from 'material-ui/Paper';
 import Grid from 'material-ui/Grid';
 import Typography from 'material-ui/Typography';
 
-import EnvironmentCard from '../components/EnvironmentCard';
+import ProjectCard from '../components/ProjectCard';
 
 type Props = {};
 
-class EnvironmentsPage extends Component<Props> {
+class ProjectsPage extends Component<Props> {
   props: Props;
 
   static styles = theme => ({
@@ -28,26 +28,19 @@ class EnvironmentsPage extends Component<Props> {
     const { classes, main } = this.props;
 
     return (
-      <Paper className={classes.paper} elevation={4}>
-        <Typography className={classes.header} variant="headline">Environments</Typography>
+      <div>
+      <Paper className={classes.paper} elevation={0}>
+        <Typography className={classes.header} variant="headline">Projects</Typography>
         <Grid container spacing={8}>
           <Grid item xs={4}>
-            <EnvironmentCard />
+            <ProjectCard name="ABIDE" />
           </Grid>
           <Grid item xs={4}>
-            <EnvironmentCard />
-          </Grid>
-          <Grid item xs={4}>
-            <EnvironmentCard />
-          </Grid>
-          <Grid item xs={4}>
-            <EnvironmentCard />
-          </Grid>
-          <Grid item xs={4}>
-            <EnvironmentCard />
+            <ProjectCard name="ADHD" />
           </Grid>
         </Grid>
       </Paper>
+      </div>
     );
   }
 }
@@ -59,4 +52,4 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = {
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(withStyles(EnvironmentsPage.styles)(EnvironmentsPage));
+export default connect(mapStateToProps, mapDispatchToProps)(withStyles(ProjectsPage.styles)(ProjectsPage));
