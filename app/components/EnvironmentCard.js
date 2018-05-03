@@ -26,6 +26,7 @@ class EnvironmentCard extends Component<Props> {
 
   static styles = theme => ({
     card: {
+      minWidth: 200,
     },
     actions: {
       display: 'flex',

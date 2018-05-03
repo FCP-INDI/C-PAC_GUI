@@ -7,6 +7,7 @@ import Paper from 'material-ui/Paper';
 import Grid from 'material-ui/Grid';
 import Typography from 'material-ui/Typography';
 
+import Content from '../components/Content';
 import EnvironmentCard from '../components/EnvironmentCard';
 
 type Props = {};
@@ -28,26 +29,26 @@ class EnvironmentsPage extends Component<Props> {
     const { classes, main } = this.props;
 
     return (
-      <Paper className={classes.paper} elevation={4}>
+      <Content>
         <Typography className={classes.header} variant="headline">Environments</Typography>
         <Grid container spacing={8}>
-          <Grid item xs={4}>
+          <Grid item>
             <EnvironmentCard />
           </Grid>
-          <Grid item xs={4}>
+          <Grid item>
             <EnvironmentCard />
           </Grid>
-          <Grid item xs={4}>
+          <Grid item>
             <EnvironmentCard />
           </Grid>
-          <Grid item xs={4}>
+          <Grid item>
             <EnvironmentCard />
           </Grid>
-          <Grid item xs={4}>
+          <Grid item>
             <EnvironmentCard />
           </Grid>
         </Grid>
-      </Paper>
+      </Content>
     );
   }
 }

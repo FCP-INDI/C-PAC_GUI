@@ -1,31 +1,39 @@
 // @flow
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
+import React, { Component } from 'react'
+import { connect } from 'react-redux'
+import { withRouter } from 'react-router-dom'
 
-import classnames from 'classnames';
-import { withStyles } from 'material-ui/styles';
+import classnames from 'classnames'
+import { withStyles } from 'material-ui/styles'
 
-import Grid from 'material-ui/Grid';
-import Card, { CardHeader, CardMedia, CardContent, CardActions } from 'material-ui/Card';
-import List, { ListItem, ListItemIcon, ListItemSecondaryAction, ListItemText } from 'material-ui/List';
-import Typography from 'material-ui/Typography';
-import Avatar from 'material-ui/Avatar';
-import blue from 'material-ui/colors/blue';
-import IconButton from 'material-ui/IconButton';
-import Button from 'material-ui/Button';
-import DeviceHub from 'material-ui-icons/DeviceHub';
-import AccessibilityIcon from 'material-ui-icons/Accessibility';
-import LaunchIcon from 'material-ui-icons/Launch';
+import { Link } from 'react-router-dom'
+import Grid from 'material-ui/Grid'
+import Card, { CardHeader, CardMedia, CardContent, CardActions } from 'material-ui/Card'
+import List, { ListItem, ListItemIcon, ListItemSecondaryAction, ListItemText } from 'material-ui/List'
+import Typography from 'material-ui/Typography'
+import Avatar from 'material-ui/Avatar'
+import blue from 'material-ui/colors/blue'
+import IconButton from 'material-ui/IconButton'
+import Button from 'material-ui/Button'
+import DeviceHub from 'material-ui-icons/DeviceHub'
+import AccessibilityIcon from 'material-ui-icons/Accessibility'
+import LaunchIcon from 'material-ui-icons/Launch'
+import NavigateNextIcon from 'material-ui-icons/NavigateNext'
+import SettingsIcon from 'material-ui-icons/Settings'
 
-type Props = {};
+import { projectOpen } from '../actions/main'
+
+type Props = {}
 
 class ProjectCard extends Component<Props> {
 
   static styles = theme => ({
     card: {
+      minWidth: 240
     },
     actions: {
       display: 'flex',
+      paddingLeft: 20,
     },
     expand: {
       marginLeft: 'auto',
@@ -36,18 +44,23 @@ class ProjectCard extends Component<Props> {
     info: {
       padding: 0
     }
-  });
+  })
+
+  handleOpen = (project) => {
+    this.props.projectOpen(project)
+    this.props.history.push(`/projects/${project}`)
+  }
 
   render() {
-    const { classes } = this.props;
+    const { classes, raised = false, projects: { [this.props.id]: project } } = this.props
 
     return (
-      <Card className={classes.card}>
+      <Card className={classes.card} raised={raised}>
         <CardHeader
           avatar={
-            <Avatar aria-label={this.props.name} className={classes.avatar}>{this.props.name[0]}</Avatar>
+            <Avatar aria-label={project.name} className={classes.avatar}>{project.name[0]}</Avatar>
           }
-          title={this.props.name}
+          title={project.name}
         />
         <CardContent className={classes.info}>
           <List>
@@ -55,30 +68,36 @@ class ProjectCard extends Component<Props> {
               <ListItemIcon>
                 <DeviceHub />
               </ListItemIcon>
-              <ListItemText primary="4 pipelines" />
+              <ListItemText primary={`${project.summary.pipelines} pipelines`} />
             </ListItem>
             <ListItem>
               <ListItemIcon>
                 <AccessibilityIcon />
               </ListItemIcon>
-              <ListItemText primary="1350 subjects" />
+              <ListItemText primary={`${project.summary.subjects} subjects`} />
             </ListItem>
           </List>
         </CardContent>
         <CardActions className={classes.actions} disableActionSpacing>
-          <IconButton aria-label="Open project" className={classes.expand}>
-            <LaunchIcon />
+          {/* <SettingsIcon /> */}
+          <IconButton className={classes.expand} onClick={() => this.handleOpen(`abide`)}>
+            {/* <LaunchIcon /> */}
+            <NavigateNextIcon />
           </IconButton>
         </CardActions>
       </Card>
-    );
+    )
   }
 }
 
 const mapStateToProps = (state) => ({
+  projects: state.main.config.projects,
 })
 
 const mapDispatchToProps = {
+  projectOpen
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(withStyles(ProjectCard.styles)(ProjectCard));
+export default connect(mapStateToProps, mapDispatchToProps)(
+  withRouter(withStyles(ProjectCard.styles)(ProjectCard))
+)

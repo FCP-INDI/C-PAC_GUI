@@ -78,3 +78,12 @@ export function environmentServerStart(environment) {
     environment
   };
 }
+
+export const PROJECT_OPEN = 'PROJECT_OPEN';
+
+export function projectOpen(project) {
+  return {
+    type: PROJECT_OPEN,
+    project
+  };
+}

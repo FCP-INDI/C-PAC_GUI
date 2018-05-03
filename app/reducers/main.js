@@ -1,13 +1,12 @@
 // @flow
-import { CONFIG_LOADED, ENVIRONMENT_CHECKED, ENVIRONMENT_SELECT } from '../actions/main';
+import {
+  CONFIG_LOADED,
+  ENVIRONMENT_CHECKED,
+  ENVIRONMENT_SELECT,
 
-// export type cpacStateType = ?{
-//   config: ?{}
-// };
-
-type actionType = {
-  +type: string
-};
+  PROJECT_LOADED,
+  PROJECT_OPEN
+} from '../actions/main'
 
 export default function main(state, action) {
   if (!state) {
@@ -16,16 +15,43 @@ export default function main(state, action) {
 
   switch (action.type) {
     case CONFIG_LOADED:
-      return { ...state, config: action.config };
+      return { ...state, config: action.config }
     case ENVIRONMENT_CHECKED:
-      return { ...state, config: { ...state.config, environments: { ...state.config.environments, ...action.environment }  } };
+      return {
+        ...state,
+        config: {
+          ...state.config,
+          environments: {
+            ...state.config.environments,
+            ...action.environment
+          }
+        }
+      }
     case ENVIRONMENT_SELECT:
       if (state.config.environments[action.environment]) {
-        return { ...state, environment: state.config.environments[action.environment] };
+        return { ...state, environment: state.config.environments[action.environment] }
       } else {
-        return { ...state, environment: undefined };
+        return { ...state, environment: undefined }
       }
+
+
+    case PROJECT_LOADED:
+      return { ...state, project: action.project }
+    case PROJECT_OPEN:
+      if (state.config.projects[action.project]) {
+        return {
+          ...state,
+          project: {
+            ...state.config.projects[action.project],
+            dirty: false
+          }
+        }
+      } else {
+        return { ...state, project: undefined }
+      }
+
+
     default:
-      return state;
+      return state
   }
 }

@@ -23,6 +23,23 @@ function* loadConfig (action) {
           }
         }
       }
+    },
+
+    projects: {
+      abide: {
+        name: "ABIDE",
+        summary: {
+          pipelines: 4,
+          subjects: 1350
+        }
+      },
+      adhd: {
+        name: "ADHD",
+        summary: {
+          pipelines: 2,
+          subjects: 300
+        }
+      },
     }
   }))
 }
