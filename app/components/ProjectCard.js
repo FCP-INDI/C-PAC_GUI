@@ -21,7 +21,6 @@ import LaunchIcon from 'material-ui-icons/Launch'
 import NavigateNextIcon from 'material-ui-icons/NavigateNext'
 import SettingsIcon from 'material-ui-icons/Settings'
 
-import { projectOpen } from '../actions/main'
 
 type Props = {}
 
@@ -47,7 +46,6 @@ class ProjectCard extends Component<Props> {
   })
 
   handleOpen = (project) => {
-    this.props.projectOpen(project)
     this.props.history.push(`/projects/${project}`)
   }
 
@@ -80,7 +78,7 @@ class ProjectCard extends Component<Props> {
         </CardContent>
         <CardActions className={classes.actions} disableActionSpacing>
           {/* <SettingsIcon /> */}
-          <IconButton className={classes.expand} onClick={() => this.handleOpen(`abide`)}>
+          <IconButton className={classes.expand} onClick={() => this.handleOpen(project.id)}>
             {/* <LaunchIcon /> */}
             <NavigateNextIcon />
           </IconButton>
@@ -95,7 +93,6 @@ const mapStateToProps = (state) => ({
 })
 
 const mapDispatchToProps = {
-  projectOpen
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(

@@ -512,7 +512,7 @@ disable_log : False
 
 function* loadEnvironment (action) {
   yield put(environmentChecking(action))
-  const { environment: id } = action 
+  const { environment: id } = action
   const environments = yield select((s) => s.main.config.environments);
   if (environments[id]) {
     const environment = environments[id]
@@ -527,7 +527,7 @@ function* loadEnvironment (action) {
 }
 
 function* checkServer (action) {
-  const { environment: id } = action 
+  const { environment: id } = action
   const environments = yield select((s) => s.main.config.environments);
   if (environments[id]) {
     const environment = environments[id]
@@ -563,7 +563,7 @@ function* checkServer (action) {
 }
 
 function* start (action) {
-  const { environment: id } = action 
+  const { environment: id } = action
   const environments = yield select((s) => s.main.config.environments);
   if (environments[id]) {
     const environment = environments[id]
@@ -571,13 +571,12 @@ function* start (action) {
       if (environment.runtime) {
         const { host, port } = environment.runtime
         const url = 'http://' + host + ':' + port + '/jobs/test'
-        const check = yield call(fetch, url, { 
+        const check = yield call(fetch, url, {
           method: 'POST',
           body:    JSON.stringify({ pipeline }),
           headers: { 'Content-Type': 'application/json' },
         })
 
-        console.log(check)
         return
       }
     } catch (error) {
