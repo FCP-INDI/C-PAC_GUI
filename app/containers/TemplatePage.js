@@ -1,13 +1,10 @@
-// @flow
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
 import { withStyles } from 'material-ui/styles';
 
-type Props = {};
 
-class TemplatePage extends Component<Props> {
-  props: Props;
+class TemplatePage extends Component {
 
   static styles = theme => ({
   });
@@ -19,12 +16,10 @@ class TemplatePage extends Component<Props> {
   }
 }
 
-function mapStateToProps(state) {
-  return {};
-}
+const mapStateToProps = (state) => ({
+})
 
-function mapDispatchToProps(dispatch) {
-  return {};
+const mapDispatchToProps = {
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(withStyles(TemplatePage.styles)(TemplatePage));
