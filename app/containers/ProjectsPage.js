@@ -1,4 +1,3 @@
-// @flow
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
@@ -6,14 +5,16 @@ import { withStyles } from 'material-ui/styles';
 import Paper from 'material-ui/Paper';
 import Grid from 'material-ui/Grid';
 import Typography from 'material-ui/Typography';
+import Avatar from 'material-ui/Avatar'
 
+import Header, { HeaderText, HeaderAvatar } from '../components/Header';
 import Content from '../components/Content';
 import ProjectCard from '../components/ProjectCard';
+import {
+  PipelineIcon,
+} from '../components/icons';
 
-type Props = {};
-
-class ProjectsPage extends Component<Props> {
-  props: Props;
+class ProjectsPage extends Component {
 
   static styles = theme => ({
     paper: {
@@ -29,17 +30,24 @@ class ProjectsPage extends Component<Props> {
     const { classes, main } = this.props;
 
     return (
-      <Content>
-        <Typography className={classes.header} variant="headline">Projects</Typography>
-        <Grid container spacing={8} alignContent="center">
-          <Grid item>
-            <ProjectCard id="abide" />
+      <div>
+        <Header>
+          <HeaderAvatar><PipelineIcon /></HeaderAvatar>
+          <HeaderText>
+            Projects
+          </HeaderText>
+        </Header>
+        <Content>
+          <Grid container spacing={8} alignContent="center">
+            <Grid item>
+              <ProjectCard id="abide" />
+            </Grid>
+            <Grid item>
+              <ProjectCard id="adhd" />
+            </Grid>
           </Grid>
-          <Grid item>
-            <ProjectCard id="adhd" />
-          </Grid>
-        </Grid>
-      </Content>
+        </Content>
+      </div>
     );
   }
 }

@@ -1,6 +1,10 @@
 import React, { Component } from 'react';
 import { withStyles } from 'material-ui/styles';
 import Paper from 'material-ui/Paper';
+import Avatar from 'material-ui/Avatar';
+import Typography from 'material-ui/Typography';
+
+
 class Header extends Component {
 
   static styles = theme => {
@@ -33,5 +37,52 @@ class Header extends Component {
   }
 }
 
-
 export default withStyles(Header.styles)(Header)
+
+
+class HeaderText extends Component {
+
+  static styles = theme => ({
+    root: {
+      padding: `0 ${theme.spacing.unit * 2}px`
+    },
+  });
+
+  render() {
+    const { classes, children, variant = 'headline' } = this.props;
+
+    return (
+      <div className={classes.root}>
+        <Typography variant={variant}>
+          { children }
+        </Typography>
+      </div>
+    );
+  }
+}
+const HeaderTextStyled = withStyles(HeaderText.styles)(HeaderText)
+export { HeaderTextStyled as HeaderText }
+
+
+class HeaderAvatar extends Component {
+
+  static styles = theme => ({
+    root: {
+      background: "#FFF",
+      color: "#666"
+    },
+  });
+
+  render() {
+    const { classes, children } = this.props;
+
+    return (
+      <Avatar className={classes.root}>
+        { children }
+      </Avatar>
+    );
+  }
+}
+
+const HeaderAvatarStyled = withStyles(HeaderAvatar.styles)(HeaderAvatar)
+export { HeaderAvatarStyled as HeaderAvatar }

@@ -1,4 +1,3 @@
-// @flow
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
@@ -11,18 +10,19 @@ import { FormControl, FormHelperText } from 'material-ui/Form';
 import Grid from 'material-ui/Grid';
 import Paper from 'material-ui/Paper';
 import Avatar from 'material-ui/Avatar';
-import LoopIcon from 'material-ui-icons/Loop';
-import LockIcon from 'material-ui-icons/Lock';
-import ErrorIcon from 'material-ui-icons/Error';
-import DoneIcon from 'material-ui-icons/Done';
+
+import {
+  LoadingIcon,
+  AuthErrorIcon,
+  ErrorIcon,
+  DoneIcon,
+} from './icons';
 
 import green from 'material-ui/colors/green';
 import red from 'material-ui/colors/red';
 import { white } from 'material-ui/colors';
 
-type Props = {};
-
-class EnvironmentStatus extends Component<Props> {
+class EnvironmentStatus extends Component {
   renderStyle(status) {
     const common = { color: white, margin: 4 }
     if (status === undefined) {
@@ -43,7 +43,7 @@ class EnvironmentStatus extends Component<Props> {
 
   renderIcon(status) {
     if (status === undefined) {
-      return <LoopIcon />;
+      return <LoadingIcon />;
     } else {
       switch (status.mode) {
         case 'ONLINE':
@@ -51,7 +51,7 @@ class EnvironmentStatus extends Component<Props> {
         case 'OFFLINE':
           return <ErrorIcon />;
         case 'AUTH_ERROR':
-          return <LockIcon />;
+          return <AuthErrorIcon />;
         default:
           return <ErrorIcon />;
       }
@@ -82,7 +82,7 @@ class EnvironmentSelector extends Component<Props> {
   componentWillUpdate(nextProps) {
     if (nextProps.main) {
       const { config: { environments = {} } = {} } = nextProps.main;
-  
+
       if (environments[this.state.environment] && environments[this.state.environment].status) {
         const isOnline = environments[this.state.environment].status.mode === 'ONLINE'
         const isNotSelected = (nextProps.main.environment || {}).id !== this.state.environment
@@ -127,10 +127,10 @@ class EnvironmentSelector extends Component<Props> {
 const mapStateToProps = (state) => ({
   main: state.main,
 })
-  
+
 const mapDispatchToProps = {
   environmentCheck,
   environmentSelect,
 }
-  
+
 export default connect(mapStateToProps, mapDispatchToProps)(EnvironmentSelector)

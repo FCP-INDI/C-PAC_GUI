@@ -1,4 +1,3 @@
-// @flow
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
@@ -14,15 +13,14 @@ import Popover from 'material-ui/Popover';
 import Collapse from 'material-ui/transitions/Collapse';
 import blue from 'material-ui/colors/blue';
 import IconButton from 'material-ui/IconButton';
-import DeviceHub from 'material-ui-icons/DeviceHub';
-import RemoveCircle from 'material-ui-icons/RemoveCircle';
-import LaunchIcon from 'material-ui-icons/Launch';
-import MoreVertIcon from 'material-ui-icons/MoreVert';
 import { CircularProgress } from 'material-ui/Progress';
 
-type Props = {};
+import {
+  PipelineIcon,
+  RemoveIcon
+} from '../components/icons';
 
-class EnvironmentCard extends Component<Props> {
+class EnvironmentCard extends Component {
 
   static styles = theme => ({
     card: {
@@ -135,11 +133,11 @@ class EnvironmentCard extends Component<Props> {
             aria-label="4 Pipelines Running"
           >
             <Badge badgeContent={4} color="primary">
-              <DeviceHub />
+              <PipelineIcon />
             </Badge>
           </IconButton>
           <IconButton aria-label="Remove" className={classes.expand}>
-            <RemoveCircle />
+            <RemoveIcon />
           </IconButton>
         </CardActions>
         <Collapse in={this.state.expanded} timeout="auto" unmountOnExit>

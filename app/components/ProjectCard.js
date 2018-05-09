@@ -1,4 +1,3 @@
-// @flow
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { withRouter } from 'react-router-dom'
@@ -15,16 +14,15 @@ import Avatar from 'material-ui/Avatar'
 import blue from 'material-ui/colors/blue'
 import IconButton from 'material-ui/IconButton'
 import Button from 'material-ui/Button'
-import DeviceHub from 'material-ui-icons/DeviceHub'
-import AccessibilityIcon from 'material-ui-icons/Accessibility'
-import LaunchIcon from 'material-ui-icons/Launch'
-import NavigateNextIcon from 'material-ui-icons/NavigateNext'
-import SettingsIcon from 'material-ui-icons/Settings'
 
+import {
+  PipelineIcon,
+  SubjectIcon,
+  LaunchIcon,
+  SettingsIcon
+} from './icons';
 
-type Props = {}
-
-class ProjectCard extends Component<Props> {
+class ProjectCard extends Component {
 
   static styles = theme => ({
     card: {
@@ -64,13 +62,13 @@ class ProjectCard extends Component<Props> {
           <List>
             <ListItem>
               <ListItemIcon>
-                <DeviceHub />
+                <PipelineIcon />
               </ListItemIcon>
               <ListItemText primary={`${project.summary.pipelines} pipelines`} />
             </ListItem>
             <ListItem>
               <ListItemIcon>
-                <AccessibilityIcon />
+                <SubjectIcon />
               </ListItemIcon>
               <ListItemText primary={`${project.summary.subjects} subjects`} />
             </ListItem>

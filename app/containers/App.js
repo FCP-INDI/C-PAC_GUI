@@ -1,9 +1,7 @@
-// @flow
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { configLoad } from '../actions/main'
 import { Link } from 'react-router-dom'
-
 
 import classNames from 'classnames';
 import { withStyles, typography } from 'material-ui/styles';
@@ -11,36 +9,36 @@ import { withStyles, typography } from 'material-ui/styles';
 import Drawer from 'material-ui/Drawer';
 import AppBar from 'material-ui/AppBar';
 import Toolbar from 'material-ui/Toolbar';
+import { Paper } from 'material-ui';
+
 import List from 'material-ui/List';
 import { ListItem, ListItemIcon, ListItemText } from 'material-ui/List';
 import Typography from 'material-ui/Typography';
 import Divider from 'material-ui/Divider';
 import IconButton from 'material-ui/IconButton';
 import MenuIcon from 'material-ui-icons/Menu';
-import FolderIcon from 'material-ui-icons/Folder';
-import FolderOpenIcon from 'material-ui-icons/FolderOpen';
-import DeveloperBoardIcon from 'material-ui-icons/DeveloperBoard';
-import AccessibilityIcon from 'material-ui-icons/Accessibility';
-import PlayCircleFilledIcon from 'material-ui-icons/PlayCircleFilled';
-import { Paper } from 'material-ui';
 
-type Props = {
-  children: React.Node
-};
+import {
+  PipelineIcon,
+  SubjectIcon,
+  RunIcon,
+  EnvironmentIcon,
+  ProjectIcon,
+  ProjectOpenIcon,
+} from '../components/icons';
 
-class App extends React.Component<Props> {
-  props: Props;
+
+class App extends React.Component {
 
   static styles = (theme, drawerWidth=240) => ({
-    menuButton: {
-      // marginLeft: 12,
-      // marginRight: 36,
+    app: {
     },
     root: {
-      display: 'flex'
+      position: 'relative',
     },
-    hide: {
-      display: 'none',
+
+    drawer: {
+      position: 'absolute'
     },
     drawerPaper: {
       position: 'relative',
@@ -62,6 +60,7 @@ class App extends React.Component<Props> {
         width: theme.spacing.unit * 7,
       },
     },
+
     project: {
       backgroundColor: '#EEE',
       paddingBottom: theme.spacing.unit * 2,
@@ -69,10 +68,19 @@ class App extends React.Component<Props> {
     projectItems: {
       marginLeft: theme.spacing.unit
     },
+
     content: {
-      flexGrow: 1,
+      position: 'absolute',
+      top: 0,
+      bottom: 0,
+      left: 0,
+      right: 0,
       backgroundColor: theme.palette.background.default,
       padding: theme.spacing.unit * 3,
+      left: theme.spacing.unit * 9,
+      [theme.breakpoints.down('xs')]: {
+        left: theme.spacing.unit * 7,
+      },
     }
   });
 
@@ -100,10 +108,8 @@ class App extends React.Component<Props> {
     const { project, config: { environments = [] } = {} } = this.props.main
     const { classes, theme } = this.props
 
-    console.log(project)
-
     return (
-      <div>
+      <div className={classes.app}>
         <header>
           <Link to={`/`}>
             <img src="../resources/logo.png" />
@@ -113,6 +119,7 @@ class App extends React.Component<Props> {
         <div className={classes.root}>
           <Drawer
             variant="permanent"
+            className={classes.drawer}
             classes={{
               paper: classNames(
                 classes.drawerPaper,
@@ -120,29 +127,20 @@ class App extends React.Component<Props> {
               ),
             }}
             open={this.state.open}
+            onMouseOver={this.handleDrawerOpen}
+            onMouseOut={this.handleDrawerClose}
           >
-
-            <List>
-              <ListItem button onClick={this.handleDrawerToggle}>
-                <ListItemIcon>
-                  <MenuIcon />
-                </ListItemIcon>
-              </ListItem>
-            </List>
-
-            <Divider />
-
             <List>
               <ListItem button component={Link} to={`/projects`}>
                 <ListItemIcon>
-                  <FolderIcon />
+                  <ProjectIcon />
                 </ListItemIcon>
                 <ListItemText primary="Projects" />
               </ListItem>
 
               <ListItem button component={Link} to={`/environments`}>
                 <ListItemIcon>
-                  <DeveloperBoardIcon />
+                  <EnvironmentIcon />
                 </ListItemIcon>
                 <ListItemText primary="Environments" />
               </ListItem>
@@ -155,29 +153,29 @@ class App extends React.Component<Props> {
             <List className={classes.project}>
               <ListItem>
                 <ListItemIcon>
-                  <FolderOpenIcon />
+                  <ProjectOpenIcon />
                 </ListItemIcon>
-                <ListItemText primary="ABIDE" />
+                <ListItemText primary={project.name} />
               </ListItem>
 
               <Paper className={classes.projectItems}>
-                <ListItem button component={Link} to={``}>
+                <ListItem button component={Link} to={`/projects/${project.id}/pipelines`}>
                   <ListItemIcon>
-                    <AccessibilityIcon />
+                    <SubjectIcon />
                   </ListItemIcon>
                   <ListItemText primary="Subjects" />
                 </ListItem>
 
-                <ListItem button component={Link} to={``}>
+                <ListItem button component={Link} to={`/projects/${project.id}/subjects`}>
                   <ListItemIcon>
-                    <DeveloperBoardIcon />
+                    <PipelineIcon />
                   </ListItemIcon>
                   <ListItemText primary="Pipelines" />
                 </ListItem>
 
-                <ListItem button component={Link} to={``}>
+                <ListItem button component={Link} to={`/projects/${project.id}/runs`}>
                   <ListItemIcon>
-                    <PlayCircleFilledIcon />
+                    <RunIcon />
                   </ListItemIcon>
                   <ListItemText primary="Runs" />
                 </ListItem>

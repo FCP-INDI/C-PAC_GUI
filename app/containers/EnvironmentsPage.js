@@ -6,14 +6,17 @@ import { withStyles } from 'material-ui/styles';
 import Paper from 'material-ui/Paper';
 import Grid from 'material-ui/Grid';
 import Typography from 'material-ui/Typography';
+import Avatar from 'material-ui/Avatar'
 
+import Header, { HeaderText, HeaderAvatar } from '../components/Header';
 import Content from '../components/Content';
 import EnvironmentCard from '../components/EnvironmentCard';
 
-type Props = {};
+import {
+  EnvironmentIcon,
+} from '../components/icons';
 
-class EnvironmentsPage extends Component<Props> {
-  props: Props;
+class EnvironmentsPage extends Component {
 
   static styles = theme => ({
     paper: {
@@ -29,26 +32,33 @@ class EnvironmentsPage extends Component<Props> {
     const { classes, main } = this.props;
 
     return (
-      <Content>
-        <Typography className={classes.header} variant="headline">Environments</Typography>
-        <Grid container spacing={8}>
-          <Grid item>
-            <EnvironmentCard />
+      <div>
+        <Header>
+          <HeaderAvatar><EnvironmentIcon /></HeaderAvatar>
+          <HeaderText>
+            Environments
+          </HeaderText>
+        </Header>
+        <Content>
+          <Grid container spacing={8}>
+            <Grid item>
+              <EnvironmentCard />
+            </Grid>
+            <Grid item>
+              <EnvironmentCard />
+            </Grid>
+            <Grid item>
+              <EnvironmentCard />
+            </Grid>
+            <Grid item>
+              <EnvironmentCard />
+            </Grid>
+            <Grid item>
+              <EnvironmentCard />
+            </Grid>
           </Grid>
-          <Grid item>
-            <EnvironmentCard />
-          </Grid>
-          <Grid item>
-            <EnvironmentCard />
-          </Grid>
-          <Grid item>
-            <EnvironmentCard />
-          </Grid>
-          <Grid item>
-            <EnvironmentCard />
-          </Grid>
-        </Grid>
-      </Content>
+        </Content>
+      </div>
     );
   }
 }
