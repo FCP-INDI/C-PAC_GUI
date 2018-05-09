@@ -32,7 +32,16 @@ function* loadConfig (action) {
         summary: {
           pipelines: 4,
           subjects: 1350
-        }
+        },
+        pipelines: [
+          {
+            id: '0000-0000-0000-0000',
+            name: 'Just anatomical',
+            definition: {
+
+            }
+          }
+        ]
       },
       adhd: {
         id: 'adhd',
