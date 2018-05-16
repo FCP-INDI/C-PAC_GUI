@@ -19,7 +19,8 @@ import {
   PipelineIcon,
   SubjectIcon,
   LaunchIcon,
-  SettingsIcon
+  SettingsIcon,
+  NavigateNextIcon
 } from './icons';
 
 class ProjectCard extends Component {
