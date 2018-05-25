@@ -4,8 +4,6 @@ import { connect } from 'react-redux';
 import { withStyles } from 'material-ui/styles';
 import Content from '../components/Content';
 import Header, { HeaderText, HeaderAvatar } from '../components/Header';
-import { ResponsivePie } from '@nivo/pie'
-import { ResponsiveLine } from '@nivo/line'
 
 import Grid from 'material-ui/Grid';
 import Card, { CardHeader, CardMedia, CardContent, CardActions } from 'material-ui/Card'
