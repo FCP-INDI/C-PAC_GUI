@@ -7,6 +7,7 @@ import EnvironmentsPage from './containers/EnvironmentsPage';
 import ProjectsPage from './containers/ProjectsPage';
 import ProjectPage from './containers/ProjectPage';
 import ProjectPipelinesPage from './containers/ProjectPipelinesPage';
+import ProjectSubjectsPage from './containers/ProjectSubjectsPage';
 
 import { projectOpen } from 'actions/main';
 
@@ -44,6 +45,7 @@ export default class TemplatePage extends Component {
     return (
       <App>
         <Switch>
+          <Route exact={true} path="/projects/:project/subjects" component={ProjectSubjectsPage} />
           <Route exact={true} path="/projects/:project/pipelines" component={ProjectPipelinesPage} />
           <Route exact={true} path="/projects/:project" component={ProjectPage} />
           <Route exact={true} path="/projects" component={ProjectsPage} />

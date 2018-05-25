@@ -34,6 +34,10 @@ header img {
   box-shadow: #232c39
 }
 
+#root {
+  height: 100vh;
+}
+
 main {
   padding: 5px;
 }

@@ -5,10 +5,7 @@ import { Link } from 'react-router-dom';
 
 import { withStyles } from 'material-ui/styles';
 
-type Props = {};
-
-class Home extends Component<Props> {
-  props: Props;
+class Home extends Component {
 
   static styles = theme => ({
   });

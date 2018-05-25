@@ -78,28 +78,6 @@ class ProjectPage extends Component {
                 <CardHeader
                   avatar={
                     <Avatar className={classes.avatar}>
-                      <PipelineIcon />
-                    </Avatar>
-                  }
-                  title="Pipelines"
-                />
-                <CardContent>
-                  <Typography component="p">
-                    Nº of subjects: { project.summary.subjects }
-                  </Typography>
-                </CardContent>
-                <CardActions className={classes.actions}>
-                  <IconButton component={Link} to={`/projects/${project.id}/pipelines`}>
-                    <NavigateNextIcon />
-                  </IconButton>
-                </CardActions>
-              </Card>
-            </Grid>
-            <Grid item sm={6} className={classes.subjects}>
-              <Card className={classes.card}>
-                <CardHeader
-                  avatar={
-                    <Avatar className={classes.avatar}>
                       <SubjectIcon />
                     </Avatar>
                   }
@@ -138,6 +116,28 @@ class ProjectPage extends Component {
                     </Typography>
                   </CardContent>
                 </Collapse>
+              </Card>
+            </Grid>
+            <Grid item sm={6} className={classes.subjects}>
+              <Card className={classes.card}>
+                <CardHeader
+                  avatar={
+                    <Avatar className={classes.avatar}>
+                      <PipelineIcon />
+                    </Avatar>
+                  }
+                  title="Pipelines"
+                />
+                <CardContent>
+                  <Typography component="p">
+                    Nº of subjects: { project.summary.subjects }
+                  </Typography>
+                </CardContent>
+                <CardActions className={classes.actions}>
+                  <IconButton component={Link} to={`/projects/${project.id}/pipelines`}>
+                    <NavigateNextIcon />
+                  </IconButton>
+                </CardActions>
               </Card>
             </Grid>
           </Grid>

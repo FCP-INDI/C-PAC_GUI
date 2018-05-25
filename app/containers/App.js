@@ -32,9 +32,15 @@ class App extends React.Component {
 
   static styles = (theme, drawerWidth=240) => ({
     app: {
+      position: 'relative',
+      height: '100vh'
+    },
+    header: {
+
     },
     root: {
       position: 'relative',
+      height: '100vh'
     },
 
     drawer: {
@@ -70,17 +76,17 @@ class App extends React.Component {
     },
 
     content: {
+      overflow: 'auto',
       position: 'absolute',
       top: 0,
       bottom: 0,
-      left: 0,
       right: 0,
-      backgroundColor: theme.palette.background.default,
-      padding: theme.spacing.unit * 3,
       left: theme.spacing.unit * 9,
       [theme.breakpoints.down('xs')]: {
         left: theme.spacing.unit * 7,
       },
+      padding: theme.spacing.unit * 3,
+      backgroundColor: theme.palette.background.default,
     }
   });
 
@@ -110,7 +116,7 @@ class App extends React.Component {
 
     return (
       <div className={classes.app}>
-        <header>
+        <header className={classes.header}>
           <Link to={`/`}>
             <img src="../resources/logo.png" />
           </Link>
@@ -159,14 +165,14 @@ class App extends React.Component {
               </ListItem>
 
               <Paper className={classes.projectItems}>
-                <ListItem button component={Link} to={`/projects/${project.id}/pipelines`}>
+                <ListItem button component={Link} to={`/projects/${project.id}/subjects`}>
                   <ListItemIcon>
                     <SubjectIcon />
                   </ListItemIcon>
                   <ListItemText primary="Subjects" />
                 </ListItem>
 
-                <ListItem button component={Link} to={`/projects/${project.id}/subjects`}>
+                <ListItem button component={Link} to={`/projects/${project.id}/pipelines`}>
                   <ListItemIcon>
                     <PipelineIcon />
                   </ListItemIcon>
