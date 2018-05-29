@@ -76,9 +76,7 @@ class ProjectCard extends Component {
           </List>
         </CardContent>
         <CardActions className={classes.actions} disableActionSpacing>
-          {/* <SettingsIcon /> */}
           <IconButton className={classes.expand} onClick={() => this.handleOpen(project.id)}>
-            {/* <LaunchIcon /> */}
             <NavigateNextIcon />
           </IconButton>
         </CardActions>

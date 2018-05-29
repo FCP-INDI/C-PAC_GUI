@@ -3,27 +3,38 @@ import { connect } from 'react-redux';
 
 import { withStyles } from 'material-ui/styles';
 
+import Grid from 'material-ui/Grid';
+
 import Content from '../components/Content';
 import Header, { HeaderText, HeaderAvatar } from '../components/Header';
+import RunCard from '../components/RunCard';
 
 
-class ProjectPipelinesPage extends Component {
+
+class ProjectRunsPage extends Component {
 
   static styles = theme => ({
   });
 
   render() {
-    const { classes, project } = this.props;
+    const { classes, project, config } = this.props;
 
     return (
       <div>
         <Header>
           <HeaderAvatar>{project.name[0]}</HeaderAvatar>
           <HeaderText>
-            Pipelines
+            Runs
           </HeaderText>
         </Header>
         <Content>
+          <Grid container spacing={8} alignContent="center">
+            {project.runs.map((run) => (
+              <Grid item key={run.id}>
+                <RunCard project={project} run={run} />
+              </Grid>
+            ))}
+          </Grid>
         </Content>
       </div>
     );
@@ -32,10 +43,10 @@ class ProjectPipelinesPage extends Component {
 
 const mapStateToProps = (state, props) => {
   const { match: { params: { project } } } = props
-  return { project: state.main.config.projects[project] }
+  return { project: state.main.config.projects[project], config: state.main.config }
 }
 
 const mapDispatchToProps = {
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(withStyles(ProjectPipelinesPage.styles)(ProjectPipelinesPage));
+export default connect(mapStateToProps, mapDispatchToProps)(withStyles(ProjectRunsPage.styles)(ProjectRunsPage));

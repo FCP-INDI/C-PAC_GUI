@@ -1,86 +1,105 @@
 /* eslint global-require: 0, flowtype-errors/show-errors: 0 */
 
-/**
- * This module executes inside of electron's main process. You can start
- * electron renderer process from here and communicate with the other processes
- * through IPC.
- *
- * When running `npm run build` or `npm run build-main`, this file is compiled to
- * `./app/main.prod.js` using webpack. This gives us some performance wins.
- *
- * @flow
- */
-import { app, BrowserWindow } from 'electron';
-import MenuBuilder from './menu';
+// import { ArgumentParser } from 'argparse';
 
-let mainWindow = null;
+// var parser = new ArgumentParser({
+//   version: '0.0.1',
+//   addHelp:true,
+//   description: 'Argparse example'
+// });
 
-if (process.env.NODE_ENV === 'production') {
-  const sourceMapSupport = require('source-map-support');
-  sourceMapSupport.install();
-}
+// var subparsers = parser.addSubparsers({
+//   dest: 'command',
+//   required: false
+// });
 
-if (process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true') {
-  require('electron-debug')();
-  const path = require('path');
-  const p = path.join(__dirname, '..', 'app', 'node_modules');
-  require('module').globalPaths.push(p);
-}
+// var server = subparsers.addParser('server', { addHelp: true });
+// server.addArgument(
+//   [ '-p', '--port' ],
+//   {
+//     action: 'store',
+//     type: 'int',
+//     default: 5697,
+//     help: 'Server port'
+//   }
+// );
 
-const installExtensions = async () => {
-  const installer = require('electron-devtools-installer');
-  const forceDownload = !!process.env.UPGRADE_EXTENSIONS;
-  const extensions = [
-    'REACT_DEVELOPER_TOOLS',
-    'REDUX_DEVTOOLS'
-  ];
+// var gui = subparsers.addParser('gui', { addHelp: true });
+// var args = parser.parseArgs();
 
-  return Promise
-    .all(extensions.map(name => installer.default(installer[name], forceDownload)))
-    .catch(console.log);
-};
+// if (args.command === 'server') {
 
+//   const express = require('express')
+//   const app = express()
+//   app.use('/', express.static(`${__dirname}`))
+//   // app.get('/', (req, res) => res.sendFile(`${__dirname}/app.html`))
+//   app.listen(args.port)
 
-/**
- * Add event listeners...
- */
+// } else {
 
-app.on('window-all-closed', () => {
-  // Respect the OSX convention of having the application in memory even
-  // after all windows have been closed
-  if (process.platform !== 'darwin') {
-    app.quit();
+  const { app, BrowserWindow } = require('electron');
+  const MenuBuilder = require('./menu');
+
+  let mainWindow = null;
+
+  if (process.env.NODE_ENV === 'production') {
+    const sourceMapSupport = require('source-map-support');
+    sourceMapSupport.install();
   }
-});
 
-
-app.on('ready', async () => {
   if (process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true') {
-    await installExtensions();
+    require('electron-debug')();
+    const path = require('path');
+    const p = path.join(__dirname, '..', 'app', 'node_modules');
+    require('module').globalPaths.push(p);
   }
 
-  mainWindow = new BrowserWindow({
-    show: false,
-    width: 1024,
-    height: 728
-  });
+  const installExtensions = async () => {
+    const installer = require('electron-devtools-installer');
+    const forceDownload = !!process.env.UPGRADE_EXTENSIONS;
+    const extensions = [
+      'REACT_DEVELOPER_TOOLS',
+      'REDUX_DEVTOOLS'
+    ];
 
-  mainWindow.loadURL(`file://${__dirname}/app.html`);
+    return Promise
+      .all(extensions.map(name => installer.default(installer[name], forceDownload)))
+      .catch(console.log);
+  };
 
-  // @TODO: Use 'ready-to-show' event
-  //        https://github.com/electron/electron/blob/master/docs/api/browser-window.md#using-ready-to-show-event
-  mainWindow.webContents.on('did-finish-load', () => {
-    if (!mainWindow) {
-      throw new Error('"mainWindow" is not defined');
+  app.on('window-all-closed', () => {
+    if (process.platform !== 'darwin') {
+      app.quit();
     }
-    mainWindow.show();
-    mainWindow.focus();
   });
 
-  mainWindow.on('closed', () => {
-    mainWindow = null;
+  app.on('ready', async () => {
+    if (process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true') {
+      await installExtensions();
+    }
+
+    mainWindow = new BrowserWindow({
+      show: false,
+      width: 1024,
+      height: 728
+    });
+
+    mainWindow.loadURL(`file://${__dirname}/app.desktop.html`);
+
+    mainWindow.webContents.on('did-finish-load', () => {
+      if (!mainWindow) {
+        throw new Error('"mainWindow" is not defined');
+      }
+      mainWindow.show();
+      mainWindow.focus();
+    });
+
+    mainWindow.on('closed', () => {
+      mainWindow = null;
+    });
+
+    const menuBuilder = new MenuBuilder(mainWindow);
+    menuBuilder.buildMenu();
   });
 
-  const menuBuilder = new MenuBuilder(mainWindow);
-  menuBuilder.buildMenu();
-});
+// }

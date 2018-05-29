@@ -157,7 +157,7 @@ class App extends React.Component {
             { project ? (
 
             <List className={classes.project}>
-              <ListItem>
+              <ListItem button component={Link} to={`/projects/${project.id}`}>
                 <ListItemIcon>
                   <ProjectOpenIcon />
                 </ListItemIcon>

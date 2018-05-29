@@ -16,10 +16,13 @@ import Highcharts from 'highcharts'
 class ProjectSubjectsPage extends Component {
 
   static styles = theme => ({
+    header: {
+      paddingBottom: 20,
+    }
   });
 
   componentDidMount() {
-    const { project: { data: { subjects } } } = this.props;
+    const { project: { subjects } } = this.props;
 
     const SitesData = subjects.summary.phenotype.filter(p => p.variable === 'Sites')[0]
 
@@ -115,7 +118,7 @@ class ProjectSubjectsPage extends Component {
             <Grid item sm={6}>
               <Card className={classes.card}>
                 <CardContent>
-                  <Typography variant="title" color="textSecondary">
+                  <Typography variant="title" color="textSecondary" className={classes.header}>
                     Sites
                   </Typography>
                   <div id="Sites">
@@ -126,8 +129,8 @@ class ProjectSubjectsPage extends Component {
             <Grid item sm={6}>
               <Card className={classes.card}>
                 <CardContent>
-                  <Typography variant="title" color="textSecondary">
-                    Sex by Age
+                  <Typography variant="title" color="textSecondary" className={classes.header}>
+                    Gender by Age
                   </Typography>
                   <div id="SexByAge">
                   </div>
