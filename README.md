@@ -2,6 +2,13 @@
 
 A suite to manage, run and track your preprocessing pipelines.
 
+## How to run
+
+```bash
+npm install
+npm run dev
+```
+
 ## Ideas
 
 * Separates the GUI from the main C-PAC in its own app: It enables better handling of pipelines execution, since the main C-PAC will be running on background as a scheduler/API on servers.
