@@ -29,4 +29,4 @@ npm run dev
 
 * Provides a web interface with the same structures/design from the GUI app, but it only can schedule/track pipelines from the server that the web interface is installed.
 
-  > User story: I just want to check how my pipeline is going, but I am on my mobile. So I open CPAC web installed on Dozer, and take a look on it.
+  > User story: I just want to check how my pipeline is going, but I am on my mobile. So I open CPAC web, that is installed on Dozer, and take a look on it.
