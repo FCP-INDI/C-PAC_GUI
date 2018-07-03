@@ -1,16 +1,15 @@
-// @flow
 import React, { Component } from 'react';
-import { withStyles } from 'material-ui/styles';
+import { withStyles } from '@material-ui/core';
 
-import Paper from 'material-ui/Paper';
+import Paper from '@material-ui/core/Paper';
 
 type Props = {};
 
 class Content extends Component<Props> {
   static styles = theme => ({
     paper: {
-      margin: 0,
-      padding: 20
+      margin: '0 0 90px 0',
+      padding: 20,
     }
   });
 

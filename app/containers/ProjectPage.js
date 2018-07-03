@@ -1,18 +1,24 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-import { withStyles } from 'material-ui/styles';
-import Paper from 'material-ui/Paper';
-import Grid from 'material-ui/Grid';
-import Typography from 'material-ui/Typography';
-import Avatar from 'material-ui/Avatar'
-import AppBar from 'material-ui/AppBar';
-import Toolbar from 'material-ui/Toolbar';
+import { withStyles } from '@material-ui/core';
+import Paper from '@material-ui/core/Paper';
+import Grid from '@material-ui/core/Grid';
+import Typography from '@material-ui/core/Typography';
+import Avatar from '@material-ui/core/Avatar'
+import AppBar from '@material-ui/core/AppBar';
+import Toolbar from '@material-ui/core/Toolbar';
 
 import classnames from 'classnames';
-import Card, { CardHeader, CardMedia, CardContent, CardActions } from 'material-ui/Card';
-import Collapse from 'material-ui/transitions/Collapse';
-import IconButton from 'material-ui/IconButton';
+
+import Card from '@material-ui/core/Card';
+import CardHeader from '@material-ui/core/CardHeader';
+import CardMedia from '@material-ui/core/CardMedia';
+import CardContent from '@material-ui/core/CardContent';
+import CardActions from '@material-ui/core/CardActions';
+
+import Collapse from '@material-ui/core/Collapse';
+import IconButton from '@material-ui/core/IconButton';
 import { Link } from 'react-router-dom';
 
 import Content from '../components/Content';
@@ -93,6 +99,9 @@ class ProjectPage extends Component {
                   <Typography component="p">
                     Nº of subjects: { project.summary.subjects }
                   </Typography>
+                  <Typography component="p">
+                    <strong>&lt; Summary info here &gt;</strong>
+                  </Typography>
                 </CardContent>
                 <CardActions className={classes.actions}>
                   <IconButton
@@ -105,6 +114,9 @@ class ProjectPage extends Component {
                   >
                     <ExpandMoreIcon />
                   </IconButton>
+                  <IconButton component={Link} to={`/projects/${project.id}/subjects`}>
+                    <NavigateNextIcon />
+                  </IconButton>
                 </CardActions>
                 <Collapse in={this.state.expanded} timeout="auto" unmountOnExit>
                   <CardContent>
@@ -113,6 +125,7 @@ class ProjectPage extends Component {
                     </Typography>
                     <Typography paragraph>
                       yada yada
+                      <strong>&lt; more info here &gt;</strong>
                     </Typography>
                   </CardContent>
                 </Collapse>
@@ -130,7 +143,13 @@ class ProjectPage extends Component {
                 />
                 <CardContent>
                   <Typography component="p">
-                    Nº of subjects: { project.summary.subjects }
+                    Number of steps
+                  </Typography>
+                  <Typography component="p">
+                    Estimated time
+                  </Typography>
+                  <Typography component="p">
+                    Generated Derivatives
                   </Typography>
                 </CardContent>
                 <CardActions className={classes.actions}>

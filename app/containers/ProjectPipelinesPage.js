@@ -1,9 +1,11 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-import { withStyles } from 'material-ui/styles';
+import { withStyles } from '@material-ui/core';
 
+import Grid from '@material-ui/core/Grid';
 import Content from '../components/Content';
+import PipelineCard from '../components/PipelineCard';
 import Header, { HeaderText, HeaderAvatar } from '../components/Header';
 
 
@@ -24,6 +26,13 @@ class ProjectPipelinesPage extends Component {
           </HeaderText>
         </Header>
         <Content>
+          <Grid container spacing={8} alignContent="center">
+            {project.pipelines.map((pipeline) => (
+              <Grid item key={pipeline.id}>
+                <PipelineCard project={project} pipeline={pipeline} />
+              </Grid>
+            ))}
+          </Grid>
         </Content>
       </div>
     );

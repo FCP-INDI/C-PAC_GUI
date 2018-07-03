@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
-import { withStyles } from 'material-ui/styles';
-import Paper from 'material-ui/Paper';
-import Avatar from 'material-ui/Avatar';
-import Typography from 'material-ui/Typography';
+import { withStyles } from '@material-ui/core';
+import Paper from '@material-ui/core/Paper';
+import Avatar from '@material-ui/core/Avatar';
+import Typography from '@material-ui/core/Typography';
 
 
 class Header extends Component {
@@ -20,6 +20,9 @@ class Header extends Component {
         boxSizing: 'border-box',
         textAlign: 'left',
         background: '#f6e187',
+        background: '#afe2df',
+        background: '#d1dfb6',
+        background: '#f0e298',
       },
     }
   };

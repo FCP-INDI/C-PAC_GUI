@@ -1,10 +1,11 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { withRouter, Link } from 'react-router-dom'
+import { withRouter } from 'react-router-dom'
 
 import classnames from 'classnames'
-import { withStyles } from '@material-ui/core'
+import { withStyles } from '@material-ui/core/styles'
 
+import { Link } from 'react-router-dom'
 import Grid from '@material-ui/core/Grid'
 
 import Card from '@material-ui/core/Card';
@@ -21,19 +22,26 @@ import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 
 import Typography from '@material-ui/core/Typography'
 import Avatar from '@material-ui/core/Avatar'
-import blue from '@material-ui/core/colors/blue'
+import green from '@material-ui/core/colors/green'
 import IconButton from '@material-ui/core/IconButton'
 import Button from '@material-ui/core/Button'
 
 import {
+  EnvironmentIcon,
   PipelineIcon,
+  PipelineStepIcon,
+  PipelineExecutionTimeIcon,
   SubjectIcon,
+  RunIcon,
   LaunchIcon,
   SettingsIcon,
-  NavigateNextIcon
+  NavigateNextIcon,
+  TimerIcon,
+  LogIcon,
+  BrainIcon
 } from './icons';
 
-class ProjectCard extends Component {
+class PipelineCard extends Component {
 
   static styles = theme => ({
     card: {
@@ -42,51 +50,52 @@ class ProjectCard extends Component {
     actions: {
       display: 'flex',
       paddingLeft: 20,
+      justifyContent: 'flex-end'
     },
-    expand: {
-      marginLeft: 'auto',
+    action: {
     },
     avatar: {
-      backgroundColor: blue[500],
     },
     info: {
       padding: 0
     }
   })
 
-  handleOpen = (project) => {
-    this.props.history.push(`/projects/${project}`)
+  handleOpen = (project, pipeline) => {
+    this.props.history.push(`/projects/${project}/pipelines/${pipeline}`)
   }
 
   render() {
-    const { classes, raised = false, projects: { [this.props.id]: project } } = this.props
+    const { classes, raised = false, project, pipeline } = this.props
 
     return (
       <Card className={classes.card} raised={raised}>
         <CardHeader
           avatar={
-            <Avatar aria-label={project.name} className={classes.avatar}>{project.name[0]}</Avatar>
+            <Avatar className={classes.avatar}>
+              <PipelineIcon />
+            </Avatar>
           }
-          title={project.name}
+          title={`${pipeline.name}`}
         />
         <CardContent className={classes.info}>
           <List>
             <ListItem>
               <ListItemIcon>
-                <PipelineIcon />
+                <PipelineStepIcon />
               </ListItemIcon>
-              <ListItemText primary={`${project.summary.pipelines} pipelines`} />
+              <ListItemText primary={`32 steps`} />
             </ListItem>
             <ListItem>
               <ListItemIcon>
-                <SubjectIcon />
+                <PipelineExecutionTimeIcon />
               </ListItemIcon>
-              <ListItemText primary={`${project.summary.subjects} subjects`} />
+              <ListItemText primary={`2 hours per subject`} />
             </ListItem>
           </List>
         </CardContent>
         <CardActions className={classes.actions} disableActionSpacing>
-          <IconButton className={classes.expand} onClick={() => this.handleOpen(project.id)}>
+          <IconButton className={classes.expand} onClick={() => this.handleOpen(project.id, pipeline.id)}>
             <NavigateNextIcon />
           </IconButton>
         </CardActions>
@@ -96,12 +105,11 @@ class ProjectCard extends Component {
 }
 
 const mapStateToProps = (state) => ({
-  projects: state.main.config.projects,
 })
 
 const mapDispatchToProps = {
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(
-  withRouter(withStyles(ProjectCard.styles)(ProjectCard))
+  withRouter(withStyles(PipelineCard.styles)(PipelineCard))
 )

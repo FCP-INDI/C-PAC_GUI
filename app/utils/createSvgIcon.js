@@ -2,7 +2,7 @@
 
 import React from 'react';
 import pure from 'recompose/pure';
-import SvgIcon from 'material-ui/SvgIcon';
+import SvgIcon from '@material-ui/core/SvgIcon';
 
 function createSvgIcon(path, displayName) {
   let Icon = props => (

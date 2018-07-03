@@ -12,9 +12,12 @@ export {
   Settings as SettingsIcon,
   DeveloperBoard as EnvironmentIcon,
   PlayCircleFilled as RunIcon,
+  PauseCircleFilled as RunPausedIcon,
   Folder as ProjectIcon,
   FolderOpen as ProjectOpenIcon,
   MenuIcon as Menu,
+  Extension as PipelineStepIcon,
+  AccessTime as PipelineExecutionTimeIcon,
 
   LoadingIcon as Loop,
   AuthErrorIcon as Lock,
@@ -22,7 +25,13 @@ export {
   DoneIcon as Done,
   Timer as TimerIcon,
   Note as LogIcon,
-} from 'material-ui-icons';
+
+  Cloud as EnvAwsIcon,
+  Laptop as EnvLocalIcon,
+  SettingsRemote as EnvApiIcon,
+  Link as EnvSshIcon,
+  Devices as EnvDockerIcon,
+} from '@material-ui/icons';
 
 // import createSvgIcon from '../utils/createSvgIcon'
 
@@ -32,4 +41,4 @@ export {
 
 export {
   Image as BrainIcon,
-} from 'material-ui-icons';
+} from '@material-ui/icons';

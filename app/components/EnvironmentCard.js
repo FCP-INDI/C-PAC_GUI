@@ -2,29 +2,44 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
 import classnames from 'classnames';
-import { withStyles } from 'material-ui/styles';
+import { withStyles } from '@material-ui/core';
 
-import Card, { CardHeader, CardMedia, CardContent, CardActions } from 'material-ui/Card';
-import List, { ListItem, ListItemSecondaryAction, ListItemText } from 'material-ui/List';
-import Typography from 'material-ui/Typography';
-import Avatar from 'material-ui/Avatar';
-import Badge from 'material-ui/Badge';
-import Popover from 'material-ui/Popover';
-import Collapse from 'material-ui/transitions/Collapse';
-import blue from 'material-ui/colors/blue';
-import IconButton from 'material-ui/IconButton';
-import { CircularProgress } from 'material-ui/Progress';
+import Card from '@material-ui/core/Card';
+import CardHeader from '@material-ui/core/CardHeader';
+import CardMedia from '@material-ui/core/CardMedia';
+import CardContent from '@material-ui/core/CardContent';
+import CardActions from '@material-ui/core/CardActions';
+
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
+import ListItemText from '@material-ui/core/ListItemText';
+
+import Typography from '@material-ui/core/Typography';
+import Avatar from '@material-ui/core/Avatar';
+import Badge from '@material-ui/core/Badge';
+import Popover from '@material-ui/core/Popover';
+import Collapse from '@material-ui/core/Collapse';
+import blue from '@material-ui/core/colors/blue';
+import IconButton from '@material-ui/core/IconButton';
+import { CircularProgress } from '@material-ui/core';
 
 import {
   PipelineIcon,
-  RemoveIcon
+  RemoveIcon,
+
+  EnvAwsIcon,
+  EnvLocalIcon,
+  EnvApiIcon,
+  EnvSshIcon,
+  EnvDockerIcon,
 } from '../components/icons';
 
 class EnvironmentCard extends Component {
 
   static styles = theme => ({
     card: {
-      minWidth: 200,
+      minWidth: 300,
     },
     actions: {
       display: 'flex',
@@ -39,6 +54,14 @@ class EnvironmentCard extends Component {
       padding: 10
     }
   });
+
+  static types = {
+    local: { name: 'Local', icon: EnvLocalIcon },
+    docker: { name: 'Docker', icon: EnvDockerIcon },
+    ssh: { name: 'SSH', icon: EnvSshIcon },
+    server: { name: 'CPAC API', icon: EnvApiIcon },
+    aws: { name: 'AWS', icon: EnvAwsIcon },
+  }
 
   state = { expanded: false, details: false };
 
@@ -59,7 +82,7 @@ class EnvironmentCard extends Component {
   };
 
   render() {
-    const { classes } = this.props;
+    const { classes, name, type } = this.props;
 
     const {
       details,
@@ -69,10 +92,12 @@ class EnvironmentCard extends Component {
       <Card className={classes.card}>
         <CardHeader
           avatar={
-            <Avatar aria-label="Docker" className={classes.avatar}>D</Avatar>
+            <Avatar aria-label={EnvironmentCard.types[type].name} className={classes.avatar}>
+              { React.createElement(EnvironmentCard.types[type].icon) }
+            </Avatar>
           }
-          title="My Docker Environment"
-          subheader="Docker"
+          title={name}
+          subheader={EnvironmentCard.types[type].name}
         />
         <CardActions className={classes.actions} disableActionSpacing>
           <Popover
@@ -99,7 +124,7 @@ class EnvironmentCard extends Component {
                   variant="determinate"
                   value={70}
                 />
-                <ListItemText primary="Pipeline test_pipeline.yaml" secondary="ABIDE" />
+                <ListItemText primary="Pipeline test" secondary="ABIDE" />
               </ListItem>
               <ListItem dense button>
                 <CircularProgress
@@ -107,7 +132,7 @@ class EnvironmentCard extends Component {
                   variant="determinate"
                   value={50}
                 />
-                <ListItemText primary="Pipeline test_pipeline.yaml" secondary="ADHD" />
+                <ListItemText primary="Pipeline VHMC" secondary="ADHD" />
               </ListItem>
               <ListItem dense button>
                 <CircularProgress
@@ -115,7 +140,7 @@ class EnvironmentCard extends Component {
                   variant="determinate"
                   value={70}
                 />
-                <ListItemText primary="Pipeline test_pipeline.yaml" secondary="ABIDE" />
+                <ListItemText primary="Pipeline low pass filter" secondary="ABIDE" />
               </ListItem>
               <ListItem dense button>
                 <CircularProgress
@@ -123,7 +148,7 @@ class EnvironmentCard extends Component {
                   variant="determinate"
                   value={50}
                 />
-                <ListItemText primary="Pipeline test_pipeline.yaml" secondary="ADHD" />
+                <ListItemText primary="Pipeline only anat" secondary="ADHD" />
               </ListItem>
             </List>
           </Popover>

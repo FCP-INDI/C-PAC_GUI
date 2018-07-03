@@ -1,14 +1,13 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-import { withStyles } from 'material-ui/styles';
+import { withStyles } from '@material-ui/core';
 
-import Grid from 'material-ui/Grid';
+import Grid from '@material-ui/core/Grid';
 
 import Content from '../components/Content';
 import Header, { HeaderText, HeaderAvatar } from '../components/Header';
 import RunCard from '../components/RunCard';
-
 
 
 class ProjectRunsPage extends Component {

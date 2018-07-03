@@ -4,19 +4,24 @@ import { configLoad } from '../actions/main'
 import { Link } from 'react-router-dom'
 
 import classNames from 'classnames';
-import { withStyles, typography } from 'material-ui/styles';
+import { withStyles, typography } from '@material-ui/core/styles';
 
-import Drawer from 'material-ui/Drawer';
-import AppBar from 'material-ui/AppBar';
-import Toolbar from 'material-ui/Toolbar';
-import { Paper } from 'material-ui';
+import Drawer from '@material-ui/core/Drawer';
+import AppBar from '@material-ui/core/AppBar';
+import Toolbar from '@material-ui/core/Toolbar';
+import { Paper } from '@material-ui/core';
 
-import List from 'material-ui/List';
-import { ListItem, ListItemIcon, ListItemText } from 'material-ui/List';
-import Typography from 'material-ui/Typography';
-import Divider from 'material-ui/Divider';
-import IconButton from 'material-ui/IconButton';
-import MenuIcon from 'material-ui-icons/Menu';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
+import ListItemText from '@material-ui/core/ListItemText';
+
+import Typography from '@material-ui/core/Typography';
+import Divider from '@material-ui/core/Divider';
+import IconButton from '@material-ui/core/IconButton';
+import MenuIcon from '@material-ui/icons/Menu';
+
+import Slide from '@material-ui/core/Slide';
 
 import {
   PipelineIcon,
@@ -155,38 +160,39 @@ class App extends React.Component {
             <Divider />
 
             { project ? (
-
-            <List className={classes.project}>
-              <ListItem button component={Link} to={`/projects/${project.id}`}>
-                <ListItemIcon>
-                  <ProjectOpenIcon />
-                </ListItemIcon>
-                <ListItemText primary={project.name} />
-              </ListItem>
-
-              <Paper className={classes.projectItems}>
-                <ListItem button component={Link} to={`/projects/${project.id}/subjects`}>
+            <Slide direction="left" in={!!project} mountOnEnter unmountOnExit>
+              <List className={classes.project}>
+                <ListItem button component={Link} to={`/projects/${project.id}`}>
                   <ListItemIcon>
-                    <SubjectIcon />
+                    <ProjectOpenIcon />
                   </ListItemIcon>
-                  <ListItemText primary="Subjects" />
+                  <ListItemText primary={project.name} />
                 </ListItem>
 
-                <ListItem button component={Link} to={`/projects/${project.id}/pipelines`}>
-                  <ListItemIcon>
-                    <PipelineIcon />
-                  </ListItemIcon>
-                  <ListItemText primary="Pipelines" />
-                </ListItem>
+                <Paper className={classes.projectItems}>
+                  <ListItem button component={Link} to={`/projects/${project.id}/subjects`}>
+                    <ListItemIcon>
+                      <SubjectIcon />
+                    </ListItemIcon>
+                    <ListItemText primary="Subjects" />
+                  </ListItem>
 
-                <ListItem button component={Link} to={`/projects/${project.id}/runs`}>
-                  <ListItemIcon>
-                    <RunIcon />
-                  </ListItemIcon>
-                  <ListItemText primary="Runs" />
-                </ListItem>
-              </Paper>
-            </List>
+                  <ListItem button component={Link} to={`/projects/${project.id}/pipelines`}>
+                    <ListItemIcon>
+                      <PipelineIcon />
+                    </ListItemIcon>
+                    <ListItemText primary="Pipelines" />
+                  </ListItem>
+
+                  <ListItem button component={Link} to={`/projects/${project.id}/runs`}>
+                    <ListItemIcon>
+                      <RunIcon />
+                    </ListItemIcon>
+                    <ListItemText primary="Runs" />
+                  </ListItem>
+                </Paper>
+              </List>
+            </Slide>
             ) : null }
 
           </Drawer>

@@ -3,13 +3,13 @@ import { connect } from 'react-redux';
 
 import { environmentCheck, environmentSelect } from '../actions/main'
 
-import Input, { InputLabel } from 'material-ui/Input';
-import Select from 'material-ui/Select';
-import { MenuItem } from 'material-ui/Menu';
-import { FormControl, FormHelperText } from 'material-ui/Form';
-import Grid from 'material-ui/Grid';
-import Paper from 'material-ui/Paper';
-import Avatar from 'material-ui/Avatar';
+import Input, { InputLabel } from '@material-ui/core/Input';
+import Select from '@material-ui/core/Select';
+import { MenuItem } from '@material-ui/core/Menu';
+import { FormControl, FormHelperText } from '@material-ui/core/Form';
+import Grid from '@material-ui/core/Grid';
+import Paper from '@material-ui/core/Paper';
+import Avatar from '@material-ui/core/Avatar';
 
 import {
   LoadingIcon,
@@ -18,9 +18,9 @@ import {
   DoneIcon,
 } from './icons';
 
-import green from 'material-ui/colors/green';
-import red from 'material-ui/colors/red';
-import { white } from 'material-ui/colors';
+import green from '@material-ui/core/colors/green';
+import red from '@material-ui/core/colors/red';
+import { white } from '@material-ui/core/colors';
 
 class EnvironmentStatus extends Component {
   renderStyle(status) {

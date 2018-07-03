@@ -1,12 +1,11 @@
-// @flow
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-import { withStyles } from 'material-ui/styles';
-import Paper from 'material-ui/Paper';
-import Grid from 'material-ui/Grid';
-import Typography from 'material-ui/Typography';
-import Avatar from 'material-ui/Avatar'
+import { withStyles } from '@material-ui/core';
+import Paper from '@material-ui/core/Paper';
+import Grid from '@material-ui/core/Grid';
+import Typography from '@material-ui/core/Typography';
+import Avatar from '@material-ui/core/Avatar'
 
 import Header, { HeaderText, HeaderAvatar } from '../components/Header';
 import Content from '../components/Content';
@@ -42,19 +41,19 @@ class EnvironmentsPage extends Component {
         <Content>
           <Grid container spacing={8}>
             <Grid item>
-              <EnvironmentCard />
+              <EnvironmentCard name="My Docker" type="docker" />
             </Grid>
             <Grid item>
-              <EnvironmentCard />
+              <EnvironmentCard name="Ned @ CMI" type="server" />
             </Grid>
             <Grid item>
-              <EnvironmentCard />
+              <EnvironmentCard name="Dozer @ CMI" type="ssh" />
             </Grid>
             <Grid item>
-              <EnvironmentCard />
+              <EnvironmentCard name="AWS - CMI account" type="aws" />
             </Grid>
             <Grid item>
-              <EnvironmentCard />
+              <EnvironmentCard name="My computer" type="local" />
             </Grid>
           </Grid>
         </Content>

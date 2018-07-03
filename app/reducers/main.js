@@ -1,4 +1,3 @@
-// @flow
 import {
   CONFIG_LOADED,
   ENVIRONMENT_CHECKED,
