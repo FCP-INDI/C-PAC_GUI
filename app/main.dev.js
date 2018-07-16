@@ -1,6 +1,6 @@
 /* eslint global-require: 0 */
 
-const parseArgs = require('electron-args');
+const parseArgs = require('electron-args')
 
 const cli = parseArgs(`
     cpac
@@ -19,83 +19,66 @@ const cli = parseArgs(`
     default: {
         port: 5697
     }
-});
+})
 
+// 'http://localhost:' + 1212 + '/dist/renderer.dev.js'
 
-if (cli.input[0] === 'server') {
-
-  const express = require('express')
-  const app = express()
-  app.use('/', express.static(`${__dirname}`))
-  // app.get('/', (req, res) => res.sendFile(`${__dirname}/app.html`))
-  app.listen(cli.flags.port)
-
-// } else if (cli.input[0] === 'gui') {
-} else {
-
-  const { app, BrowserWindow } = require('electron');
-  const MenuBuilder = require('./menu');
-
-  let mainWindow = null;
-
-  if (process.env.NODE_ENV === 'production') {
-    const sourceMapSupport = require('source-map-support');
-    sourceMapSupport.install();
+const express = require('express')
+const server = express()
+server.get('/', (req, res) => res.sendFile(`${__dirname}/app.html`))
+server.get('/dist/style.css', (req, res) => res.sendFile(`${__dirname}/dist/style.css`))
+server.get('/dist/dll/renderer.dev.dll.js', (req, res) => res.sendFile(`${__dirname}/dist/dll/renderer.dev.dll.js`))
+server.get('/dist/renderer.js', (req, res) => {
+  if (process.env.NODE_ENV === 'development') {
+    res.redirect('http://localhost:1212/dist/renderer.dev.js');
+  } else {
+    res.sendFile(`${__dirname}/dist/dll/renderer.prod.js`)
   }
+})
 
-  if (process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true') {
-    require('electron-debug')();
-    const path = require('path');
-    const p = path.join(__dirname, '..', 'app', 'node_modules');
-    require('module').globalPaths.push(p);
-  }
+server.get('/api/files', function(req, res) {
+  const fs = require('fs')
+  fs.readdir('/tmp', function(err, items) {
+    res.json({ files: items })
+  })
+})
 
-  const installExtensions = async () => {
-    const installer = require('electron-devtools-installer');
-    const forceDownload = !!process.env.UPGRADE_EXTENSIONS;
-    const extensions = [
-      'REACT_DEVELOPER_TOOLS',
-      'REDUX_DEVTOOLS'
-    ];
+server.listen(cli.flags.port)
 
-    return Promise
-      .all(extensions.map(name => installer.default(installer[name], forceDownload)))
-      .catch(console.log);
-  };
+const { app, BrowserWindow } = require('electron')
 
-  app.on('window-all-closed', () => {
-    if (process.platform !== 'darwin') {
-      app.quit();
-    }
-  });
+let mainWindow = null
 
-  app.on('ready', async () => {
-    if (process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true') {
-      await installExtensions();
-    }
-
-    mainWindow = new BrowserWindow({
-      show: false,
-      width: 1024,
-      height: 728
-    });
-
-    mainWindow.loadURL(`file://${__dirname}/app.desktop.html`);
-
-    mainWindow.webContents.on('did-finish-load', () => {
-      if (!mainWindow) {
-        throw new Error('"mainWindow" is not defined');
-      }
-      mainWindow.show();
-      mainWindow.focus();
-    });
-
-    mainWindow.on('closed', () => {
-      mainWindow = null;
-    });
-
-    const menuBuilder = new MenuBuilder(mainWindow);
-    menuBuilder.buildMenu();
-  });
-
+if (process.env.NODE_ENV === 'production') {
+  const sourceMapSupport = require('source-map-support')
+  sourceMapSupport.install()
 }
+
+app.on('window-all-closed', () => {
+  if (process.platform !== 'darwin') {
+    app.quit()
+  }
+})
+
+app.on('ready', async () => {
+  mainWindow = new BrowserWindow({
+    show: false,
+    width: 1024,
+    height: 728
+  })
+
+  mainWindow.setMenu(null)
+  mainWindow.loadURL(`http://localhost:${cli.flags.port}`)
+
+  mainWindow.webContents.on('did-finish-load', () => {
+    if (!mainWindow) {
+      throw new Error('"mainWindow" is not defined')
+    }
+    mainWindow.show()
+    mainWindow.focus()
+  })
+
+  mainWindow.on('closed', () => {
+    mainWindow = null
+  })
+})

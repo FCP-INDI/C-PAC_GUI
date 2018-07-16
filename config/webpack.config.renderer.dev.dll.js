@@ -7,16 +7,34 @@ import CheckNodeEnv from '../internals/scripts/CheckNodeEnv';
 
 CheckNodeEnv('development');
 
-const dist = path.resolve(process.cwd(), '..', 'dll');
+const dist = path.resolve(process.cwd(), 'app', 'dist', 'dll');
+
+console.log(dist)
 
 export default merge.smart(baseConfig, {
   context: process.cwd(),
 
   devtool: 'eval',
 
-  target: 'electron-renderer',
+  target: 'web',
 
-  externals: ['fsevents', 'crypto-browserify'],
+  externals: ['fsevents', 'crypto-browserify', 'argparse', 'express', 'devtron',
+  'electron-store', 'electron-args', 'source-map-support', 'electron-debug'],
+
+  entry: {
+    renderer: (
+      Object
+        .keys(dependencies || {})
+        .filter(dependency => dependency !== 'font-awesome')
+    )
+  },
+
+  output: {
+    library: 'renderer',
+    path: dist,
+    filename: '[name].dev.dll.js',
+    libraryTarget: 'var'
+  },
 
   module: {
     rules: [
@@ -154,21 +172,6 @@ export default merge.smart(baseConfig, {
     ]
   },
 
-  entry: {
-    renderer: (
-      Object
-        .keys(dependencies || {})
-        .filter(dependency => dependency !== 'font-awesome')
-    )
-  },
-
-  output: {
-    library: 'renderer',
-    path: dist,
-    filename: '[name].dev.dll.js',
-    libraryTarget: 'var'
-  },
-
   plugins: [
     new webpack.DllPlugin({
       path: path.join(dist, '[name].json'),
@@ -184,7 +187,7 @@ export default merge.smart(baseConfig, {
       options: {
         context: path.resolve(process.cwd(), 'app'),
         output: {
-          path: path.resolve(process.cwd(), 'dll'),
+          path: path.resolve(process.cwd(), 'app', 'dist', 'dll'),
         },
       },
     })

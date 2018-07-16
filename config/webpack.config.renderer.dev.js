@@ -14,7 +14,7 @@ CheckNodeEnv('development');
 
 const port = process.env.PORT || 1212;
 const publicPath = `http://localhost:${port}/dist`;
-const dll = path.resolve(process.cwd(), 'dll');
+const dll = path.resolve(process.cwd(), 'app', 'dist', 'dll');
 const manifest = path.resolve(dll, 'renderer.json');
 
 if (!(fs.existsSync(dll) && fs.existsSync(manifest))) {
@@ -25,7 +25,7 @@ if (!(fs.existsSync(dll) && fs.existsSync(manifest))) {
 export default merge.smart(baseConfig, {
   devtool: 'inline-source-map',
 
-  target: 'electron-renderer',
+  target: 'web',
 
   entry: [
     'react-hot-loader/patch',

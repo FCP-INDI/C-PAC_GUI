@@ -10,7 +10,7 @@
       (function() {
         const link = document.createElement('link');
         link.rel = 'stylesheet';
-        link.href = '/dist/style.css';
+        link.href = './dist/style.css';
         document.getElementsByTagName('head')[0].appendChild(link);
       }());
     </script>
@@ -18,15 +18,19 @@
   <body>
     <div id="root"></div>
     <script>
-      const module = {}
-      const global = {}
-      const scripts = [];
-      scripts.push('/dist/renderer.prod.js');
-      document.write(
-        scripts
-          .map(script => '<script defer src="' + script + '"><\/script>')
-          .join('')
-      );
+      var module = {}
+      var global = {}
+      {
+        const scripts = [];
+        scripts.push('./dist/dll/renderer.dev.dll.js');
+        scripts.push('./dist/renderer.js');
+
+        document.write(
+          scripts
+            .map(script => '<script defer src="' + script + '"><\/script>')
+            .join('')
+        );
+      }
     </script>
   </body>
 </html>
