@@ -1,41 +1,37 @@
-/* eslint global-require: 0, flowtype-errors/show-errors: 0 */
+/* eslint global-require: 0 */
 
-// import { ArgumentParser } from 'argparse';
+const parseArgs = require('electron-args');
 
-// var parser = new ArgumentParser({
-//   version: '0.0.1',
-//   addHelp:true,
-//   description: 'Argparse example'
-// });
+const cli = parseArgs(`
+    cpac
 
-// var subparsers = parser.addSubparsers({
-//   dest: 'command',
-//   required: false
-// });
+    Usage
+      $ cpac server|gui
 
-// var server = subparsers.addParser('server', { addHelp: true });
-// server.addArgument(
-//   [ '-p', '--port' ],
-//   {
-//     action: 'store',
-//     type: 'int',
-//     default: 5697,
-//     help: 'Server port'
-//   }
-// );
+    Options
+      --help         show help
+      --port [port]  webapp server port
+`, {
+    alias: {
+        h: 'help',
+        p: 'port',
+    },
+    default: {
+        port: 5697
+    }
+});
 
-// var gui = subparsers.addParser('gui', { addHelp: true });
-// var args = parser.parseArgs();
 
-// if (args.command === 'server') {
+if (cli.input[0] === 'server') {
 
-//   const express = require('express')
-//   const app = express()
-//   app.use('/', express.static(`${__dirname}`))
-//   // app.get('/', (req, res) => res.sendFile(`${__dirname}/app.html`))
-//   app.listen(args.port)
+  const express = require('express')
+  const app = express()
+  app.use('/', express.static(`${__dirname}`))
+  // app.get('/', (req, res) => res.sendFile(`${__dirname}/app.html`))
+  app.listen(cli.flags.port)
 
-// } else {
+// } else if (cli.input[0] === 'gui') {
+} else {
 
   const { app, BrowserWindow } = require('electron');
   const MenuBuilder = require('./menu');
@@ -102,4 +98,4 @@
     menuBuilder.buildMenu();
   });
 
-// }
+}
