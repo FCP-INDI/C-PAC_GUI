@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { withRouter } from 'react-router-dom'
 
 import { withStyles } from '@material-ui/core';
 import Paper from '@material-ui/core/Paper';
@@ -69,4 +70,4 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = {
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(withStyles(EnvironmentsPage.styles)(EnvironmentsPage));
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(withStyles(EnvironmentsPage.styles)(EnvironmentsPage)))

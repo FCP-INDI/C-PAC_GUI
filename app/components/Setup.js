@@ -2,11 +2,7 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import styles from './Setup.css';
 
-type Props = {};
-
-export default class Setup extends Component<Props> {
-  props: Props;
-
+export default class Setup extends Component {
   render() {
     return (
       <div>

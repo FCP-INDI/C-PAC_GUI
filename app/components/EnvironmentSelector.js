@@ -66,8 +66,7 @@ class EnvironmentStatus extends Component {
   }
 }
 
-class EnvironmentSelector extends Component<Props> {
-  props: Props;
+class EnvironmentSelector extends Component {
 
   state = {
     environment: ''

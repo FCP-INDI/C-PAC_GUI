@@ -3,9 +3,7 @@ import { withStyles } from '@material-ui/core';
 
 import Paper from '@material-ui/core/Paper';
 
-type Props = {};
-
-class Content extends Component<Props> {
+class Content extends Component {
   static styles = theme => ({
     paper: {
       margin: '0 0 90px 0',

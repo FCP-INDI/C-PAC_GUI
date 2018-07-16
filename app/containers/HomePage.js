@@ -1,13 +1,11 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { withStyles } from '@material-ui/core';
+import { withRouter } from 'react-router-dom'
 
 import Home from '../components/Home';
 
-type Props = {};
-
-class HomePage extends Component<Props> {
-  props: Props;
+class HomePage extends Component {
 
   static styles = theme => ({
   });
@@ -27,4 +25,4 @@ function mapDispatchToProps(dispatch) {
     return {};
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(withStyles(HomePage.styles)(HomePage));
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(withStyles(HomePage.styles)(HomePage)))

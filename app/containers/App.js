@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { configLoad } from '../actions/main'
+import { withRouter } from 'react-router-dom'
 import { Link } from 'react-router-dom'
+import { configLoad } from '../actions/main'
 
 import classNames from 'classnames';
 import { withStyles, typography } from '@material-ui/core/styles';
@@ -220,5 +221,5 @@ const mapDispatchToProps = {
   configLoad,
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(
-  withStyles(App.styles, { withTheme: true })(App))
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(
+  withStyles(App.styles, { withTheme: true })(App)))
