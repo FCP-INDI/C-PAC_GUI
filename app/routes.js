@@ -11,7 +11,7 @@ import ProjectPipelinePage from './containers/ProjectPipelinePage';
 import ProjectSubjectsPage from './containers/ProjectSubjectsPage';
 import ProjectRunsPage from './containers/ProjectRunsPage';
 
-import { projectOpen } from 'actions/main';
+import { projectOpen } from './actions/main';
 
 export default class TemplatePage extends Component {
 

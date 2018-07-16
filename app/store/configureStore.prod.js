@@ -1,16 +1,45 @@
-import { createStore, applyMiddleware } from 'redux';
-import { createBrowserHistory } from 'history';
+import { createStore, applyMiddleware, compose } from 'redux'
+import { createHashHistory } from 'history'
 import createSagaMiddleware from 'redux-saga'
-import { routerMiddleware } from 'react-router-redux';
-import rootReducer from '../reducers';
+import { routerMiddleware, routerActions } from 'react-router-redux'
+import { createLogger } from 'redux-logger'
+import rootReducer from '../reducers'
+import sagas from '../sagas'
 
-const history = createBrowserHistory();
-const router = routerMiddleware(history);
-const saga = createSagaMiddleware()
-const enhancer = applyMiddleware(saga, router);
+const history = createHashHistory()
+const router = routerMiddleware(history)
+const sagaMiddleware = createSagaMiddleware()
+const logger = createLogger({
+  level: 'info',
+  collapsed: true
+})
 
-function configureStore(initialState) {
-  return createStore(rootReducer, initialState, enhancer);
+const configureStore = (initialState) => {
+  const middleware = []
+  const enhancers = []
+
+  middleware.push(logger)
+  middleware.push(router)
+  middleware.push(sagaMiddleware)
+
+  enhancers.push(applyMiddleware(...middleware))
+
+  const actionCreators = {
+    ...routerActions,
+  }
+
+  const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__
+    ? window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__({
+      actionCreators,
+    })
+    : compose
+
+  const enhancer = composeEnhancers(...enhancers)
+
+  const store = createStore(rootReducer, initialState, enhancer)
+
+  sagaMiddleware.run(sagas)
+  return store
 }
 
-export default { configureStore, history };
+export default { configureStore, history }

@@ -9,7 +9,7 @@ import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
 import merge from 'webpack-merge';
 import UglifyJSPlugin from 'uglifyjs-webpack-plugin';
 import baseConfig from './webpack.config.base';
-import CheckNodeEnv from './internals/scripts/CheckNodeEnv';
+import CheckNodeEnv from '../internals/scripts/CheckNodeEnv';
 
 CheckNodeEnv('production');
 
@@ -21,14 +21,13 @@ export default merge.smart(baseConfig, {
   entry: './app/index',
 
   output: {
-    path: path.join(__dirname, 'app/dist'),
-    publicPath: './dist/',
+    path: path.join(__dirname, '..', 'app', 'dist'),
+    publicPath: 'dist',
     filename: 'renderer.prod.js'
   },
 
   module: {
     rules: [
-      // Extract all .global.css to style.css as is
       {
         test: /\.global\.css$/,
         use: ExtractTextPlugin.extract({
@@ -42,7 +41,6 @@ export default merge.smart(baseConfig, {
           fallback: 'style-loader',
         })
       },
-      // Pipe other styles through css modules and append to style.css
       {
         test: /^((?!\.global).)*\.css$/,
         use: ExtractTextPlugin.extract({
@@ -57,7 +55,6 @@ export default merge.smart(baseConfig, {
           }
         }),
       },
-      // Add SASS support  - compile all .global.scss files and pipe it to style.css
       {
         test: /\.global\.(scss|sass)$/,
         use: ExtractTextPlugin.extract({
@@ -75,7 +72,6 @@ export default merge.smart(baseConfig, {
           fallback: 'style-loader',
         })
       },
-      // Add SASS support  - compile all other .scss files and pipe it to style.css
       {
         test: /^((?!\.global).)*\.(scss|sass)$/,
         use: ExtractTextPlugin.extract({
@@ -93,7 +89,6 @@ export default merge.smart(baseConfig, {
           }]
         }),
       },
-      // WOFF Font
       {
         test: /\.woff(\?v=\d+\.\d+\.\d+)?$/,
         use: {
@@ -104,7 +99,6 @@ export default merge.smart(baseConfig, {
           }
         },
       },
-      // WOFF2 Font
       {
         test: /\.woff2(\?v=\d+\.\d+\.\d+)?$/,
         use: {
@@ -115,7 +109,6 @@ export default merge.smart(baseConfig, {
           }
         }
       },
-      // TTF Font
       {
         test: /\.ttf(\?v=\d+\.\d+\.\d+)?$/,
         use: {
@@ -126,12 +119,10 @@ export default merge.smart(baseConfig, {
           }
         }
       },
-      // EOT Font
       {
         test: /\.eot(\?v=\d+\.\d+\.\d+)?$/,
         use: 'file-loader',
       },
-      // SVG Font
       {
         test: /\.svg(\?v=\d+\.\d+\.\d+)?$/,
         use: {
@@ -142,7 +133,6 @@ export default merge.smart(baseConfig, {
           }
         }
       },
-      // Common Image Formats
       {
         test: /\.(?:ico|gif|png|jpg|jpeg|webp)$/,
         use: 'url-loader',
@@ -151,17 +141,9 @@ export default merge.smart(baseConfig, {
   },
 
   plugins: [
-    /**
-     * Create global constants which can be configured at compile time.
-     *
-     * Useful for allowing different behaviour between development builds and
-     * release builds
-     *
-     * NODE_ENV should be production so that modules do not perform certain
-     * development checks
-     */
     new webpack.EnvironmentPlugin({
-      NODE_ENV: 'production'
+      // NODE_ENV: 'production'
+      NODE_ENV: 'development'
     }),
 
     new UglifyJSPlugin({

@@ -32,6 +32,8 @@ import {
   ProjectOpenIcon,
 } from '../components/icons';
 
+import Logo from '../resources/logo.png'
+
 
 class App extends React.Component {
 
@@ -123,7 +125,7 @@ class App extends React.Component {
       <div className={classes.app}>
         <header className={classes.header}>
           <Link to={`/`}>
-            <img src="../resources/logo.png" />
+            <img src={Logo} />
           </Link>
         </header>
 
