@@ -33,7 +33,6 @@
     "react/prefer-stateless-function": "off"
   },
   "plugins": [
-    "flowtype",
     "import",
     "promise",
     "compat",
@@ -42,7 +41,7 @@
   "settings": {
     "import/resolver": {
       "webpack": {
-        "config": "webpack.config.eslint.js"
+        "config": "config/webpack.config.eslint.js"
       }
     }
   }
