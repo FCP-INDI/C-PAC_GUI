@@ -15,7 +15,7 @@ export default merge.smart(baseConfig, {
 
   output: {
     path: __dirname,
-    filename: '../app/main.prod.js'
+    filename: '../app/dist/main.prod.js'
   },
 
   plugins: [

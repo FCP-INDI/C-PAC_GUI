@@ -13,6 +13,7 @@ export default {
         use: {
           loader: 'babel-loader',
           options: {
+            "cacheDirectory": true,
             "presets": [
               "@babel/preset-env",
               "@babel/preset-react"
