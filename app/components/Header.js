@@ -52,7 +52,7 @@ class HeaderText extends Component {
   });
 
   render() {
-    const { classes, children, variant = 'headline' } = this.props;
+    const { classes, children, variant = 'h5' } = this.props;
 
     return (
       <div className={classes.root}>

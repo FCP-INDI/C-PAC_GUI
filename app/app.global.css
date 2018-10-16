@@ -23,7 +23,7 @@ body {
   font-family: Arial, Helvetica, Helvetica Neue, serif;
 }
 
-header {
+header#root-header {
   padding: 20px;
   background-color: #232c39;
   background-image: linear-gradient(45deg, #97e2ef 5%, #f9e28a 30%, #d3da5f);

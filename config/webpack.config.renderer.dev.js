@@ -3,10 +3,9 @@
 import path from 'path';
 import fs from 'fs';
 import webpack from 'webpack';
-import chalk from 'chalk';
 import merge from 'webpack-merge';
 import { spawn, execSync } from 'child_process';
-import ExtractTextPlugin from 'extract-text-webpack-plugin';
+import MiniCssExtractPlugin from 'mini-css-extract-plugin'
 import baseConfig from './webpack.config.base';
 import CheckNodeEnv from '../internals/scripts/CheckNodeEnv';
 
@@ -18,7 +17,6 @@ const dll = path.resolve(process.cwd(), 'app', 'dist', 'dll');
 const manifest = path.resolve(dll, 'renderer.json');
 
 if (!(fs.existsSync(dll) && fs.existsSync(manifest))) {
-  console.log(chalk.black.bgYellow.bold('The DLL files are missing. Sit back while we build them for you with "npm run build-dll"'));
   execSync('npm run build-dll');
 }
 
@@ -36,32 +34,15 @@ export default merge.smart(baseConfig, {
 
   output: {
     publicPath: `http://localhost:${port}/dist/`,
-    filename: 'renderer.dev.js'
+    filename: 'renderer.js'
   },
 
   module: {
     rules: [
       {
-        test: /\.jsx?$/,
-        exclude: /node_modules/,
-        use: {
-          loader: 'babel-loader',
-          options: {
-            cacheDirectory: true,
-            plugins: [
-              'transform-class-properties',
-              'transform-es2015-classes',
-              'react-hot-loader/babel'
-            ],
-          }
-        }
-      },
-      {
         test: /\.global\.css$/,
         use: [
-          {
-            loader: 'style-loader'
-          },
+          MiniCssExtractPlugin.loader,
           {
             loader: 'css-loader',
             options: {
@@ -73,9 +54,7 @@ export default merge.smart(baseConfig, {
       {
         test: /^((?!\.global).)*\.css$/,
         use: [
-          {
-            loader: 'style-loader'
-          },
+          MiniCssExtractPlugin.loader,
           {
             loader: 'css-loader',
             options: {
@@ -90,9 +69,7 @@ export default merge.smart(baseConfig, {
       {
         test: /\.global\.(scss|sass)$/,
         use: [
-          {
-            loader: 'style-loader'
-          },
+          MiniCssExtractPlugin.loader,
           {
             loader: 'css-loader',
             options: {
@@ -107,9 +84,7 @@ export default merge.smart(baseConfig, {
       {
         test: /^((?!\.global).)*\.(scss|sass)$/,
         use: [
-          {
-            loader: 'style-loader'
-          },
+          MiniCssExtractPlugin.loader,
           {
             loader: 'css-loader',
             options: {
@@ -196,8 +171,9 @@ export default merge.smart(baseConfig, {
       debug: true
     }),
 
-    new ExtractTextPlugin({
-      filename: '[name].css'
+    new MiniCssExtractPlugin({
+      filename: "[name].css",
+      chunkFilename: "[id].css"
     }),
   ],
 
@@ -210,13 +186,13 @@ export default merge.smart(baseConfig, {
     port,
     publicPath,
     compress: true,
-    noInfo: true,
-    stats: 'errors-only',
+    // noInfo: true,
+    // stats: 'errors-only',
     inline: true,
     lazy: false,
     hot: true,
     headers: { 'Access-Control-Allow-Origin': '*' },
-    contentBase: path.join(__dirname, '..',  'dist'),
+    contentBase: path.join(__dirname, '..', 'app'),
     watchOptions: {
       aggregateTimeout: 300,
       ignored: /node_modules/,
@@ -228,14 +204,14 @@ export default merge.smart(baseConfig, {
     },
     before() {
       if (process.env.START_HOT) {
-        console.log('Starting Main Process...');
-        spawn(
-          'npm',
-          ['run', 'start-main-dev'],
-          { shell: true, env: process.env, stdio: 'inherit' }
-        )
-          .on('close', code => process.exit(code))
-          .on('error', spawnError => console.error(spawnError));
+        // console.log('Starting Main Process...');
+        // spawn(
+        //   'npm',
+        //   ['run', 'start-main-dev'],
+        //   { shell: true, env: process.env, stdio: 'inherit' }
+        // )
+        //   .on('close', code => process.exit(code))
+        //   .on('error', spawnError => console.error(spawnError));
       }
     }
   },

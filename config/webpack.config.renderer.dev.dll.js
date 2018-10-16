@@ -42,15 +42,7 @@ export default merge.smart(baseConfig, {
         test: /\.jsx?$/,
         exclude: /node_modules/,
         use: {
-          loader: 'babel-loader',
-          options: {
-            cacheDirectory: true,
-            plugins: [
-              'transform-class-properties',
-              'transform-es2015-classes',
-              'react-hot-loader/babel'
-            ],
-          }
+          loader: 'babel-loader'
         }
       },
       {

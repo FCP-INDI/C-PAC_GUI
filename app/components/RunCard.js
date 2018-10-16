@@ -105,7 +105,7 @@ class RunCard extends Component {
 
           { run.status == 'paused' ?
           <Paper className={classes.alert} elevation={1}>
-            <Typography variant="title" component="h3">
+            <Typography variant="h6" component="h3">
               This pipeline is currently paused
             </Typography>
             <Typography component="p">

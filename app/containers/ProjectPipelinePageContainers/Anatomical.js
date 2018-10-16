@@ -23,7 +23,7 @@ class Anatomical extends Component {
     return (
       <Grid container spacing={8}>
         <Grid item lg={6} xs={12}>
-          <Typography variant="title">
+          <Typography variant="h6">
             Registration
           </Typography>
           <Grid container spacing={8}>
@@ -36,7 +36,7 @@ class Anatomical extends Component {
                         />
             </Grid>
           </Grid>
-          <Typography variant="title" color="textSecondary" className={classes.divider}>
+          <Typography variant="h6" color="textSecondary" className={classes.divider}>
             Templates
           </Typography>
           <Grid container spacing={8}>
@@ -49,7 +49,7 @@ class Anatomical extends Component {
                          helperText='Template to be used during registration. It is not necessary to change this path unless you intend to use a non-standard template.'/>
             </Grid>
           </Grid>
-          <Typography variant="title"  color="textSecondary" className={classes.divider}>
+          <Typography variant="h6"  color="textSecondary" className={classes.divider}>
             Method
           </Typography>
           <Grid container spacing={8}>

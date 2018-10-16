@@ -51,48 +51,8 @@ class App extends React.Component {
       height: '100vh'
     },
 
-    drawer: {
-      position: 'absolute'
-    },
-    drawerPaper: {
-      position: 'relative',
-      whiteSpace: 'nowrap',
-      width: drawerWidth,
-      transition: theme.transitions.create('width', {
-        easing: theme.transitions.easing.sharp,
-        duration: theme.transitions.duration.enteringScreen,
-      }),
-    },
-    drawerPaperClose: {
-      overflowX: 'hidden',
-      transition: theme.transitions.create('width', {
-        easing: theme.transitions.easing.sharp,
-        duration: theme.transitions.duration.leavingScreen,
-      }),
-      width: theme.spacing.unit * 9,
-      [theme.breakpoints.down('xs')]: {
-        width: theme.spacing.unit * 7,
-      },
-    },
-
-    project: {
-      backgroundColor: '#EEE',
-      paddingBottom: theme.spacing.unit * 2,
-    },
-    projectItems: {
-      marginLeft: theme.spacing.unit
-    },
-
     content: {
       overflow: 'auto',
-      position: 'absolute',
-      top: 0,
-      bottom: 0,
-      right: 0,
-      left: theme.spacing.unit * 9,
-      [theme.breakpoints.down('xs')]: {
-        left: theme.spacing.unit * 7,
-      },
       padding: theme.spacing.unit * 3,
       backgroundColor: theme.palette.background.default,
     }
@@ -124,82 +84,20 @@ class App extends React.Component {
 
     return (
       <div className={classes.app}>
-        <header className={classes.header}>
+        <header id="root-header" className={classes.header}>
           <Link to={`/`}>
             <img src={Logo} />
           </Link>
         </header>
 
         <div className={classes.root}>
-          <Drawer
-            variant="permanent"
-            className={classes.drawer}
-            classes={{
-              paper: classNames(
-                classes.drawerPaper,
-                !this.state.open && classes.drawerPaperClose
-              ),
-            }}
-            open={this.state.open}
-            onMouseOver={this.handleDrawerOpen}
-            onMouseOut={this.handleDrawerClose}
-          >
-            <List>
-              <ListItem button component={Link} to={`/projects`}>
-                <ListItemIcon>
-                  <ProjectIcon />
-                </ListItemIcon>
-                <ListItemText primary="Projects" />
-              </ListItem>
-
-              <ListItem button component={Link} to={`/environments`}>
-                <ListItemIcon>
-                  <EnvironmentIcon />
-                </ListItemIcon>
-                <ListItemText primary="Environments" />
-              </ListItem>
-            </List>
-
-            <Divider />
-
-            { project ? (
-            <Slide direction="left" in={!!project} mountOnEnter unmountOnExit>
-              <List className={classes.project}>
-                <ListItem button component={Link} to={`/projects/${project.id}`}>
-                  <ListItemIcon>
-                    <ProjectOpenIcon />
-                  </ListItemIcon>
-                  <ListItemText primary={project.name} />
-                </ListItem>
-
-                <Paper className={classes.projectItems}>
-                  <ListItem button component={Link} to={`/projects/${project.id}/subjects`}>
-                    <ListItemIcon>
-                      <SubjectIcon />
-                    </ListItemIcon>
-                    <ListItemText primary="Subjects" />
-                  </ListItem>
-
-                  <ListItem button component={Link} to={`/projects/${project.id}/pipelines`}>
-                    <ListItemIcon>
-                      <PipelineIcon />
-                    </ListItemIcon>
-                    <ListItemText primary="Pipelines" />
-                  </ListItem>
-
-                  <ListItem button component={Link} to={`/projects/${project.id}/runs`}>
-                    <ListItemIcon>
-                      <RunIcon />
-                    </ListItemIcon>
-                    <ListItemText primary="Runs" />
-                  </ListItem>
-                </Paper>
-              </List>
-            </Slide>
-            ) : null }
-
-          </Drawer>
-
+          <AppBar position="static" color="default">
+            <Toolbar>
+              <Typography variant="h6" color="inherit">
+                Photos
+              </Typography>
+            </Toolbar>
+          </AppBar>
           <main className={classes.content}>
             {
               environments.length === 0 ?

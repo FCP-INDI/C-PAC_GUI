@@ -26,7 +26,7 @@ import TextField from '@material-ui/core/TextField';
 import MenuItem from '@material-ui/core/MenuItem';
 import Checkbox from '@material-ui/core/Checkbox';
 
-import Highcharts from 'highcharts'
+// import Highcharts from 'highcharts'
 
 
 class ProjectSubjectsPage extends Component {
@@ -53,35 +53,35 @@ class ProjectSubjectsPage extends Component {
       })
     )
 
-    this.SitesChart = Highcharts.chart('Sites', {
-      chart: {
-        plotBackgroundColor: null,
-        plotBorderWidth: null,
-        plotShadow: false,
-        type: 'pie'
-      },
-      title: false,
-      tooltip: {
-        pointFormat: '{series.name}: <b>{point.y}</b>'
-      },
-      plotOptions: {
-        pie: {
-          allowPointSelect: true,
-          cursor: 'pointer',
-          dataLabels: {
-            enabled: true,
-            format: '<b>{point.name}</b>: {point.percentage:.1f} %',
-            style: {
-              color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
-            }
-          }
-        }
-      },
-      series: [{
-        name: 'Subjects',
-        data: SitesDataChart
-      }]
-    });
+    // this.SitesChart = Highcharts.chart('Sites', {
+    //   chart: {
+    //     plotBackgroundColor: null,
+    //     plotBorderWidth: null,
+    //     plotShadow: false,
+    //     type: 'pie'
+    //   },
+    //   title: false,
+    //   tooltip: {
+    //     pointFormat: '{series.name}: <b>{point.y}</b>'
+    //   },
+    //   plotOptions: {
+    //     pie: {
+    //       allowPointSelect: true,
+    //       cursor: 'pointer',
+    //       dataLabels: {
+    //         enabled: true,
+    //         format: '<b>{point.name}</b>: {point.percentage:.1f} %',
+    //         style: {
+    //           color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
+    //         }
+    //       }
+    //     }
+    //   },
+    //   series: [{
+    //     name: 'Subjects',
+    //     data: SitesDataChart
+    //   }]
+    // });
 
     const SexByAgeData = subjects.summary.phenotype.filter(p => p.variable === 'Sex distribution')[0]
     const SexByAgeChartData = SexByAgeData.data.map(g => ({
@@ -90,31 +90,31 @@ class ProjectSubjectsPage extends Component {
       data: g.value.map((d, i) => d)
     }))
 
-    this.SexByAgeChart = Highcharts.chart('SexByAge', {
-      chart: {
-        type: 'line'
-      },
-      title: false,
-      xAxis: {
-        title: {
-          text: 'Age'
-        }
-      },
-      yAxis: {
-        title: {
-          text: 'Count'
-        }
-      },
-      plotOptions: {
-        line: {
-          dataLabels: {
-            enabled: true
-          },
-          enableMouseTracking: false
-        }
-      },
-      series: SexByAgeChartData
-    });
+  //   this.SexByAgeChart = Highcharts.chart('SexByAge', {
+  //     chart: {
+  //       type: 'line'
+  //     },
+  //     title: false,
+  //     xAxis: {
+  //       title: {
+  //         text: 'Age'
+  //       }
+  //     },
+  //     yAxis: {
+  //       title: {
+  //         text: 'Count'
+  //       }
+  //     },
+  //     plotOptions: {
+  //       line: {
+  //         dataLabels: {
+  //           enabled: true
+  //         },
+  //         enableMouseTracking: false
+  //       }
+  //     },
+  //     series: SexByAgeChartData
+  //   });
   }
 
   componentWillUnmount() {
@@ -161,7 +161,7 @@ class ProjectSubjectsPage extends Component {
             <Grid item sm={6}>
               <Card className={classes.card}>
                 <CardContent>
-                  <Typography variant="title" color="textSecondary" className={classes.header}>
+                  <Typography variant="h6" color="textSecondary" className={classes.header}>
                     Variable:
                     <TextField
                       select
@@ -190,7 +190,7 @@ class ProjectSubjectsPage extends Component {
             <Grid item sm={6}>
               <Card className={classes.card}>
                 <CardContent>
-                  <Typography variant="title" color="textSecondary" className={classes.header}>
+                  <Typography variant="h6" color="textSecondary" className={classes.header}>
                     Cross Variables:
                     <TextField
                       select

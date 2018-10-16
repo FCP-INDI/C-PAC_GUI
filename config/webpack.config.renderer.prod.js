@@ -4,10 +4,9 @@
 
 import path from 'path';
 import webpack from 'webpack';
-import ExtractTextPlugin from 'extract-text-webpack-plugin';
 import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
+import MiniCssExtractPlugin from 'mini-css-extract-plugin'
 import merge from 'webpack-merge';
-import UglifyJSPlugin from 'uglifyjs-webpack-plugin';
 import baseConfig from './webpack.config.base';
 import CheckNodeEnv from '../internals/scripts/CheckNodeEnv';
 
@@ -30,64 +29,33 @@ export default merge.smart(baseConfig, {
     rules: [
       {
         test: /\.global\.css$/,
-        use: ExtractTextPlugin.extract({
-          publicPath: './',
-          use: {
-            loader: 'css-loader',
-            options: {
-              minimize: true,
-            }
-          },
-          fallback: 'style-loader',
-        })
+        use: [
+          MiniCssExtractPlugin.loader,
+          'css-loader'
+        ]
       },
       {
         test: /^((?!\.global).)*\.css$/,
-        use: ExtractTextPlugin.extract({
-          use: {
-            loader: 'css-loader',
-            options: {
-              modules: true,
-              minimize: true,
-              importLoaders: 1,
-              localIdentName: '[name]__[local]__[hash:base64:5]',
-            }
-          }
-        }),
+        use: [
+          MiniCssExtractPlugin.loader,
+          'css-loader'
+        ]
       },
       {
         test: /\.global\.(scss|sass)$/,
-        use: ExtractTextPlugin.extract({
-          use: [
-            {
-              loader: 'css-loader',
-              options: {
-                minimize: true,
-              }
-            },
-            {
-              loader: 'sass-loader'
-            }
-          ],
-          fallback: 'style-loader',
-        })
+        use: [
+          MiniCssExtractPlugin.loader,
+          'css-loader',
+          'sass-loader'
+        ]
       },
       {
         test: /^((?!\.global).)*\.(scss|sass)$/,
-        use: ExtractTextPlugin.extract({
-          use: [{
-            loader: 'css-loader',
-            options: {
-              modules: true,
-              minimize: true,
-              importLoaders: 1,
-              localIdentName: '[name]__[local]__[hash:base64:5]',
-            }
-          },
-          {
-            loader: 'sass-loader'
-          }]
-        }),
+        use: [
+          MiniCssExtractPlugin.loader,
+          'css-loader',
+          'sass-loader'
+        ]
       },
       {
         test: /\.woff(\?v=\d+\.\d+\.\d+)?$/,
@@ -146,12 +114,10 @@ export default merge.smart(baseConfig, {
       NODE_ENV: 'development'
     }),
 
-    new UglifyJSPlugin({
-      parallel: true,
-      sourceMap: true
+    new MiniCssExtractPlugin({
+      filename: '[name].[hash].css',
+      chunkFilename: '[id].[hash].css',
     }),
-
-    new ExtractTextPlugin('style.css'),
 
     new BundleAnalyzerPlugin({
       analyzerMode: process.env.OPEN_ANALYZER === 'true' ? 'server' : 'disabled',

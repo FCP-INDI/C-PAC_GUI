@@ -31,7 +31,7 @@ class Home extends Component {
       <Grid container spacing={8} alignContent="center">
         <Grid item sm={6}>
           <Paper className={classes.paper}>
-            <Typography variant='headline' className={classes.header}>
+            <Typography variant='h5' className={classes.header}>
               Recent projects
             </Typography>
             <Grid container spacing={8} alignContent="center">
@@ -43,7 +43,7 @@ class Home extends Component {
         </Grid>
         <Grid item sm={6}>
           <Paper className={classes.paper}>
-            <Typography variant="headline" className={classes.title}>
+            <Typography variant="h5" className={classes.title}>
               About C-PAC
             </Typography>
             <Typography paragraph>
