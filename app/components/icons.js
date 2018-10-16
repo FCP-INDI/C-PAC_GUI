@@ -31,6 +31,9 @@ export {
   SettingsRemote as EnvApiIcon,
   Link as EnvSshIcon,
   Devices as EnvDockerIcon,
+
+  Home as HomeIcon,
+  KeyboardArrowRight as NextIcon,
 } from '@material-ui/icons';
 
 // import createSvgIcon from '../utils/createSvgIcon'

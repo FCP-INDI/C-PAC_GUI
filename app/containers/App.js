@@ -7,7 +7,6 @@ import { configLoad } from '../actions/main'
 import classNames from 'classnames';
 import { withStyles, typography } from '@material-ui/core/styles';
 
-import Drawer from '@material-ui/core/Drawer';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import { Paper } from '@material-ui/core';
@@ -25,6 +24,8 @@ import MenuIcon from '@material-ui/icons/Menu';
 import Slide from '@material-ui/core/Slide';
 
 import {
+  HomeIcon,
+  NextIcon,
   PipelineIcon,
   SubjectIcon,
   RunIcon,
@@ -38,7 +39,7 @@ import Logo from '../resources/logo.png'
 
 class App extends React.Component {
 
-  static styles = (theme, drawerWidth=240) => ({
+  static styles = (theme) => ({
     app: {
       position: 'relative',
       height: '100vh'
@@ -62,20 +63,54 @@ class App extends React.Component {
     this.props.configLoad()
   }
 
-  state = {
-    open: false,
-  };
+  renderBreadcrumbs = () => {
 
-  handleDrawerToggle = () => {
-    this.setState({ open: !this.state.open });
-  };
+    if (!this.props.main || !this.props.main.config) {
+      return null
+    }
 
-  handleDrawerOpen = () => {
-    this.setState({ open: true });
-  };
+    const config = this.props.main.config
 
-  handleDrawerClose = () => {
-    this.setState({ open: false });
+    let project = null
+    let pipeline = null
+
+    const place = this.props.location.pathname.substr(1).split('/')
+    const crumbs = []
+    for (let i = 0; i < place.length; i++) {
+      if (place[i] == "projects") {
+        if (i + 1 < place.length) {
+          project = config.projects[place[++i]]
+        }
+
+        crumbs.push(
+          <IconButton aria-label="Project" key="project">
+            <ProjectIcon /> { project ? project.name : null }
+          </IconButton>
+        )
+      }
+      if (place[i] == "pipelines") {
+        if (i + 1 < place.length) {
+          pipeline = project.pipelines.find((p) => p.id == place[++i])
+        }
+
+        crumbs.push(
+          <IconButton aria-label="Pipeline" key="pipeline">
+            <PipelineIcon /> { pipeline ? pipeline.name : null }
+          </IconButton>
+        )
+      }
+    }
+
+    return (
+        <AppBar position="static" color="default">
+        <Toolbar>
+          <IconButton aria-label="Home">
+            <HomeIcon /> Home
+          </IconButton>
+          { crumbs }
+        </Toolbar>
+      </AppBar>
+    )
   };
 
   render() {
@@ -91,13 +126,9 @@ class App extends React.Component {
         </header>
 
         <div className={classes.root}>
-          <AppBar position="static" color="default">
-            <Toolbar>
-              <Typography variant="h6" color="inherit">
-                Photos
-              </Typography>
-            </Toolbar>
-          </AppBar>
+
+          {this.renderBreadcrumbs()}
+
           <main className={classes.content}>
             {
               environments.length === 0 ?
