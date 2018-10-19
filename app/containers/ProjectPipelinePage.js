@@ -5,7 +5,7 @@ import { withStyles } from '@material-ui/core';
 
 import Grid from '@material-ui/core/Grid';
 import Content from '../components/Content';
-import Header, { HeaderText, HeaderAvatar } from '../components/Header';
+import Header, { HeaderText, HeaderAvatar, HeaderTools } from '../components/Header';
 
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
@@ -15,7 +15,8 @@ import {
   PipelineIcon,
   SubjectIcon,
   ExpandMoreIcon,
-  NavigateNextIcon
+  NavigateNextIcon,
+  DownloadIcon
 } from '../components/icons';
 
 import {
@@ -51,6 +52,16 @@ class ProjectPipelinePage extends Component {
     const { classes, project, pipeline } = this.props
     const { value } = this.state
 
+    if (!project) {
+      // @TODO ASH create a 404 page/component
+      return "404"
+    }
+
+    if (!pipeline) {
+      // @TODO ASH create a 404 page/component
+      return "404"
+    }
+
     return (
       <div>
         <Header>
@@ -58,8 +69,11 @@ class ProjectPipelinePage extends Component {
             <PipelineIcon />
           </HeaderAvatar>
           <HeaderText>
-            {pipeline.name }
+            { pipeline.name }
           </HeaderText>
+          <HeaderTools>
+            <DownloadIcon />
+          </HeaderTools>
         </Header>
         <Content>
           <Tabs
@@ -73,14 +87,12 @@ class ProjectPipelinePage extends Component {
             <Tab label="Anatomical" />
             <Tab label="Functional" />
             <Tab label="Derivatives" />
-            <Tab label="Group Analysis" />
           </Tabs>
 
           <Paper className={classes.content}>
             { value === 0 && <Anatomical /> }
             { value === 1 && <Functional /> }
             { value === 2 && <Derivatives /> }
-            { value === 3 && <GroupAnalysis /> }
           </Paper>
 
         </Content>
@@ -91,9 +103,10 @@ class ProjectPipelinePage extends Component {
 
 const mapStateToProps = (state, props) => {
   const { match: { params: { project, pipeline } } } = props
+  const projectConfig = state.main.config.projects[project]
   return {
-    project: state.main.config.projects[project],
-    pipeline: state.main.config.projects[project].pipelines.find((p) => p.id == pipeline)
+    project: projectConfig,
+    pipeline: projectConfig ? projectConfig.pipelines.find((p) => p.id == pipeline) : undefined
   }
 }
 

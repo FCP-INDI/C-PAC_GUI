@@ -34,6 +34,8 @@ export {
 
   Home as HomeIcon,
   KeyboardArrowRight as NextIcon,
+
+  CloudDownload as DownloadIcon,
 } from '@material-ui/icons';
 
 // import createSvgIcon from '../utils/createSvgIcon'

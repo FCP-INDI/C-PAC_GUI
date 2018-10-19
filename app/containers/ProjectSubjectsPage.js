@@ -118,8 +118,8 @@ class ProjectSubjectsPage extends Component {
   }
 
   componentWillUnmount() {
-    this.SitesChart.destroy();
-    this.SexByAgeChart.destroy();
+    // this.SitesChart.destroy();
+    // this.SexByAgeChart.destroy();
   }
 
   render() {

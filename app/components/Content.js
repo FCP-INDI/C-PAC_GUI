@@ -6,7 +6,6 @@ import Paper from '@material-ui/core/Paper';
 class Content extends Component {
   static styles = theme => ({
     paper: {
-      margin: '0 0 90px 0',
       padding: 20,
     }
   });

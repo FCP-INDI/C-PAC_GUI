@@ -9,6 +9,7 @@ import { withStyles, typography } from '@material-ui/core/styles';
 
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
+import Button from '@material-ui/core/Button';
 import { Paper } from '@material-ui/core';
 
 import List from '@material-ui/core/List';
@@ -42,21 +43,39 @@ class App extends React.Component {
   static styles = (theme) => ({
     app: {
       position: 'relative',
-      height: '100vh'
+      height: '100vh',
+      display: 'flex',
+      flexDirection: 'column',
     },
-    header: {
 
+    header: {
+      display: 'flex',
+      flexShrink: 0,
     },
     root: {
-      position: 'relative',
-      height: '100vh'
+      height: '100vh',
+      display: 'flex',
+      flexDirection: 'column',
+      flexGrow: 1,
     },
 
+    bread: {
+      flexShrink: 0,
+    },
     content: {
       overflow: 'auto',
       padding: theme.spacing.unit * 3,
       backgroundColor: theme.palette.background.default,
-    }
+      flexGrow: 1,
+    },
+
+    icon: {
+      marginRight: theme.spacing.unit,
+    },
+    singleIcon: {
+      marginRight: 0,
+    },
+
   });
 
   componentDidMount() {
@@ -64,6 +83,7 @@ class App extends React.Component {
   }
 
   renderBreadcrumbs = () => {
+    const { classes } = this.props
 
     if (!this.props.main || !this.props.main.config) {
       return null
@@ -74,6 +94,8 @@ class App extends React.Component {
     let project = null
     let pipeline = null
 
+    console.log(this.props)
+
     const place = this.props.location.pathname.substr(1).split('/')
     const crumbs = []
     for (let i = 0; i < place.length; i++) {
@@ -83,30 +105,46 @@ class App extends React.Component {
         }
 
         crumbs.push(
-          <IconButton aria-label="Project" key="project">
-            <ProjectIcon /> { project ? project.name : null }
-          </IconButton>
+          <NextIcon key={crumbs.length} />
+        )
+        crumbs.push(
+          <Button key={crumbs.length} size="small" component={Link} to={`/projects/${project ? project.id : ''}`}>
+            <ProjectIcon className={classes.icon} />
+            { project ? project.name : "Projects" }
+          </Button>
         )
       }
       if (place[i] == "pipelines") {
+
+        if (!project) {
+          continue
+        }
+
         if (i + 1 < place.length) {
           pipeline = project.pipelines.find((p) => p.id == place[++i])
         }
 
+        console.log("here", !!pipeline)
+
         crumbs.push(
-          <IconButton aria-label="Pipeline" key="pipeline">
-            <PipelineIcon /> { pipeline ? pipeline.name : null }
-          </IconButton>
+          <NextIcon key={crumbs.length} />
+        )
+        crumbs.push(
+          <Button key={crumbs.length} size="small" component={Link} to={`/projects/${project.id}/pipelines/${  pipeline ? pipeline.id : '' }`}>
+            <PipelineIcon className={classes.icon} />
+            { pipeline ? pipeline.name : "Pipelines" }
+          </Button>
         )
       }
     }
 
     return (
-        <AppBar position="static" color="default">
+      <AppBar position="static" color="default" className={classes.bread}>
         <Toolbar>
-          <IconButton aria-label="Home">
-            <HomeIcon /> Home
-          </IconButton>
+          <Button size="small" component={Link} to={`/`}>
+            <HomeIcon className={classes.icon} />
+            Home
+          </Button>
           { crumbs }
         </Toolbar>
       </AppBar>

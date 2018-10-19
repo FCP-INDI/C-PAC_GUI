@@ -89,3 +89,25 @@ class HeaderAvatar extends Component {
 
 const HeaderAvatarStyled = withStyles(HeaderAvatar.styles)(HeaderAvatar)
 export { HeaderAvatarStyled as HeaderAvatar }
+
+
+class HeaderTools extends Component {
+
+  static styles = theme => ({
+    root: {
+      padding: `0 ${theme.spacing.unit * 2}px`
+    },
+  });
+
+  render() {
+    const { classes, children, variant = 'h5' } = this.props;
+
+    return (
+      <div className={classes.root}>
+        { children }
+      </div>
+    );
+  }
+}
+const HeaderToolsStyled = withStyles(HeaderTools.styles)(HeaderTools)
+export { HeaderToolsStyled as HeaderTools }
