@@ -5,6 +5,8 @@ import fs from 'fs';
 import webpack from 'webpack';
 import merge from 'webpack-merge';
 import { spawn, execSync } from 'child_process';
+
+import HtmlWebpackPlugin from 'html-webpack-plugin'
 import MiniCssExtractPlugin from 'mini-css-extract-plugin'
 import baseConfig from './webpack.config.base';
 import CheckNodeEnv from '../internals/scripts/CheckNodeEnv';
@@ -12,12 +14,14 @@ import CheckNodeEnv from '../internals/scripts/CheckNodeEnv';
 CheckNodeEnv('development');
 
 const port = process.env.PORT || 1212;
-const publicPath = `http://localhost:${port}/dist`;
-const dll = path.resolve(process.cwd(), 'app', 'dist', 'dll');
+const publicPath = `http://localhost:${port}`;
+
+const dist = path.resolve(process.cwd(), 'app', 'dist');
+const dll = path.resolve(dist, 'dll');
 const manifest = path.resolve(dll, 'renderer.json');
 
 if (!(fs.existsSync(dll) && fs.existsSync(manifest))) {
-  execSync('npm run build-dll');
+  execSync('yarn run build-dll');
 }
 
 export default merge.smart(baseConfig, {
@@ -27,13 +31,14 @@ export default merge.smart(baseConfig, {
 
   entry: [
     'react-hot-loader/patch',
-    `webpack-dev-server/client?http://localhost:${port}/`,
+    `webpack-dev-server/client?${publicPath}`,
     'webpack/hot/only-dev-server',
     path.join(__dirname, '../app/index.js'),
   ],
 
   output: {
-    publicPath: `http://localhost:${port}/dist/`,
+    path: dist,
+    publicPath: '/',
     filename: 'renderer.js'
   },
 
@@ -42,7 +47,7 @@ export default merge.smart(baseConfig, {
       {
         test: /\.global\.css$/,
         use: [
-          MiniCssExtractPlugin.loader,
+          'style-loader', //MiniCssExtractPlugin.loader,
           {
             loader: 'css-loader',
             options: {
@@ -54,7 +59,7 @@ export default merge.smart(baseConfig, {
       {
         test: /^((?!\.global).)*\.css$/,
         use: [
-          MiniCssExtractPlugin.loader,
+          'style-loader', //MiniCssExtractPlugin.loader,
           {
             loader: 'css-loader',
             options: {
@@ -69,7 +74,7 @@ export default merge.smart(baseConfig, {
       {
         test: /\.global\.(scss|sass)$/,
         use: [
-          MiniCssExtractPlugin.loader,
+          'style-loader', //MiniCssExtractPlugin.loader,
           {
             loader: 'css-loader',
             options: {
@@ -84,7 +89,7 @@ export default merge.smart(baseConfig, {
       {
         test: /^((?!\.global).)*\.(scss|sass)$/,
         use: [
-          MiniCssExtractPlugin.loader,
+          'style-loader', //MiniCssExtractPlugin.loader,
           {
             loader: 'css-loader',
             options: {
@@ -152,13 +157,12 @@ export default merge.smart(baseConfig, {
 
   plugins: [
     new webpack.DllReferencePlugin({
-      context: process.cwd(),
+      context: dll,
       manifest: require(manifest),
-      sourceType: 'var',
     }),
 
     new webpack.HotModuleReplacementPlugin({
-      multiStep: true
+      multiStep: false
     }),
 
     new webpack.NoEmitOnErrorsPlugin(),
@@ -175,6 +179,10 @@ export default merge.smart(baseConfig, {
       filename: "[name].css",
       chunkFilename: "[id].css"
     }),
+
+    new HtmlWebpackPlugin({
+      template: 'app/app.html'
+    }),
   ],
 
   node: {
@@ -186,13 +194,11 @@ export default merge.smart(baseConfig, {
     port,
     publicPath,
     compress: true,
-    // noInfo: true,
-    // stats: 'errors-only',
     inline: true,
     lazy: false,
     hot: true,
     headers: { 'Access-Control-Allow-Origin': '*' },
-    contentBase: path.join(__dirname, '..', 'app'),
+    contentBase: path.join(__dirname, '..', 'app', 'dist'),
     watchOptions: {
       aggregateTimeout: 300,
       ignored: /node_modules/,

@@ -94,8 +94,6 @@ class App extends React.Component {
     let project = null
     let pipeline = null
 
-    console.log(this.props)
-
     const place = this.props.location.pathname.substr(1).split('/')
     const crumbs = []
     for (let i = 0; i < place.length; i++) {
@@ -123,8 +121,6 @@ class App extends React.Component {
         if (i + 1 < place.length) {
           pipeline = project.pipelines.find((p) => p.id == place[++i])
         }
-
-        console.log("here", !!pipeline)
 
         crumbs.push(
           <NextIcon key={crumbs.length} />

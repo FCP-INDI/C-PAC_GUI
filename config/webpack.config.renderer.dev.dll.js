@@ -9,8 +9,6 @@ CheckNodeEnv('development');
 
 const dist = path.resolve(process.cwd(), 'app', 'dist', 'dll');
 
-console.log(dist)
-
 export default merge.smart(baseConfig, {
   context: process.cwd(),
 
@@ -30,10 +28,9 @@ export default merge.smart(baseConfig, {
   },
 
   output: {
-    library: 'renderer',
     path: dist,
+    library: '[name]',
     filename: '[name].dev.dll.js',
-    libraryTarget: 'var'
   },
 
   module: {

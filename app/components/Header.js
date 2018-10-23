@@ -19,10 +19,7 @@ class Header extends Component {
         width: '100%',
         boxSizing: 'border-box',
         textAlign: 'left',
-        background: '#f6e187',
-        background: '#afe2df',
-        background: '#d1dfb6',
-        background: '#f0e298',
+        background: '#ade3da',
       },
     }
   };

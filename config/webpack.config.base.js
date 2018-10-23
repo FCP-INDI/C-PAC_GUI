@@ -51,7 +51,8 @@ export default {
 
   output: {
     path: path.join(__dirname, '..', 'app'),
-    libraryTarget: 'commonjs2'
+    library: 'CPAC',
+    libraryTarget: 'assign'
   },
 
   resolve: {

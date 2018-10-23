@@ -6,31 +6,8 @@
     <meta name="description" content="">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <script>
-      (function() {
-        const link = document.createElement('link');
-        link.rel = 'stylesheet';
-        link.href = './dist/main.css';
-        document.getElementsByTagName('head')[0].appendChild(link);
-      }());
-    </script>
   </head>
   <body>
     <div id="root"></div>
-    <script>
-      var module = {}
-      var global = {}
-      {
-        const scripts = [];
-        scripts.push('./dist/dll/renderer.dev.dll.js');
-        scripts.push('./dist/renderer.js');
-
-        document.write(
-          scripts
-            .map(script => '<script defer src="' + script + '"><\/script>')
-            .join('')
-        );
-      }
-    </script>
   </body>
 </html>
