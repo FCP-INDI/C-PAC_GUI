@@ -42,6 +42,14 @@ export default merge.smart(baseConfig, {
     filename: 'renderer.js'
   },
 
+  optimization: {
+    minimize: false,
+    noEmitOnErrors: true,
+    removeAvailableModules: false,
+    removeEmptyChunks: false,
+    splitChunks: false,
+  },
+
   module: {
     rules: [
       {
@@ -169,10 +177,6 @@ export default merge.smart(baseConfig, {
 
     new webpack.EnvironmentPlugin({
       NODE_ENV: 'development'
-    }),
-
-    new webpack.LoaderOptionsPlugin({
-      debug: true
     }),
 
     new MiniCssExtractPlugin({

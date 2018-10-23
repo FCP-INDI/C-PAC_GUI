@@ -33,6 +33,16 @@ export default merge.smart(baseConfig, {
     filename: '[name].dev.dll.js',
   },
 
+  devtool: 'eval',
+
+  optimization: {
+    minimize: false,
+  },
+
+  performance: {
+    hints: false,
+  },
+
   module: {
     rules: [
       {
