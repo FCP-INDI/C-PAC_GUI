@@ -8,9 +8,11 @@ import { spawn, execSync } from 'child_process';
 
 import HtmlWebpackPlugin from 'html-webpack-plugin'
 import MiniCssExtractPlugin from 'mini-css-extract-plugin'
-import baseConfig from './webpack.config.base';
-import CheckNodeEnv from '../internals/scripts/CheckNodeEnv';
+import HardSourceWebpackPlugin from 'hard-source-webpack-plugin'
 
+import baseConfig from './webpack.config.base';
+
+import CheckNodeEnv from '../internals/scripts/CheckNodeEnv';
 CheckNodeEnv('development');
 
 const port = process.env.PORT || 1212;
@@ -25,7 +27,7 @@ if (!(fs.existsSync(dll) && fs.existsSync(manifest))) {
 }
 
 export default merge.smart(baseConfig, {
-  devtool: 'inline-source-map',
+  devtool: 'cheap-module-eval-source-map',
 
   target: 'web',
 
@@ -38,6 +40,7 @@ export default merge.smart(baseConfig, {
 
   output: {
     path: dist,
+    pathinfo: false,
     publicPath: '/',
     filename: 'renderer.js'
   },
@@ -74,42 +77,8 @@ export default merge.smart(baseConfig, {
               modules: true,
               sourceMap: true,
               importLoaders: 1,
-              localIdentName: '[name]__[local]__[hash:base64:5]',
             }
           },
-        ]
-      },
-      {
-        test: /\.global\.(scss|sass)$/,
-        use: [
-          'style-loader', //MiniCssExtractPlugin.loader,
-          {
-            loader: 'css-loader',
-            options: {
-              sourceMap: true,
-            },
-          },
-          {
-            loader: 'sass-loader'
-          }
-        ]
-      },
-      {
-        test: /^((?!\.global).)*\.(scss|sass)$/,
-        use: [
-          'style-loader', //MiniCssExtractPlugin.loader,
-          {
-            loader: 'css-loader',
-            options: {
-              modules: true,
-              sourceMap: true,
-              importLoaders: 1,
-              localIdentName: '[name]__[local]__[hash:base64:5]',
-            }
-          },
-          {
-            loader: 'sass-loader'
-          }
         ]
       },
       {
@@ -172,6 +141,8 @@ export default merge.smart(baseConfig, {
     new webpack.HotModuleReplacementPlugin({
       multiStep: false
     }),
+
+    // new HardSourceWebpackPlugin(),
 
     new webpack.NoEmitOnErrorsPlugin(),
 

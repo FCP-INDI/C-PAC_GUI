@@ -4,7 +4,9 @@ import {
   ENVIRONMENT_SELECT,
 
   PROJECT_LOADED,
-  PROJECT_OPEN
+  PROJECT_OPEN,
+
+  PIPELINE_CONFIG_UPDATE_KEY,
 } from '../actions/main'
 
 export default function main(state, action) {
@@ -49,6 +51,23 @@ export default function main(state, action) {
         return { ...state, project: undefined }
       }
 
+
+    case PIPELINE_CONFIG_UPDATE_KEY:
+      const { pipeline: id, key, value } = action
+      const pipeline = state.config.pipelines.find((p) => p.id == id)
+
+      // @TODO ASH review version
+      const version = Object.keys(pipeline.versions)[0]
+      const path = key.split(".")
+
+      let i
+      let obj = pipeline.versions[version].configuration
+      for (i = 0; i < path.length - 1; i++)
+        obj = obj[path[i]];
+
+      obj[path[i]] = value
+
+      return state
 
     default:
       return state

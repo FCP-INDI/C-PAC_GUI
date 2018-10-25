@@ -3,6 +3,8 @@ import React, { Component } from 'react'
 export {
   DeviceHub as PipelineIcon,
   Accessibility as SubjectIcon,
+  Accessibility as ParticipantIcon,
+  Accessibility as DatasetIcon,
   ExpandMore as ExpandMoreIcon,
   MoreVert as MoreVertIcon,
   OpenInNew as OpenIcon,
@@ -36,6 +38,8 @@ export {
   KeyboardArrowRight as NextIcon,
 
   CloudDownload as DownloadIcon,
+  Save as SaveIcon,
+  Cached as RevertIcon,
 } from '@material-ui/icons';
 
 // import createSvgIcon from '../utils/createSvgIcon'

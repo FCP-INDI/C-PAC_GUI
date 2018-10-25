@@ -8,6 +8,9 @@ import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
 
 import ProjectCard from '../components/ProjectCard';
+import PipelineCard from '../components/PipelineCard';
+import DatasetCard from '../components/DatasetCard';
+
 
 class Home extends Component {
 
@@ -20,28 +23,36 @@ class Home extends Component {
     },
     paper: {
       margin: 0,
-      padding: 20
-    }
+      padding: 20,
+      flexGrow: 1,
+    },
+    cell: {
+      display: 'flex',
+    },
   });
 
   render() {
-    const { classes } = this.props
+    const { classes, projects, pipelines, datasets } = this.props
 
     return (
       <Grid container spacing={8} alignContent="center">
-        <Grid item sm={6}>
+        <Grid item sm={6} className={classes.cell}>
           <Paper className={classes.paper}>
             <Typography variant='h5' className={classes.header}>
               Recent projects
             </Typography>
             <Grid container spacing={8} alignContent="center">
-              <Grid item>
-                <ProjectCard id="abide" />
-              </Grid>
+              {
+                projects && projects.map((project) => (
+                  <Grid item key={project.id}>
+                    <ProjectCard id={project.id} />
+                  </Grid>
+                ))
+              }
             </Grid>
           </Paper>
         </Grid>
-        <Grid item sm={6}>
+        <Grid item sm={6} className={classes.cell}>
           <Paper className={classes.paper}>
             <Typography variant="h5" className={classes.title}>
               About C-PAC
@@ -65,12 +76,56 @@ class Home extends Component {
             </Typography>
           </Paper>
         </Grid>
+        <Grid item sm={12}>
+          <Paper className={classes.paper}>
+            <Typography variant='h5' className={classes.header}>
+              Explore
+            </Typography>
+            <Grid container spacing={8} alignContent="center">
+              <Grid item sm={6} className={classes.cell}>
+                <Paper className={classes.paper}>
+                  <Typography variant="h6" className={classes.title}>
+                    Datasets
+                  </Typography>
+                  <Grid container spacing={8} alignContent="center">
+                    {
+                      datasets && datasets.map((dataset) => (
+                        <Grid item key={dataset.id}>
+                          <DatasetCard id={dataset.id} />
+                        </Grid>
+                      ))
+                    }
+                  </Grid>
+                </Paper>
+              </Grid>
+              <Grid item sm={6} className={classes.cell}>
+                <Paper className={classes.paper}>
+                  <Typography variant="h6" className={classes.title}>
+                    Pipelines
+                  </Typography>
+                  <Grid container spacing={8} alignContent="center">
+                    {
+                      pipelines && pipelines.map((pipeline) => (
+                        <Grid item key={pipeline.id}>
+                          <PipelineCard id={pipeline.id} />
+                        </Grid>
+                      ))
+                    }
+                  </Grid>
+                </Paper>
+              </Grid>
+            </Grid>
+          </Paper>
+        </Grid>
       </Grid>
     );
   }
 }
 
 const mapStateToProps = (state) => ({
+  projects: ((state.main.config || {}).projects) || [],
+  pipelines: ((state.main.config || {}).pipelines) || [],
+  datasets: ((state.main.config || {}).datasets) || [],
 })
 
 const mapDispatchToProps = {

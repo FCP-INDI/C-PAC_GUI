@@ -21,6 +21,16 @@ export function configLoaded(config: object) {
   };
 }
 
+export const PIPELINE_CONFIG_UPDATE_KEY = 'PIPELINE_CONFIG_UPDATE_KEY';
+export const PIPELINE_CONFIG_UPDATE_KEY_DONE = 'PIPELINE_CONFIG_UPDATE_KEY_DONE';
+
+export function pipelineConfigUpdate(pipeline, key, value) {
+  return {
+    type: PIPELINE_CONFIG_UPDATE_KEY,
+    pipeline, key, value
+  };
+}
+
 export const ENVIRONMENT_CHECK = 'ENVIRONMENT_CHECK';
 export const ENVIRONMENT_SERVER_CHECK = 'ENVIRONMENT_SERVER_CHECK';
 export const ENVIRONMENT_CHECKING = 'ENVIRONMENT_CHECKING';

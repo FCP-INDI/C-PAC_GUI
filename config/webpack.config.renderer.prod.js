@@ -1,27 +1,26 @@
-/**
- * Build config for electron renderer process
- */
-
 import path from 'path';
 import webpack from 'webpack';
 import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
+
+import HtmlWebpackPlugin from 'html-webpack-plugin'
 import MiniCssExtractPlugin from 'mini-css-extract-plugin'
+
 import merge from 'webpack-merge';
 import baseConfig from './webpack.config.base';
-import CheckNodeEnv from '../internals/scripts/CheckNodeEnv';
 
+import CheckNodeEnv from '../internals/scripts/CheckNodeEnv';
 CheckNodeEnv('production');
 
-export default merge.smart(baseConfig, {
-  devtool: 'source-map',
+const dist = path.resolve(process.cwd(), 'app', 'dist');
 
+export default merge.smart(baseConfig, {
   target: 'web',
 
-  entry: './app/index',
+  entry: path.join(__dirname, '../app/index.js'),
 
   output: {
-    path: path.join(__dirname, '..', 'app', 'dist'),
-    publicPath: 'dist',
+    path: dist,
+    publicPath: '',
     filename: 'renderer.prod.js'
   },
 
@@ -110,13 +109,16 @@ export default merge.smart(baseConfig, {
 
   plugins: [
     new webpack.EnvironmentPlugin({
-      // NODE_ENV: 'production'
-      NODE_ENV: 'development'
+      NODE_ENV: 'production'
     }),
 
     new MiniCssExtractPlugin({
       filename: '[name].[hash].css',
       chunkFilename: '[id].[hash].css',
+    }),
+
+    new HtmlWebpackPlugin({
+      template: 'app/app.html'
     }),
 
     new BundleAnalyzerPlugin({

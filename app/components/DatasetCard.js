@@ -26,15 +26,15 @@ import IconButton from '@material-ui/core/IconButton'
 import Button from '@material-ui/core/Button'
 
 import {
-  ProjectIcon,
+  DatasetIcon,
+  ParticipantIcon,
   PipelineIcon,
-  SubjectIcon,
   LaunchIcon,
   SettingsIcon,
   NavigateNextIcon
 } from './icons';
 
-class ProjectCard extends Component {
+class DatasetCard extends Component {
 
   static styles = theme => ({
     card: {
@@ -55,39 +55,33 @@ class ProjectCard extends Component {
     }
   })
 
-  handleOpen = (project) => {
-    this.props.history.push(`/projects/${project}`)
+  handleOpen = (dataset) => {
+    this.props.history.push(`/datasets/${dataset}`)
   }
 
   render() {
-    const { classes, raised = false, project } = this.props
+    const { classes, raised = false, dataset } = this.props
 
     return (
       <Card className={classes.card} raised={raised}>
         <CardHeader
           avatar={
-            <Avatar aria-label={project.name} className={classes.avatar}><ProjectIcon /></Avatar>
+            <Avatar aria-label={dataset.name} className={classes.avatar}><DatasetIcon /></Avatar>
           }
-          title={project.name}
+          title={dataset.name}
         />
         <CardContent className={classes.info}>
           <List>
             <ListItem>
               <ListItemIcon>
-                <PipelineIcon />
+                <ParticipantIcon />
               </ListItemIcon>
-              <ListItemText primary={`0 pipelines`} />
-            </ListItem>
-            <ListItem>
-              <ListItemIcon>
-                <SubjectIcon />
-              </ListItemIcon>
-              <ListItemText primary={`0 subjects`} />
+              <ListItemText primary={`${dataset.summary.participants} participants`} />
             </ListItem>
           </List>
         </CardContent>
         <CardActions className={classes.actions} disableActionSpacing>
-          <IconButton className={classes.expand} onClick={() => this.handleOpen(project.id)}>
+          <IconButton className={classes.expand} onClick={() => this.handleOpen(dataset.id)}>
             <NavigateNextIcon />
           </IconButton>
         </CardActions>
@@ -97,12 +91,12 @@ class ProjectCard extends Component {
 }
 
 const mapStateToProps = (state, ownProps) => ({
-  project: state.main.config.projects.find((p) => p.id == ownProps.id),
+  dataset: state.main.config.datasets.find((p) => p.id == ownProps.id),
 })
 
 const mapDispatchToProps = {
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(
-  withRouter(withStyles(ProjectCard.styles)(ProjectCard))
+  withRouter(withStyles(DatasetCard.styles)(DatasetCard))
 )

@@ -1,5 +1,5 @@
 import { delay } from 'redux-saga'
-import { select, put, call, takeEvery } from 'redux-saga/effects'
+import { select, put, call, takeEvery, all } from 'redux-saga/effects'
 import { ENVIRONMENT_CHECK, ENVIRONMENT_SERVER_CHECK, ENVIRONMENT_SERVER_START,
          environmentTypedCheck, environmentChecked, environmentChecking } from '../actions/main'
 
@@ -594,11 +594,11 @@ function* start (action) {
 }
 
 function* environmentSaga () {
-  yield [
+  yield all([
     takeEvery(ENVIRONMENT_CHECK, loadEnvironment),
     takeEvery(ENVIRONMENT_SERVER_CHECK, checkServer),
     takeEvery(ENVIRONMENT_SERVER_START, start)
-  ]
+  ])
 }
 
 export default environmentSaga

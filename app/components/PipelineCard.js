@@ -1,11 +1,10 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { withRouter } from 'react-router-dom'
+import { withRouter, Link } from 'react-router-dom'
 
 import classnames from 'classnames'
 import { withStyles } from '@material-ui/core/styles'
 
-import { Link } from 'react-router-dom'
 import Grid from '@material-ui/core/Grid'
 
 import Card from '@material-ui/core/Card';
@@ -61,12 +60,12 @@ class PipelineCard extends Component {
     }
   })
 
-  handleOpen = (project, pipeline) => {
-    this.props.history.push(`/projects/${project}/pipelines/${pipeline}`)
+  handleOpen = ( pipeline) => {
+    this.props.history.push(`/pipelines/${pipeline}`)
   }
 
   render() {
-    const { classes, raised = false, project, pipeline } = this.props
+    const { classes, raised = false, pipeline } = this.props
 
     return (
       <Card className={classes.card} raised={raised}>
@@ -84,18 +83,18 @@ class PipelineCard extends Component {
               <ListItemIcon>
                 <PipelineStepIcon />
               </ListItemIcon>
-              <ListItemText primary={`32 steps`} />
+              <ListItemText primary={`5 derivatives`} />
             </ListItem>
             <ListItem>
               <ListItemIcon>
                 <PipelineExecutionTimeIcon />
               </ListItemIcon>
-              <ListItemText primary={`2 hours per subject`} />
+              <ListItemText primary={`~2 hours per subject`} />
             </ListItem>
           </List>
         </CardContent>
         <CardActions className={classes.actions} disableActionSpacing>
-          <IconButton className={classes.expand} onClick={() => this.handleOpen(project.id, pipeline.id)}>
+          <IconButton className={classes.expand} onClick={() => this.handleOpen(pipeline.id)}>
             <NavigateNextIcon />
           </IconButton>
         </CardActions>
@@ -104,7 +103,8 @@ class PipelineCard extends Component {
   }
 }
 
-const mapStateToProps = (state) => ({
+const mapStateToProps = (state, ownProps) => ({
+  pipeline: state.main.config.pipelines.find((p) => p.id == ownProps.id),
 })
 
 const mapDispatchToProps = {

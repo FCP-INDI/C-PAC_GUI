@@ -148,8 +148,7 @@ class App extends React.Component {
   };
 
   render() {
-    const { project, config: { environments = [] } = {} } = this.props.main
-    const { classes, theme } = this.props
+    const { classes, theme, main } = this.props
 
     return (
       <div className={classes.app}>
@@ -161,14 +160,10 @@ class App extends React.Component {
 
         <div className={classes.root}>
 
-          {this.renderBreadcrumbs()}
+          { this.renderBreadcrumbs() }
 
           <main className={classes.content}>
-            {
-              environments.length === 0 ?
-              null :
-              this.props.children
-            }
+            { main.config ? this.props.children : "Loading" }
           </main>
         </div>
       </div>
