@@ -1,25 +1,44 @@
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
 import { withStyles } from '@material-ui/core';
 
-class Derivatives extends Component {
+import Divider from '@material-ui/core/Divider';
 
+import {
+  ALFF,
+  NetworkCentrality,
+  RegionalHomogeneity,
+  SeedBasedCorrelation,
+  TimeSeriesExtraction,
+  VHMC
+} from './derivatives'
+
+class Derivatives extends Component {
   static styles = theme => ({
+    divider: {
+      margin: theme.spacing.unit,
+      marginBottom: theme.spacing.unit * 3,
+    }
   });
 
   render() {
-    return null
+    const { classes, configuration, onChange, onValueChange } = this.props
+
+    return (
+      <div>
+        <TimeSeriesExtraction configuration={configuration} onChange={onChange} onValueChange={onValueChange} />
+        <Divider className={classes.divider} />
+        <SeedBasedCorrelation configuration={configuration} onChange={onChange} onValueChange={onValueChange} />
+        <Divider className={classes.divider} />
+        <ALFF configuration={configuration} onChange={onChange} onValueChange={onValueChange} />
+        <Divider className={classes.divider} />
+        <NetworkCentrality configuration={configuration} onChange={onChange} onValueChange={onValueChange} />
+        <Divider className={classes.divider} />
+        <VHMC configuration={configuration} onChange={onChange} onValueChange={onValueChange} />
+        <Divider className={classes.divider} />
+        <RegionalHomogeneity configuration={configuration} onChange={onChange} onValueChange={onValueChange} />
+      </div>
+    )
   }
 }
 
-const mapStateToProps = (state, props) => {
-  return {
-  }
-}
-
-const mapDispatchToProps = {
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(
-  withStyles(Derivatives.styles)(Derivatives)
-);
+export default withStyles(Derivatives.styles)(Derivatives);

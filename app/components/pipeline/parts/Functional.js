@@ -10,6 +10,7 @@ import {
   NuisanceRegression,
   TemplateRegistration,
   SliceTimingCorrection,
+  Smoothing,
   TemporalFiltering
 } from './functional'
 
@@ -39,6 +40,8 @@ class Functional extends Component {
         <MedianAngleCorrection configuration={configuration} onChange={onChange} onValueChange={onValueChange} />
         <Divider className={classes.divider} />
         <TemporalFiltering configuration={configuration} onChange={onChange} onValueChange={onValueChange} />
+        <Divider className={classes.divider} />
+        <Smoothing configuration={configuration} onChange={onChange} onValueChange={onValueChange} />
       </div>
     )
   }
