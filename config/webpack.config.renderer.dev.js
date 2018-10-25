@@ -1,5 +1,3 @@
-/* eslint global-require: 0, import/no-dynamic-require: 0 */
-
 import path from 'path';
 import fs from 'fs';
 import webpack from 'webpack';
@@ -7,7 +5,6 @@ import merge from 'webpack-merge';
 import { spawn, execSync } from 'child_process';
 
 import HtmlWebpackPlugin from 'html-webpack-plugin'
-import MiniCssExtractPlugin from 'mini-css-extract-plugin'
 import HardSourceWebpackPlugin from 'hard-source-webpack-plugin'
 
 import baseConfig from './webpack.config.base';
@@ -26,7 +23,10 @@ if (!(fs.existsSync(dll) && fs.existsSync(manifest))) {
   execSync('yarn run build-dll');
 }
 
-export default merge.smart(baseConfig, {
+const SpeedMeasurePlugin = require("speed-measure-webpack-plugin");
+const smp = new SpeedMeasurePlugin();
+
+const config = merge.smart(baseConfig, {
   devtool: 'cheap-module-eval-source-map',
 
   target: 'web',
@@ -58,7 +58,7 @@ export default merge.smart(baseConfig, {
       {
         test: /\.global\.css$/,
         use: [
-          'style-loader', //MiniCssExtractPlugin.loader,
+          'style-loader',
           {
             loader: 'css-loader',
             options: {
@@ -70,7 +70,7 @@ export default merge.smart(baseConfig, {
       {
         test: /^((?!\.global).)*\.css$/,
         use: [
-          'style-loader', //MiniCssExtractPlugin.loader,
+          'style-loader',
           {
             loader: 'css-loader',
             options: {
@@ -133,6 +133,8 @@ export default merge.smart(baseConfig, {
   },
 
   plugins: [
+    // new webpack.debug.ProfilingPlugin(),
+
     new webpack.DllReferencePlugin({
       context: dll,
       manifest: require(manifest),
@@ -142,7 +144,7 @@ export default merge.smart(baseConfig, {
       multiStep: false
     }),
 
-    // new HardSourceWebpackPlugin(),
+    new HardSourceWebpackPlugin(),
 
     new webpack.NoEmitOnErrorsPlugin(),
 
@@ -150,13 +152,10 @@ export default merge.smart(baseConfig, {
       NODE_ENV: 'development'
     }),
 
-    new MiniCssExtractPlugin({
-      filename: "[name].css",
-      chunkFilename: "[id].css"
-    }),
-
     new HtmlWebpackPlugin({
-      template: 'app/app.html'
+      template: 'app/app.html',
+      cache: true,
+      minify: false,
     }),
   ],
 
@@ -197,3 +196,6 @@ export default merge.smart(baseConfig, {
     }
   },
 });
+
+export default config;
+// export default smp.wrap(config);

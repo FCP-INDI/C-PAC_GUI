@@ -13,7 +13,10 @@ CheckNodeEnv('production');
 
 const dist = path.resolve(process.cwd(), 'app', 'dist');
 
-export default merge.smart(baseConfig, {
+const SpeedMeasurePlugin = require("speed-measure-webpack-plugin");
+const smp = new SpeedMeasurePlugin();
+
+const config = merge.smart(baseConfig, {
   target: 'web',
 
   entry: path.join(__dirname, '../app/index.js'),
@@ -127,3 +130,6 @@ export default merge.smart(baseConfig, {
     }),
   ],
 });
+
+export default smp.wrap(config);
+// export default config;
