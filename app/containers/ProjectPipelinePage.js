@@ -19,17 +19,6 @@ import {
   DownloadIcon
 } from '../components/icons';
 
-import {
-  Anatomical,
-  Functional,
-  Derivatives,
-  GroupAnalysis
-} from '../containers/ProjectPipelinePageContainers'
-
-
-function TabContainer(props) {
-  return props.children
-}
 
 class ProjectPipelinePage extends Component {
 
@@ -76,24 +65,6 @@ class ProjectPipelinePage extends Component {
           </HeaderTools>
         </Header>
         <Content>
-          <Tabs
-            value={value}
-            onChange={this.handleChange}
-            indicatorColor="primary"
-            textColor="primary"
-            scrollable
-            scrollButtons="auto"
-          >
-            <Tab label="Anatomical" />
-            <Tab label="Functional" />
-            <Tab label="Derivatives" />
-          </Tabs>
-
-          <Paper className={classes.content}>
-            { value === 0 && <Anatomical /> }
-            { value === 1 && <Functional /> }
-            { value === 2 && <Derivatives /> }
-          </Paper>
 
         </Content>
       </div>
