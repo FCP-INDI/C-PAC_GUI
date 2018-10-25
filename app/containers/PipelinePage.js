@@ -13,13 +13,16 @@ import Content from '../components/Content';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import Paper from '@material-ui/core/Paper';
+import Button from '@material-ui/core/Button';
 
 import {
   PipelineIcon,
   SubjectIcon,
   ExpandMoreIcon,
   NavigateNextIcon,
-  DownloadIcon
+  DownloadIcon,
+  SaveIcon,
+  RevertIcon
 } from '../components/icons';
 
 
@@ -89,7 +92,15 @@ class PipelinePage extends Component {
             { pipeline.name }
           </HeaderText>
           <HeaderTools>
-            <DownloadIcon />
+            <Button size="small">
+              <DownloadIcon />
+            </Button>
+            <Button size="small">
+              <SaveIcon />
+            </Button>
+            <Button size="small">
+              <RevertIcon />
+            </Button>
           </HeaderTools>
         </Header>
         <Content>

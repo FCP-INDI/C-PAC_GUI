@@ -10,24 +10,18 @@ import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import Paper from '@material-ui/core/Paper';
 
-import Button from '@material-ui/core/Button';
-
 import {
   HomeIcon,
   PipelineIcon,
   SubjectIcon,
   ExpandMoreIcon,
   NavigateNextIcon,
-  DownloadIcon,
-  SaveIcon,
-  RevertIcon,
 } from '../icons';
 
 import {
   Anatomical,
   Functional,
   Derivatives,
-  GroupAnalysis
 } from './parts'
 
 
@@ -59,14 +53,6 @@ class PipelineEditor extends Component {
 
     return (
       <div>
-        <Button size="small">
-          <SaveIcon />
-          Save
-        </Button>
-        <Button size="small">
-          <RevertIcon />
-          Revert
-        </Button>
         <Tabs
           value={tab}
           onChange={this.handleTabChange}

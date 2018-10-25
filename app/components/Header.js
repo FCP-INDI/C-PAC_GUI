@@ -28,7 +28,7 @@ class Header extends Component {
     const { classes } = this.props;
 
     return (
-      <Paper className={this.props.classes.paper} elevation={1}>
+      <Paper className={classes.paper} elevation={1}>
         <div className={classes.root}>
           { this.props.children }
         </div>
