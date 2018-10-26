@@ -20,7 +20,6 @@ import ListItemText from '@material-ui/core/ListItemText';
 import Typography from '@material-ui/core/Typography';
 import Divider from '@material-ui/core/Divider';
 import IconButton from '@material-ui/core/IconButton';
-import MenuIcon from '@material-ui/icons/Menu';
 
 import Slide from '@material-ui/core/Slide';
 
@@ -114,19 +113,15 @@ class App extends React.Component {
       }
       if (place[i] == "pipelines") {
 
-        if (!project) {
-          continue
-        }
-
         if (i + 1 < place.length) {
-          pipeline = project.pipelines.find((p) => p.id == place[++i])
+          pipeline = config.pipelines.find((p) => p.id == place[++i])
         }
 
         crumbs.push(
           <NextIcon key={crumbs.length} />
         )
         crumbs.push(
-          <Button key={crumbs.length} size="small" component={Link} to={`/projects/${project.id}/pipelines/${  pipeline ? pipeline.id : '' }`}>
+          <Button key={crumbs.length} size="small" component={Link} to={`/pipelines/${ pipeline ? pipeline.id : '' }`}>
             <PipelineIcon className={classes.icon} />
             { pipeline ? pipeline.name : "Pipelines" }
           </Button>
