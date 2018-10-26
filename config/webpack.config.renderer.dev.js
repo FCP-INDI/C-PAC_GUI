@@ -5,7 +5,6 @@ import merge from 'webpack-merge';
 import { spawn, execSync } from 'child_process';
 
 import HtmlWebpackPlugin from 'html-webpack-plugin'
-import HardSourceWebpackPlugin from 'hard-source-webpack-plugin'
 
 import baseConfig from './webpack.config.base';
 
@@ -143,8 +142,6 @@ const config = merge.smart(baseConfig, {
     new webpack.HotModuleReplacementPlugin({
       multiStep: false
     }),
-
-    new HardSourceWebpackPlugin(),
 
     new webpack.NoEmitOnErrorsPlugin(),
 
