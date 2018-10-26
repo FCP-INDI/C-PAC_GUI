@@ -11,13 +11,12 @@ import ProjectCard from '../components/ProjectCard';
 import PipelineCard from '../components/PipelineCard';
 import DatasetCard from '../components/DatasetCard';
 
+import Box from './Box'
+
 
 class Home extends Component {
 
   static styles = theme => ({
-    header: {
-      padding: '0 0 20px 0',
-    },
     title: {
       marginBottom: 10
     },
@@ -28,20 +27,22 @@ class Home extends Component {
     },
     cell: {
       display: 'flex',
+      flexDirection: 'column',
+      flexGrow: 1
     },
+    expand: {
+      flexGrow: 1
+    }
   });
 
   render() {
     const { classes, projects, pipelines, datasets } = this.props
 
     return (
-      <Grid container spacing={8} alignContent="center">
+      <Grid container spacing={8}>
         <Grid item sm={6} className={classes.cell}>
-          <Paper className={classes.paper}>
-            <Typography variant='h5' className={classes.header}>
-              Recent projects
-            </Typography>
-            <Grid container spacing={8} alignContent="center">
+          <Box title="Recent Projects" className={classes.expand}>
+            <Grid container spacing={8}>
               {
                 projects && projects.map((project) => (
                   <Grid item key={project.id}>
@@ -50,13 +51,10 @@ class Home extends Component {
                 ))
               }
             </Grid>
-          </Paper>
+          </Box>
         </Grid>
         <Grid item sm={6} className={classes.cell}>
-          <Paper className={classes.paper}>
-            <Typography variant="h5" className={classes.title}>
-              About C-PAC
-            </Typography>
+          <Box title="About C-PAC" className={classes.expand}>
             <Typography paragraph>
               The Configurable Pipeline for the Analysis of Connectomes (C-PAC) is an
               open-source software pipeline for automated preprocessing and analysis
@@ -74,48 +72,41 @@ class Home extends Component {
               arbitrary number of subjects. Results can then be compared across
               groups using the integrated group statistics feature.
             </Typography>
-          </Paper>
+          </Box>
         </Grid>
         <Grid item sm={12}>
-          <Paper className={classes.paper}>
-            <Typography variant='h5' className={classes.header}>
-              Explore
-            </Typography>
-            <Grid container spacing={8} alignContent="center">
-              <Grid item sm={6} className={classes.cell}>
-                <Paper className={classes.paper}>
-                  <Typography variant="h6" className={classes.title}>
-                    Datasets
-                  </Typography>
-                  <Grid container spacing={8} alignContent="center">
-                    {
-                      datasets && datasets.map((dataset) => (
-                        <Grid item key={dataset.id}>
-                          <DatasetCard id={dataset.id} />
-                        </Grid>
-                      ))
-                    }
-                  </Grid>
-                </Paper>
+          <Box title="Explore" className={classes.expand}>
+            <Grid container spacing={8}>
+              <Grid item>
+                <Typography variant="h6" className={classes.title}>
+                  Datasets
+                </Typography>
+                <Grid container spacing={8}>
+                  {
+                    datasets && datasets.map((dataset) => (
+                      <Grid item key={dataset.id}>
+                        <DatasetCard id={dataset.id} />
+                      </Grid>
+                    ))
+                  }
+                </Grid>
               </Grid>
-              <Grid item sm={6} className={classes.cell}>
-                <Paper className={classes.paper}>
-                  <Typography variant="h6" className={classes.title}>
-                    Pipelines
-                  </Typography>
-                  <Grid container spacing={8} alignContent="center">
-                    {
-                      pipelines && pipelines.map((pipeline) => (
-                        <Grid item key={pipeline.id}>
-                          <PipelineCard id={pipeline.id} />
-                        </Grid>
-                      ))
-                    }
-                  </Grid>
-                </Paper>
+              <Grid item>
+                <Typography variant="h6" className={classes.title}>
+                  Pipelines
+                </Typography>
+                <Grid container spacing={8}>
+                  {
+                    pipelines && pipelines.map((pipeline) => (
+                      <Grid item key={pipeline.id}>
+                        <PipelineCard id={pipeline.id} />
+                      </Grid>
+                    ))
+                  }
+                </Grid>
               </Grid>
             </Grid>
-          </Paper>
+          </Box>
         </Grid>
       </Grid>
     );

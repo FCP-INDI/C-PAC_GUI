@@ -9,6 +9,7 @@ import Grid from '@material-ui/core/Grid';
 import PipelineEditor from '../components/pipeline/PipelineEditor';
 import Header, { HeaderText, HeaderAvatar, HeaderTools } from '../components/Header';
 import Content from '../components/Content';
+import Box from '../components/Box';
 
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
@@ -82,35 +83,30 @@ class PipelinePage extends Component {
       return "404"
     }
 
-    return (
+    const tools = (
       <div>
-        <Header>
-          <HeaderAvatar>
-            <PipelineIcon />
-          </HeaderAvatar>
-          <HeaderText>
-            { pipeline.name }
-          </HeaderText>
-          <HeaderTools>
-            <Button size="small">
-              <DownloadIcon />
-            </Button>
-            <Button size="small">
-              <SaveIcon />
-            </Button>
-            <Button size="small">
-              <RevertIcon />
-            </Button>
-          </HeaderTools>
-        </Header>
-        <Content>
-          {
-            this.state.configuration ?
-            <PipelineEditor configuration={this.state.configuration} onChange={this.handleChange} onSave={this.handleSave} />:
-            null
-          }
-        </Content>
+        <Button size="small">
+          <DownloadIcon />
+        </Button>
+        <Button size="small">
+          <SaveIcon />
+        </Button>
+        <Button size="small">
+          <RevertIcon />
+        </Button>
       </div>
+    )
+
+    return (
+      <Box title={pipeline.name}
+           avatar={<PipelineIcon />}
+           tools={tools}>
+        {
+          this.state.configuration ?
+          <PipelineEditor configuration={this.state.configuration} onChange={this.handleChange} onSave={this.handleSave} />:
+          null
+        }
+      </Box>
     );
   }
 }
