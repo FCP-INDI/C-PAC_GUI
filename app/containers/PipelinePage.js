@@ -16,6 +16,9 @@ import Tab from '@material-ui/core/Tab';
 import Paper from '@material-ui/core/Paper';
 import Button from '@material-ui/core/Button';
 
+import getter from 'lodash.get';
+import setter from 'lodash.set';
+
 import {
   PipelineIcon,
   SubjectIcon,
@@ -44,28 +47,15 @@ class PipelinePage extends Component {
     }
   }
 
-  getNewConfiguration = (configuration, name, value) => {
-    const path = name.split(".")
-
-    let i = 0
-    let obj = configuration
-    for (i = 0; i < path.length - 1; i++) {
-      obj = obj[path[i]]
-    }
-
-    obj[path[i]] = value
-    return configuration
-  }
-
   handleChange = (name, value) => {
     let configuration = this.state.configuration
 
     if (!name) {
       for (let newName in value) {
-        configuration = this.getNewConfiguration(configuration, newName, value[newName])
+        setter(configuration, newName, value[newName]);
       }
     } else {
-      configuration = this.getNewConfiguration(configuration, name, value)
+      setter(configuration, name, value);
     }
 
     this.setState({ configuration })
@@ -84,7 +74,7 @@ class PipelinePage extends Component {
     }
 
     const tools = (
-      <div>
+      <React.Fragment>
         <Button size="small">
           <DownloadIcon />
         </Button>
@@ -94,7 +84,7 @@ class PipelinePage extends Component {
         <Button size="small">
           <RevertIcon />
         </Button>
-      </div>
+      </React.Fragment>
     )
 
     return (
