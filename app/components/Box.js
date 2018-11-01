@@ -9,41 +9,39 @@ import Typography from '@material-ui/core/Typography';
 
 class Box extends Component {
 
-  static styles = theme => {
-    return {
-      root: {
-        display: 'flex',
-        flexDirection: 'column'
-      },
-      header: {
-        padding: 20,
-        display: 'flex',
-        justifyContent: 'flex-start',
-        alignItems: 'center',
-        position: 'relative',
-        textDecoration: 'none',
-        width: '100%',
-        boxSizing: 'border-box',
-        textAlign: 'left',
-        background: '#ade3da',
-      },
-      headerText: {
-        padding: `0 ${theme.spacing.unit * 2}px`,
-        flexGrow: 1
-      },
-      headerAvatar: {
-        background: "#FFF",
-        color: "#666"
-      },
-      headerTools: {
+  static styles = theme => ({
+    root: {
+      display: 'flex',
+      flexDirection: 'column'
+    },
+    header: {
+      padding: 20,
+      display: 'flex',
+      justifyContent: 'flex-start',
+      alignItems: 'center',
+      position: 'relative',
+      textDecoration: 'none',
+      width: '100%',
+      boxSizing: 'border-box',
+      textAlign: 'left',
+      background: theme.palette.primary.main,
+    },
+    headerText: {
+      padding: `0 ${theme.spacing.unit * 2}px`,
+      flexGrow: 1
+    },
+    headerAvatar: {
+      background: "#FFF",
+      color: "#666"
+    },
+    headerTools: {
 
-      },
-      content: {
-        padding: 20,
-        flexGrow: 1
-      }
+    },
+    content: {
+      padding: 20,
+      flexGrow: 1
     }
-  };
+  });
 
   render() {
     const { classes, className, avatar, title, tools, headerVariant = 'h5' } = this.props;
