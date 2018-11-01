@@ -76,8 +76,8 @@ class Home extends Component {
         </Grid>
         <Grid item sm={12}>
           <Box title="Explore" className={classes.expand}>
-            <Grid container spacing={8}>
-              <Grid item>
+            <Grid container spacing={32}>
+              <Grid item sm={12}>
                 <Typography variant="h6" className={classes.title}>
                   Datasets
                 </Typography>
@@ -91,7 +91,7 @@ class Home extends Component {
                   }
                 </Grid>
               </Grid>
-              <Grid item>
+              <Grid item sm={12}>
                 <Typography variant="h6" className={classes.title}>
                   Pipelines
                 </Typography>

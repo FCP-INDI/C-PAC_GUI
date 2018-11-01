@@ -1,8 +1,18 @@
 import React, { Component } from 'react';
 
 import { withStyles, Typography } from '@material-ui/core';
-import TextField from '@material-ui/core/TextField';
 import Grid from '@material-ui/core/Grid'
+
+import MenuItem from '@material-ui/core/MenuItem';
+import TextField from '@material-ui/core/TextField';
+import InputAdornment from '@material-ui/core/InputAdornment';
+import Switch from '@material-ui/core/Switch';
+
+import FormGroup from '@material-ui/core/FormGroup';
+import FormLabel from '@material-ui/core/FormLabel';
+import FormControl from '@material-ui/core/FormControl';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import FormHelperText from '@material-ui/core/FormHelperText';
 
 
 class RegionalHomogeneity extends Component {
@@ -14,18 +24,20 @@ class RegionalHomogeneity extends Component {
     const { classes, configuration, onChange } = this.props
 
     return (
-      <Grid container spacing={8}>
-        <Grid item lg={6} xs={12}>
-          <Typography variant="h6">
-            Regional Homogeneity
-          </Typography>
-          <Grid container spacing={8}>
-            <Grid item xs={6}>
-            </Grid>
-          </Grid>
-        </Grid>
-        <Grid item lg={6} xs={12} style={{ padding: 20 }}>
-          <Typography paragraph></Typography>
+      <Grid container>
+        <Grid item sm={12}>
+          <TextField
+            select
+            label="Voxel Cluster size"
+            fullWidth={true} margin="normal" variant="outlined"
+            className={classes.textField}
+            value={7}
+            helperText=''
+          >
+            <MenuItem value={7}>7</MenuItem>
+            <MenuItem value={19}>19</MenuItem>
+            <MenuItem value={27}>27</MenuItem>
+          </TextField>
         </Grid>
       </Grid>
     )

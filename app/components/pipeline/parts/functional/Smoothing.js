@@ -1,8 +1,18 @@
 import React, { Component } from 'react';
 
 import { withStyles, Typography } from '@material-ui/core';
-import TextField from '@material-ui/core/TextField';
 import Grid from '@material-ui/core/Grid'
+
+import MenuItem from '@material-ui/core/MenuItem';
+import TextField from '@material-ui/core/TextField';
+import InputAdornment from '@material-ui/core/InputAdornment';
+import Switch from '@material-ui/core/Switch';
+
+import FormGroup from '@material-ui/core/FormGroup';
+import FormLabel from '@material-ui/core/FormLabel';
+import FormControl from '@material-ui/core/FormControl';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import FormHelperText from '@material-ui/core/FormHelperText';
 
 
 class Smoothing extends Component {
@@ -14,18 +24,45 @@ class Smoothing extends Component {
     const { classes, configuration, onChange } = this.props
 
     return (
-      <Grid container spacing={8}>
-        <Grid item lg={6} xs={12}>
-          <Typography variant="h6">
-            Smoothing / Z-scoring
-          </Typography>
-          <Grid container spacing={8}>
-            <Grid item xs={6}>
-            </Grid>
-          </Grid>
-        </Grid>
-        <Grid item lg={6} xs={12} style={{ padding: 20 }}>
-          <Typography paragraph></Typography>
+      <Grid container>
+        <Grid item sm={12}>
+          <TextField
+            label="Smoothing kernel FWHM"
+            value={4}
+            fullWidth={true} margin="normal" variant="outlined"
+            helperText=''
+            InputProps={{
+              endAdornment: <InputAdornment position="end">mm</InputAdornment>,
+            }}
+          />
+          <FormControl component="fieldset">
+            <FormGroup row>
+              <FormControlLabel
+                label="Perform smoothing before z-scoring"
+                control={
+                  <Switch
+                    name="anatomical.skull_stripping.methods.bet.enabled"
+                    checked={true}
+                    onChange={this.handleChange}
+                    color="primary"
+                  />
+                }
+              />
+            </FormGroup>
+            <FormGroup row>
+              <FormControlLabel
+                label="Apply z-score standarization to derivatives"
+                control={
+                  <Switch
+                    name="anatomical.skull_stripping.methods.bet.enabled"
+                    checked={true}
+                    onChange={this.handleChange}
+                    color="primary"
+                  />
+                }
+              />
+            </FormGroup>
+          </FormControl>
         </Grid>
       </Grid>
     )

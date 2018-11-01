@@ -14,18 +14,8 @@ class Aroma extends Component {
     const { classes, configuration, onChange } = this.props
 
     return (
-      <Grid container spacing={8}>
-        <Grid item lg={6} xs={12}>
-          <Typography variant="h6">
-            ICA-AROMA
-          </Typography>
-          <Grid container spacing={8}>
-            <Grid item xs={6}>
-            </Grid>
-          </Grid>
-        </Grid>
-        <Grid item lg={6} xs={12} style={{ padding: 20 }}>
-          <Typography paragraph></Typography>
+      <Grid container>
+        <Grid item sm={12}>
         </Grid>
       </Grid>
     )

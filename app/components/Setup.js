@@ -5,11 +5,11 @@ import styles from './Setup.css';
 export default class Setup extends Component {
   render() {
     return (
-      <div>
+      <React.Fragment>
         <div className={styles.container} data-tid="container">
         Hello
         </div>
-      </div>
+      </React.Fragment>
     );
   }
 }

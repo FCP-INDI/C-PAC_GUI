@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { withStyles } from '@material-ui/core';
+import { withStyles, Typography } from '@material-ui/core';
 
 import Divider from '@material-ui/core/Divider';
 
@@ -21,11 +21,17 @@ class Anatomical extends Component {
     const { classes, configuration, onChange, onValueChange } = this.props
 
     return (
-      <div>
+      <React.Fragment>
+        <Typography variant="h6">
+          Skull stripping
+        </Typography>
         <SkullStripping configuration={configuration} onChange={onChange} onValueChange={onValueChange} />
         <Divider className={classes.divider} />
+        <Typography variant="h6">
+          Registration
+        </Typography>
         <Registration configuration={configuration} onChange={onChange} onValueChange={onValueChange} />
-      </div>
+      </React.Fragment>
     )
   }
 }

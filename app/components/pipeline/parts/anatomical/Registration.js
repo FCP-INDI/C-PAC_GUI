@@ -25,9 +25,6 @@ class Registration extends Component {
     return (
       <Grid container spacing={8}>
         <Grid item lg={6} xs={12}>
-          <Typography variant="h6">
-            Registration
-          </Typography>
           <Grid container spacing={8}>
             <Grid item xs={6}>
               <TextField label="Resolution"

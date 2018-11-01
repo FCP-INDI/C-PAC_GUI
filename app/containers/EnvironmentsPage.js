@@ -32,7 +32,7 @@ class EnvironmentsPage extends Component {
     const { classes, main } = this.props;
 
     return (
-      <div>
+      <React.Fragment>
         <Header>
           <HeaderAvatar><EnvironmentIcon /></HeaderAvatar>
           <HeaderText>
@@ -58,7 +58,7 @@ class EnvironmentsPage extends Component {
             </Grid>
           </Grid>
         </Content>
-      </div>
+      </React.Fragment>
     );
   }
 }

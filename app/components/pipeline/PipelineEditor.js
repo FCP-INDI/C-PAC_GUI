@@ -52,7 +52,7 @@ class PipelineEditor extends Component {
     const { tab } = this.state
 
     return (
-      <div>
+      <React.Fragment>
         <Tabs
           value={tab}
           onChange={this.handleTabChange}
@@ -66,12 +66,12 @@ class PipelineEditor extends Component {
           <Tab label="Derivatives" />
         </Tabs>
 
-        <Paper className={classes.content}>
+        <Paper className={classes.content} elevation={0}>
           { tab === 0 && <Anatomical configuration={configuration} onChange={onChange} onValueChange={this.handleValueChange} /> }
           { tab === 1 && <Functional configuration={configuration} onChange={onChange} onValueChange={this.handleValueChange} /> }
           { tab === 2 && <Derivatives configuration={configuration} onChange={onChange} onValueChange={this.handleValueChange} /> }
         </Paper>
-      </div>
+      </React.Fragment>
     );
   }
 }

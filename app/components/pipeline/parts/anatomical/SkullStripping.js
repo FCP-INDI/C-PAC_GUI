@@ -67,9 +67,6 @@ class SkullStripping extends Component {
     return (
       <Grid container spacing={8}>
         <Grid item lg={6} xs={12}>
-          <Typography variant="h6">
-            Skull-Stripping
-          </Typography>
           <Grid container spacing={8}>
             <Grid item lg={6} xs={12}>
               <FormGroup row>
