@@ -31,7 +31,7 @@ class ProjectsPage extends Component {
     const { classes, main } = this.props;
 
     return (
-      <div>
+      <React.Fragment>
         <Header>
           <HeaderAvatar><PipelineIcon /></HeaderAvatar>
           <HeaderText>
@@ -45,7 +45,7 @@ class ProjectsPage extends Component {
             </Grid>
           </Grid>
         </Content>
-      </div>
+      </React.Fragment>
     );
   }
 }

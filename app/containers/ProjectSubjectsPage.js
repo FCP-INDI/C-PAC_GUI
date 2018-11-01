@@ -149,7 +149,7 @@ class ProjectSubjectsPage extends Component {
     }
 
     return (
-      <div>
+      <React.Fragment>
         <Header>
           <HeaderAvatar>{project.name[0]}</HeaderAvatar>
           <HeaderText>
@@ -273,7 +273,7 @@ class ProjectSubjectsPage extends Component {
             </Grid>
           </Grid>
         </Content>
-      </div>
+      </React.Fragment>
     );
   }
 }

@@ -52,7 +52,7 @@ class ProjectPipelinePage extends Component {
     }
 
     return (
-      <div>
+      <React.Fragment>
         <Header>
           <HeaderAvatar>
             <PipelineIcon />
@@ -67,7 +67,7 @@ class ProjectPipelinePage extends Component {
         <Content>
 
         </Content>
-      </div>
+      </React.Fragment>
     );
   }
 }

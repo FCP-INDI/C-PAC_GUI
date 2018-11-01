@@ -71,7 +71,7 @@ class ProjectPage extends Component {
     const { classes, project } = this.props;
 
     return (
-      <div>
+      <React.Fragment>
         <Header>
           <HeaderAvatar>{project.name[0]}</HeaderAvatar>
           <HeaderText>
@@ -162,7 +162,7 @@ class ProjectPage extends Component {
             </Grid>
           </Grid>
         </Content>
-      </div>
+      </React.Fragment>
     );
   }
 }
