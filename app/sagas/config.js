@@ -66,54 +66,80 @@ function* loadConfig (action) {
               },
               functional: {
                 slice_timing_correction: {
-
+                  enabled: true,
                 },
                 distortion_correction: {
-
+                  enabled: true,
                 },
                 anatomical_registration: {
-
+                  enabled: true,
                 },
                 template_registration: {
-
+                  enabled: true,
                 },
                 nuisance_regression: {
-
+                  enabled: true,
                 },
                 median_angle_correction: {
-
+                  enabled: true,
                 },
                 temporal_filtering: {
-
+                  enabled: true,
                 },
                 aroma: {
-
+                  enabled: true,
+                },
+                smoothing: {
+                  enabled: true,
                 }
               },
               derivatives: {
                 timeseries_extraction: {
-                  mask: '${environment.paths.fsl_dir}/data/standard/tissuepriors/2mm/avg152T1_white_bin.nii.gz',
-                  methods: [
-                    { method: 'SpatialRegression' },
-                    { method: 'DualRegression' },
-                    { method: 'MultipleRegression' },
-                    { method: 'Average' },
+                  enabled: true,
+                  masks: [
+                    {
+                      mask: 'cc200.nii.gz',
+                      average: true,
+                      voxel: true,
+                      spatial_regression: true,
+                      dual_regression: true,
+                      pearson_correlation: true,
+                      partial_correlation: true,
+                    },
+                    {
+                      mask: 'cc400.nii.gz',
+                      average: true,
+                      voxel: true,
+                      spatial_regression: false,
+                      dual_regression: false,
+                      pearson_correlation: true,
+                      partial_correlation: false,
+                    }
                   ]
                 },
                 sca: {
-
+                  enabled: true,
+                  normalize: true,
+                  masks: [
+                    {
+                      mask: 'seed.nii.gz',
+                      average: true,
+                      dual_regression: true,
+                      multiple_regression: true,
+                    }
+                  ]
                 },
                 vhmc: {
-
+                  enabled: true,
                 },
                 alff: {
-
+                  enabled: true,
                 },
                 reho: {
-
+                  enabled: true,
                 },
                 network_centrality: {
-
+                  enabled: true,
                 },
               }
             }
