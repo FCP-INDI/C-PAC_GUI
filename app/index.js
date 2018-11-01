@@ -18,10 +18,11 @@ const render = Component => {
   )
 }
 
-render(Root)
-
-if (module.hot) {
-  module.hot.accept('./containers/Root', () => {
-    render(require('./containers/Root').default)
-  })
-}
+window.addEventListener('load', () => {
+  render(Root)
+  if (module.hot) {
+    module.hot.accept('./containers/Root', () => {
+      render(require('./containers/Root').default)
+    })
+  }
+})
