@@ -34,11 +34,11 @@ class Anatomical extends Component {
         <Typography variant="h6">
           Skull stripping
         </Typography>
-        <SkullStripping configuration={configuration} onChange={onChange} onValueChange={onValueChange} />
+        <SkullStripping configuration={configuration} onChange={onChange} />
         <Typography variant="h6">
           Registration
         </Typography>
-        <Registration configuration={configuration} onChange={onChange}/>
+        <Registration configuration={configuration} onChange={onChange} />
       </React.Fragment>
     )
   }
