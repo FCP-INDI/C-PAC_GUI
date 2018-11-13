@@ -31,11 +31,10 @@ class Anatomical extends Component {
 
     return (
       <React.Fragment>
-        {/* <Typography variant="h6">
+        <Typography variant="h6">
           Skull stripping
         </Typography>
-        <SkullStripping configuration={configuration} onChange={onChange} onValueChange={onValueChange} /> */}
-        <Divider className={classes.divider} />
+        <SkullStripping configuration={configuration} onChange={onChange} onValueChange={onValueChange} />
         <Typography variant="h6">
           Registration
         </Typography>
