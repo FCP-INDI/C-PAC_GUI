@@ -85,12 +85,6 @@ class PipelineCard extends Component {
               </ListItemIcon>
               <ListItemText primary={`5 derivatives`} />
             </ListItem>
-            <ListItem>
-              <ListItemIcon>
-                <PipelineExecutionTimeIcon />
-              </ListItemIcon>
-              <ListItemText primary={`~2 hours per subject`} />
-            </ListItem>
           </List>
         </CardContent>
         <CardActions className={classes.actions} disableActionSpacing>

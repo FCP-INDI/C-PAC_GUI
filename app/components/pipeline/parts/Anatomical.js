@@ -17,20 +17,29 @@ class Anatomical extends Component {
     }
   });
 
+  constructor(props) {
+    super(props)
+    this.state = { configuration: props.configuration }
+  }
+
+  shouldComponentUpdate(nextProps, nextState) {
+    return nextProps.configuration.anatomical
+  }
+
   render() {
-    const { classes, configuration, onChange, onValueChange } = this.props
+    const { classes, configuration, onChange } = this.props
 
     return (
       <React.Fragment>
-        <Typography variant="h6">
+        {/* <Typography variant="h6">
           Skull stripping
         </Typography>
-        <SkullStripping configuration={configuration} onChange={onChange} onValueChange={onValueChange} />
+        <SkullStripping configuration={configuration} onChange={onChange} onValueChange={onValueChange} /> */}
         <Divider className={classes.divider} />
         <Typography variant="h6">
           Registration
         </Typography>
-        <Registration configuration={configuration} onChange={onChange} onValueChange={onValueChange} />
+        <Registration configuration={configuration} onChange={onChange}/>
       </React.Fragment>
     )
   }

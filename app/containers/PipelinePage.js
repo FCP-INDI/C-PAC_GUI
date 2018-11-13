@@ -1,7 +1,10 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-import { pipelineConfigUpdate } from '../actions/main'
+import {
+  pipelineConfigUpdate,
+  pipelineNameUpdate,
+} from '../actions/main'
 
 import { withStyles } from '@material-ui/core';
 
@@ -15,6 +18,8 @@ import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import Paper from '@material-ui/core/Paper';
 import Button from '@material-ui/core/Button';
+import TextField from '@material-ui/core/TextField';
+import IconButton from '@material-ui/core/IconButton'
 
 import getter from 'lodash.get';
 import setter from 'lodash.set';
@@ -26,7 +31,8 @@ import {
   NavigateNextIcon,
   DownloadIcon,
   SaveIcon,
-  RevertIcon
+  RevertIcon,
+  EditIcon
 } from '../components/icons';
 
 
@@ -65,6 +71,61 @@ class PipelinePage extends Component {
     this.props.pipelineConfigUpdate(this.props.pipeline.id, name, value)
   };
 
+  handleTitleHover = () => {
+    this.setState(this.toggleTitleHoverState);
+  }
+
+  handleTitleClick = () => {
+    this.setState({
+      isTitleEditing: true
+    });
+  }
+
+  handleTitleSaveClick = () => {
+    const name = this.title.value
+    this.props.pipelineNameUpdate(this.props.pipeline.id, name)
+    this.setState({
+      isTitleEditing: false
+    });
+  }
+
+  toggleTitleHoverState(state) {
+    return {
+      isTitleHovering: !state.isTitleHovering,
+    };
+  }
+
+  renderTitle(pipeline) {
+    return this.state.isTitleEditing ? (
+      <React.Fragment>
+        <TextField
+          label="Pipeline Name"
+          defaultValue={pipeline.name}
+          inputRef={(input) => { this.title = input; }}
+          margin="none" variant="outlined"
+          helperText=''
+          style={{
+            marginTop: 0,
+            marginBottom: 0
+          }}
+        />
+        <IconButton onClick={this.handleTitleSaveClick}>
+          <SaveIcon />
+        </IconButton>
+      </React.Fragment>
+    ) : (
+      <div
+        onMouseEnter={this.handleTitleHover}
+        onMouseLeave={this.handleTitleHover}
+        onClick={this.handleTitleClick}
+        style={{
+          cursor: 'pointer',
+          padding: '12.5px 0' // esoteric number
+        }}
+      >{ pipeline.name }</div>
+    )
+  }
+
   render() {
     const { classes, pipeline } = this.props
 
@@ -88,7 +149,7 @@ class PipelinePage extends Component {
     )
 
     return (
-      <Box title={pipeline.name}
+      <Box title={this.renderTitle(pipeline)}
            avatar={<PipelineIcon />}
            tools={tools}>
         {
@@ -111,6 +172,7 @@ const mapStateToProps = (state, props) => {
 
 const mapDispatchToProps = {
   pipelineConfigUpdate,
+  pipelineNameUpdate,
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(withStyles(PipelinePage.styles)(PipelinePage));

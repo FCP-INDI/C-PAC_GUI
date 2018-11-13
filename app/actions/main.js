@@ -31,6 +31,16 @@ export function pipelineConfigUpdate(pipeline, key, value) {
   };
 }
 
+export const PIPELINE_NAME_UPDATE = 'PIPELINE_NAME_UPDATE';
+export const PIPELINE_NAME_UPDATE_DONE = 'PIPELINE_NAME_UPDATE_DONE';
+
+export function pipelineNameUpdate(pipeline, name) {
+  return {
+    type: PIPELINE_NAME_UPDATE,
+    pipeline, name
+  };
+}
+
 export const ENVIRONMENT_CHECK = 'ENVIRONMENT_CHECK';
 export const ENVIRONMENT_SERVER_CHECK = 'ENVIRONMENT_SERVER_CHECK';
 export const ENVIRONMENT_CHECKING = 'ENVIRONMENT_CHECKING';

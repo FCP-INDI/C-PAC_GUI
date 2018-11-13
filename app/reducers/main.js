@@ -7,6 +7,7 @@ import {
   PROJECT_OPEN,
 
   PIPELINE_CONFIG_UPDATE_KEY,
+  PIPELINE_NAME_UPDATE
 } from '../actions/main'
 
 export default function main(state, action) {
@@ -51,8 +52,16 @@ export default function main(state, action) {
         return { ...state, project: undefined }
       }
 
+    case PIPELINE_NAME_UPDATE: {
+      const { pipeline: id, name } = action
+      const pipeline = state.config.pipelines.find((p) => p.id == id)
 
-    case PIPELINE_CONFIG_UPDATE_KEY:
+      pipeline.name = name
+
+      return state
+    }
+
+    case PIPELINE_CONFIG_UPDATE_KEY: {
       const { pipeline: id, key, value } = action
       const pipeline = state.config.pipelines.find((p) => p.id == id)
 
@@ -68,6 +77,7 @@ export default function main(state, action) {
       obj[path[i]] = value
 
       return state
+    }
 
     default:
       return state

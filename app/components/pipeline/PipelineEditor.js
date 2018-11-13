@@ -38,6 +38,15 @@ class PipelineEditor extends Component {
     tab: 0,
   };
 
+  constructor(props) {
+    super(props)
+    this.state.configuration = props.configuration
+  }
+
+  shouldComponentUpdate(nextProps, nextState) {
+    return true
+  }
+
   handleTabChange = (event, tab) => {
     this.setState({ tab });
   };
@@ -48,8 +57,8 @@ class PipelineEditor extends Component {
   };
 
   render() {
-    const { classes, configuration, onChange } = this.props
-    const { tab } = this.state
+    const { classes, onChange } = this.props
+    const { tab, configuration } = this.state
 
     return (
       <React.Fragment>
@@ -58,8 +67,7 @@ class PipelineEditor extends Component {
           onChange={this.handleTabChange}
           indicatorColor="primary"
           textColor="primary"
-          scrollable
-          scrollButtons="auto"
+          centered
         >
           <Tab label="Anatomical" />
           <Tab label="Functional" />

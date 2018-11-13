@@ -40,6 +40,7 @@ function* loadConfig (action) {
             cpac_version: '1.3.0',
             configuration: {
               anatomical: {
+                enabled: true,
                 registration: {
                   resolution: 1,
                   brain_template: '${environment.paths.fsl_dir}/data/standard/MNI152_T1_${pipeline.anatomical.registration.resolution}mm_brain.nii.gz',
@@ -65,8 +66,13 @@ function* loadConfig (action) {
                 }
               },
               functional: {
+                enabled: true,
                 slice_timing_correction: {
                   enabled: true,
+                  pattern: 'header',
+                  repetition_time: '',
+                  first_timepoint: '',
+                  last_timepoint: '',
                 },
                 distortion_correction: {
                   enabled: true,
@@ -94,6 +100,7 @@ function* loadConfig (action) {
                 }
               },
               derivatives: {
+                enabled: true,
                 timeseries_extraction: {
                   enabled: true,
                   masks: [

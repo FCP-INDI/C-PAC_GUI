@@ -13,7 +13,7 @@ class SliceTimingCorrection extends Component {
   });
 
   render() {
-    const { classes, configuration, onChange } = this.props
+    const { classes, configuration, onChange, onValueChange } = this.props
 
     return (
       <Grid container>
@@ -22,10 +22,11 @@ class SliceTimingCorrection extends Component {
           <TextField
             select
             label="Slice Acquisition Pattern"
+            name="functional.slice_timing_correction.pattern"
+            value={configuration.functional.slice_timing_correction.pattern}
+            onChange={onValueChange}
             fullWidth={true} margin="normal" variant="outlined"
-            className={classes.textField}
-            value={"header"}
-            helperText=''
+            className={classes.textField} helperText=''
           >
             <MenuItem value={"header"}>Use NIFTI header</MenuItem>
             <MenuItem value={"alt+z"}>alt+z</MenuItem>
@@ -39,6 +40,9 @@ class SliceTimingCorrection extends Component {
           <TextField
             label="Repetition Time (TR)"
             fullWidth={true} margin="normal" variant="outlined"
+            name="functional.slice_timing_correction.repetition_time"
+            value={configuration.functional.slice_timing_correction.repetition_time}
+            onChange={onValueChange}
             InputProps={{
               endAdornment: <InputAdornment position="end">sec</InputAdornment>,
             }}
@@ -47,13 +51,18 @@ class SliceTimingCorrection extends Component {
 
           <TextField
             label="First Timepoint"
+            name="functional.slice_timing_correction.first_timepoint"
+            value={configuration.functional.slice_timing_correction.first_timepoint}
+            onChange={onValueChange}
             fullWidth={true} margin="normal" variant="outlined"
-            value={0}
             helperText=''
           />
 
           <TextField
             label="Last Timepoint"
+            name="functional.slice_timing_correction.last_timepoint"
+            value={configuration.functional.slice_timing_correction.last_timepoint}
+            onChange={onValueChange}
             fullWidth={true} margin="normal" variant="outlined"
             helperText=''
           />

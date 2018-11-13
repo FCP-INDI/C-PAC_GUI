@@ -13,14 +13,37 @@ import TextField from '@material-ui/core/TextField';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import Switch from '@material-ui/core/Switch';
 
+import getter from 'lodash.get';
+import setter from 'lodash.set';
+
+import { Map, updateIn } from 'immutable';
+
 
 class Registration extends Component {
 
   static styles = theme => ({
   });
 
+  constructor(props) {
+    super(props)
+    this.state = {
+      configuration: Map(props.configuration)
+    }
+  }
+
+  handleValueChange = (event) => {
+    const name = event.target.name
+    const value = event.target.type && event.target.type == "checkbox" ?
+                    event.target.checked :
+                    event.target.value
+
+    const { configuration } = this.state
+    this.setState({ configuration: configuration.setIn(name.split('.'), value) })
+  };
+
   render() {
-    const { classes, configuration, onChange, onValueChange } = this.props
+    const { classes } = this.props
+    const { configuration } = this.state
 
     return (
       <Grid container spacing={8}>
@@ -30,8 +53,8 @@ class Registration extends Component {
               <TextField label="Resolution"
                          fullWidth={true} margin="normal" variant="outlined"
                          name="anatomical.registration.resolution"
-                         value={configuration.anatomical.registration.resolution}
-                         onChange={onValueChange}
+                         value={configuration.getIn("anatomical.registration.resolution".split("."))}
+                         onChange={this.handleValueChange}
                          InputProps={{
                            endAdornment: <InputAdornment position="end">mm</InputAdornment>,
                          }}
@@ -46,15 +69,15 @@ class Registration extends Component {
             <Grid item xs={6}>
               <TextField label="Brain" fullWidth={true} margin="normal" variant="outlined"
                          name="anatomical.registration.brain_template"
-                         value={configuration.anatomical.registration.brain_template}
-                         onChange={onValueChange}
+                         value={configuration.getIn("anatomical.registration.brain_template".split("."))}
+                         onChange={this.handleValueChange}
                          helperText='Template to be used during registration. It is not necessary to change this path unless you intend to use a non-standard template.' />
             </Grid>
             <Grid item xs={6}>
               <TextField label="Skull" fullWidth={true} margin="normal" variant="outlined"
                          name="anatomical.registration.skull_template"
-                         value={configuration.anatomical.registration.skull_template}
-                         onChange={onValueChange}
+                         value={configuration.getIn("anatomical.registration.skull_template".split("."))}
+                         onChange={this.handleValueChange}
                          helperText='Template to be used during registration. It is not necessary to change this path unless you intend to use a non-standard template.'/>
             </Grid>
           </Grid>
@@ -69,8 +92,8 @@ class Registration extends Component {
                   control={
                     <Switch
                       name="anatomical.registration.methods.ants.enabled"
-                      checked={configuration.anatomical.registration.methods.ants.enabled}
-                      onChange={onValueChange}
+                      checked={configuration.getIn("anatomical.registration.methods.ants.enabled".split("."))}
+                      onChange={this.handleValueChange}
                       color="primary"
                     />
                   }
@@ -82,8 +105,8 @@ class Registration extends Component {
                   control={
                     <Switch
                       name="anatomical.registration.methods.fnirt.enabled"
-                      checked={configuration.anatomical.registration.methods.fnirt.enabled}
-                      onChange={onValueChange}
+                      checked={configuration.getIn("anatomical.registration.methods.fnirt.enabled".split("."))}
+                      onChange={this.handleValueChange}
                       color="primary"
                     />
                   }
@@ -91,29 +114,29 @@ class Registration extends Component {
               </FormGroup>
             </Grid>
             <Grid item xs={6}>
-              { configuration.anatomical.registration.methods.fnirt.enabled ?
+              { configuration.getIn("anatomical.registration.methods.fnirt.enabled".split(".")) ?
                 <TextField label="FNIRT Configuration" fullWidth={true} margin="normal" variant="outlined"
                            name="anatomical.registration.methods.fnirt.configuration.config_file"
-                           value={configuration.anatomical.registration.methods.fnirt.configuration.config_file}
-                           onChange={onValueChange}
+                           value={configuration.getIn("anatomical.registration.methods.fnirt.configuration.config_file".split("."))}
+                           onChange={this.handleValueChange}
                            helperText='Configuration file to be used by FSL to set FNIRT parameters. It is not necessary to change this path unless you intend to use custom FNIRT parameters or a non-standard template.' /> : null }
 
-              { configuration.anatomical.registration.methods.fnirt.enabled ?
+              { configuration.getIn("anatomical.registration.methods.fnirt.enabled".split(".")) ?
                 <TextField label="FNIRT Reference Mask" fullWidth={true} margin="normal" variant="outlined"
                            name="anatomical.registration.methods.fnirt.configuration.reference_mask"
-                           value={configuration.anatomical.registration.methods.fnirt.configuration.reference_mask}
-                           onChange={onValueChange}
+                           value={configuration.getIn("anatomical.registration.methods.fnirt.configuration.reference_mask".split("."))}
+                           onChange={this.handleValueChange}
                            helperText='A reference mask to be used by FNIRT' /> : null }
 
-              { configuration.anatomical.registration.methods.ants.enabled ?
+              { configuration.getIn("anatomical.registration.methods.ants.enabled".split(".")) ?
                 <FormControl>
                   <FormControlLabel
                     label="ANTS Skull-on Transform"
                     control={
                       <Switch
                         name="anatomical.registration.methods.ants.configuration.skull_on"
-                        checked={configuration.anatomical.registration.methods.ants.configuration.skull_on}
-                        onChange={onValueChange}
+                        checked={configuration.getIn("anatomical.registration.methods.ants.configuration.skull_on".split("."))}
+                        onChange={this.handleValueChange}
                       />
                     }
                   />

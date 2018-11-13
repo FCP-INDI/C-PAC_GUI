@@ -46,7 +46,8 @@ class Derivatives extends Component {
             name={name}
             checked={value}
             onChange={onValueChange}
-            color="primary"/>
+            color="primary"
+          />
           <Typography variant="h6" className={classes.sectionTitle}>
             { title }
           </Typography>
