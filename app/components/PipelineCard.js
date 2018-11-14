@@ -97,13 +97,4 @@ class PipelineCard extends Component {
   }
 }
 
-const mapStateToProps = (state, ownProps) => ({
-  pipeline: state.main.config.pipelines.find((p) => p.id == ownProps.id),
-})
-
-const mapDispatchToProps = {
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(
-  withRouter(withStyles(PipelineCard.styles)(PipelineCard))
-)
+export default withRouter(withStyles(PipelineCard.styles)(PipelineCard))

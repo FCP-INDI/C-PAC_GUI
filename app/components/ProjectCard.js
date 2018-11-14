@@ -96,13 +96,4 @@ class ProjectCard extends Component {
   }
 }
 
-const mapStateToProps = (state, ownProps) => ({
-  project: state.main.config.projects.find((p) => p.id == ownProps.id),
-})
-
-const mapDispatchToProps = {
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(
-  withRouter(withStyles(ProjectCard.styles)(ProjectCard))
-)
+export default withRouter(withStyles(ProjectCard.styles)(ProjectCard))

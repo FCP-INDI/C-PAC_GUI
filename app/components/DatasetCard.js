@@ -76,7 +76,7 @@ class DatasetCard extends Component {
               <ListItemIcon>
                 <ParticipantIcon />
               </ListItemIcon>
-              <ListItemText primary={`${dataset.summary.participants} participants`} />
+              <ListItemText primary={`${dataset.settings.format}`} />
             </ListItem>
           </List>
         </CardContent>
@@ -90,13 +90,4 @@ class DatasetCard extends Component {
   }
 }
 
-const mapStateToProps = (state, ownProps) => ({
-  dataset: state.main.config.datasets.find((p) => p.id == ownProps.id),
-})
-
-const mapDispatchToProps = {
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(
-  withRouter(withStyles(DatasetCard.styles)(DatasetCard))
-)
+export default withRouter(withStyles(DatasetCard.styles)(DatasetCard))

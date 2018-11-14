@@ -46,7 +46,7 @@ class Home extends Component {
               {
                 projects && projects.map((project) => (
                   <Grid item key={project.id}>
-                    <ProjectCard id={project.id} />
+                    <ProjectCard project={project} />
                   </Grid>
                 ))
               }
@@ -85,7 +85,7 @@ class Home extends Component {
                   {
                     datasets && datasets.map((dataset) => (
                       <Grid item key={dataset.id}>
-                        <DatasetCard id={dataset.id} />
+                        <DatasetCard dataset={dataset} />
                       </Grid>
                     ))
                   }
@@ -99,7 +99,7 @@ class Home extends Component {
                   {
                     pipelines && pipelines.map((pipeline) => (
                       <Grid item key={pipeline.id}>
-                        <PipelineCard id={pipeline.id} />
+                        <PipelineCard pipeline={pipeline} />
                       </Grid>
                     ))
                   }

@@ -17,6 +17,23 @@ function* loadConfig (action) {
         summary: {
           participants: 1112,
           sites: 17,
+        },
+        settings: {
+          format: 'BIDS',
+          base_directory: '',
+          aws_credential_path: '',
+          anatomical_path_template: '',
+          functional_path_template: '',
+          anatomical_scan: '',
+          scan_parameters_path: '',
+          brain_mask_path: '',
+          fieldmap_phase_path_template: '',
+          fieldmap_magnitude_path_template: '',
+          subjects: {
+            inclusion: [],
+            exclusion: [],
+          },
+          sites: [],
         }
       },
 
@@ -26,6 +43,23 @@ function* loadConfig (action) {
         summary: {
           participants: 1114,
           sites: 19,
+        },
+        settings: {
+          format: 'BIDS',
+          base_directory: '',
+          aws_credential_path: '',
+          anatomical_path_template: '',
+          functional_path_template: '',
+          anatomical_scan: '',
+          scan_parameters_path: '',
+          brain_mask_path: '',
+          fieldmap_phase_path_template: '',
+          fieldmap_magnitude_path_template: '',
+          subjects: {
+            inclusion: [],
+            exclusion: [],
+          },
+          sites: [],
         }
       }
     ],
