@@ -28,7 +28,9 @@ class Smoothing extends Component {
         <Grid item sm={12}>
           <TextField
             label="Smoothing kernel FWHM"
-            value={4}
+            name="functional.smoothing.kernel_fwhm"
+            value={configuration.getIn(["functional", "smoothing", "kernel_fwhm"])}
+            onChange={onChange}
             fullWidth={true} margin="normal" variant="outlined"
             helperText=''
             InputProps={{
@@ -41,9 +43,9 @@ class Smoothing extends Component {
                 label="Perform smoothing before z-scoring"
                 control={
                   <Switch
-                    name="anatomical.skull_stripping.methods.bet.enabled"
-                    checked={true}
-                    onChange={this.handleChange}
+                    name="functional.smoothing.before_zscore"
+                    checked={configuration.getIn(["functional", "smoothing", "before_zscore"])}
+                    onChange={onChange}
                     color="primary"
                   />
                 }
@@ -54,9 +56,9 @@ class Smoothing extends Component {
                 label="Apply z-score standarization to derivatives"
                 control={
                   <Switch
-                    name="anatomical.skull_stripping.methods.bet.enabled"
-                    checked={true}
-                    onChange={this.handleChange}
+                    name="functional.smoothing.zscore_derivatives"
+                    checked={configuration.getIn(["functional", "smoothing", "zscore_derivatives"])}
+                    onChange={onChange}
                     color="primary"
                   />
                 }

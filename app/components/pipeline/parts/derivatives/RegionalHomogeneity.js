@@ -29,9 +29,11 @@ class RegionalHomogeneity extends Component {
           <TextField
             select
             label="Voxel Cluster size"
+            name="derivatives.reho.cluster_size"
+            value={configuration.getIn(['derivatives', 'reho', 'cluster_size'])}
+            onChange={onChange}
             fullWidth={true} margin="normal" variant="outlined"
             className={classes.textField}
-            value={7}
             helperText=''
           >
             <MenuItem value={7}>7</MenuItem>

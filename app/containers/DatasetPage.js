@@ -9,7 +9,7 @@ import {
 import { withStyles } from '@material-ui/core';
 
 import Grid from '@material-ui/core/Grid';
-import PipelineEditor from '../components/pipeline/PipelineEditor';
+import DatasetSettingsEditor from '../components/dataset/DatasetSettingsEditor';
 import Header, { HeaderText, HeaderAvatar, HeaderTools } from '../components/Header';
 import Content from '../components/Content';
 import Box from '../components/Box';
@@ -24,10 +24,8 @@ import IconButton from '@material-ui/core/IconButton'
 import getter from 'lodash.get';
 import setter from 'lodash.set';
 
-import { Map, fromJS } from 'immutable';
-
 import {
-  PipelineIcon,
+  DatasetIcon,
   SubjectIcon,
   ExpandMoreIcon,
   NavigateNextIcon,
@@ -38,7 +36,7 @@ import {
 } from '../components/icons';
 
 
-class PipelinePage extends Component {
+class DatasetPage extends Component {
 
   static styles = theme => ({
     content: {
@@ -49,35 +47,28 @@ class PipelinePage extends Component {
 
   constructor(props) {
     super(props)
-    const pipeline = this.props.pipeline
+    const dataset = this.props.dataset
     this.state = {
-      configuration: fromJS(pipeline.versions[pipeline.last_version].configuration)
+      settings: dataset.settings
     }
   }
 
-  handleChange = (values) => {
+  handleChange = (name, value) => {
     let configuration = this.state.configuration
 
-    if (values.target) {
-      const name = values.target.name
-      const value = values.target.type && values.target.type == "checkbox" ?
-                      values.target.checked :
-                      values.target.value
-
-      return this.handleChange([[name, value]])
-    }
-
-    for (let [key, value] of values) {
-      if (typeof key == "string") {
-        key = key.split('.')
+    if (!name) {
+      for (let newName in value) {
+        setter(configuration, newName, value[newName]);
       }
-      configuration = configuration.setIn(key, value)
+    } else {
+      setter(configuration, name, value);
     }
+
     this.setState({ configuration })
   }
 
   handleSave = (name, value) => {
-    this.props.pipelineConfigUpdate(this.props.pipeline.id, name, value)
+    this.props.pipelineConfigUpdate(this.props.dataset.id, name, value)
   };
 
   handleTitleHover = () => {
@@ -92,7 +83,7 @@ class PipelinePage extends Component {
 
   handleTitleSaveClick = () => {
     const name = this.title.value
-    this.props.pipelineNameUpdate(this.props.pipeline.id, name)
+    this.props.pipelineNameUpdate(this.props.dataset.id, name)
     this.setState({
       isTitleEditing: false
     });
@@ -104,12 +95,12 @@ class PipelinePage extends Component {
     };
   }
 
-  renderTitle(pipeline) {
+  renderTitle(dataset) {
     return this.state.isTitleEditing ? (
       <React.Fragment>
         <TextField
-          label="Pipeline Name"
-          defaultValue={pipeline.name}
+          label="Dataset Name"
+          defaultValue={dataset.name}
           inputRef={(input) => { this.title = input; }}
           margin="none" variant="outlined"
           helperText=''
@@ -131,14 +122,14 @@ class PipelinePage extends Component {
           cursor: 'pointer',
           padding: '12.5px 0' // esoteric number
         }}
-      >{ pipeline.name }</div>
+      >{ dataset.name }</div>
     )
   }
 
   render() {
-    const { classes, pipeline } = this.props
+    const { classes, dataset } = this.props
 
-    if (!pipeline) {
+    if (!dataset) {
       // @TODO ASH create a 404 page/component
       return "404"
     }
@@ -158,12 +149,12 @@ class PipelinePage extends Component {
     )
 
     return (
-      <Box title={this.renderTitle(pipeline)}
-           avatar={<PipelineIcon />}
+      <Box title={this.renderTitle(dataset)}
+           avatar={<DatasetIcon />}
            tools={tools}>
         {
-          this.state.configuration ?
-          <PipelineEditor configuration={this.state.configuration} onChange={this.handleChange} onSave={this.handleSave} />:
+          this.state.settings ?
+          <DatasetSettingsEditor settings={this.state.settings} onChange={this.handleChange} onSave={this.handleSave} />:
           null
         }
       </Box>
@@ -172,16 +163,16 @@ class PipelinePage extends Component {
 }
 
 const mapStateToProps = (state, props) => {
-  const { match: { params: { pipeline } } } = props
+  const { match: { params: { dataset } } } = props
 
   return {
-    pipeline: state.main.config.pipelines.find((p) => p.id == pipeline)
+    dataset: state.main.config.datasets.find((p) => p.id == dataset)
   }
 }
 
 const mapDispatchToProps = {
-  pipelineConfigUpdate,
-  pipelineNameUpdate,
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(withStyles(PipelinePage.styles)(PipelinePage));
+export default connect(mapStateToProps, mapDispatchToProps)(
+  withStyles(DatasetPage.styles)(DatasetPage)
+);

@@ -23,12 +23,16 @@ class NetworkCentrality extends Component {
   render() {
     const { classes, configuration, onChange } = this.props
 
+    const config = configuration.getIn(['derivatives', 'network_centrality'])
+
     return (
       <Grid container>
         <Grid item sm={12}>
           <TextField
             label="Mask"
-            value={""}
+            name="derivatives.network_centrality.mask"
+            value={config.getIn(['mask'])}
+            onChange={onChange}
             fullWidth={true} margin="normal" variant="outlined"
             helperText=''
           />
@@ -40,9 +44,9 @@ class NetworkCentrality extends Component {
                 label="Binarized"
                 control={
                   <Switch
-                    name="anatomical.skull_stripping.methods.bet.enabled"
-                    checked={true}
-                    onChange={this.handleChange}
+                    name="derivatives.network_centrality.degree_centrality.binarized"
+                    checked={config.getIn(['degree_centrality', 'binarized'])}
+                    onChange={onChange}
                     color="primary"
                   />
                 }
@@ -53,9 +57,9 @@ class NetworkCentrality extends Component {
                 label="Weighted"
                 control={
                   <Switch
-                    name="anatomical.skull_stripping.methods.afni.enabled"
-                    checked={false}
-                    onChange={this.handleChange}
+                    name="derivatives.network_centrality.degree_centrality.weighted"
+                    checked={config.getIn(['degree_centrality', 'weighted'])}
+                    onChange={onChange}
                     color="primary"
                   />
                 }
@@ -66,9 +70,11 @@ class NetworkCentrality extends Component {
           <TextField
             select
             label="Degree Centrality Threshold Type"
+            name="derivatives.network_centrality.degree_centrality.threshold_type"
+            value={config.getIn(['degree_centrality', 'threshold_type'])}
+            onChange={onChange}
             fullWidth={true} margin="normal" variant="outlined"
             className={classes.textField}
-            value={"significance"}
             helperText=''
           >
             <MenuItem value={"significance"}>Significance</MenuItem>
@@ -78,7 +84,9 @@ class NetworkCentrality extends Component {
 
           <TextField
             label="Degree Centrality Threshold"
-            value={"0.001"}
+            name="derivatives.network_centrality.degree_centrality.threshold"
+            value={config.getIn(['degree_centrality', 'threshold'])}
+            onChange={onChange}
             fullWidth={true} margin="normal" variant="outlined"
             helperText=''
           />
@@ -90,9 +98,9 @@ class NetworkCentrality extends Component {
                 label="Binarized"
                 control={
                   <Switch
-                    name="anatomical.skull_stripping.methods.bet.enabled"
-                    checked={true}
-                    onChange={this.handleChange}
+                    name="derivatives.network_centrality.eigenvector.binarized"
+                    checked={config.getIn(['eigenvector', 'binarized'])}
+                    onChange={onChange}
                     color="primary"
                   />
                 }
@@ -103,9 +111,9 @@ class NetworkCentrality extends Component {
                 label="Weighted"
                 control={
                   <Switch
-                    name="anatomical.skull_stripping.methods.afni.enabled"
-                    checked={false}
-                    onChange={this.handleChange}
+                    name="derivatives.network_centrality.eigenvector.weighted"
+                    checked={config.getIn(['eigenvector', 'weighted'])}
+                    onChange={onChange}
                     color="primary"
                   />
                 }
@@ -116,9 +124,11 @@ class NetworkCentrality extends Component {
           <TextField
             select
             label="Eigenvector Threshold Type"
+            name="derivatives.network_centrality.eigenvector.threshold_type"
+            value={config.getIn(['eigenvector', 'threshold_type'])}
+            onChange={onChange}
             fullWidth={true} margin="normal" variant="outlined"
             className={classes.textField}
-            value={"significance"}
             helperText=''
           >
             <MenuItem value={"significance"}>Significance</MenuItem>
@@ -128,7 +138,9 @@ class NetworkCentrality extends Component {
 
           <TextField
             label="Eigenvector Threshold"
-            value={"0.001"}
+            name="derivatives.network_centrality.eigenvector.threshold"
+            value={config.getIn(['eigenvector', 'threshold'])}
+            onChange={onChange}
             fullWidth={true} margin="normal" variant="outlined"
             helperText=''
           />
@@ -140,9 +152,9 @@ class NetworkCentrality extends Component {
                 label="Binarized"
                 control={
                   <Switch
-                    name="anatomical.skull_stripping.methods.bet.enabled"
-                    checked={true}
-                    onChange={this.handleChange}
+                    name="derivatives.network_centrality.local_connectivity_density.binarized"
+                    checked={config.getIn(['local_connectivity_density', 'binarized'])}
+                    onChange={onChange}
                     color="primary"
                   />
                 }
@@ -153,9 +165,9 @@ class NetworkCentrality extends Component {
                 label="Weighted"
                 control={
                   <Switch
-                    name="anatomical.skull_stripping.methods.afni.enabled"
-                    checked={false}
-                    onChange={this.handleChange}
+                    name="derivatives.network_centrality.local_connectivity_density.weighted"
+                    checked={config.getIn(['local_connectivity_density', 'weighted'])}
+                    onChange={onChange}
                     color="primary"
                   />
                 }
@@ -166,9 +178,11 @@ class NetworkCentrality extends Component {
           <TextField
             select
             label="Local Functional Connectivity Density Threshold Type"
+            name="derivatives.network_centrality.local_connectivity_density.threshold_type"
+            value={config.getIn(['local_connectivity_density', 'threshold_type'])}
+            onChange={onChange}
             fullWidth={true} margin="normal" variant="outlined"
             className={classes.textField}
-            value={"significance"}
             helperText=''
           >
             <MenuItem value={"significance"}>Significance</MenuItem>
@@ -178,7 +192,9 @@ class NetworkCentrality extends Component {
 
           <TextField
             label="Local Functional Connectivity Density Threshold"
-            value={"0.001"}
+            name="derivatives.network_centrality.local_connectivity_density.threshold"
+            value={config.getIn(['local_connectivity_density', 'threshold'])}
+            onChange={onChange}
             fullWidth={true} margin="normal" variant="outlined"
             helperText=''
           />

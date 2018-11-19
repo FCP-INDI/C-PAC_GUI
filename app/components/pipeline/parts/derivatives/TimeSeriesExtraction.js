@@ -28,6 +28,7 @@ import IconButton from '@material-ui/core/IconButton';
 import Button from '@material-ui/core/Button';
 import DeleteIcon from '@material-ui/icons/Delete';
 import AddIcon from '@material-ui/icons/Add';
+import { fromJS } from 'immutable';
 
 
 class TimeSeriesExtraction extends Component {
@@ -37,30 +38,41 @@ class TimeSeriesExtraction extends Component {
     footer: { textAlign: 'right', padding: theme.spacing.unit * 2 }
   });
 
-  handleAdd = (event) => {
-
+  addMask = (event) => {
     const { configuration, onChange } = this.props
+    const next = configuration.getIn(['derivatives', 'timeseries_extraction', 'masks']).size
 
-    const next = configuration.derivatives.timeseries_extraction.masks.length
+    onChange([
+      [
+        `derivatives.timeseries_extraction.masks.${next}`,
+        fromJS({
+          mask: '',
+          average: false,
+          voxel: false,
+          spatial_regression: false,
+          dual_regression: false,
+          pearson_correlation: false,
+          partial_correlation: false,
+        })
+      ]
+    ])
+  }
 
-    onChange(`derivatives.timeseries_extraction.masks[${next}]`,{
-      mask: '',
-      average: false,
-      voxel: false,
-      spatial_regression: false,
-      dual_regression: false,
-      pearson_correlation: false,
-      partial_correlation: false,
-    })
+  removeMask = (i) => {
+    const { classes, configuration, onChange } = this.props
+
+    const masks = configuration.getIn(['derivatives', 'timeseries_extraction', 'masks']).delete(i)
+
+    onChange([
+      [['derivatives', 'timeseries_extraction', 'masks'], masks]
+    ])
+
   }
 
   render() {
-    const { classes, configuration, onChange, onValueChange } = this.props
+    const { classes, configuration, onChange } = this.props
 
-    // "derivatives.timeseries_extraction.masks[0].enabled",
-    // configuration.derivatives.timeseries_extraction.masks,
-
-    const config = configuration.derivatives.timeseries_extraction
+    const config = configuration.getIn(['derivatives', 'timeseries_extraction'])
 
     return (
       <Grid container>
@@ -81,55 +93,55 @@ class TimeSeriesExtraction extends Component {
               </TableHead>
               <TableBody>
               {
-                config.masks.map((mask, i) => (
+                config.get('masks').map((mask, i) => (
                 <TableRow key={i}>
                   <TableCell padding="checkbox">
-                    <IconButton className={classes.button} aria-label="Delete">
+                    <IconButton className={classes.button} onClick={() => this.removeMask(i)}>
                       <DeleteIcon />
                     </IconButton>
                   </TableCell>
                   <TableCell>
                     <TextField
                       fullWidth={true}
-                      name={`derivatives.timeseries_extraction.masks[${i}].mask`}
-                      onChange={onValueChange}
-                      value={mask.mask}
+                      name={`derivatives.timeseries_extraction.masks.${i}.mask`}
+                      onChange={onChange}
+                      value={mask.get('mask')}
                       helperText=''
                       />
                   </TableCell>
                   <TableCell padding="checkbox">
                     <Checkbox
-                      name={`derivatives.timeseries_extraction.masks[${i}].average`}
-                      onChange={onValueChange}
-                      checked={mask.average}
+                      name={`derivatives.timeseries_extraction.masks.${i}.average`}
+                      onChange={onChange}
+                      checked={mask.get('average')}
                     />
                   </TableCell>
                   <TableCell padding="checkbox">
                     <Checkbox
-                      name={`derivatives.timeseries_extraction.masks[${i}].voxel`}
-                      onChange={onValueChange}
-                      checked={mask.voxel}
+                      name={`derivatives.timeseries_extraction.masks.${i}.voxel`}
+                      onChange={onChange}
+                      checked={mask.get('voxel')}
                     />
                   </TableCell>
                   <TableCell padding="checkbox">
                     <Checkbox
-                      name={`derivatives.timeseries_extraction.masks[${i}].spatial_regression`}
-                      onChange={onValueChange}
-                      checked={mask.spatial_regression}
+                      name={`derivatives.timeseries_extraction.masks.${i}.spatial_regression`}
+                      onChange={onChange}
+                      checked={mask.get('spatial_regression')}
                     />
                   </TableCell>
                   <TableCell padding="checkbox">
                     <Checkbox
-                      name={`derivatives.timeseries_extraction.masks[${i}].pearson_correlation`}
-                      onChange={onValueChange}
-                      checked={mask.pearson_correlation}
+                      name={`derivatives.timeseries_extraction.masks.${i}.pearson_correlation`}
+                      onChange={onChange}
+                      checked={mask.get('pearson_correlation')}
                     />
                   </TableCell>
                   <TableCell padding="checkbox">
                     <Checkbox
-                      name={`derivatives.timeseries_extraction.masks[${i}].partial_correlation`}
-                      onChange={onValueChange}
-                      checked={mask.partial_correlation}
+                      name={`derivatives.timeseries_extraction.masks.${i}.partial_correlation`}
+                      onChange={onChange}
+                      checked={mask.get('partial_correlation')}
                     />
                   </TableCell>
                 </TableRow>
@@ -138,7 +150,7 @@ class TimeSeriesExtraction extends Component {
               <TableFooter>
                 <TableRow >
                   <TableCell padding="checkbox" colSpan={7} className={classes.footer}>
-                    <Button  variant="fab" mini aria-label="Add new ROI" onClick={this.handleAdd}>
+                    <Button  variant="fab" mini aria-label="Add new ROI" onClick={this.addMask}>
                       <AddIcon />
                     </Button>
                   </TableCell>
@@ -154,9 +166,9 @@ class TimeSeriesExtraction extends Component {
                 label="CSV"
                 control={
                   <Switch
-                    name="anatomical.skull_stripping.methods.bet.enabled"
-                    checked={true}
-                    onChange={this.handleChange}
+                    name="derivatives.timeseries_extraction.masks.outputs.csv"
+                    checked={config.getIn(['outputs', 'csv'])}
+                    onChange={onChange}
                     color="primary"
                   />
                 }
@@ -167,9 +179,9 @@ class TimeSeriesExtraction extends Component {
                 label="Numpy"
                 control={
                   <Switch
-                    name="anatomical.skull_stripping.methods.afni.enabled"
-                    checked={false}
-                    onChange={this.handleChange}
+                    name="derivatives.timeseries_extraction.outputs.numpy"
+                    checked={config.getIn(['outputs', 'numpy'])}
+                    onChange={onChange}
                     color="primary"
                   />
                 }

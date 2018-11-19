@@ -36,8 +36,9 @@ class Derivatives extends Component {
     // })
   };
 
-  renderSection(title, name, value, component) {
-    const { classes, configuration, onChange, onValueChange } = this.props
+  renderSection(title, name, component) {
+    const { classes, configuration, onChange } = this.props
+    const value = configuration.getIn(name.split("."))
 
     return (
       <ExpansionPanel expanded={value} onChange={this.handleSection(name)}>
@@ -45,7 +46,6 @@ class Derivatives extends Component {
           <Switch
             name={name}
             checked={value}
-            onChange={onValueChange}
             color="primary"
           />
           <Typography variant="h6" className={classes.sectionTitle}>
@@ -57,7 +57,6 @@ class Derivatives extends Component {
             React.createElement(component, {
               configuration,
               onChange,
-              onValueChange
             })
           }
         </ExpansionPanelDetails>
@@ -75,7 +74,6 @@ class Derivatives extends Component {
           this.renderSection(
             "Time Series Extraction",
             "derivatives.timeseries_extraction.enabled",
-            configuration.derivatives.timeseries_extraction.enabled,
             TimeSeriesExtraction
           )
         }
@@ -84,7 +82,6 @@ class Derivatives extends Component {
           this.renderSection(
             "Seed-based Correlation",
             "derivatives.sca.enabled",
-            configuration.derivatives.sca.enabled,
             SeedBasedCorrelation
           )
         }
@@ -93,7 +90,6 @@ class Derivatives extends Component {
           this.renderSection(
             "ALFF / f-ALFF",
             "derivatives.alff.enabled",
-            configuration.derivatives.alff.enabled,
             ALFF
           )
         }
@@ -102,7 +98,6 @@ class Derivatives extends Component {
           this.renderSection(
             "Network Centrality",
             "derivatives.network_centrality.enabled",
-            configuration.derivatives.network_centrality.enabled,
             NetworkCentrality
           )
         }
@@ -111,7 +106,6 @@ class Derivatives extends Component {
           this.renderSection(
             "Voxel-Mirrored Homotopic Connectivity (VMHC)",
             "derivatives.vhmc.enabled",
-            configuration.derivatives.vhmc.enabled,
             VHMC
           )
         }
@@ -120,7 +114,6 @@ class Derivatives extends Component {
           this.renderSection(
             "Regional Homogeneity",
             "derivatives.reho.enabled",
-            configuration.derivatives.reho.enabled,
             RegionalHomogeneity
           )
         }

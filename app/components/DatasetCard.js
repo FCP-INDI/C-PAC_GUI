@@ -62,6 +62,11 @@ class DatasetCard extends Component {
   render() {
     const { classes, raised = false, dataset } = this.props
 
+    const labels = {
+      bids: 'BIDS',
+      custom: 'Custom'
+    }
+
     return (
       <Card className={classes.card} raised={raised}>
         <CardHeader
@@ -76,7 +81,7 @@ class DatasetCard extends Component {
               <ListItemIcon>
                 <ParticipantIcon />
               </ListItemIcon>
-              <ListItemText primary={`${dataset.settings.format}`} />
+              <ListItemText primary={`${labels[dataset.settings.format]}`} />
             </ListItem>
           </List>
         </CardContent>

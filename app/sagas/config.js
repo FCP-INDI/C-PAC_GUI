@@ -19,8 +19,8 @@ function* loadConfig (action) {
           sites: 17,
         },
         settings: {
-          format: 'BIDS',
-          base_directory: '',
+          format: 'bids',
+          base_directory: 's3://test-bucket/adhd',
           aws_credential_path: '',
           anatomical_path_template: '',
           functional_path_template: '',
@@ -45,7 +45,7 @@ function* loadConfig (action) {
           sites: 19,
         },
         settings: {
-          format: 'BIDS',
+          format: 'bids',
           base_directory: '',
           aws_credential_path: '',
           anatomical_path_template: '',
@@ -110,27 +110,73 @@ function* loadConfig (action) {
                 },
                 distortion_correction: {
                   enabled: true,
+                  skull_stripping: 'afni',
+                  threshold: 0.6,
+                  delta_te: 2.46,
+                  dwell_time: 0.0005,
+                  dwell_to_assymetric_ratio: 0.93902439,
+                  phase_encoding_direction: 'x',
                 },
                 anatomical_registration: {
                   enabled: true,
+                  bb_registration: false,
+                  bb_registration_scheduler: '/usr/share/fsl/5.0/etc/flirtsch/bbr.sch',
+                  registration_input: 'mean',
+                  functional_volume: 0,
+                  functional_masking: {
+                    bet: false,
+                    afni: false,
+                  },
                 },
                 template_registration: {
                   enabled: true,
+                  functional_resolution: 3,
+                  derivative_resolution: 3,
+                  brain_template: '',
+                  skull_template: '',
+                  identity_matrix: '',
+
                 },
                 nuisance_regression: {
                   enabled: true,
+                  lateral_ventricles_mask: '/usr/share/fsl/5.0/data/atlases/HarvardOxford/HarvardOxford-lateral-ventricles-thr25-2mm.nii.gz',
+                  compcor_components: 5,
+                  friston_motion_regressors: true,
+                  spike_denoising: {
+                    no_denoising: true,
+                    despiking: false,
+                    scrubbing: false,
+                  },
+                  fd_calculation: 'jenkinson',
+                  fd_threshold: 0.2,
+                  pre_volumes: 1,
+                  post_volumes: 1,
                 },
                 median_angle_correction: {
                   enabled: true,
+                  target_angle: 90
                 },
                 temporal_filtering: {
                   enabled: true,
+                  filters: [
+                    {
+                      low: 0.010,
+                      high: 0.100
+                    },
+                    {
+                      low: 0.020,
+                      high: 0.200
+                    },
+                  ]
                 },
                 aroma: {
                   enabled: true,
                 },
                 smoothing: {
                   enabled: true,
+                  kernel_fwhm: 4,
+                  before_zscore: false,
+                  zscore_derivatives: false,
                 }
               },
               derivatives: {
@@ -156,7 +202,11 @@ function* loadConfig (action) {
                       pearson_correlation: true,
                       partial_correlation: false,
                     }
-                  ]
+                  ],
+                  outputs: {
+                    csv: true,
+                    numpy: true,
+                  }
                 },
                 sca: {
                   enabled: true,
@@ -168,19 +218,48 @@ function* loadConfig (action) {
                       dual_regression: true,
                       multiple_regression: true,
                     }
-                  ]
+                  ],
+                  normalize: false,
                 },
                 vhmc: {
                   enabled: true,
+                  symmetric_brain: '$FSLDIR/data/standard/MNI152_T1_${resolution_for_anat}_brain_symmetric.nii.gz',
+                  symmetric_skull: '$FSLDIR/data/standard/MNI152_T1_${resolution_for_anat}_symmetric.nii.gz',
+                  dilated_symmetric_brain: '$FSLDIR/data/standard/MNI152_T1_${resolution_for_anat}_brain_mask_symmetric_dil.nii.gz',
+                  flirt_configuration_file: '$FSLDIR/etc/flirtsch/T1_2_MNI152_2mm.cnf',
                 },
                 alff: {
                   enabled: true,
+                  cutoff: {
+                    low: 0.01,
+                    high: 0.1,
+                  }
                 },
                 reho: {
                   enabled: true,
+                  cluster_size: 7,
                 },
                 network_centrality: {
                   enabled: true,
+                  mask: '',
+                  degree_centrality: {
+                    binarized: true,
+                    weighted: true,
+                    threshold_type: 'significance',
+                    threshold: 0.001
+                  },
+                  eigenvector: {
+                    binarized: true,
+                    weighted: true,
+                    threshold_type: 'significance',
+                    threshold: 0.001
+                  },
+                  local_connectivity_density: {
+                    binarized: true,
+                    weighted: true,
+                    threshold_type: 'significance',
+                    threshold: 0.001
+                  },
                 },
               }
             }

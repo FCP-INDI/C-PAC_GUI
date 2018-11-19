@@ -28,7 +28,8 @@ class MedialAngleCorrection extends Component {
         <Grid item sm={12}>
           <TextField
             label="Target angle"
-            value={90}
+            name="functional.median_angle_correction.target_angle"
+            value={configuration.getIn(["functional", "median_angle_correction", "target_angle"])}
             fullWidth={true} margin="normal" variant="outlined"
             helperText=''
             InputProps={{

@@ -30,9 +30,11 @@ class DistortionCorrection extends Component {
           <TextField
             select
             label="Skull-strip the magnitude file with"
+            name="functional.distortion_correction.skull_stripping"
+            value={configuration.getIn(["functional", "distortion_correction", "skull_stripping"])}
+            onChange={onChange}
             fullWidth={true} margin="normal" variant="outlined"
             className={classes.textField}
-            value={"bet"}
             helperText=''
           >
             <MenuItem value={"bet"}>BET</MenuItem>
@@ -40,22 +42,19 @@ class DistortionCorrection extends Component {
           </TextField>
 
           <TextField
-            label="BET Threshold"
-            value={0.5}
-            fullWidth={true} margin="normal" variant="outlined"
-            helperText=''
-          />
-
-          <TextField
-            label="AFNI Threshold"
-            value={0.6}
+            label="Threshold"
+            name="functional.distortion_correction.threshold"
+            value={configuration.getIn(["functional", "distortion_correction", "threshold"])}
+            onChange={onChange}
             fullWidth={true} margin="normal" variant="outlined"
             helperText=''
           />
 
           <TextField
             label="Delta-TE"
-            value={2.46}
+            name="functional.distortion_correction.delta_te"
+            value={configuration.getIn(["functional", "distortion_correction", "delta_te"])}
+            onChange={onChange}
             fullWidth={true} margin="normal" variant="outlined"
             InputProps={{
               endAdornment: <InputAdornment position="end">ms</InputAdornment>,
@@ -66,7 +65,9 @@ class DistortionCorrection extends Component {
           <TextField
             label="Dwell Time"
             fullWidth={true} margin="normal" variant="outlined"
-            value={0.0005}
+            name="functional.distortion_correction.dwell_time"
+            value={configuration.getIn(["functional", "distortion_correction", "dwell_time"])}
+            onChange={onChange}
             InputProps={{
               endAdornment: <InputAdornment position="end">s</InputAdornment>,
             }}
@@ -76,7 +77,9 @@ class DistortionCorrection extends Component {
           <TextField
             label="Dwell to assymetric ratio"
             fullWidth={true} margin="normal" variant="outlined"
-            value={0.93902439}
+            name="functional.distortion_correction.dwell_to_assymetric_ratio"
+            value={configuration.getIn(["functional", "distortion_correction", "dwell_to_assymetric_ratio"])}
+            onChange={onChange}
             helperText=''
           />
 
@@ -85,7 +88,9 @@ class DistortionCorrection extends Component {
             label="Phase-encoding direction"
             fullWidth={true} margin="normal" variant="outlined"
             className={classes.textField}
-            value={"x"}
+            name="functional.distortion_correction.phase_encoding_direction"
+            value={configuration.getIn(["functional", "distortion_correction", "phase_encoding_direction"])}
+            onChange={onChange}
             helperText=''
           >
             <MenuItem value={"x"}>x</MenuItem>

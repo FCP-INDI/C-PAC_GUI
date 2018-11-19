@@ -20,7 +20,7 @@ class SkullStripping extends Component {
   static styles = theme => ({
   });
 
-  handleChange = (event) => {
+  handleValueChange = (event) => {
     const name = event.target.name
 
     const checkBoxes = [
@@ -30,18 +30,20 @@ class SkullStripping extends Component {
     ]
 
     if (!checkBoxes.includes(name)) {
-      this.props.onValueChange(event)
+      this.props.onChange([
+        [name, event.target.value]
+      ])
 
     } else {
 
-      const changes = {}
+      const changes = []
 
       if (name == "anatomical.skull_stripping.enabled") {
         const value = event.target.checked
-        changes[name] = value
+        changes.push([name, value])
         if (value) {
-          changes["anatomical.skull_stripping.methods.afni.enabled"] = false
-          changes["anatomical.skull_stripping.methods.bet.enabled"] = false
+          changes.push(["anatomical.skull_stripping.methods.afni.enabled", false])
+          changes.push(["anatomical.skull_stripping.methods.bet.enabled", false])
         }
       }
 
@@ -51,13 +53,13 @@ class SkullStripping extends Component {
       ]
       if (methods.includes(name)) {
         const value = event.target.checked
-        changes[name] = value
+        changes.push([name, value])
         if (value) {
-          changes["anatomical.skull_stripping.enabled"] = false
+          changes.push(["anatomical.skull_stripping.enabled", false])
         }
       }
 
-      this.props.onChange(null, changes)
+      this.props.onChange(changes)
     }
   };
 
@@ -75,8 +77,8 @@ class SkullStripping extends Component {
                   control={
                     <Switch
                       name="anatomical.skull_stripping.enabled"
-                      checked={configuration.anatomical.skull_stripping.enabled}
-                      onChange={this.handleChange}
+                      checked={configuration.getIn("anatomical.skull_stripping.enabled".split("."))}
+                      onChange={this.handleValueChange}
                       color="primary"
                     />
                   }
@@ -89,8 +91,8 @@ class SkullStripping extends Component {
                   control={
                     <Switch
                       name="anatomical.skull_stripping.methods.bet.enabled"
-                      checked={configuration.anatomical.skull_stripping.methods.bet.enabled}
-                      onChange={this.handleChange}
+                      checked={configuration.getIn("anatomical.skull_stripping.methods.bet.enabled".split("."))}
+                      onChange={this.handleValueChange}
                       color="primary"
                     />
                   }
@@ -100,8 +102,8 @@ class SkullStripping extends Component {
                   control={
                     <Switch
                       name="anatomical.skull_stripping.methods.afni.enabled"
-                      checked={configuration.anatomical.skull_stripping.methods.afni.enabled}
-                      onChange={this.handleChange}
+                      checked={configuration.getIn("anatomical.skull_stripping.methods.afni.enabled".split("."))}
+                      onChange={this.handleValueChange}
                       color="primary"
                     />
                   }

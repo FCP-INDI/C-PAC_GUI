@@ -23,33 +23,43 @@ class VHMC extends Component {
   render() {
     const { classes, configuration, onChange } = this.props
 
+    const config = configuration.getIn(['derivatives', 'vhmc'])
+
     return (
       <Grid container>
         <Grid item sm={12}>
           <TextField
             label="Symmetric Brain Template"
-            value={"$FSLDIR/data/standard/MNI152_T1_${resolution_for_anat}_brain_symmetric.nii.gz"}
+            name="derivatives.vhmc.symmetric_brain"
+            value={config.getIn(['symmetric_brain'])}
+            onChange={onChange}
             fullWidth={true} margin="normal" variant="outlined"
             helperText=''
           />
 
           <TextField
             label="Symmetric Brain + Skull Template"
-            value={"$FSLDIR/data/standard/MNI152_T1_${resolution_for_anat}_symmetric.nii.gz"}
+            name="derivatives.vhmc.symmetric_skull"
+            value={config.getIn(['symmetric_skull'])}
+            onChange={onChange}
             fullWidth={true} margin="normal" variant="outlined"
             helperText=''
           />
 
           <TextField
             label="Dilated Symmetric Brain Mask"
-            value={"$FSLDIR/data/standard/MNI152_T1_${resolution_for_anat}_brain_mask_symmetric_dil.nii.gz"}
+            name="derivatives.vhmc.dilated_symmetric_brain"
+            value={config.getIn(['dilated_symmetric_brain'])}
+            onChange={onChange}
             fullWidth={true} margin="normal" variant="outlined"
             helperText=''
           />
 
           <TextField
             label="FLIRT Configuration file"
-            value={"$FSLDIR/etc/flirtsch/T1_2_MNI152_2mm.cnf"}
+            name="derivatives.vhmc.flirt_configuration_file"
+            value={config.getIn(['flirt_configuration_file'])}
+            onChange={onChange}
             fullWidth={true} margin="normal" variant="outlined"
             helperText=''
           />

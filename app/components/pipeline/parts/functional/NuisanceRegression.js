@@ -28,15 +28,19 @@ class NuisanceRegression extends Component {
         <Grid item sm={12}>
 
           <TextField
-            label="Lateral Ventrical Mask"
-            value="/usr/share/fsl/5.0/data/atlases/HarvardOxford/HarvardOxford-lateral-ventricles-thr25-2mm.nii.gz"
+            label="Lateral Ventricles Mask"
+            name="functional.nuisance_regression.lateral_ventricles_mask"
+            value={configuration.getIn(["functional", "nuisance_regression", "lateral_ventricles_mask"])}
+            onChange={onChange}
             fullWidth={true} margin="normal" variant="outlined"
             helperText=''
           />
 
           <TextField
             label="CompCor Components"
-            value={5}
+            name="functional.nuisance_regression.compcor_components"
+            value={configuration.getIn(["functional", "nuisance_regression", "compcor_components"])}
+            onChange={onChange}
             fullWidth={true} margin="normal" variant="outlined"
             helperText=''
           />
@@ -46,9 +50,9 @@ class NuisanceRegression extends Component {
               label="Use Frinston's 24 motion regressors"
               control={
                 <Switch
-                  name="anatomical.skull_stripping.methods.bet.enabled"
-                  checked={true}
-                  onChange={this.handleChange}
+                  name="functional.nuisance_regression.friston_motion_regressors"
+                  checked={configuration.getIn(["functional", "nuisance_regression", "friston_motion_regressors"])}
+                  onChange={onChange}
                   color="primary"
                 />
               }
@@ -62,9 +66,9 @@ class NuisanceRegression extends Component {
                 label="No De-noising"
                 control={
                   <Switch
-                    name="anatomical.skull_stripping.methods.bet.enabled"
-                    checked={true}
-                    onChange={this.handleChange}
+                    name="functional.nuisance_regression.spike_denoising.no_denoising"
+                    checked={configuration.getIn(["functional", "nuisance_regression", "spike_denoising", "no_denoising"])}
+                    onChange={onChange}
                     color="primary"
                   />
                 }
@@ -75,9 +79,9 @@ class NuisanceRegression extends Component {
                 label="De-spiking"
                 control={
                   <Switch
-                    name="anatomical.skull_stripping.methods.afni.enabled"
-                    checked={false}
-                    onChange={this.handleChange}
+                    name="functional.nuisance_regression.spike_denoising.despiking"
+                    checked={configuration.getIn(["functional", "nuisance_regression", "spike_denoising", "despiking"])}
+                    onChange={onChange}
                     color="primary"
                   />
                 }
@@ -88,9 +92,9 @@ class NuisanceRegression extends Component {
                 label="Scrubbing"
                 control={
                   <Switch
-                    name="anatomical.skull_stripping.methods.afni.enabled"
-                    checked={false}
-                    onChange={this.handleChange}
+                    name="functional.nuisance_regression.spike_denoising.scrubbing"
+                    checked={configuration.getIn(["functional", "nuisance_regression", "spike_denoising", "scrubbing"])}
+                    onChange={onChange}
                     color="primary"
                   />
                 }
@@ -103,7 +107,9 @@ class NuisanceRegression extends Component {
             label="Framewise Displacement (FD) Calculation"
             fullWidth={true} margin="normal" variant="outlined"
             className={classes.textField}
-            value={"jenkinson"}
+            name="functional.nuisance_regression.fd_calculation"
+            value={configuration.getIn(["functional", "nuisance_regression", "fd_calculation"])}
+            onChange={onChange}
             helperText=''
           >
             <MenuItem value={"jenkinson"}>Jenkinson</MenuItem>
@@ -112,8 +118,10 @@ class NuisanceRegression extends Component {
 
           <TextField
             label="Framewise Displacement (FD) Threshold"
-            value={5}
             fullWidth={true} margin="normal" variant="outlined"
+            name="functional.nuisance_regression.fd_threshold"
+            value={configuration.getIn(["functional", "nuisance_regression", "fd_threshold"])}
+            onChange={onChange}
             helperText=''
             InputProps={{
               endAdornment: <InputAdornment position="end">mm</InputAdornment>,
@@ -122,14 +130,18 @@ class NuisanceRegression extends Component {
 
           <TextField
             label="Preceding volumes to De-noise"
-            value={1}
+            name="functional.nuisance_regression.pre_volumes"
+            value={configuration.getIn(["functional", "nuisance_regression", "pre_volumes"])}
+            onChange={onChange}
             fullWidth={true} margin="normal" variant="outlined"
             helperText=''
           />
 
           <TextField
             label="Subsequent volumes to De-noise"
-            value={1}
+            name="functional.nuisance_regression.post_volumes"
+            value={configuration.getIn(["functional", "nuisance_regression", "post_volumes"])}
+            onChange={onChange}
             fullWidth={true} margin="normal" variant="outlined"
             helperText=''
           />

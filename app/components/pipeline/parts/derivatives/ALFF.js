@@ -21,7 +21,7 @@ class ALFF extends Component {
   });
 
   render() {
-    const { classes, configuration, onChange, onValueChange } = this.props
+    const { classes, configuration, onChange } = this.props
 
     return (
       <Grid container>
@@ -29,7 +29,9 @@ class ALFF extends Component {
 
           <TextField
             label="f/ALFF Low-pass cutoff"
-            value={0.1}
+            name="derivatives.alff.cutoff.low"
+            value={configuration.getIn(['derivatives', 'alff', 'cutoff', 'low'])}
+            onChange={onChange}
             fullWidth={true} margin="normal" variant="outlined"
             helperText=''
             InputProps={{
@@ -39,7 +41,9 @@ class ALFF extends Component {
 
           <TextField
             label="f/ALFF High-pass cutoff"
-            value={0.01}
+            name="derivatives.alff.cutoff.high"
+            value={configuration.getIn(['derivatives', 'alff', 'cutoff', 'high'])}
+            onChange={onChange}
             fullWidth={true} margin="normal" variant="outlined"
             helperText=''
             InputProps={{

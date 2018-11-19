@@ -28,6 +28,7 @@ import IconButton from '@material-ui/core/IconButton';
 import Button from '@material-ui/core/Button';
 import DeleteIcon from '@material-ui/icons/Delete';
 import AddIcon from '@material-ui/icons/Add';
+import { fromJS } from 'immutable';
 
 
 class SeedBasedCorrelation extends Component {
@@ -37,8 +38,33 @@ class SeedBasedCorrelation extends Component {
     footer: { textAlign: 'right', padding: theme.spacing.unit * 2 }
   });
 
+  addMask = (event) => {
+    const { configuration, onChange } = this.props
+    const next = configuration.getIn(['derivatives', 'sca', 'masks']).size
+
+    onChange([
+      [
+        `derivatives.sca.masks.${next}`,
+        fromJS({
+          mask: '',
+          average: false,
+          dual_regression: false,
+          multiple_regression: false,
+        })
+      ]
+    ])
+  }
+
+  removeMask = (i) => {
+    const { classes, configuration, onChange } = this.props
+    const masks = configuration.getIn(['derivatives', 'sca', 'masks']).delete(i)
+    onChange([[['derivatives', 'sca', 'masks'], masks]])
+  }
+
   render() {
     const { classes, configuration, onChange } = this.props
+
+    const config = configuration.getIn(['derivatives', 'sca'])
 
     return (
       <Grid container>
@@ -55,41 +81,51 @@ class SeedBasedCorrelation extends Component {
                 </TableRow>
               </TableHead>
               <TableBody>
-                <TableRow>
+              {
+                config.get('masks').map((mask, i) => (
+                <TableRow key={i}>
                   <TableCell padding="checkbox">
-                    <IconButton className={classes.button} aria-label="Delete">
+                    <IconButton className={classes.button} onClick={() => this.removeMask(i)}>
                       <DeleteIcon />
                     </IconButton>
                   </TableCell>
                   <TableCell>
                     <TextField
                       fullWidth={true}
-                      name=""
-                      value={'seed.nii.gz'}
+                      name={`derivatives.sca.masks.${i}.mask`}
+                      onChange={onChange}
+                      value={mask.get('mask')}
                       helperText=''
                       />
                   </TableCell>
                   <TableCell padding="checkbox">
                     <Checkbox
-                      checked={true}
+                      name={`derivatives.sca.masks.${i}.average`}
+                      onChange={onChange}
+                      checked={mask.get('average')}
                     />
                   </TableCell>
                   <TableCell padding="checkbox">
                     <Checkbox
-                      checked={true}
+                      name={`derivatives.sca.masks.${i}.dual_regression`}
+                      onChange={onChange}
+                      checked={mask.get('dual_regression')}
                     />
                   </TableCell>
                   <TableCell padding="checkbox">
                     <Checkbox
-                      checked={true}
+                      name={`derivatives.sca.masks.${i}.multiple_regression`}
+                      onChange={onChange}
+                      checked={mask.get('multiple_regression')}
                     />
                   </TableCell>
                 </TableRow>
+              ))}
               </TableBody>
               <TableFooter>
                 <TableRow >
                   <TableCell padding="checkbox" colSpan={7} className={classes.footer}>
-                    <Button  variant="fab" mini aria-label="Add new ROI">
+                    <Button onClick={this.addMask} variant="fab" mini aria-label="Add new ROI">
                       <AddIcon />
                     </Button>
                   </TableCell>
@@ -102,9 +138,9 @@ class SeedBasedCorrelation extends Component {
             label="Normalize time series (dual regression)"
             control={
               <Switch
-                name="anatomical.skull_stripping.methods.bet.enabled"
-                checked={true}
-                onChange={this.handleChange}
+                name="derivatives.sca.normalize"
+                checked={config.get('normalize')}
+                onChange={onChange}
                 color="primary"
               />
             }

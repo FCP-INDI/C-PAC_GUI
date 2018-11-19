@@ -35,30 +35,16 @@ class PipelineEditor extends Component {
   });
 
   state = {
-    tab: 0,
+    tab: 2,
   };
-
-  constructor(props) {
-    super(props)
-    this.state.configuration = props.configuration
-  }
-
-  shouldComponentUpdate(nextProps, nextState) {
-    return true
-  }
 
   handleTabChange = (event, tab) => {
     this.setState({ tab });
   };
 
-  handleValueChange = (event) => {
-    let value = event.target.type && event.target.type == "checkbox" ? event.target.checked : event.target.value
-    this.props.onChange(event.target.name, value)
-  };
-
   render() {
-    const { classes, onChange } = this.props
-    const { tab, configuration } = this.state
+    const { classes, onChange, configuration } = this.props
+    const { tab } = this.state
 
     return (
       <React.Fragment>
@@ -75,9 +61,9 @@ class PipelineEditor extends Component {
         </Tabs>
 
         <Paper className={classes.content} elevation={0}>
-          { tab === 0 && <Anatomical configuration={configuration} onChange={onChange} onValueChange={this.handleValueChange} /> }
-          { tab === 1 && <Functional configuration={configuration} onChange={onChange} onValueChange={this.handleValueChange} /> }
-          { tab === 2 && <Derivatives configuration={configuration} onChange={onChange} onValueChange={this.handleValueChange} /> }
+          { tab === 0 && <Anatomical configuration={configuration} onChange={onChange} /> }
+          { tab === 1 && <Functional configuration={configuration} onChange={onChange} /> }
+          { tab === 2 && <Derivatives configuration={configuration} onChange={onChange} /> }
         </Paper>
       </React.Fragment>
     );

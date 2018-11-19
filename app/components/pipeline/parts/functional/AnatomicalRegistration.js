@@ -14,6 +14,8 @@ import FormControl from '@material-ui/core/FormControl';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormHelperText from '@material-ui/core/FormHelperText';
 
+import Collapse from '@material-ui/core/Collapse';
+
 
 class AnatomicalRegistration extends Component {
 
@@ -21,7 +23,7 @@ class AnatomicalRegistration extends Component {
   });
 
   render() {
-    const { classes, configuration, onChange, onValueChange } = this.props
+    const { classes, configuration, onChange } = this.props
 
     return (
       <Grid container>
@@ -32,9 +34,9 @@ class AnatomicalRegistration extends Component {
               label="Using BB Registration"
               control={
                 <Switch
-                  name="anatomical.skull_stripping.methods.afni.enabled"
-                  checked={false}
-                  onChange={this.handleChange}
+                  name="functional.anatomical_registration.bb_registration"
+                  checked={configuration.getIn(["functional", "anatomical_registration", "bb_registration"])}
+                  onChange={onChange}
                   color="primary"
                 />
               }
@@ -43,9 +45,9 @@ class AnatomicalRegistration extends Component {
 
           <TextField label="BB Registration Scheduler"
                       fullWidth={true} margin="normal" variant="outlined"
-                      name="anatomical.registration.resolution"
-                      value={'/usr/share/fsl/5.0/etc/flirtsch/bbr.sch'}
-                      onChange={onValueChange}
+                      name="functional.anatomical_registration.bb_registration_scheduler"
+                      value={configuration.getIn(["functional", "anatomical_registration", "bb_registration_scheduler"])}
+                      onChange={onChange}
                       helperText=''
                       />
 
@@ -53,30 +55,35 @@ class AnatomicalRegistration extends Component {
             select
             label="Use as registration input"
             fullWidth={true} margin="normal" variant="outlined"
-            className={classes.textField}
-            value={"mean"}
+            className={classes.textField} onChange={onChange}
+            name="functional.anatomical_registration.registration_input"
+            value={configuration.getIn(["functional", "anatomical_registration", "registration_input"])}
             helperText=''
           >
             <MenuItem value={"mean"}>Mean Functional</MenuItem>
             <MenuItem value={"selected"}>Selected Functional Volume</MenuItem>
           </TextField>
 
-          <TextField
-            label="Functional Volume"
-            fullWidth={true} margin="normal" variant="outlined"
-            helperText=''
-          />
+          <Collapse in={configuration.getIn(["functional", "anatomical_registration", "registration_input"]) == 'selected'}>
+            <TextField
+              label="Functional Volume" onChange={onChange}
+              fullWidth={true} margin="normal" variant="outlined"
+              name="functional.anatomical_registration.functional_volume"
+              value={configuration.getIn(["functional", "anatomical_registration", "functional_volume"])}
+              helperText=''
+            />
+          </Collapse>
 
-          <FormControl component="fieldset">
-            <FormLabel component="legend">Functional Masking</FormLabel>
+          <FormControl variant="outlined">
+            <FormLabel>Functional Masking</FormLabel>
             <FormGroup row>
               <FormControlLabel
                 label="FSL BET"
                 control={
                   <Switch
-                    name="anatomical.skull_stripping.methods.bet.enabled"
-                    checked={true}
-                    onChange={this.handleChange}
+                    name="functional.anatomical_registration.functional_masking.bet"
+                    checked={configuration.getIn(["functional", "anatomical_registration", "functional_masking", "bet"])}
+                    onChange={onChange}
                     color="primary"
                   />
                 }
@@ -87,9 +94,9 @@ class AnatomicalRegistration extends Component {
                 label="AFNI 3dSkullStrip"
                 control={
                   <Switch
-                    name="anatomical.skull_stripping.methods.afni.enabled"
-                    checked={false}
-                    onChange={this.handleChange}
+                    name="functional.anatomical_registration.functional_masking.afni"
+                    checked={configuration.getIn(["functional", "anatomical_registration", "functional_masking", "afni"])}
+                    onChange={onChange}
                     color="primary"
                   />
                 }

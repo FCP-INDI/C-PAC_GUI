@@ -13,7 +13,7 @@ class SliceTimingCorrection extends Component {
   });
 
   render() {
-    const { classes, configuration, onChange, onValueChange } = this.props
+    const { classes, configuration, onChange } = this.props
 
     return (
       <Grid container>
@@ -23,8 +23,8 @@ class SliceTimingCorrection extends Component {
             select
             label="Slice Acquisition Pattern"
             name="functional.slice_timing_correction.pattern"
-            value={configuration.functional.slice_timing_correction.pattern}
-            onChange={onValueChange}
+            value={configuration.getIn(["functional", "slice_timing_correction", "pattern"])}
+            onChange={onChange}
             fullWidth={true} margin="normal" variant="outlined"
             className={classes.textField} helperText=''
           >
@@ -41,8 +41,8 @@ class SliceTimingCorrection extends Component {
             label="Repetition Time (TR)"
             fullWidth={true} margin="normal" variant="outlined"
             name="functional.slice_timing_correction.repetition_time"
-            value={configuration.functional.slice_timing_correction.repetition_time}
-            onChange={onValueChange}
+            value={configuration.getIn(['functional', 'slice_timing_correction', 'repetition_time'])}
+            onChange={onChange}
             InputProps={{
               endAdornment: <InputAdornment position="end">sec</InputAdornment>,
             }}
@@ -52,8 +52,8 @@ class SliceTimingCorrection extends Component {
           <TextField
             label="First Timepoint"
             name="functional.slice_timing_correction.first_timepoint"
-            value={configuration.functional.slice_timing_correction.first_timepoint}
-            onChange={onValueChange}
+            value={configuration.getIn(['functional', 'slice_timing_correction', 'first_timepoint'])}
+            onChange={onChange}
             fullWidth={true} margin="normal" variant="outlined"
             helperText=''
           />
@@ -61,8 +61,8 @@ class SliceTimingCorrection extends Component {
           <TextField
             label="Last Timepoint"
             name="functional.slice_timing_correction.last_timepoint"
-            value={configuration.functional.slice_timing_correction.last_timepoint}
-            onChange={onValueChange}
+            value={configuration.getIn(['functional', 'slice_timing_correction', 'last_timepoint'])}
+            onChange={onChange}
             fullWidth={true} margin="normal" variant="outlined"
             helperText=''
           />

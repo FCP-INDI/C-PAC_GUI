@@ -11,6 +11,7 @@ import HomePage from './containers/HomePage';
 // import ProjectSubjectsPage from './containers/ProjectSubjectsPage';
 // import ProjectRunsPage from './containers/ProjectRunsPage';
 import PipelinePage from './containers/PipelinePage';
+import DatasetPage from './containers/DatasetPage';
 
 import { projectOpen } from './actions/main';
 
@@ -56,6 +57,7 @@ export default class TemplatePage extends Component {
           <Route exact={true} path="/projects" component={ProjectsPage} />
           <Route exact={true} path="/environments" component={EnvironmentsPage} /> */}
           <Route exact={true} path="/pipelines/:pipeline" component={PipelinePage} />
+          <Route exact={true} path="/datasets/:dataset" component={DatasetPage} />
           {/* <Route exact={true} path="/pipelines" component={PipelinesPage} /> */}
           <Route exact={true} path="/" component={HomePage} />
         </Switch>

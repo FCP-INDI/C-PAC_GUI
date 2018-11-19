@@ -40,8 +40,9 @@ class Functional extends Component {
     // })
   };
 
-  renderSection(title, name, value, component) {
-    const { classes, configuration, onChange, onValueChange } = this.props
+  renderSection(title, name, component) {
+    const { classes, configuration, onChange } = this.props
+    const value = configuration.getIn(name.split('.'))
 
     return (
       <ExpansionPanel expanded={value} onChange={this.handleSection(name)}>
@@ -49,7 +50,7 @@ class Functional extends Component {
           <Switch
             name={name}
             checked={value}
-            onChange={onValueChange}
+            onChange={onChange}
             color="primary"/>
           <Typography variant="h6" className={classes.sectionTitle}>
             { title }
@@ -60,7 +61,6 @@ class Functional extends Component {
             React.createElement(component, {
               configuration,
               onChange,
-              onValueChange
             })
           }
         </ExpansionPanelDetails>
@@ -69,7 +69,7 @@ class Functional extends Component {
   }
 
   render() {
-    const { classes, configuration, onChange, onValueChange } = this.props
+    const { classes, configuration, onChange } = this.props
 
     return (
       <React.Fragment>
@@ -78,7 +78,6 @@ class Functional extends Component {
           this.renderSection(
             "Slice Timing Correction",
             "functional.slice_timing_correction.enabled",
-            configuration.functional.slice_timing_correction.enabled,
             SliceTimingCorrection
           )
         }
@@ -87,7 +86,6 @@ class Functional extends Component {
           this.renderSection(
             "Functional to Anatomical Registration",
             "functional.anatomical_registration.enabled",
-            configuration.functional.anatomical_registration.enabled,
             AnatomicalRegistration
           )
         }
@@ -96,7 +94,6 @@ class Functional extends Component {
           this.renderSection(
             "Functional to Template Registration",
             "functional.template_registration.enabled",
-            configuration.functional.template_registration.enabled,
             TemplateRegistration
           )
         }
@@ -105,7 +102,6 @@ class Functional extends Component {
           this.renderSection(
             "Distortion Correction",
             "functional.distortion_correction.enabled",
-            configuration.functional.distortion_correction.enabled,
             DistortionCorrection
           )
         }
@@ -114,7 +110,6 @@ class Functional extends Component {
           this.renderSection(
             "Nuisance Regression",
             "functional.nuisance_regression.enabled",
-            configuration.functional.nuisance_regression.enabled,
             NuisanceRegression
           )
         }
@@ -123,7 +118,6 @@ class Functional extends Component {
           this.renderSection(
             "Median Angle Correction",
             "functional.median_angle_correction.enabled",
-            configuration.functional.median_angle_correction.enabled,
             MedianAngleCorrection
           )
         }
@@ -132,7 +126,6 @@ class Functional extends Component {
           this.renderSection(
             "Temporal Filtering",
             "functional.temporal_filtering.enabled",
-            configuration.functional.temporal_filtering.enabled,
             TemporalFiltering
           )
         }
@@ -141,7 +134,6 @@ class Functional extends Component {
           this.renderSection(
             "Smoothing / Z-Scoring",
             "functional.smoothing.enabled",
-            configuration.functional.smoothing.enabled,
             Smoothing
           )
         }
