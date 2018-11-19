@@ -3,7 +3,7 @@
   "productName": "C-PAC",
   "version": "1.0.0",
   "description": "",
-  "main": "./main.prod.js",
+  "main": "./main.js",
   "author": {
     "name": "Anibal Solon",
     "email": "anibalsolon@gmail.com"
