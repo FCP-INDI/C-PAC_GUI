@@ -28,9 +28,9 @@ class Registration extends Component {
     const { classes, configuration, onChange } = this.props
 
     return (
-      <Grid container spacing={8}>
-        <Grid item lg={6} xs={12}>
-          <Grid container spacing={8}>
+      <Grid container>
+        <Grid item lg={8} xs={12}>
+          <Grid container>
             <Grid item xs={6}>
               <TextField label="Resolution"
                          name="anatomical.registration.resolution"
@@ -48,7 +48,7 @@ class Registration extends Component {
           <Typography variant="h6" color="textSecondary">
             Templates
           </Typography>
-          <Grid container spacing={8}>
+          <Grid container>
             <Grid item xs={6}>
               <TextField label="Brain" fullWidth={true} margin="normal" variant="outlined"
                          name="anatomical.registration.brain_template"
@@ -68,7 +68,7 @@ class Registration extends Component {
           <Typography variant="h6" color="textSecondary">
             Methods
           </Typography>
-          <Grid container spacing={8}>
+          <Grid container>
             <Grid item xs={6}>
               <FormGroup row>
                 <FormControlLabel
@@ -130,7 +130,7 @@ class Registration extends Component {
             </Grid>
           </Grid>
         </Grid>
-        <Grid item lg={6} xs={12} style={{ padding: 20 }}>
+        <Grid item lg={4} xs={12} style={{ padding: 20 }}>
           <Typography paragraph>In order to compare brain activations between subjects, individual functional and anatomical images must first be transformed to match a common template. The most commonly used template (MNI152) is maintained by the Montreal Neurological Institute, and is created by combining data from the brains of many different individuals to create an “average” brain. The image below shows how an individual brain is warped to match the shape of the template.</Typography>
           <Typography paragraph>C-PAC provides the option of either using FSL (FLIRT and FNIRT) or Advanced Normalization Tools (ANTS) to register images. Although the use of ANTS requires an extra step during the C-PAC install process, we have found its results to be significantly better than those produced by FSL (a conclusion supported by a recent systematic analysis by Klein et al.).</Typography>
           <Typography paragraph>During registration, individual anatomical images are first transformed to match the common template. Then, the functional data for each subject is registered to their own transformed anatomical image. Finally, functional derivative files are transformed to the common template. For more detail on how C-PAC computes these steps, please see the Registration Page of the developer documentation.</Typography>

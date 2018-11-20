@@ -35,7 +35,7 @@ class PipelineEditor extends Component {
   });
 
   state = {
-    tab: 2,
+    tab: 0,
   };
 
   handleTabChange = (event, tab) => {

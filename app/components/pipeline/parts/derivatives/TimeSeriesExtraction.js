@@ -159,14 +159,14 @@ class TimeSeriesExtraction extends Component {
             </Table>
           </Paper>
 
-          <FormControl component="fieldset">
-            <FormLabel component="legend">Outputs</FormLabel>
+          <FormGroup>
+            <FormLabel>Outputs</FormLabel>
             <FormGroup row>
               <FormControlLabel
                 label="CSV"
                 control={
                   <Switch
-                    name="derivatives.timeseries_extraction.masks.outputs.csv"
+                    name="derivatives.timeseries_extraction.outputs.csv"
                     checked={config.getIn(['outputs', 'csv'])}
                     onChange={onChange}
                     color="primary"
@@ -187,7 +187,7 @@ class TimeSeriesExtraction extends Component {
                 }
               />
             </FormGroup>
-          </FormControl>
+          </FormGroup>
         </Grid>
       </Grid>
     )

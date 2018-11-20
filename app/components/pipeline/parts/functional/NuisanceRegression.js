@@ -59,8 +59,8 @@ class NuisanceRegression extends Component {
             />
           </FormGroup>
 
-          <FormControl component="fieldset">
-            <FormLabel component="legend">Motion Spike De-noising</FormLabel>
+          <FormGroup>
+            <FormLabel>Motion Spike De-noising</FormLabel>
             <FormGroup row>
               <FormControlLabel
                 label="No De-noising"
@@ -100,7 +100,7 @@ class NuisanceRegression extends Component {
                 }
               />
             </FormGroup>
-          </FormControl>
+          </FormGroup>
 
           <TextField
             select

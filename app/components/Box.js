@@ -27,6 +27,7 @@ class Box extends Component {
       background: theme.palette.primary.main,
     },
     headerText: {
+      color: "#444",
       padding: `0 ${theme.spacing.unit * 2}px`,
       flexGrow: 1
     },

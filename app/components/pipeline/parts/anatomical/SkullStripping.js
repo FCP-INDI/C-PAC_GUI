@@ -67,60 +67,55 @@ class SkullStripping extends Component {
     const { classes, configuration } = this.props
 
     return (
-      <Grid container spacing={8}>
-        <Grid item lg={6} xs={12}>
-          <Grid container spacing={8}>
-            <Grid item lg={6} xs={12}>
-              <FormGroup row>
-                <FormControlLabel
-                  label="Already skull stripped"
-                  control={
-                    <Switch
-                      name="anatomical.skull_stripping.enabled"
-                      checked={configuration.getIn("anatomical.skull_stripping.enabled".split("."))}
-                      onChange={this.handleValueChange}
-                      color="primary"
-                    />
-                  }
-                />
-              </FormGroup>
-
-              <FormGroup row>
-                <FormControlLabel
-                  label="FSL BET"
-                  control={
-                    <Switch
-                      name="anatomical.skull_stripping.methods.bet.enabled"
-                      checked={configuration.getIn("anatomical.skull_stripping.methods.bet.enabled".split("."))}
-                      onChange={this.handleValueChange}
-                      color="primary"
-                    />
-                  }
-                />
-                <FormControlLabel
-                  label="AFNI 3dSkullStrip"
-                  control={
-                    <Switch
-                      name="anatomical.skull_stripping.methods.afni.enabled"
-                      checked={configuration.getIn("anatomical.skull_stripping.methods.afni.enabled".split("."))}
-                      onChange={this.handleValueChange}
-                      color="primary"
-                    />
-                  }
-                />
-              </FormGroup>
-            </Grid>
-          </Grid>
+      <Grid container>
+        <Grid item lg={8} xs={12}>
+          <FormGroup>
+            <FormGroup row>
+              <FormControlLabel
+                label="Already skull stripped"
+                control={
+                  <Switch
+                    name="anatomical.skull_stripping.enabled"
+                    checked={configuration.getIn("anatomical.skull_stripping.enabled".split("."))}
+                    onChange={this.handleValueChange}
+                    color="primary"
+                  />
+                }
+              />
+            </FormGroup>
+            <FormGroup row>
+              <FormControlLabel
+                label="FSL BET"
+                control={
+                  <Switch
+                    name="anatomical.skull_stripping.methods.bet.enabled"
+                    checked={configuration.getIn("anatomical.skull_stripping.methods.bet.enabled".split("."))}
+                    onChange={this.handleValueChange}
+                    color="primary"
+                  />
+                }
+              />
+              <FormControlLabel
+                label="AFNI 3dSkullStrip"
+                control={
+                  <Switch
+                    name="anatomical.skull_stripping.methods.afni.enabled"
+                    checked={configuration.getIn("anatomical.skull_stripping.methods.afni.enabled".split("."))}
+                    onChange={this.handleValueChange}
+                    color="primary"
+                  />
+                }
+              />
+            </FormGroup>
+          </FormGroup>
         </Grid>
-        <Grid item lg={6} xs={12} style={{ padding: 20 }}>
+        <Grid item lg={4} style={{ padding: 16 }}>
           <Typography paragraph>Skull-stripping is the removal of skull and other non-brain tissue like dura and eyes from anatomical images, which could otherwise complicate co-registration and normalization steps.</Typography>
           <Typography paragraph>C-PAC provides options for configuring skull-stripping - users can select:</Typography>
-          <Typography>
-            <ul>
-              <li>AFNI’s 3dSkullStrip</li>
-              <li>FSL’s BET, and can configure further parameters for each of these tools.</li>
-              <li>Providing their own brain mask for extraction</li>
-            </ul>
+          <Typography component="ul">
+            <li>AFNI’s 3dSkullStrip</li>
+            <li>FSL’s BET, and can configure further parameters for each of these tools.</li>
+            <li>Providing their own brain mask for extraction</li>
           </Typography>
         </Grid>
       </Grid>

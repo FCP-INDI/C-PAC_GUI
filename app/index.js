@@ -1,19 +1,28 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { AppContainer } from 'react-hot-loader';
-import { hot } from 'react-hot-loader';
-import Root from './containers/Root';
+import { AppContainer, hot } from 'react-hot-loader';
+
 import { configureStore, history } from './store/configureStore';
 
+import theme from './theme';
+import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
+
+import Root from './containers/Root';
+
 import './app.global.css';
+
+import CPAC from '@internal/c-pac';
+
 
 const store = configureStore();
 
 const render = Component => {
   ReactDOM.render(
-    <AppContainer>
-      <Component store={store} history={history} />
-    </AppContainer>,
+    <MuiThemeProvider theme={theme}>
+      <AppContainer>
+        <Component store={store} history={history} />
+      </AppContainer>
+    </MuiThemeProvider>,
     document.getElementById('root'),
   )
 }

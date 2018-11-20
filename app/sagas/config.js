@@ -68,10 +68,10 @@ function* loadConfig (action) {
       {
         id: '0000-0000-0000-0000',
         name: 'Default',
-        last_version: 1527624899948,
+        last_version: 0,
         versions: {
-          1527624899948: {
-            cpac_version: '1.3.0',
+          0: {
+            version: '1.3.0',
             configuration: {
               anatomical: {
                 enabled: true,
@@ -265,16 +265,6 @@ function* loadConfig (action) {
             }
           },
         }
-      },
-      {
-        id: '0000-0000-0000-0001',
-        name: 'Wooba-dooba',
-        last_version: 1527624899948,
-      },
-      {
-        id: '0000-0000-0000-0002',
-        name: 'Monkey proc',
-        last_version: 1527624899948,
       }
     ],
 
@@ -306,9 +296,6 @@ function* loadConfig (action) {
       },
     ]
   }
-
-  config.pipelines[1].versions = config.pipelines[0].versions
-  config.pipelines[2].versions = config.pipelines[0].versions
 
   yield put(configLoaded(config))
 }
