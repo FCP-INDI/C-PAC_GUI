@@ -58,6 +58,7 @@ export default {
   resolve: {
     extensions: ['.js', '.jsx', '.json'],
     modules: [
+      path.join(__dirname, '..', 'c-pac'),
       path.join(__dirname, '..', 'app'),
       'node_modules',
     ],
