@@ -65,10 +65,10 @@ class PipelineCard extends Component {
   }
 
   render() {
-    const { classes, raised = false, pipeline } = this.props
+    const { classes, pipeline } = this.props
 
     return (
-      <Card className={classes.card} raised={raised}>
+      <Card className={classes.card}>
         <CardHeader
           avatar={
             <Avatar className={classes.avatar}>

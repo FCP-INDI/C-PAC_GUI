@@ -11,8 +11,15 @@ import ProjectCard from '../components/ProjectCard';
 import PipelineCard from '../components/PipelineCard';
 import DatasetCard from '../components/DatasetCard';
 
+import IconButton from '@material-ui/core/IconButton'
+import Button from '@material-ui/core/Button'
+
 import Box from '../components/Box'
 
+import {
+  PipelineIcon,
+  AddIcon,
+} from '../components/icons';
 
 class HomePage extends Component {
 
@@ -38,10 +45,21 @@ class HomePage extends Component {
   render() {
     const { classes, projects, pipelines, datasets } = this.props
 
+    const tools = (
+      <React.Fragment>
+        <IconButton>
+          <AddIcon />
+        </IconButton>
+      </React.Fragment>
+    )
+
     return (
       <Grid container spacing={8}>
         <Grid item md={8} sm={12} className={classes.cell}>
-          <Box title="Pipelines" className={classes.expand}>
+          <Box title="Pipelines"
+              avatar={<PipelineIcon />}
+              tools={tools}
+              className={classes.expand}>
             <Grid container spacing={8}>
               {
                 pipelines && pipelines.map((pipeline) => (

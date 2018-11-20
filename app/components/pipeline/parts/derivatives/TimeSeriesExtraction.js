@@ -93,7 +93,14 @@ class TimeSeriesExtraction extends Component {
               </TableHead>
               <TableBody>
               {
-                config.get('masks').map((mask, i) => (
+                config.get('masks').size == 0 ? (
+                <TableRow>
+                  <TableCell colSpan={7} style={{ textAlign: "center" }}>
+                    Add new rows with the "+" below.
+                  </TableCell>
+                </TableRow>
+                ) : (
+                  config.get('masks').map((mask, i) => (
                 <TableRow key={i}>
                   <TableCell padding="checkbox">
                     <IconButton className={classes.button} onClick={() => this.removeMask(i)}>
@@ -145,7 +152,7 @@ class TimeSeriesExtraction extends Component {
                     />
                   </TableCell>
                 </TableRow>
-              ))}
+              )))}
               </TableBody>
               <TableFooter>
                 <TableRow >

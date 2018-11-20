@@ -26,26 +26,19 @@ class Derivatives extends Component {
     sectionTitle: {
       paddingTop: 10
     },
-  });
-
-  handleSection = (section) => (event) => {
-    return false
-    // @TODO open on click at title
-    // this.props.onChange(null, {
-    //   [section]:
-    // })
-  };
+  })
 
   renderSection(title, name, component) {
     const { classes, configuration, onChange } = this.props
     const value = configuration.getIn(name.split("."))
 
     return (
-      <ExpansionPanel expanded={value} onChange={this.handleSection(name)}>
+      <ExpansionPanel expanded={value}>
         <ExpansionPanelSummary>
           <Switch
             name={name}
             checked={value}
+            onChange={onChange}
             color="primary"
           />
           <Typography variant="h6" className={classes.sectionTitle}>

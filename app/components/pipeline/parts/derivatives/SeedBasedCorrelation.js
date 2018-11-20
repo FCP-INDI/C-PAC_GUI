@@ -82,6 +82,13 @@ class SeedBasedCorrelation extends Component {
               </TableHead>
               <TableBody>
               {
+                config.get('masks').size == 0 ? (
+                <TableRow>
+                  <TableCell colSpan={7} style={{ textAlign: "center" }}>
+                    Add new rows with the "+" below.
+                  </TableCell>
+                </TableRow>
+                ) : (
                 config.get('masks').map((mask, i) => (
                 <TableRow key={i}>
                   <TableCell padding="checkbox">
@@ -120,7 +127,7 @@ class SeedBasedCorrelation extends Component {
                     />
                   </TableCell>
                 </TableRow>
-              ))}
+              )))}
               </TableBody>
               <TableFooter>
                 <TableRow >

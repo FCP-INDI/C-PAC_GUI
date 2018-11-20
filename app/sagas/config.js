@@ -87,7 +87,7 @@ function* loadConfig (action) {
                 skull_stripping: {
                   enabled: true,
                   methods: {
-                    afni: { enabled: false },
+                    afni: { enabled: true },
                     bet: { enabled: false }
                   }
                 },
@@ -120,7 +120,7 @@ function* loadConfig (action) {
                 anatomical_registration: {
                   enabled: true,
                   bb_registration: false,
-                  bb_registration_scheduler: '/usr/share/fsl/5.0/etc/flirtsch/bbr.sch',
+                  bb_registration_scheduler: '${environment.paths.fsl_dir}/etc/flirtsch/bbr.sch',
                   registration_input: 'mean',
                   functional_volume: 0,
                   functional_masking: {
@@ -160,12 +160,8 @@ function* loadConfig (action) {
                   enabled: true,
                   filters: [
                     {
-                      low: 0.010,
-                      high: 0.100
-                    },
-                    {
-                      low: 0.020,
-                      high: 0.200
+                      low: 0.01,
+                      high: 0.1
                     },
                   ]
                 },
@@ -184,24 +180,6 @@ function* loadConfig (action) {
                 timeseries_extraction: {
                   enabled: true,
                   masks: [
-                    {
-                      mask: 'cc200.nii.gz',
-                      average: true,
-                      voxel: true,
-                      spatial_regression: true,
-                      dual_regression: true,
-                      pearson_correlation: true,
-                      partial_correlation: true,
-                    },
-                    {
-                      mask: 'cc400.nii.gz',
-                      average: true,
-                      voxel: true,
-                      spatial_regression: false,
-                      dual_regression: false,
-                      pearson_correlation: true,
-                      partial_correlation: false,
-                    }
                   ],
                   outputs: {
                     csv: true,
@@ -209,38 +187,31 @@ function* loadConfig (action) {
                   }
                 },
                 sca: {
-                  enabled: true,
-                  normalize: true,
+                  enabled: false,
                   masks: [
-                    {
-                      mask: 'seed.nii.gz',
-                      average: true,
-                      dual_regression: true,
-                      multiple_regression: true,
-                    }
                   ],
                   normalize: false,
                 },
                 vhmc: {
-                  enabled: true,
+                  enabled: false,
                   symmetric_brain: '$FSLDIR/data/standard/MNI152_T1_${resolution_for_anat}_brain_symmetric.nii.gz',
                   symmetric_skull: '$FSLDIR/data/standard/MNI152_T1_${resolution_for_anat}_symmetric.nii.gz',
                   dilated_symmetric_brain: '$FSLDIR/data/standard/MNI152_T1_${resolution_for_anat}_brain_mask_symmetric_dil.nii.gz',
                   flirt_configuration_file: '$FSLDIR/etc/flirtsch/T1_2_MNI152_2mm.cnf',
                 },
                 alff: {
-                  enabled: true,
+                  enabled: false,
                   cutoff: {
                     low: 0.01,
                     high: 0.1,
                   }
                 },
                 reho: {
-                  enabled: true,
+                  enabled: false,
                   cluster_size: 7,
                 },
                 network_centrality: {
-                  enabled: true,
+                  enabled: false,
                   mask: '',
                   degree_centrality: {
                     binarized: true,

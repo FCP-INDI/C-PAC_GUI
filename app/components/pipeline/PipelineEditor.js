@@ -60,11 +60,9 @@ class PipelineEditor extends Component {
           <Tab label="Derivatives" />
         </Tabs>
 
-        <Paper className={classes.content} elevation={0}>
-          { tab === 0 && <Anatomical configuration={configuration} onChange={onChange} /> }
-          { tab === 1 && <Functional configuration={configuration} onChange={onChange} /> }
-          { tab === 2 && <Derivatives configuration={configuration} onChange={onChange} /> }
-        </Paper>
+        { tab === 0 && <Anatomical configuration={configuration} onChange={onChange} /> }
+        { tab === 1 && <Functional configuration={configuration} onChange={onChange} /> }
+        { tab === 2 && <Derivatives configuration={configuration} onChange={onChange} /> }
       </React.Fragment>
     );
   }

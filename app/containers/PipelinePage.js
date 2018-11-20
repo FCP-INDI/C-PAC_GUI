@@ -34,17 +34,14 @@ import {
   DownloadIcon,
   SaveIcon,
   RevertIcon,
-  EditIcon
+  EditIcon,
+  DuplicateIcon,
 } from '../components/icons';
 
 
 class PipelinePage extends Component {
 
   static styles = theme => ({
-    content: {
-      padding: 20,
-      marginTop: 20,
-    }
   });
 
   constructor(props) {
@@ -129,7 +126,6 @@ class PipelinePage extends Component {
         onClick={this.handleTitleClick}
         style={{
           cursor: 'pointer',
-          padding: '12.5px 0' // esoteric number
         }}
       >{ pipeline.name }</div>
     )
@@ -145,15 +141,15 @@ class PipelinePage extends Component {
 
     const tools = (
       <React.Fragment>
-        <Button size="small">
+        <IconButton>
+          <DuplicateIcon />
+        </IconButton>
+        <IconButton>
           <DownloadIcon />
-        </Button>
-        <Button size="small">
+        </IconButton>
+        <IconButton>
           <SaveIcon />
-        </Button>
-        <Button size="small">
-          <RevertIcon />
-        </Button>
+        </IconButton>
       </React.Fragment>
     )
 
