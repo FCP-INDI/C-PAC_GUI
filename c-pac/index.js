@@ -1,2 +1,1 @@
-const CPAC = "CPAC"
-export default CPAC
+export { loadPipeline } from './pipeline'

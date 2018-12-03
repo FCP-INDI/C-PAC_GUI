@@ -10,7 +10,7 @@
     "postinstall": "node -r @babel/register internals/scripts/CheckNativeDep.js && yarn run build-dll && electron-builder install-app-deps && node node_modules/fbjs-scripts/node/check-dev-engines.js package.json",
     "prestart": "yarn run build",
     "start": "cross-env NODE_ENV=production electron ./app/",
-    "dev": "npm-run-all --parallel dev:*",
+    "dev": "npm-run-all --parallel dev:renderer dev:main",
     "dev:main": "cross-env HOT=1 NODE_ENV=development electron -r @babel/register ./app/main",
     "dev:renderer": "cross-env NODE_ENV=development node --trace-warnings -r @babel/register ./node_modules/webpack-dev-server/bin/webpack-dev-server --mode development --config config/webpack.config.renderer.dev.js",
     "lint": "cross-env NODE_ENV=development eslint --cache --format=node_modules/eslint-formatter-pretty .",
@@ -128,8 +128,10 @@
     "identity-obj-proxy": "^3.0.0",
     "mini-css-extract-plugin": "^0.4.4",
     "minimist": "^1.2.0",
+    "mocha": "^5.2.0",
     "node-sass": "^4.7.2",
     "npm-logical-tree": "^1.2.1",
+    "npm-run-all": "^4.1.5",
     "react-test-renderer": "^16.2.0",
     "redux-logger": "^3.0.6",
     "rimraf": "^2.6.2",
@@ -146,11 +148,10 @@
     "webpack-bundle-analyzer": "^3.0.2",
     "webpack-cli": "^3.1.2",
     "webpack-dev-server": "^3.1.9",
-    "webpack-merge": "^4.1.1",
-    "yarn-run-all": "^3.1.1"
+    "webpack-merge": "^4.1.1"
   },
   "dependencies": {
-    "@internal/c-pac": "./c-pac",
+    "@internal/c-pac": "file:./c-pac",
     "@material-ui/core": "^3.5.1",
     "@material-ui/icons": "^3.0.1",
     "devtron": "^1.4.0",
@@ -172,7 +173,8 @@
     "react-router-redux": "^5.0.0-alpha.6",
     "redux": "^4.0.1",
     "redux-saga": "^0.16.2",
-    "source-map-support": "^0.5.3"
+    "source-map-support": "^0.5.3",
+    "uuid": "^3.3.2"
   },
   "devEngines": {
     "node": ">=7.x",
