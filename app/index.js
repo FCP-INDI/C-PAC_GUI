@@ -11,8 +11,6 @@ import Root from './containers/Root';
 
 import './app.global.css';
 
-import CPAC from '@internal/c-pac';
-
 
 const store = configureStore();
 

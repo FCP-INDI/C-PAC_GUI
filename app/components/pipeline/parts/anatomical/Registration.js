@@ -88,8 +88,8 @@ class Registration extends Component {
                   label="FSL FNIRT"
                   control={
                     <Switch
-                      name="anatomical.registration.methods.fnirt.enabled"
-                      checked={configuration.getIn("anatomical.registration.methods.fnirt.enabled".split("."))}
+                      name="anatomical.registration.methods.fsl.enabled"
+                      checked={configuration.getIn("anatomical.registration.methods.fsl.enabled".split("."))}
                       onChange={onChange}
                       color="primary"
                     />
@@ -99,15 +99,15 @@ class Registration extends Component {
             </Grid>
 
             <Grid item xs={6}>
-              <Collapse in={configuration.getIn("anatomical.registration.methods.fnirt.enabled".split("."))}>
+              <Collapse in={configuration.getIn("anatomical.registration.methods.fsl.enabled".split("."))}>
                 <TextField label="FNIRT Configuration" fullWidth={true} margin="normal" variant="outlined"
-                           name="anatomical.registration.methods.fnirt.configuration.config_file"
-                           value={configuration.getIn("anatomical.registration.methods.fnirt.configuration.config_file".split("."))}
+                           name="anatomical.registration.methods.fsl.configuration.config_file"
+                           value={configuration.getIn("anatomical.registration.methods.fsl.configuration.config_file".split("."))}
                            onChange={onChange}
                            helperText='Configuration file to be used by FSL to set FNIRT parameters. It is not necessary to change this path unless you intend to use custom FNIRT parameters or a non-standard template.' />
                 <TextField label="FNIRT Reference Mask" fullWidth={true} margin="normal" variant="outlined"
-                           name="anatomical.registration.methods.fnirt.configuration.reference_mask"
-                           value={configuration.getIn("anatomical.registration.methods.fnirt.configuration.reference_mask".split("."))}
+                           name="anatomical.registration.methods.fsl.configuration.reference_mask"
+                           value={configuration.getIn("anatomical.registration.methods.fsl.configuration.reference_mask".split("."))}
                            onChange={onChange}
                            helperText='A reference mask to be used by FNIRT' />
               </Collapse>

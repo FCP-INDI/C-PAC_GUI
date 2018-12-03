@@ -2,9 +2,11 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
 import {
-  pipelineConfigUpdate,
+  pipelineVersionDirtyUpdate,
+  pipelineVersionDirtySave,
   pipelineNameUpdate,
-} from '../actions/main'
+  pipelineDuplicate,
+} from '../actions/pipeline'
 
 import { withStyles } from '@material-ui/core';
 
@@ -20,11 +22,12 @@ import Paper from '@material-ui/core/Paper';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import IconButton from '@material-ui/core/IconButton'
+import Tooltip from '@material-ui/core/Tooltip'
 
 import getter from 'lodash.get';
 import setter from 'lodash.set';
 
-import { Map, fromJS } from 'immutable';
+import { fromJS } from 'immutable';
 
 import {
   PipelineIcon,
@@ -47,8 +50,47 @@ class PipelinePage extends Component {
   constructor(props) {
     super(props)
     const pipeline = this.props.pipeline
+    const versions = pipeline.get('versions')
+
+    let dirty = false
+    let version = null
+
+    // @TODO move to saga or reducer
+
+    if (versions.has("0")) {
+      dirty = true
+      version = "0"
+    } else {
+      version = versions.keySeq().max()
+    }
+
     this.state = {
-      configuration: fromJS(pipeline.versions[pipeline.last_version].configuration)
+      dirty,
+      version,
+      configuration: pipeline.getIn(['versions', version, 'configuration'])
+    }
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (!nextProps.pipeline.get('versions').keySeq().equals(this.props.pipeline.get('versions').keySeq())) {
+      const pipeline = nextProps.pipeline
+      const versions = pipeline.get('versions')
+
+      let dirty = false
+      let version = null
+
+      if (versions.has("0")) {
+        dirty = true
+        version = "0"
+      } else {
+        version = versions.keySeq().max()
+      }
+
+      this.setState({
+        dirty,
+        version,
+        configuration: pipeline.getIn(['versions', version, 'configuration'])
+      });
     }
   }
 
@@ -70,12 +112,23 @@ class PipelinePage extends Component {
       }
       configuration = configuration.setIn(key, value)
     }
-    this.setState({ configuration })
+
+    this.props.pipelineVersionDirtyUpdate(
+      this.props.pipeline,
+      configuration
+    )
+
+    this.setState({ configuration, dirty: true, version: "0" })
+
   }
 
   handleSave = (name, value) => {
-    this.props.pipelineConfigUpdate(this.props.pipeline.id, name, value)
+    this.props.pipelineVersionDirtySave(this.props.pipeline.get('id'))
   };
+
+  handleDuplicate = () => {
+    this.props.pipelineDuplicate(this.props.pipeline.get('id'))
+  }
 
   handleTitleHover = () => {
     this.setState(this.toggleTitleHoverState);
@@ -89,7 +142,7 @@ class PipelinePage extends Component {
 
   handleTitleSaveClick = () => {
     const name = this.title.value
-    this.props.pipelineNameUpdate(this.props.pipeline.id, name)
+    this.props.pipelineNameUpdate(this.props.pipeline.get('id'), name)
     this.setState({
       isTitleEditing: false
     });
@@ -106,7 +159,7 @@ class PipelinePage extends Component {
       <React.Fragment>
         <TextField
           label="Pipeline Name"
-          defaultValue={pipeline.name}
+          defaultValue={pipeline.get('name')}
           inputRef={(input) => { this.title = input; }}
           margin="none" variant="outlined"
           helperText=''
@@ -127,7 +180,7 @@ class PipelinePage extends Component {
         style={{
           cursor: 'pointer',
         }}
-      >{ pipeline.name }</div>
+      >{ pipeline.get('name') + (this.state.dirty ? " *" : "") }</div>
     )
   }
 
@@ -141,15 +194,23 @@ class PipelinePage extends Component {
 
     const tools = (
       <React.Fragment>
-        <IconButton>
-          <DuplicateIcon />
-        </IconButton>
-        <IconButton>
-          <DownloadIcon />
-        </IconButton>
-        <IconButton>
-          <SaveIcon />
-        </IconButton>
+        <Tooltip title="Duplicate">
+          <IconButton onClick={this.handleDuplicate}>
+            <DuplicateIcon />
+          </IconButton>
+        </Tooltip>
+
+        <Tooltip title="Download config file">
+          <IconButton>
+            <DownloadIcon />
+          </IconButton>
+        </Tooltip>
+
+        <Tooltip title="Save">
+          <IconButton onClick={this.handleSave}>
+            <SaveIcon />
+          </IconButton>
+        </Tooltip>
       </React.Fragment>
     )
 
@@ -171,13 +232,20 @@ const mapStateToProps = (state, props) => {
   const { match: { params: { pipeline } } } = props
 
   return {
-    pipeline: state.main.config.pipelines.find((p) => p.id == pipeline)
+    pipeline: state.main.getIn(['config', 'pipelines']).find((p) => p.get('id') == pipeline),
   }
 }
 
 const mapDispatchToProps = {
-  pipelineConfigUpdate,
+  pipelineVersionDirtyUpdate,
+  pipelineVersionDirtySave,
   pipelineNameUpdate,
+  pipelineDuplicate,
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(withStyles(PipelinePage.styles)(PipelinePage));
+const areStatesEqual = (next, prev) => {
+  // TODO review
+  return false
+}
+
+export default connect(mapStateToProps, mapDispatchToProps, null, { areStatesEqual })(withStyles(PipelinePage.styles)(PipelinePage));

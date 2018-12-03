@@ -1,10 +1,27 @@
 import { delay } from 'redux-saga'
-import { put, takeEvery } from 'redux-saga/effects'
-import { CONFIG_LOAD, configLoading, configLoaded } from '../actions/main'
-import { phenotype } from './config.data'
+import { select, put, takeEvery } from 'redux-saga/effects'
+import {
+  CONFIG_LOAD,
+  configLoading,
+  configLoaded,
+
+  CONFIG_SAVE,
+  configSaved,
+
+  CONFIG_CLEAR,
+  configCleared,
+} from '../actions/main'
+
+import {
+  PIPELINE_NAME_UPDATE,
+  PIPELINE_DUPLICATE,
+  PIPELINE_VERSION_DIRTY_UPDATE,
+  PIPELINE_VERSION_DIRTY_SAVE,
+} from '../actions/pipeline'
+
+// import { phenotype } from './config.data'
 
 function* loadConfig (action) {
-
   yield put(configLoading(action))
   // yield delay(500)
 
@@ -66,11 +83,10 @@ function* loadConfig (action) {
 
     pipelines: [
       {
-        id: '0000-0000-0000-0000',
+        id: 'default',
         name: 'Default',
-        last_version: 0,
         versions: {
-          0: {
+          '0': {
             version: '1.3.0',
             configuration: {
               anatomical: {
@@ -81,7 +97,7 @@ function* loadConfig (action) {
                   skull_template: '${environment.paths.fsl_dir}/data/standard/MNI152_T1_${pipeline.anatomical.registration.resolution}mm.nii.gz',
                   methods: {
                     ants: { enabled: true, configuration: { skull_on: false } },
-                    fnirt: { enabled: true, configuration: { config_file: '', reference_mask: '' } }
+                    fsl: { enabled: true, configuration: { config_file: '', reference_mask: '' } }
                   }
                 },
                 skull_stripping: {
@@ -92,6 +108,7 @@ function* loadConfig (action) {
                   }
                 },
                 tissue_segmentation: {
+                  enabled: true,
                   priors: {
                     white_matter: '${environment.paths.fsl_dir}/data/standard/tissuepriors/2mm/avg152T1_white_bin.nii.gz',
                     gray_matter: '${environment.paths.fsl_dir}/data/standard/tissuepriors/2mm/avg152T1_gray_bin.nii.gz',
@@ -139,7 +156,7 @@ function* loadConfig (action) {
                 },
                 nuisance_regression: {
                   enabled: true,
-                  lateral_ventricles_mask: '/usr/share/fsl/5.0/data/atlases/HarvardOxford/HarvardOxford-lateral-ventricles-thr25-2mm.nii.gz',
+                  lateral_ventricles_mask: '${environment.paths.fsl_dir}/data/atlases/HarvardOxford/HarvardOxford-lateral-ventricles-thr25-2mm.nii.gz',
                   compcor_components: 5,
                   friston_motion_regressors: true,
                   spike_denoising: {
@@ -194,10 +211,10 @@ function* loadConfig (action) {
                 },
                 vhmc: {
                   enabled: false,
-                  symmetric_brain: '$FSLDIR/data/standard/MNI152_T1_${resolution_for_anat}_brain_symmetric.nii.gz',
-                  symmetric_skull: '$FSLDIR/data/standard/MNI152_T1_${resolution_for_anat}_symmetric.nii.gz',
-                  dilated_symmetric_brain: '$FSLDIR/data/standard/MNI152_T1_${resolution_for_anat}_brain_mask_symmetric_dil.nii.gz',
-                  flirt_configuration_file: '$FSLDIR/etc/flirtsch/T1_2_MNI152_2mm.cnf',
+                  symmetric_brain: '${environment.paths.fsl_dir}/data/standard/MNI152_T1_${resolution_for_anat}_brain_symmetric.nii.gz',
+                  symmetric_skull: '${environment.paths.fsl_dir}/data/standard/MNI152_T1_${resolution_for_anat}_symmetric.nii.gz',
+                  dilated_symmetric_brain: '${environment.paths.fsl_dir}/data/standard/MNI152_T1_${resolution_for_anat}_brain_mask_symmetric_dil.nii.gz',
+                  flirt_configuration_file: '${environment.paths.fsl_dir}/etc/flirtsch/T1_2_MNI152_2mm.cnf',
                 },
                 alff: {
                   enabled: false,
@@ -243,7 +260,7 @@ function* loadConfig (action) {
       {
         id: 'abide',
         name: 'ABIDE Preproc',
-        pipeline: '0000-0000-0000-0000',
+        pipeline: 'default',
         last_modification: new Date(Date.UTC(2015, 11, 17, 3, 24, 0)),
         participants: {
           dataset: '0000-0000-0000-0000',
@@ -268,11 +285,44 @@ function* loadConfig (action) {
     ]
   }
 
-  yield put(configLoaded(config))
+  let initialState = null
+  try {
+    initialState = JSON.parse(localStorage.getItem('state'))
+  } catch (e) {
+  }
+
+  if (!initialState) {
+    initialState = config
+    localStorage.setItem('state', JSON.stringify(config))
+    console.log("Using initial state")
+  } else {
+    console.log("Using local state")
+  }
+
+  yield put(configLoaded(initialState))
 }
 
-function* configSaga () {
-  yield takeEvery(CONFIG_LOAD, loadConfig)
+function* saveConfig() {
+  const config = yield select((state) => state.main.getIn(['config']));
+  localStorage.setItem('state', JSON.stringify(config.toJS()))
+  yield put(configSaved())
 }
 
-export default configSaga
+function* clearConfig(config) {
+  localStorage.removeItem('state')
+  yield put(configCleared(config))
+}
+
+export default function* configSaga () {
+  yield [
+    takeEvery(CONFIG_LOAD, loadConfig),
+
+    takeEvery(CONFIG_SAVE, saveConfig),
+    takeEvery(PIPELINE_NAME_UPDATE, saveConfig),
+    takeEvery(PIPELINE_VERSION_DIRTY_UPDATE, saveConfig),
+    takeEvery(PIPELINE_VERSION_DIRTY_SAVE, saveConfig),
+    takeEvery(PIPELINE_DUPLICATE, saveConfig),
+
+    takeEvery(CONFIG_CLEAR, clearConfig),
+  ]
+}

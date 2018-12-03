@@ -170,7 +170,7 @@ class TimeSeriesExtraction extends Component {
             <FormLabel>Outputs</FormLabel>
             <FormGroup row>
               <FormControlLabel
-                label="CSV"
+                label="Comma-separated values (CSV)"
                 control={
                   <Switch
                     name="derivatives.timeseries_extraction.outputs.csv"

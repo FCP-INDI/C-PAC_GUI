@@ -11,11 +11,16 @@ import Tab from '@material-ui/core/Tab';
 import Paper from '@material-ui/core/Paper';
 
 import {
-  HomeIcon,
-  PipelineIcon,
-  SubjectIcon,
+  DatasetIcon,
+  DownloadIcon,
+  EditIcon,
   ExpandMoreIcon,
+  HomeIcon,
   NavigateNextIcon,
+  PipelineIcon,
+  RevertIcon,
+  SaveIcon,
+  SubjectIcon,
 } from '../icons';
 
 import {
@@ -23,6 +28,12 @@ import {
   Functional,
   Derivatives,
 } from './parts'
+
+import Button from '@material-ui/core/Button';
+import IconButton from '@material-ui/core/IconButton'
+import Switch from '@material-ui/core/Switch';
+
+import Collapse from '@material-ui/core/Collapse';
 
 
 class PipelineEditor extends Component {
@@ -42,9 +53,43 @@ class PipelineEditor extends Component {
     this.setState({ tab });
   };
 
+  handleStateChange = (event) => {
+    const name = event.target.name
+    const value = event.target.checked
+
+    const props = [
+      [name, value]
+    ]
+
+    if (name == "functional.enabled") {
+      this.setState({ tab: value ? 1 : 0 });
+      props.push(["derivatives.enabled", value])
+    }
+
+    this.props.onChange(props)
+  }
+
   render() {
     const { classes, onChange, configuration } = this.props
     const { tab } = this.state
+
+    const tools = (
+      <React.Fragment>
+        <Button size="small">
+          <DownloadIcon />
+        </Button>
+        <Button size="small">
+          <SaveIcon />
+        </Button>
+        <Button size="small">
+          <RevertIcon />
+        </Button>
+      </React.Fragment>
+    )
+
+    const disable = (event) => {
+      event.stopPropagation()
+    }
 
     return (
       <React.Fragment>
@@ -55,9 +100,28 @@ class PipelineEditor extends Component {
           textColor="primary"
           centered
         >
-          <Tab label="Anatomical" />
-          <Tab label="Functional" />
+          <Tab label={(
+            <React.Fragment>
+              Anatomical
+            </React.Fragment>
+          )} />
+          { configuration.getIn(["anatomical", "enabled"]) ?
+          <Tab label={(
+            <React.Fragment>
+              <Switch
+                name="functional.enabled"
+                checked={configuration.getIn(["functional", "enabled"])}
+                onClick={disable}
+                onChange={this.handleStateChange}
+                color="primary"
+              />
+              Functional
+            </React.Fragment>
+          )} />
+          : null }
+          { configuration.getIn(["derivatives", "enabled"]) ?
           <Tab label="Derivatives" />
+          : null }
         </Tabs>
 
         { tab === 0 && <Anatomical configuration={configuration} onChange={onChange} /> }

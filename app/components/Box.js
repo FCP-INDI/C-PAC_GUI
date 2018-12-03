@@ -15,6 +15,7 @@ class Box extends Component {
       flexDirection: 'column'
     },
     header: {
+      height: 88,
       padding: 20,
       display: 'flex',
       justifyContent: 'flex-start',

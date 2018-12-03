@@ -38,7 +38,9 @@ export { default as RevertIcon } from '@material-ui/icons/Cached';
 export { default as BrainIcon } from '@material-ui/icons/Image';
 export { default as EditIcon } from '@material-ui/icons/Edit';
 export { default as AddIcon } from '@material-ui/icons/Add';
+export { default as HelpIcon } from '@material-ui/icons/Help';
 export { default as DuplicateIcon } from '@material-ui/icons/SwapHoriz';
+export { default as UploadIcon } from '@material-ui/icons/CloudUpload';
 
 // import createSvgIcon from '../utils/createSvgIcon'
 // export const BrainIcon = createSvgIcon(

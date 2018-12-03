@@ -84,11 +84,11 @@ class App extends React.Component {
   renderBreadcrumbs = () => {
     const { classes } = this.props
 
-    if (!this.props.main || !this.props.main.config) {
+    if (!this.props.main || !this.props.main.get('config')) {
       return null
     }
 
-    const config = this.props.main.config
+    const config = this.props.main.get('config')
 
     let project = null
     let pipeline = null
@@ -96,34 +96,34 @@ class App extends React.Component {
     const place = this.props.location.pathname.substr(1).split('/')
     const crumbs = []
     for (let i = 0; i < place.length; i++) {
-      if (place[i] == "projects") {
-        if (i + 1 < place.length) {
-          project = config.projects[place[++i]]
-        }
+      // if (place[i] == "projects") {
+      //   if (i + 1 < place.length) {
+      //     project = config.projects[place[++i]]
+      //   }
 
-        crumbs.push(
-          <NextIcon key={crumbs.length} />
-        )
-        crumbs.push(
-          <Button key={crumbs.length} size="small" component={Link} to={`/projects/${project ? project.id : ''}`}>
-            <ProjectIcon className={classes.icon} />
-            { project ? project.name : "Projects" }
-          </Button>
-        )
-      }
+      //   crumbs.push(
+      //     <NextIcon key={crumbs.length} />
+      //   )
+      //   crumbs.push(
+      //     <Button key={crumbs.length} size="small" component={Link} to={`/projects/${project ? project.id : ''}`}>
+      //       <ProjectIcon className={classes.icon} />
+      //       { project ? project.name : "Projects" }
+      //     </Button>
+      //   )
+      // }
       if (place[i] == "pipelines") {
 
         if (i + 1 < place.length) {
-          pipeline = config.pipelines.find((p) => p.id == place[++i])
+          pipeline = config.get('pipelines').find((p) => p.get('id') == place[++i])
         }
 
         crumbs.push(
           <NextIcon key={crumbs.length} />
         )
         crumbs.push(
-          <Button key={crumbs.length} size="small" component={Link} to={`/pipelines/${ pipeline ? pipeline.id : '' }`}>
+          <Button key={crumbs.length} size="small" component={Link} to={`/pipelines/${ pipeline ? pipeline.get('id') : '' }`}>
             <PipelineIcon className={classes.icon} />
-            { pipeline ? pipeline.name : "Pipelines" }
+            { pipeline ? pipeline.get('name') : "Pipelines" }
           </Button>
         )
       }
@@ -158,7 +158,7 @@ class App extends React.Component {
           { this.renderBreadcrumbs() }
 
           <main className={classes.content}>
-            { main.config ? this.props.children : "Loading" }
+            { main.has('config') ? this.props.children : "Loading..." }
           </main>
         </div>
       </div>

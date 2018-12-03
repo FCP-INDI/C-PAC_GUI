@@ -75,10 +75,22 @@ class PipelineCard extends Component {
               <PipelineIcon />
             </Avatar>
           }
-          title={`${pipeline.name}`}
+          title={pipeline.get('name')}
         />
         <CardContent className={classes.info}>
           <List>
+            <ListItem>
+              <ListItemIcon>
+                <PipelineStepIcon />
+              </ListItemIcon>
+              <ListItemText primary={`Anatomical`} />
+            </ListItem>
+            <ListItem>
+              <ListItemIcon>
+                <PipelineStepIcon />
+              </ListItemIcon>
+              <ListItemText primary={`Functional`} />
+            </ListItem>
             <ListItem>
               <ListItemIcon>
                 <PipelineStepIcon />
@@ -88,7 +100,7 @@ class PipelineCard extends Component {
           </List>
         </CardContent>
         <CardActions className={classes.actions} disableActionSpacing>
-          <IconButton className={classes.expand} onClick={() => this.handleOpen(pipeline.id)}>
+          <IconButton className={classes.expand} onClick={() => this.handleOpen(pipeline.get('id'))}>
             <NavigateNextIcon />
           </IconButton>
         </CardActions>
