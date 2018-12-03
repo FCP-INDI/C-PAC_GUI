@@ -17,7 +17,7 @@ const SpeedMeasurePlugin = require("speed-measure-webpack-plugin");
 const smp = new SpeedMeasurePlugin();
 
 const config = merge.smart(baseConfig, {
-  target: 'web',
+  target: 'electron-renderer',
 
   entry: path.join(__dirname, '../app/index.js'),
 

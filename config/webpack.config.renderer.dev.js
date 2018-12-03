@@ -28,7 +28,7 @@ const smp = new SpeedMeasurePlugin();
 const config = merge.smart(baseConfig, {
   devtool: 'cheap-module-eval-source-map',
 
-  target: 'web',
+  target: 'electron-renderer',
 
   entry: [
     'react-hot-loader/patch',
@@ -162,6 +162,7 @@ const config = merge.smart(baseConfig, {
   },
 
   devServer: {
+    public: '0.0.0.0:1212',
     port,
     publicPath,
     compress: true,
@@ -178,18 +179,6 @@ const config = merge.smart(baseConfig, {
     historyApiFallback: {
       verbose: true,
       disableDotRule: false,
-    },
-    before() {
-      if (process.env.START_HOT) {
-        // console.log('Starting Main Process...');
-        // spawn(
-        //   'npm',
-        //   ['run', 'start-main-dev'],
-        //   { shell: true, env: process.env, stdio: 'inherit' }
-        // )
-        //   .on('close', code => process.exit(code))
-        //   .on('error', spawnError => console.error(spawnError));
-      }
     }
   },
 });

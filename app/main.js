@@ -11,7 +11,7 @@ app.on('window-all-closed', () => {
 app.on('ready', async () => {
   mainWindow = new BrowserWindow({
     webPreferences: {
-      nodeIntegration: false,
+      nodeIntegration: true,
     },
     show: false,
     width: 1024,
@@ -20,9 +20,18 @@ app.on('ready', async () => {
 
   mainWindow.setMenu(null)
   if (process.env.NODE_ENV === 'development') {
+    mainWindow.loadURL(`http://localhost:1212`);
     mainWindow.toggleDevTools()
+  } else {
+    mainWindow.loadURL(`file://${__dirname}/dist/index.html`);
   }
-  mainWindow.loadURL(`file://${__dirname}/dist/index.html`);
+
+  mainWindow.webContents.on("did-fail-load", function() {
+    console.log("did-fail-load");
+    if (process.env.NODE_ENV === 'development') {
+      mainWindow.loadURL(`http://localhost:1212`);
+    }
+  });
 
   mainWindow.webContents.on('did-finish-load', () => {
     if (!mainWindow) {
