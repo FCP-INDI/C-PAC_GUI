@@ -50,7 +50,6 @@ class TimeSeriesExtraction extends Component {
           average: false,
           voxel: false,
           spatial_regression: false,
-          dual_regression: false,
           pearson_correlation: false,
           partial_correlation: false,
         })

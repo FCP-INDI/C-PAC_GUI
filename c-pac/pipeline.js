@@ -1,6 +1,6 @@
 import yaml from 'yaml'
 
-const template = {
+export const template = {
   id: 'default',
   name: 'Default',
   versions: {
@@ -152,7 +152,7 @@ const template = {
             ],
             normalize: false,
           },
-          vhmc: {
+          vmhc: {
             enabled: false,
             symmetric_brain: '${environment.paths.fsl_dir}/data/standard/MNI152_T1_${resolution_for_anat}_brain_symmetric.nii.gz',
             symmetric_skull: '${environment.paths.fsl_dir}/data/standard/MNI152_T1_${resolution_for_anat}_symmetric.nii.gz',
@@ -345,65 +345,92 @@ export function loadPipeline(content) {
   c.functional.smoothing.zscore_derivatives = 1 in config.runZScoring
 
 
+  c.derivatives.timeseries_extraction.enable = 1 in config.runROITimeseries
 
-  // derivatives: {
-  //   enabled: true,
-  //   timeseries_extraction: {
-  //     enabled: true,
-  //     masks: [
-  //     ],
-  //     outputs: {
-  //       csv: true,
-  //       numpy: true,
-  //     }
-  //   },
-  //   sca: {
-  //     enabled: false,
-  //     masks: [
-  //     ],
-  //     normalize: false,
-  //   },
-  //   vhmc: {
-  //     enabled: false,
-  //     symmetric_brain: '${environment.paths.fsl_dir}/data/standard/MNI152_T1_${resolution_for_anat}_brain_symmetric.nii.gz',
-  //     symmetric_skull: '${environment.paths.fsl_dir}/data/standard/MNI152_T1_${resolution_for_anat}_symmetric.nii.gz',
-  //     dilated_symmetric_brain: '${environment.paths.fsl_dir}/data/standard/MNI152_T1_${resolution_for_anat}_brain_mask_symmetric_dil.nii.gz',
-  //     flirt_configuration_file: '${environment.paths.fsl_dir}/etc/flirtsch/T1_2_MNI152_2mm.cnf',
-  //   },
-  //   alff: {
-  //     enabled: false,
-  //     cutoff: {
-  //       low: 0.01,
-  //       high: 0.1,
-  //     }
-  //   },
-  //   reho: {
-  //     enabled: false,
-  //     cluster_size: 7,
-  //   },
-  //   network_centrality: {
-  //     enabled: false,
-  //     mask: '',
-  //     degree_centrality: {
-  //       binarized: true,
-  //       weighted: true,
-  //       threshold_type: 'significance',
-  //       threshold: 0.001
-  //     },
-  //     eigenvector: {
-  //       binarized: true,
-  //       weighted: true,
-  //       threshold_type: 'significance',
-  //       threshold: 0.001
-  //     },
-  //     local_connectivity_density: {
-  //       binarized: true,
-  //       weighted: true,
-  //       threshold_type: 'significance',
-  //       threshold: 0.001
-  //     },
-  //   },
-},
+  if (config.tsa_roi_paths instanceof Array) {
+    config.tsa_roi_paths = config.tsa_roi_paths[0]
+  }
+
+  for (let mask of Object.keys(config.tsa_roi_paths)) {
+    let analysis = config.tsa_roi_paths
+    if (typeof analysis === "string") {
+      analysis = analysis.split(",").map(s => s.trim().toLowerCase())
+    }
+
+    c.derivatives.timeseries_extraction.masks.push({
+      mask,
+      average: "avg" in analysis,
+      voxel: "voxel" in analysis,
+      spatial_regression: "spatialreg" in analysis,
+      pearson_correlation: "pearsoncorr" in analysis,
+      partial_correlation: "partialcorr" in analysis,
+    })
+  }
+
+  c.derivatives.timeseries_extraction.outputs.csv = config.roiTSOutputs[0]
+  c.derivatives.timeseries_extraction.outputs.numpy = config.roiTSOutputs[1]
+
+
+  c.derivatives.sca.enable = 1 in config.runSCA
+
+  if (config.sca_roi_paths instanceof Array) {
+    config.sca_roi_paths = config.sca_roi_paths[0]
+  }
+
+  for (let mask of Object.keys(config.sca_roi_paths)) {
+    let analysis = config.sca_roi_paths
+    if (typeof analysis === "string") {
+      analysis = analysis.split(",").map(s => s.trim().toLowerCase())
+    }
+
+    c.derivatives.sca.masks.push({
+      mask,
+      average: "avg" in analysis,
+      dual_regression: "dualreg" in analysis,
+      multiple_regression: "multreg" in analysis,
+    })
+  }
+
+  c.derivatives.sca.normalize = config.mrsNorm
+
+
+  c.derivatives.vmhc.enable = 1 in config.runVMHC
+  c.derivatives.vmhc.symmetric_brain = config.template_symmetric_brain_only
+  c.derivatives.vmhc.symmetric_skull = config.template_symmetric_skull
+  c.derivatives.vmhc.dilated_symmetric_brain = config.dilated_symmetric_brain_mask
+  c.derivatives.vmhc.flirt_configuration_file = config.configFileTwomm
+
+  c.derivatives.alff.enable = 1 in config.runALFF
+  c.derivatives.alff.cutoff.low = config.lowPassFreqALFF[0]
+  c.derivatives.alff.cutoff.high = config.highPassFreqALFF[0]
+
+  c.derivatives.reho.enable = 1 in config.runReHo
+  c.derivatives.reho.cluster_size = config.clusterSize
+
+
+  c.derivatives.network_centrality.enable = 1 in config.runNetworkCentrality
+  c.derivatives.network_centrality.mask = config.templateSpecificationFile
+
+  const thresh_types = {
+    "Significance threshold": 'significance',
+    "Sparsity threshold": 'sparsity',
+    "Correlation threshold": 'correlation',
+  }
+
+  c.derivatives.network_centrality.degree_centrality.binarized = config.degWeightOptions[0]
+  c.derivatives.network_centrality.degree_centrality.weighted = config.degWeightOptions[1]
+  c.derivatives.network_centrality.degree_centrality.threshold_type = thresh_types[config.degCorrelationThresholdOption[0]]
+  c.derivatives.network_centrality.degree_centrality.threshold = config.degCorrelationThreshold
+
+  c.derivatives.network_centrality.eigenvector.binarized = config.eigWeightOptions[0]
+  c.derivatives.network_centrality.eigenvector.weighted = config.eigWeightOptions[1]
+  c.derivatives.network_centrality.eigenvector.threshold_type = thresh_types[config.eigCorrelationThresholdOption[0]]
+  c.derivatives.network_centrality.eigenvector.threshold = config.eigCorrelationThreshold
+
+  c.derivatives.network_centrality.local_connectivity_density.binarized = config.lfcdWeightOptions[0]
+  c.derivatives.network_centrality.local_connectivity_density.weighted = config.lfcdWeightOptions[1]
+  c.derivatives.network_centrality.local_connectivity_density.threshold_type = thresh_types[config.lfcdCorrelationThresholdOption[0]]
+  c.derivatives.network_centrality.local_connectivity_density.threshold = config.lfcdCorrelationThreshold
 
   return t
 }

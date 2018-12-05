@@ -1,6 +1,3 @@
-import { remote } from 'electron'
-import fs from 'fs'
-
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { withRouter, Link } from 'react-router-dom'
@@ -9,6 +6,7 @@ import { withStyles } from '@material-ui/core'
 import Typography from '@material-ui/core/Typography'
 import Grid from '@material-ui/core/Grid'
 import Paper from '@material-ui/core/Paper'
+import Modal from '@material-ui/core/Modal'
 
 import ProjectCard from '../components/ProjectCard'
 import PipelineCard from '../components/PipelineCard'
@@ -44,6 +42,25 @@ class HomePage extends Component {
       padding: 20,
       flexGrow: 1,
     },
+    upload: {
+      position: 'absolute',
+      width: theme.spacing.unit * 50,
+      boxShadow: theme.shadows[5],
+      padding: theme.spacing.unit * 2,
+      top: '50%',
+      left: '50%',
+      transform: 'translate(-50%, -50%)',
+      textAlign: 'center',
+    },
+    uploadArea: {
+      border: '3px dashed ' + theme.palette.primary.main,
+      borderRadius: 10,
+    },
+    uploadAreaPicker: {
+      cursor: 'pointer',
+      padding: '40px 20px',
+      display: 'block',
+    },
     cell: {
       display: 'flex',
       flexDirection: 'column',
@@ -55,26 +72,29 @@ class HomePage extends Component {
   })
 
   pipelineUpload() {
-    const pipelineConfigs = remote.dialog.showOpenDialog({
-      properties: [
-        'openFile',
-        'multiSelections'
-      ]
-    })
+    // import { remote } from 'electron'
+    // import fs from 'fs'
 
-    if (!pipelineConfigs){
-      return
-    }
+    // const pipelineConfigs = remote.dialog.showOpenDialog({
+    //   properties: [
+    //     'openFile',
+    //     'multiSelections'
+    //   ]
+    // })
 
-    for (const pipelineConfig of pipelineConfigs) {
-      fs.readFile(pipelineConfig, 'utf-8', (err, data) => {
-        if(err){
-            return
-        }
+    // if (!pipelineConfigs){
+    //   return
+    // }
 
-        this.props.pipelineImport(data)
-      })
-    }
+    // for (const pipelineConfig of pipelineConfigs) {
+    //   fs.readFile(pipelineConfig, 'utf-8', (err, data) => {
+    //     if(err){
+    //         return
+    //     }
+
+    //     this.props.pipelineImport(data)
+    //   })
+    // }
   }
 
   render() {
@@ -82,14 +102,15 @@ class HomePage extends Component {
 
     const tools = (
       <React.Fragment>
+        <input type="file" id="pipeline" style={{display: 'none'}} />
         <Tooltip title="Create new pipeline">
           <IconButton onClick={() => this.props.pipelineDuplicate()}>
             <AddIcon />
           </IconButton>
         </Tooltip>
         <Tooltip title="Upload a pipeline">
-          <IconButton onClick={() => this.pipelineUpload()}>
-            <UploadIcon />
+          <IconButton for="pipeline" component="label">
+              <UploadIcon />
           </IconButton>
         </Tooltip>
       </React.Fragment>

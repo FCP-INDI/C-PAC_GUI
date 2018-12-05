@@ -1,1 +1,2 @@
-export { loadPipeline } from './pipeline'
+import pipeline from './pipeline'
+export { pipeline }

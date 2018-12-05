@@ -1,7 +1,7 @@
 import fs from 'fs'
 import assert from 'assert'
 
-import { loadPipeline } from '..'
+import { loadPipeline } from '../pipeline'
 
 describe('load pipeline', () => {
   it('should parse the YAML file', () => {

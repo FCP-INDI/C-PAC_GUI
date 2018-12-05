@@ -15,7 +15,7 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormHelperText from '@material-ui/core/FormHelperText';
 
 
-class VHMC extends Component {
+class VMHC extends Component {
 
   static styles = theme => ({
   });
@@ -23,14 +23,14 @@ class VHMC extends Component {
   render() {
     const { classes, configuration, onChange } = this.props
 
-    const config = configuration.getIn(['derivatives', 'vhmc'])
+    const config = configuration.getIn(['derivatives', 'vmhc'])
 
     return (
       <Grid container>
         <Grid item sm={12}>
           <TextField
             label="Symmetric Brain Template"
-            name="derivatives.vhmc.symmetric_brain"
+            name="derivatives.vmhc.symmetric_brain"
             value={config.getIn(['symmetric_brain'])}
             onChange={onChange}
             fullWidth={true} margin="normal" variant="outlined"
@@ -39,7 +39,7 @@ class VHMC extends Component {
 
           <TextField
             label="Symmetric Brain + Skull Template"
-            name="derivatives.vhmc.symmetric_skull"
+            name="derivatives.vmhc.symmetric_skull"
             value={config.getIn(['symmetric_skull'])}
             onChange={onChange}
             fullWidth={true} margin="normal" variant="outlined"
@@ -48,7 +48,7 @@ class VHMC extends Component {
 
           <TextField
             label="Dilated Symmetric Brain Mask"
-            name="derivatives.vhmc.dilated_symmetric_brain"
+            name="derivatives.vmhc.dilated_symmetric_brain"
             value={config.getIn(['dilated_symmetric_brain'])}
             onChange={onChange}
             fullWidth={true} margin="normal" variant="outlined"
@@ -57,7 +57,7 @@ class VHMC extends Component {
 
           <TextField
             label="FLIRT Configuration file"
-            name="derivatives.vhmc.flirt_configuration_file"
+            name="derivatives.vmhc.flirt_configuration_file"
             value={config.getIn(['flirt_configuration_file'])}
             onChange={onChange}
             fullWidth={true} margin="normal" variant="outlined"
@@ -69,4 +69,4 @@ class VHMC extends Component {
   }
 }
 
-export default withStyles(VHMC.styles)(VHMC);
+export default withStyles(VMHC.styles)(VMHC);

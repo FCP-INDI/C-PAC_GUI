@@ -132,7 +132,7 @@ class EnvironmentCard extends Component {
                   variant="determinate"
                   value={50}
                 />
-                <ListItemText primary="Pipeline VHMC" secondary="ADHD" />
+                <ListItemText primary="Pipeline VMHC" secondary="ADHD" />
               </ListItem>
               <ListItem dense button>
                 <CircularProgress

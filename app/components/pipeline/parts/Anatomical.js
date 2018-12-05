@@ -4,6 +4,7 @@ import { withStyles, Typography } from '@material-ui/core';
 import {
   SkullStripping,
   Registration,
+  TissueSegmentation,
 } from './anatomical'
 
 class Anatomical extends Component {
@@ -24,6 +25,10 @@ class Anatomical extends Component {
           Registration
         </Typography>
         <Registration configuration={configuration} onChange={onChange} />
+        <Typography variant="h6">
+          Tissue Segmentation
+        </Typography>
+        <TissueSegmentation configuration={configuration} onChange={onChange} />
       </React.Fragment>
     )
   }

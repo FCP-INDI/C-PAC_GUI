@@ -14,7 +14,7 @@ import {
   RegionalHomogeneity,
   SeedBasedCorrelation,
   TimeSeriesExtraction,
-  VHMC
+  VMHC
 } from './derivatives'
 
 class Derivatives extends Component {
@@ -98,8 +98,8 @@ class Derivatives extends Component {
         {
           this.renderSection(
             "Voxel-Mirrored Homotopic Connectivity (VMHC)",
-            "derivatives.vhmc.enabled",
-            VHMC
+            "derivatives.vmhc.enabled",
+            VMHC
           )
         }
 
