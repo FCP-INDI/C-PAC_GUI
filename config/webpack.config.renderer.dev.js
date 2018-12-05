@@ -18,6 +18,8 @@ const dist = path.resolve(process.cwd(), 'app', 'dist');
 const dll = path.resolve(dist, 'dll');
 const manifest = path.resolve(dll, 'renderer.json');
 
+const target = process.env.TARGET == 'web' ? 'web' : 'electron-renderer'
+
 if (!(fs.existsSync(dll) && fs.existsSync(manifest))) {
   execSync('yarn run build-dll');
 }
@@ -28,7 +30,7 @@ const smp = new SpeedMeasurePlugin();
 const config = merge.smart(baseConfig, {
   devtool: 'cheap-module-eval-source-map',
 
-  target: 'electron-renderer',
+  target,
 
   entry: [
     'react-hot-loader/patch',
@@ -157,18 +159,21 @@ const config = merge.smart(baseConfig, {
   ],
 
   node: {
+    fs: 'empty',
     __dirname: false,
     __filename: false
   },
 
   devServer: {
     public: '0.0.0.0:1212',
+    host: '0.0.0.0',
     port,
     publicPath,
     compress: true,
     inline: true,
     lazy: false,
     hot: true,
+    clientLogLevel: 'info',
     headers: { 'Access-Control-Allow-Origin': '*' },
     contentBase: path.join(__dirname, '..', 'app', 'dist'),
     watchOptions: {
