@@ -17,7 +17,7 @@ import {
 
 import uuid from 'uuid/v4'
 import { fromJS } from 'immutable';
-import { loadPipeline } from '@internal/c-pac'
+import { parse } from '@internal/c-pac'
 
 
 export default function main(state, action) {
@@ -79,7 +79,7 @@ export default function main(state, action) {
 
     case PIPELINE_IMPORT: {
       const { content } = action
-      loadPipeline(content)
+      parse(content)
     }
 
     case PIPELINE_DUPLICATE: {

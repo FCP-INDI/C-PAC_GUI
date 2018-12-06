@@ -198,24 +198,24 @@ export const template = {
   }
 }
 
-export function loadPipeline(content) {
+export function parse(content) {
   const config = yaml.parse(content)
 
   const t = JSON.parse(JSON.stringify(template))
   const c = t.versions['0'].configuration
 
   t.name = config.pipelineName
-  c.anatomical.skull_stripping.enabled = 1 in config.already_skullstripped
+  c.anatomical.skull_stripping.enabled = config.already_skullstripped.includes(1)
 
   if (typeof config.skullstrip_option === "string") {
     config.skullstrip_option = [config.skullstrip_option]
   }
 
-  if ("AFNI" in config.skullstrip_option) {
+  if (config.skullstrip_option.includes("AFNI")) {
     c.anatomical.skull_stripping.methods.afni.enabled = true
   }
 
-  if ("BET" in config.skullstrip_option) {
+  if (config.skullstrip_option.includes("BET")) {
     c.anatomical.skull_stripping.methods.bet.enabled = true
   }
 
@@ -231,12 +231,12 @@ export function loadPipeline(content) {
     config.regOption = [config.regOption]
   }
 
-  if ("ANTS" in config.regOption) {
+  if (config.regOption.includes("ANTS")) {
     c.anatomical.registration.methods.ants.enabled = true
   }
-  c.anatomical.registration.methods.ants.configuration.skull_on = 1 in config.regWithSkull
+  c.anatomical.registration.methods.ants.configuration.skull_on = config.regWithSkull.includes(1)
 
-  if ("FSL" in config.regOption) {
+  if (config.regOption.includes("FSL")) {
     c.anatomical.registration.methods.fsl.enabled = true
   }
   c.anatomical.registration.methods.fsl.configuration.config_file = config.fnirtConfig
@@ -245,40 +245,40 @@ export function loadPipeline(content) {
       .replace("${resolution_for_anat}", "${pipeline.anatomical.registration.resolution}mm")
       .replace("$FSLDIR", "${environment.paths.fsl_dir}")
 
-  c.anatomical.tissue_segmentation.enabled = 1 in config.runSegmentationPreprocessing
+  c.anatomical.tissue_segmentation.enabled = config.runSegmentationPreprocessing.includes(1)
   c.anatomical.tissue_segmentation.priors.white_matter = config.PRIORS_WHITE.replace("$priors_path", "${environment.paths.segmentation_priors}")
   c.anatomical.tissue_segmentation.priors.grate_matter = config.PRIORS_GRAY.replace("$priors_path", "${environment.paths.segmentation_priors}")
   c.anatomical.tissue_segmentation.priors.cerebrospinal_fluid = config.PRIORS_CSF.replace("$priors_path", "${environment.paths.segmentation_priors}")
 
-  c.functional.slice_timing_correction.enabled = 1 in config.slice_timing_correction
+  c.functional.slice_timing_correction.enabled = config.slice_timing_correction.includes(1)
   c.functional.slice_timing_correction.repetition_time = !config.TR || config.TR == "None" ? '' : config.TR
   c.functional.slice_timing_correction.pattern = config.slice_timing_pattern == "Use NIFTI Header" ? "pattern" : config.slice_timing_pattern
   c.functional.slice_timing_correction.first_timepoint = config.startIdx
   c.functional.slice_timing_correction.last_timepoint = !config.stopIdx || config.stopIdx == "None" ? '' : config.stopIdx
 
-  c.functional.distortion_correction.enabled = 1 in config.runEPI_DistCorr
+  c.functional.distortion_correction.enabled = config.runEPI_DistCorr.includes(1)
   if (typeof config.fmap_distcorr_skullstrip === "string") {
     config.fmap_distcorr_skullstrip = [config.fmap_distcorr_skullstrip]
   }
-  c.functional.distortion_correction.skull_stripping = 'BET' in config.fmap_distcorr_skullstrip ? 'bet' : 'afni'
+  c.functional.distortion_correction.skull_stripping = config.fmap_distcorr_skullstrip.includes('BET') ? 'bet' : 'afni'
   c.functional.distortion_correction.threshold = config.fmap_distcorr_frac[0] // TODO review on CPAC; fmap_distcorr_threshold???
   c.functional.distortion_correction.delta_te = config.fmap_distcorr_deltaTE[0]
   c.functional.distortion_correction.dwell_time = config.fmap_distcorr_dwell_time[0]
   c.functional.distortion_correction.dwell_to_assymetric_ratio = config.fmap_distcorr_dwell_asym_ratio[0]
   c.functional.distortion_correction.phase_encoding_direction = config.fmap_distcorr_pedir
 
-  c.functional.anatomical_registration.enabled = 1 in config.runRegisterFuncToAnat
-  c.functional.anatomical_registration.bb_registration = 1 in config.runBBReg
+  c.functional.anatomical_registration.enabled = config.runRegisterFuncToAnat.includes(1)
+  c.functional.anatomical_registration.bb_registration = config.runBBReg.includes(1)
   c.functional.anatomical_registration.bb_registration_scheduler =
     config.boundaryBasedRegistrationSchedule
       .replace("$FSLDIR", "${environment.paths.fsl_dir}")
   c.functional.anatomical_registration.registration_input =
-    'Mean Functional' in config.func_reg_input ? 'mean' : 'selected'
+  config.func_reg_input.includes('Mean Functional') ? 'mean' : 'selected'
   c.functional.anatomical_registration.functional_volume = config.func_reg_input_volume
-  c.functional.anatomical_registration.functional_masking.bet = 'BET' in config.functionalMasking
-  c.functional.anatomical_registration.functional_masking.afni = '3dAutoMask' in config.functionalMasking
+  c.functional.anatomical_registration.functional_masking.bet = config.functionalMasking.includes('BET')
+  c.functional.anatomical_registration.functional_masking.afni = config.functionalMasking.includes('3dAutoMask')
 
-  c.functional.template_registration.enabled = 1 in config.runRegisterFuncToMNI
+  c.functional.template_registration.enabled = config.runRegisterFuncToMNI.includes(1)
   c.functional.template_registration.functional_resolution = config.resolution_for_func_preproc.replace("mm", "")
   c.functional.template_registration.derivative_resolution = config.resolution_for_func_derivative.replace("mm", "")
   c.functional.template_registration.brain_template =
@@ -293,17 +293,17 @@ export function loadPipeline(content) {
     config.identityMatrix
       .replace("$FSLDIR", "${environment.paths.fsl_dir}")
 
-  c.functional.nuisance_regression.enabled = 1 in config.runNuisance
+  c.functional.nuisance_regression.enabled = config.runNuisance.includes(1)
   c.functional.nuisance_regression.lateral_ventricles_mask =
     config.lateral_ventricles_mask
       .replace("$FSLDIR", "${environment.paths.fsl_dir}")
 
   c.functional.nuisance_regression.lateral_ventricles_mask = config.nComponents
-  c.functional.nuisance_regression.friston_motion_regressors = 1 in config.runFristonModel
-  c.functional.nuisance_regression.spike_denoising.no_denoising = 'None' in config.runMotionSpike
-  c.functional.nuisance_regression.spike_denoising.despiking = 'De-Spiking' in config.runMotionSpike
-  c.functional.nuisance_regression.spike_denoising.scrubbing = 'Scrubbing' in config.runMotionSpike
-  c.functional.nuisance_regression.fd_calculation = 'Jenkinson' in config.fdCalc ? 'jenkinson' : 'power'
+  c.functional.nuisance_regression.friston_motion_regressors = config.runFristonModel.includes(1)
+  c.functional.nuisance_regression.spike_denoising.no_denoising = config.runMotionSpike.includes('None')
+  c.functional.nuisance_regression.spike_denoising.despiking = config.runMotionSpike.includes('De-Spiking')
+  c.functional.nuisance_regression.spike_denoising.scrubbing = config.runMotionSpike.includes('Scrubbing')
+  c.functional.nuisance_regression.fd_calculation = config.fdCalc.includes('Jenkinson') ? 'jenkinson' : 'power'
   c.functional.nuisance_regression.fd_threshold = config.spikeThreshold[0]
   c.functional.nuisance_regression.pre_volumes = config.numRemovePrecedingFrames
   c.functional.nuisance_regression.post_volumes = config.numRemoveSubsequentFrames
@@ -323,10 +323,10 @@ export function loadPipeline(content) {
     })
   }
 
-  c.functional.median_angle_correction.enable = 1 in config.runMedianAngleCorrection
+  c.functional.median_angle_correction.enable = config.runMedianAngleCorrection.includes(1)
   c.functional.median_angle_correction.target_angle = config.targetAngleDeg[0]
 
-  c.functional.temporal_filtering.enable = 1 in config.runFrequencyFiltering
+  c.functional.temporal_filtering.enable = config.runFrequencyFiltering.includes(1)
   c.functional.temporal_filtering.filters = []
   for (const frequencies of config.nuisanceBandpassFreq) {
     c.functional.temporal_filtering.filters.push({
@@ -335,35 +335,36 @@ export function loadPipeline(content) {
     })
   }
 
-  c.functional.aroma.enable = 1 in config.runICA
+  c.functional.aroma.enable = config.runICA.includes(1)
   c.functional.aroma.denoising_strategy =
     config.aroma_denoise_type == 'nonaggr' ? 'non-aggressive' : 'aggressive'
 
-  c.functional.smoothing.enable = 1 in config.run_smoothing
+  c.functional.smoothing.enable = config.run_smoothing.includes(1)
   c.functional.smoothing.kernel_fwhm = config.fwhm[0]
   c.functional.smoothing.before_zscore = config.smoothing_order[0] == 'Before'
-  c.functional.smoothing.zscore_derivatives = 1 in config.runZScoring
+  c.functional.smoothing.zscore_derivatives = config.runZScoring.includes(1)
 
 
-  c.derivatives.timeseries_extraction.enable = 1 in config.runROITimeseries
+  c.derivatives.timeseries_extraction.enable = config.runROITimeseries.includes(1)
 
   if (config.tsa_roi_paths instanceof Array) {
     config.tsa_roi_paths = config.tsa_roi_paths[0]
   }
 
   for (let mask of Object.keys(config.tsa_roi_paths)) {
-    let analysis = config.tsa_roi_paths
+    let analysis = config.tsa_roi_paths[mask]
     if (typeof analysis === "string") {
-      analysis = analysis.split(",").map(s => s.trim().toLowerCase())
+      analysis = analysis.split(",")
     }
+    analysis = analysis.map(s => s.trim().toLowerCase())
 
     c.derivatives.timeseries_extraction.masks.push({
       mask,
-      average: "avg" in analysis,
-      voxel: "voxel" in analysis,
-      spatial_regression: "spatialreg" in analysis,
-      pearson_correlation: "pearsoncorr" in analysis,
-      partial_correlation: "partialcorr" in analysis,
+      average: analysis.includes("avg"),
+      voxel: analysis.includes("voxel"),
+      spatial_regression: analysis.includes("spatialreg"),
+      pearson_correlation: analysis.includes("pearsoncorr"),
+      partial_correlation: analysis.includes("partialcorr"),
     })
   }
 
@@ -371,44 +372,45 @@ export function loadPipeline(content) {
   c.derivatives.timeseries_extraction.outputs.numpy = config.roiTSOutputs[1]
 
 
-  c.derivatives.sca.enable = 1 in config.runSCA
+  c.derivatives.sca.enable = config.runSCA.includes(1)
 
   if (config.sca_roi_paths instanceof Array) {
     config.sca_roi_paths = config.sca_roi_paths[0]
   }
 
   for (let mask of Object.keys(config.sca_roi_paths)) {
-    let analysis = config.sca_roi_paths
+    let analysis = config.sca_roi_paths[mask]
     if (typeof analysis === "string") {
-      analysis = analysis.split(",").map(s => s.trim().toLowerCase())
+      analysis = analysis.split(",")
     }
+    analysis = analysis.map(s => s.trim().toLowerCase())
 
     c.derivatives.sca.masks.push({
       mask,
-      average: "avg" in analysis,
-      dual_regression: "dualreg" in analysis,
-      multiple_regression: "multreg" in analysis,
+      average: analysis.includes("avg"),
+      dual_regression: analysis.includes("dualreg"),
+      multiple_regression: analysis.includes("multreg"),
     })
   }
 
   c.derivatives.sca.normalize = config.mrsNorm
 
 
-  c.derivatives.vmhc.enable = 1 in config.runVMHC
+  c.derivatives.vmhc.enable = config.runVMHC.includes(1)
   c.derivatives.vmhc.symmetric_brain = config.template_symmetric_brain_only
   c.derivatives.vmhc.symmetric_skull = config.template_symmetric_skull
   c.derivatives.vmhc.dilated_symmetric_brain = config.dilated_symmetric_brain_mask
   c.derivatives.vmhc.flirt_configuration_file = config.configFileTwomm
 
-  c.derivatives.alff.enable = 1 in config.runALFF
+  c.derivatives.alff.enable = config.runALFF.includes(1)
   c.derivatives.alff.cutoff.low = config.lowPassFreqALFF[0]
   c.derivatives.alff.cutoff.high = config.highPassFreqALFF[0]
 
-  c.derivatives.reho.enable = 1 in config.runReHo
+  c.derivatives.reho.enable = config.runReHo.includes(1)
   c.derivatives.reho.cluster_size = config.clusterSize
 
 
-  c.derivatives.network_centrality.enable = 1 in config.runNetworkCentrality
+  c.derivatives.network_centrality.enable = config.runNetworkCentrality.includes(1)
   c.derivatives.network_centrality.mask = config.templateSpecificationFile
 
   const thresh_types = {
@@ -433,4 +435,9 @@ export function loadPipeline(content) {
   c.derivatives.network_centrality.local_connectivity_density.threshold = config.lfcdCorrelationThreshold
 
   return t
+}
+
+
+export function dump(c) {
+
 }
