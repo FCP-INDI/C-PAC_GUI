@@ -26,9 +26,9 @@ describe('load pipeline', () => {
     const yamlConfig = dump(pipeline)
     const config = parse(yamlConfig).versions['0'].configuration
 
-    assert(config.anatomical.skull_stripping.enabled === true)
-    assert(config.anatomical.skull_stripping.methods.afni.enabled === true)
-    assert(config.anatomical.skull_stripping.methods.bet.enabled === false)
+    assert(config.anatomical.skull_stripping.enabled == true)
+    assert(config.anatomical.skull_stripping.methods.afni.enabled == true)
+    assert(config.anatomical.skull_stripping.methods.bet.enabled == false)
 
     assert(config.functional.nuisance_regression.regressors.length == 2)
 
