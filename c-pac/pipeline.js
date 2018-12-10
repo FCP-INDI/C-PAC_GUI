@@ -59,6 +59,7 @@ export function parse(content) {
   c.functional.slice_timing_correction.enabled = config.slice_timing_correction.includes(1)
   c.functional.slice_timing_correction.repetition_time = !config.TR || config.TR == "None" ? '' : config.TR
   c.functional.slice_timing_correction.pattern = config.slice_timing_pattern == "Use NIFTI Header" ? "pattern" : config.slice_timing_pattern
+
   c.functional.slice_timing_correction.first_timepoint = config.startIdx
   c.functional.slice_timing_correction.last_timepoint = !config.stopIdx || config.stopIdx == "None" ? '' : config.stopIdx
 
@@ -66,8 +67,9 @@ export function parse(content) {
   if (typeof config.fmap_distcorr_skullstrip === "string") {
     config.fmap_distcorr_skullstrip = [config.fmap_distcorr_skullstrip]
   }
+
   c.functional.distortion_correction.skull_stripping = config.fmap_distcorr_skullstrip.includes('BET') ? 'bet' : 'afni'
-  c.functional.distortion_correction.threshold = config.fmap_distcorr_frac[0] // TODO review on CPAC; fmap_distcorr_threshold???
+  c.functional.distortion_correction.threshold = config.fmap_distcorr_threshold // TODO review on CPAC; fmap_distcorr_threshold???
   c.functional.distortion_correction.delta_te = config.fmap_distcorr_deltaTE[0]
   c.functional.distortion_correction.dwell_time = config.fmap_distcorr_dwell_time[0]
   c.functional.distortion_correction.dwell_to_assymetric_ratio = config.fmap_distcorr_dwell_asym_ratio[0]
@@ -104,7 +106,7 @@ export function parse(content) {
     config.lateral_ventricles_mask
       .replace("$FSLDIR", "${environment.paths.fsl_dir}")
 
-  c.functional.nuisance_regression.lateral_ventricles_mask = config.nComponents
+  c.functional.nuisance_regression.compcor_components = config.nComponents
   c.functional.nuisance_regression.friston_motion_regressors = config.runFristonModel.includes(1)
   c.functional.nuisance_regression.spike_denoising.no_denoising = config.runMotionSpike.includes('None')
   c.functional.nuisance_regression.spike_denoising.despiking = config.runMotionSpike.includes('De-Spiking')
@@ -143,17 +145,16 @@ export function parse(content) {
 
   c.functional.aroma.enable = config.runICA.includes(1)
   c.functional.aroma.denoising_strategy =
-    config.aroma_denoise_type == 'nonaggr' ? 'non-aggressive' : 'aggressive'
+    config.aroma_denoise_type === 'nonaggr' ? 'non-aggressive' : 'aggressive'
 
   c.functional.smoothing.enable = config.run_smoothing.includes(1)
   c.functional.smoothing.kernel_fwhm = config.fwhm[0]
   c.functional.smoothing.before_zscore = config.smoothing_order[0] == 'Before'
   c.functional.smoothing.zscore_derivatives = config.runZScoring.includes(1)
 
-
   c.derivatives.timeseries_extraction.enable = config.runROITimeseries.includes(1)
 
-  if (config.tsa_roi_paths instanceof Array) {
+  if (config.tsa_roi_paths instanceof Array && config.tsa_roi_paths.length > 0) {
     config.tsa_roi_paths = config.tsa_roi_paths[0]
   }
   if (config.tsa_roi_paths) {
@@ -181,7 +182,7 @@ export function parse(content) {
 
   c.derivatives.sca.enable = config.runSCA.includes(1)
 
-  if (config.sca_roi_paths instanceof Array) {
+  if (config.sca_roi_paths instanceof Array && config.sca_roi_paths.length > 0) {
     config.sca_roi_paths = config.sca_roi_paths[0]
   }
   if (config.sca_roi_paths) {
@@ -202,7 +203,6 @@ export function parse(content) {
   }
 
   c.derivatives.sca.normalize = config.mrsNorm
-
 
   c.derivatives.vmhc.enable = config.runVMHC.includes(1)
   c.derivatives.vmhc.symmetric_brain = config.template_symmetric_brain_only
@@ -246,9 +246,10 @@ export function parse(content) {
 }
 
 
-export function dump(pipeline) {
+export function dump(pipeline, version=0) {
 
-  const c = pipeline.versions[0].configuration
+  // TODO verify version
+  const c = pipeline.versions[version].configuration
 
   const config = {}
 
@@ -314,92 +315,161 @@ export function dump(pipeline) {
   config.bet_threshold = false
   config.bet_vertical_gradient = 0.0
 
-  config.resolution_for_anat = "2mm"
-  config.template_brain_only_for_anat = "$FSLDIR/data/standard/MNI152_T1_${resolution_for_anat}_brain.nii.gz"
-  config.template_skull_for_anat = "$FSLDIR/data/standard/MNI152_T1_${resolution_for_anat}.nii.gz"
+  config.resolution_for_anat = c.anatomical.registration.resolution + "mm"
+  config.template_brain_only_for_anat = c.anatomical.registration.brain_template
+  config.template_skull_for_anat = c.anatomical.registration.skull_template
   config.regOption = ['ANTS']
-  config.fnirtConfig = "T1_2_MNI152_2mm"
-  config.ref_mask = "$FSLDIR/data/standard/MNI152_T1_${resolution_for_anat}_brain_mask_dil.nii.gz"
-  config.regWithSkull = [0]
 
-  config.runSegmentationPreprocessing = [1]
-  config.priors_path = "$FSLDIR/data/standard/tissuepriors/2mm"
-  config.PRIORS_WHITE = "$priors_path/avg152T1_white_bin.nii.gz"
-  config.PRIORS_GRAY = "$priors_path/avg152T1_gray_bin.nii.gz"
-  config.PRIORS_CSF = "$priors_path/avg152T1_csf_bin.nii.gz"
+  config.regOption = []
+    .concat(c.anatomical.registration.methods.ants.enabled ? ["ANTS"] : [])
+    .concat(c.anatomical.registration.methods.fsl.enabled ? ["FSL"] : [])
 
-  config.slice_timing_correction = [0]
-  config.TR = null
-  config.slice_timing_pattern = "Use NIFTI Header"
-  config.startIdx = 0
-  config.stopIdx = null
+  config.fnirtConfig = c.anatomical.registration.methods.fsl.configuration.config_file
+  config.ref_mask = c.anatomical.registration.methods.fsl.configuration.reference_mask
 
-  config.runEPI_DistCorr = [0]
-  config.fmap_distcorr_skullstrip = ['BET']
-  config.fmap_distcorr_frac = [0.5]
-  config.fmap_distcorr_threshold = 0.6
-  config.fmap_distcorr_deltaTE = [2.46]
-  config.fmap_distcorr_dwell_time = [0.0005]
-  config.fmap_distcorr_dwell_asym_ratio = [0.93902439]
-  config.fmap_distcorr_pedir = "-y"
+  config.regWithSkull = [c.anatomical.registration.methods.ants.configuration.skull_on ? 1 : 0]
 
-  config.runRegisterFuncToAnat = [1]
-  config.runBBReg = [1]
-  config.boundaryBasedRegistrationSchedule = "$FSLDIR/etc/flirtsch/bbr.sch"
-  config.func_reg_input = ['Mean Functional']
-  config.func_reg_input_volume = 0
-  config.functionalMasking = ['3dAutoMask']
-  config.runRegisterFuncToMNI = [1]
-  config.resolution_for_func_preproc = "3mm"
-  config.resolution_for_func_derivative = "3mm"
-  config.template_brain_only_for_func = "$FSLDIR/data/standard/MNI152_T1_${resolution_for_func_preproc}_brain.nii.gz"
-  config.template_skull_for_func = "$FSLDIR/data/standard/MNI152_T1_${resolution_for_func_preproc}.nii.gz"
-  config.identityMatrix = "$FSLDIR/etc/flirtsch/ident.mat"
+  config.runSegmentationPreprocessing = [c.anatomical.tissue_segmentation.enabled ? 1 : 0]
+  config.priors_path = ""
+  config.PRIORS_WHITE = c.anatomical.tissue_segmentation.priors.white_matter
+  config.PRIORS_GRAY = c.anatomical.tissue_segmentation.priors.grate_matter
+  config.PRIORS_CSF = c.anatomical.tissue_segmentation.priors.cerebrospinal_fluid
 
-  config.runICA = [0]
-  config.aroma_denoise_type = "nonaggr"
+  // @TODO review pattern and stop idx
+  config.slice_timing_correction = [c.functional.slice_timing_correction.enabled ? 1 : 0]
+  config.TR = c.functional.slice_timing_correction.repetition_time.trim() === "" ? null : c.functional.slice_timing_correction.repetition_time
+  config.slice_timing_pattern =
+    c.functional.slice_timing_correction.pattern === "pattern" ?
+      "Use NIFTI Header": c.functional.slice_timing_correction.pattern
 
-  config.runNuisance = [1]
-  config.lateral_ventricles_mask = "$FSLDIR/data/atlases/HarvardOxford/HarvardOxford-lateral-ventricles-thr25-2mm.nii.gz"
+  config.startIdx = c.functional.slice_timing_correction.first_timepoint === "" ?
+    0 : parseInt(c.functional.slice_timing_correction.first_timepoint)
 
-  config.Regressors = [
-    { compcor: 1,
-      wm: 0,
-      csf: 1,
-      global: 1,
-      pc1: 0,
-      motion: 1,
-      linear: 1,
-      quadratic: 1,
-      gm: 0 },
+  config.stopIdx = c.functional.slice_timing_correction.last_timepoint === "" ?
+    null : parseInt(c.functional.slice_timing_correction.last_timepoint)
+
+  config.runEPI_DistCorr = [c.functional.distortion_correction.enabled ? 1 : 0]
+  config.fmap_distcorr_skullstrip = [c.functional.distortion_correction.skull_stripping === 'bet' ? 'BET' : 'AFNI']
+  config.fmap_distcorr_threshold = c.functional.distortion_correction.threshold
+  config.fmap_distcorr_deltaTE = [c.functional.distortion_correction.delta_te]
+  config.fmap_distcorr_dwell_time = [c.functional.distortion_correction.dwell_time]
+  config.fmap_distcorr_dwell_asym_ratio = [c.functional.distortion_correction.dwell_to_assymetric_ratio]
+  config.fmap_distcorr_pedir = c.functional.distortion_correction.phase_encoding_direction
+
+  config.runRegisterFuncToAnat = [c.functional.anatomical_registration.enabled ? 1 : 0]
+  config.runBBReg = [c.functional.anatomical_registration.bb_registration ? 1 : 0]
+  config.boundaryBasedRegistrationSchedule = c.functional.anatomical_registration.bb_registration_scheduler
+  config.func_reg_input = [c.functional.anatomical_registration.registration_input === 'mean' ?
+    "Mean Functional" : "Selected Functional Volume"]
+
+  config.func_reg_input_volume = c.functional.anatomical_registration.functional_volume
+  config.functionalMasking = []
+    .concat(c.functional.anatomical_registration.functional_masking.bet ? ["BET"] : [])
+    .concat(c.functional.anatomical_registration.functional_masking.afni ? ["3dAutoMask"] : [])
+
+  config.runRegisterFuncToMNI = [c.functional.template_registration.enabled ? 1 : 0]
+  config.resolution_for_func_preproc = c.functional.template_registration.functional_resolution + "mm"
+  config.resolution_for_func_derivative = c.functional.template_registration.derivative_resolution + "mm"
+  config.template_brain_only_for_func = c.functional.template_registration.brain_template
+  config.template_skull_for_func = c.functional.template_registration.skull_template
+  config.identityMatrix = c.functional.template_registration.identity_matrix
+
+  config.runICA = [c.functional.aroma.enable ? 1 : 0]
+  config.aroma_denoise_type = c.functional.aroma.denoising_strategy === 'non-aggressive' ? "nonaggr" : "aggr"
+
+  config.runNuisance = [c.functional.nuisance_regression.enabled ? 1 : 0]
+  config.lateral_ventricles_mask = c.functional.nuisance_regression.lateral_ventricles_mask
+
+  config.Regressors = []
+  for (const regressor of c.functional.nuisance_regression.regressors) {
+    config.Regressors.push({
+      compcor: regressor.compcor ? 1 : 0,
+      wm: regressor.white_matter ? 1 : 0,
+      gm: regressor.gray_matter ? 1 : 0,
+      csf: regressor.cerebrospinal_fluid ? 1 : 0,
+      global: regressor.global ? 1 : 0,
+      pc1: regressor.principal_component ? 1 : 0,
+      motion: regressor.motion ? 1 : 0,
+      linear: regressor.linear ? 1 : 0,
+      quadratic: regressor.quadratic ? 1 : 0,
+    })
+  }
+
+  config.nComponents = c.functional.nuisance_regression.compcor_components
+
+  config.runFristonModel = [c.functional.nuisance_regression.friston_motion_regressors ? 1 : 0]
+
+  c.functional.nuisance_regression.spike_denoising.no_denoising = config.runMotionSpike.includes('None')
+  c.functional.nuisance_regression.spike_denoising.despiking = config.runMotionSpike.includes('De-Spiking')
+  c.functional.nuisance_regression.spike_denoising.scrubbing = config.runMotionSpike.includes('Scrubbing')
+
+  config.runMotionSpike = []
+    .concat(c.functional.nuisance_regression.spike_denoising.no_denoising ? ['None'] : [])
+    .concat(c.functional.nuisance_regression.spike_denoising.despiking ? ['De-Spiking'] : [])
+    .concat(c.functional.nuisance_regression.spike_denoising.scrubbing ? ['Scrubbing'] : [])
+
+  config.fdCalc = c.functional.nuisance_regression.fd_calculation == 'jenkinson' ?
+    'Jenkinson' : 'Power'
+
+  config.spikeThreshold = [c.functional.nuisance_regression.fd_threshold]
+
+  config.numRemovePrecedingFrames = c.functional.nuisance_regression.pre_volumes
+  config.numRemoveSubsequentFrames = c.functional.nuisance_regression.post_volumes
+
+  config.runMedianAngleCorrection = [c.functional.median_angle_correction.enable ? 1 : 0]
+  config.targetAngleDeg = [c.functional.median_angle_correction.target_angle]
+
+  config.runFrequencyFiltering = [c.functional.temporal_filtering.enable ? 1 : 0]
+  config.nuisanceBandpassFreq = []
+  for (const frequencies of c.functional.temporal_filtering.filters) {
+    config.nuisanceBandpassFreq.push([
+      frequencies[0],
+      frequencies[1],
+    ])
+  }
+
+  config.runROITimeseries = [c.derivatives.timeseries_extraction.enable ? 1 : 0]
+
+
+  if (config.tsa_roi_paths) {
+    for (let mask of Object.keys(config.tsa_roi_paths)) {
+      let analysis = config.tsa_roi_paths[mask]
+      if (typeof analysis === "string") {
+        analysis = analysis.split(",")
+      }
+      analysis = analysis.map(s => s.trim().toLowerCase())
+
+      c.derivatives.timeseries_extraction.masks.push({
+        mask,
+        average: analysis.includes("avg"),
+        voxel: analysis.includes("voxel"),
+        spatial_regression: analysis.includes("spatialreg"),
+        pearson_correlation: analysis.includes("pearsoncorr"),
+        partial_correlation: analysis.includes("partialcorr"),
+      })
+    }
+  }
+
+  config.tsa_roi_paths = [{}]
+
+  for (const mask of c.derivatives.timeseries_extraction.masks) {
+
+    let maskFeatures = []
+      .concat(mask.average ? ['Avg'] : [])
+      .concat(mask.voxel ? ['Voxel'] : [])
+      .concat(mask.spatial_regression ? ['SpatialReg'] : [])
+      .concat(mask.pearson_correlation ? ['PearsonCorr'] : [])
+      .concat(mask.partial_correlation ? ['PartialCorr'] : [])
+
+    if (mask.length > 0) {
+      config.tsa_roi_paths[0][mask] = maskFeatures.join(", ")
+    }
+  }
+
+  config.roiTSOutputs = [
+    c.derivatives.timeseries_extraction.outputs.csv,
+    c.derivatives.timeseries_extraction.outputs.numpy
   ]
-  config.nComponents = 5
-
-  config.runFristonModel = [1]
-
-  config.runMotionSpike = ['None']
-  config.fdCalc = ['Jenkinson']
-  config.spikeThreshold = [0.5]
-  config.numRemovePrecedingFrames = 1
-  config.numRemoveSubsequentFrames = 2
-
-  config.runMedianAngleCorrection = [0]
-  config.targetAngleDeg = [90]
-
-  config.runFrequencyFiltering = [0, 1]
-  config.nuisanceBandpassFreq = [[0.01, 0.1]]
-
-  config.runROITimeseries = [1]
-  config.tsa_roi_paths =
-    [ { 's3://fcp-indi/resources/cpac/resources/CC400.nii.gz': 'Avg',
-        's3://fcp-indi/resources/cpac/resources/ez_mask_pad.nii.gz': 'Avg',
-        's3://fcp-indi/resources/cpac/resources/aal_mask_pad.nii.gz': 'Avg',
-        's3://fcp-indi/resources/cpac/resources/CC200.nii.gz': 'Avg',
-        's3://fcp-indi/resources/cpac/resources/tt_mask_pad.nii.gz': 'Avg',
-        's3://fcp-indi/resources/cpac/resources/PNAS_Smith09_rsn10.nii.gz': 'SpatialReg',
-        's3://fcp-indi/resources/cpac/resources/ho_mask_pad.nii.gz': 'Avg',
-        's3://fcp-indi/resources/cpac/resources/rois_3mm.nii.gz': 'Avg' } ]
-  config.roiTSOutputs = [true, true]
 
   config.runSCA = [1]
   config.sca_roi_paths = []
