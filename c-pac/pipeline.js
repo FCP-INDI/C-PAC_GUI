@@ -11,7 +11,7 @@ export function parse(content) {
   const c = t.versions['0'].configuration
 
   t.name = config.pipelineName
-  c.anatomical.skull_stripping.enabled = config.already_skullstripped.includes(1)
+  c.anatomical.skull_stripping.enabled = config.already_skullstripped.includes(0)
 
   if (typeof config.skullstrip_option === "string") {
     config.skullstrip_option = [config.skullstrip_option]
@@ -246,7 +246,9 @@ export function parse(content) {
 }
 
 
-export function dump(c, contents) {
+export function dump(pipeline) {
+
+  const c = pipeline.versions[0].configuration
 
   const config = {}
 
@@ -274,8 +276,11 @@ export function dump(c, contents) {
   config.reGenerateOutputs = false
   config.runSymbolicLinks = [1]
 
-  config.already_skullstripped = [0]
-  config.skullstrip_option = ["AFNI"]
+  config.already_skullstripped = [c.anatomical.skull_stripping.enabled ? 0 : 1]
+  config.skullstrip_option = []
+    .concat(c.anatomical.skull_stripping.methods.afni.enabled ? ["AFNI"] : [])
+    .concat(c.anatomical.skull_stripping.methods.bet.enabled ? ["BET"] : [])
+
   config.skullstrip_shrink_factor = 0.6
   config.skullstrip_var_shrink_fac = true
   config.skullstrip_shrink_factor_bot_lim = 0.4

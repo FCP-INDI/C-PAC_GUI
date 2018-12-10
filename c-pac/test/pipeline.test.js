@@ -10,7 +10,7 @@ describe('load pipeline', () => {
     const pipeline = parse(contents)
     const config = pipeline.versions['0'].configuration
 
-    assert(config.anatomical.skull_stripping.enabled === false)
+    assert(config.anatomical.skull_stripping.enabled === true)
     assert(config.anatomical.skull_stripping.methods.afni.enabled === true)
     assert(config.anatomical.skull_stripping.methods.bet.enabled === false)
 
@@ -23,10 +23,10 @@ describe('load pipeline', () => {
   it('should dump the YAML file', () => {
     var contents = fs.readFileSync('./test/data/pipeline_config_template.yml', 'utf8');
     const pipeline = parse(contents)
-    const yamlConfig = dump(template, contents)
+    const yamlConfig = dump(pipeline)
     const config = parse(yamlConfig).versions['0'].configuration
 
-    assert(config.anatomical.skull_stripping.enabled === false)
+    assert(config.anatomical.skull_stripping.enabled === true)
     assert(config.anatomical.skull_stripping.methods.afni.enabled === true)
     assert(config.anatomical.skull_stripping.methods.bet.enabled === false)
 
