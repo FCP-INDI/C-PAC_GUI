@@ -399,10 +399,6 @@ export function dump(pipeline, version=0) {
 
   config.runFristonModel = [c.functional.nuisance_regression.friston_motion_regressors ? 1 : 0]
 
-  c.functional.nuisance_regression.spike_denoising.no_denoising = config.runMotionSpike.includes('None')
-  c.functional.nuisance_regression.spike_denoising.despiking = config.runMotionSpike.includes('De-Spiking')
-  c.functional.nuisance_regression.spike_denoising.scrubbing = config.runMotionSpike.includes('Scrubbing')
-
   config.runMotionSpike = []
     .concat(c.functional.nuisance_regression.spike_denoising.no_denoising ? ['None'] : [])
     .concat(c.functional.nuisance_regression.spike_denoising.despiking ? ['De-Spiking'] : [])
@@ -430,30 +426,9 @@ export function dump(pipeline, version=0) {
 
   config.runROITimeseries = [c.derivatives.timeseries_extraction.enable ? 1 : 0]
 
-
-  if (config.tsa_roi_paths) {
-    for (let mask of Object.keys(config.tsa_roi_paths)) {
-      let analysis = config.tsa_roi_paths[mask]
-      if (typeof analysis === "string") {
-        analysis = analysis.split(",")
-      }
-      analysis = analysis.map(s => s.trim().toLowerCase())
-
-      c.derivatives.timeseries_extraction.masks.push({
-        mask,
-        average: analysis.includes("avg"),
-        voxel: analysis.includes("voxel"),
-        spatial_regression: analysis.includes("spatialreg"),
-        pearson_correlation: analysis.includes("pearsoncorr"),
-        partial_correlation: analysis.includes("partialcorr"),
-      })
-    }
-  }
-
   config.tsa_roi_paths = [{}]
 
   for (const mask of c.derivatives.timeseries_extraction.masks) {
-
     let maskFeatures = []
       .concat(mask.average ? ['Avg'] : [])
       .concat(mask.voxel ? ['Voxel'] : [])
@@ -461,8 +436,8 @@ export function dump(pipeline, version=0) {
       .concat(mask.pearson_correlation ? ['PearsonCorr'] : [])
       .concat(mask.partial_correlation ? ['PartialCorr'] : [])
 
-    if (mask.length > 0) {
-      config.tsa_roi_paths[0][mask] = maskFeatures.join(", ")
+    if (maskFeatures.length > 0) {
+      config.tsa_roi_paths[0][mask.mask] = maskFeatures.join(", ")
     }
   }
 
@@ -471,40 +446,73 @@ export function dump(pipeline, version=0) {
     c.derivatives.timeseries_extraction.outputs.numpy
   ]
 
-  config.runSCA = [1]
-  config.sca_roi_paths = []
-  config.mrsNorm = true
+  config.runSCA = [c.derivatives.sca.enabled ? 1 : 0]
 
-  config.runVMHC = [1]
-  config.template_symmetric_brain_only = "$FSLDIR/data/standard/MNI152_T1_${resolution_for_anat}_brain_symmetric.nii.gz"
-  config.template_symmetric_skull = "$FSLDIR/data/standard/MNI152_T1_${resolution_for_anat}_symmetric.nii.gz"
-  config.dilated_symmetric_brain_mask = "$FSLDIR/data/standard/MNI152_T1_${resolution_for_anat}_brain_mask_symmetric_dil.nii.gz"
-  config.configFileTwomm = "$FSLDIR/etc/flirtsch/T1_2_MNI152_2mm.cnf"
+  config.sca_roi_paths = [{}]
 
-  config.runALFF = [1]
-  config.highPassFreqALFF = [0.01]
-  config.lowPassFreqALFF = [0.1]
+  for (const mask of c.derivatives.sca.masks) {
 
-  config.runReHo = [1]
-  config.clusterSize = 27
+    let maskFeatures = []
+      .concat(mask.average ? ['Avg'] : [])
+      .concat(mask.dual_regression ? ['DualReg'] : [])
+      .concat(mask.multiple_regression ? ['MultReg'] : [])
 
-  config.runNetworkCentrality = [1]
-  config.templateSpecificationFile = "s3://fcp-indi/resources/cpac/resources/mask-thr50-3mm.nii.gz"
-  config.degWeightOptions = [true, true]
-  config.degCorrelationThresholdOption = ['Significance threshold']
-  config.degCorrelationThreshold = 0.001
-  config.eigWeightOptions = [true, true]
-  config.eigCorrelationThresholdOption = ['Significance threshold']
-  config.eigCorrelationThreshold = 0.001
-  config.lfcdWeightOptions = [true, true]
-  config.lfcdCorrelationThresholdOption = ['Significance threshold']
-  config.lfcdCorrelationThreshold = 0.001
+    if (maskFeatures.length > 0) {
+      config.sca_roi_paths[0][mask.mask] = maskFeatures.join(", ")
+    }
+  }
+
+  config.mrsNorm = c.derivatives.sca.normalize
+
+  config.runVMHC = [c.derivatives.vmhc.enabled ? 1 : 0]
+  config.template_symmetric_brain_only = c.derivatives.vmhc.symmetric_brain
+  config.template_symmetric_skull = c.derivatives.vmhc.symmetric_skull
+  config.dilated_symmetric_brain_mask = c.derivatives.vmhc.dilated_symmetric_brain
+  config.configFileTwomm = c.derivatives.vmhc.flirt_configuration_file
+
+  config.runALFF = [c.derivatives.alff.enabled ? 1 : 0]
+  config.highPassFreqALFF = [c.derivatives.alff.cutoff.low]
+  config.lowPassFreqALFF = [c.derivatives.alff.cutoff.high]
+
+  config.runReHo = [c.derivatives.reho.enabled ? 1 : 0]
+  config.clusterSize = c.derivatives.reho.cluster_size
+
+  config.runNetworkCentrality = [c.derivatives.network_centrality.enable ? 1 : 0]
+  config.templateSpecificationFile = c.derivatives.network_centrality.mask
+
+  const thresholdType = {
+    significance: "Significance threshold",
+    sparsity: "Sparsity threshold",
+    correlation: "Correlation threshold",
+  }
+
+  config.degWeightOptions = [
+    c.derivatives.network_centrality.degree_centrality.binarized,
+    c.derivatives.network_centrality.degree_centrality.weighted
+  ]
+  config.degCorrelationThresholdOption = [thresholdType[c.derivatives.network_centrality.degree_centrality.threshold_type]]
+  config.degCorrelationThreshold = c.derivatives.network_centrality.degree_centrality.threshold
+
+  config.eigWeightOptions = [
+    c.derivatives.network_centrality.eigenvector.binarized,
+    c.derivatives.network_centrality.eigenvector.weighted
+  ]
+  config.eigCorrelationThresholdOption = [thresholdType[c.derivatives.network_centrality.eigenvector.threshold_type]]
+  config.eigCorrelationThreshold = c.derivatives.network_centrality.eigenvector.threshold
+
+  config.lfcdWeightOptions = [
+    c.derivatives.network_centrality.local_connectivity_density.binarized,
+    c.derivatives.network_centrality.local_connectivity_density.weighted
+  ]
+  config.lfcdCorrelationThresholdOption = [thresholdType[c.derivatives.network_centrality.local_connectivity_density.threshold_type]]
+  config.lfcdCorrelationThreshold = c.derivatives.network_centrality.local_connectivity_density.threshold
+
   config.memoryAllocatedForDegreeCentrality = 3.0
 
-  config.run_smoothing = [1]
-  config.fwhm = [4]
-  config.smoothing_order = ['Before']
-  config.runZScoring = [1]
+  config.run_smoothing = [c.functional.smoothing.enable ? 1 : 0]
+  config.fwhm = [c.functional.smoothing.kernel_fwhm]
+  config.smoothing_order = [c.functional.smoothing.before_zscore ? "Before" : "After"]
+  config.runZScoring = [c.functional.smoothing.zscore_derivatives ? 1 : 0]
 
   config.run_fsl_feat = [0]
   config.numGPAModelsAtOnce = 1
@@ -538,6 +546,7 @@ export function dump(pipeline, version=0) {
   config.mdmr_permutations = 500
   config.mdmr_parallel_nodes = 1
 
+  // Generate valid YAML syntax
   const configYamled = {}
   for (let k of Object.keys(config)) {
     configYamled[k] = yaml.stringify({ [k]: config[k] })

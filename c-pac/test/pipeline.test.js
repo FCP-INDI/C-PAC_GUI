@@ -35,6 +35,6 @@ describe('load pipeline', () => {
     assert(config.derivatives.timeseries_extraction.enabled)
     assert(config.derivatives.timeseries_extraction.masks.length == 8)
     assert(config.derivatives.timeseries_extraction.masks[0].average)
-    assert(config.derivatives.sca.masks.length == 0)
+    assert(config.derivatives.sca.masks.length == 1)
   })
 })
