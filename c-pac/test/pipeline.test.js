@@ -2,11 +2,12 @@ import fs from 'fs'
 import assert from 'assert'
 import yaml from 'yaml'
 
-import { template, parse, dump } from '../pipeline'
+import { pipeline } from '..'
+const { template, parse, dump } = pipeline
 
 describe('load pipeline', () => {
   it('should parse the YAML file', () => {
-    var contents = fs.readFileSync('./test/data/pipeline_config_template.yml', 'utf8');
+    const contents = fs.readFileSync('./test/data/pipeline_config_template.yml', 'utf8');
     const pipeline = parse(contents)
     const config = pipeline.versions['0'].configuration
 
@@ -21,7 +22,7 @@ describe('load pipeline', () => {
   })
 
   it('should dump the YAML file', () => {
-    var contents = fs.readFileSync('./test/data/pipeline_config_template.yml', 'utf8');
+    const contents = fs.readFileSync('./test/data/pipeline_config_template.yml', 'utf8');
     const pipeline = parse(contents)
     const yamlConfig = dump(pipeline)
     const config = parse(yamlConfig).versions['0'].configuration
