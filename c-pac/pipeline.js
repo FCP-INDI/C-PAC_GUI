@@ -1,202 +1,8 @@
 import yaml from 'yaml'
 
-export const template = {
-  id: 'default',
-  name: 'Default',
-  versions: {
-    '0': {
-      version: '1.3.0',
-      configuration: {
-        anatomical: {
-          enabled: true,
-          registration: {
-            resolution: 1,
-            brain_template: '${environment.paths.fsl_dir}/data/standard/MNI152_T1_${pipeline.anatomical.registration.resolution}mm_brain.nii.gz',
-            skull_template: '${environment.paths.fsl_dir}/data/standard/MNI152_T1_${pipeline.anatomical.registration.resolution}mm.nii.gz',
-            methods: {
-              ants: { enabled: true, configuration: { skull_on: false } },
-              fsl: { enabled: true, configuration: { config_file: '', reference_mask: '' } }
-            }
-          },
-          skull_stripping: {
-            enabled: true,
-            methods: {
-              afni: { enabled: true },
-              bet: { enabled: false }
-            }
-          },
-          tissue_segmentation: {
-            enabled: true,
-            priors: {
-              white_matter: '${environment.paths.fsl_dir}/data/standard/tissuepriors/2mm/avg152T1_white_bin.nii.gz',
-              gray_matter: '${environment.paths.fsl_dir}/data/standard/tissuepriors/2mm/avg152T1_gray_bin.nii.gz',
-              cerebrospinal_fluid: '${environment.paths.fsl_dir}/data/standard/tissuepriors/2mm/avg152T1_csf_bin.nii.gz',
-            }
-          }
-        },
-        functional: {
-          enabled: true,
-          slice_timing_correction: {
-            enabled: true,
-            pattern: 'header',
-            repetition_time: '',
-            first_timepoint: '',
-            last_timepoint: '',
-          },
-          distortion_correction: {
-            enabled: true,
-            skull_stripping: 'afni',
-            threshold: 0.6,
-            delta_te: 2.46,
-            dwell_time: 0.0005,
-            dwell_to_assymetric_ratio: 0.93902439,
-            phase_encoding_direction: 'x',
-          },
-          anatomical_registration: {
-            enabled: true,
-            bb_registration: false,
-            bb_registration_scheduler: '${environment.paths.fsl_dir}/etc/flirtsch/bbr.sch',
-            registration_input: 'mean',
-            functional_volume: 0,
-            functional_masking: {
-              bet: false,
-              afni: false,
-            },
-          },
-          template_registration: {
-            enabled: true,
-            functional_resolution: 3,
-            derivative_resolution: 3,
-            brain_template: '',
-            skull_template: '',
-            identity_matrix: '',
+import template from './resources/pipeline/config'
+import yamlTemplate from './resources/pipeline/yaml'
 
-          },
-          nuisance_regression: {
-            enabled: true,
-            lateral_ventricles_mask: '${environment.paths.fsl_dir}/data/atlases/HarvardOxford/HarvardOxford-lateral-ventricles-thr25-2mm.nii.gz',
-            compcor_components: 5,
-            friston_motion_regressors: true,
-            spike_denoising: {
-              no_denoising: true,
-              despiking: false,
-              scrubbing: false,
-            },
-            fd_calculation: 'jenkinson',
-            fd_threshold: 0.2,
-            pre_volumes: 1,
-            post_volumes: 1,
-            regressors: [
-              {
-                gray_matter: false,
-                white_matter: false,
-                cerebrospinal_fluid: true,
-                compcor: true,
-                global: true,
-                principal_component: false,
-                motion: true,
-                linear: true,
-                quadratic: true,
-              },
-              {
-                gray_matter: false,
-                white_matter: false,
-                cerebrospinal_fluid: true,
-                compcor: true,
-                global: false,
-                principal_component: false,
-                motion: true,
-                linear: true,
-                quadratic: true,
-              }
-            ]
-          },
-          median_angle_correction: {
-            enabled: true,
-            target_angle: 90
-          },
-          temporal_filtering: {
-            enabled: true,
-            filters: [
-              {
-                low: 0.01,
-                high: 0.1
-              },
-            ]
-          },
-          aroma: {
-            enabled: true,
-            denoising_strategy: 'non-aggressive'
-          },
-          smoothing: {
-            enabled: true,
-            kernel_fwhm: 4,
-            before_zscore: false,
-            zscore_derivatives: false,
-          }
-        },
-        derivatives: {
-          enabled: true,
-          timeseries_extraction: {
-            enabled: true,
-            masks: [
-            ],
-            outputs: {
-              csv: true,
-              numpy: true,
-            }
-          },
-          sca: {
-            enabled: false,
-            masks: [
-            ],
-            normalize: false,
-          },
-          vmhc: {
-            enabled: false,
-            symmetric_brain: '${environment.paths.fsl_dir}/data/standard/MNI152_T1_${resolution_for_anat}_brain_symmetric.nii.gz',
-            symmetric_skull: '${environment.paths.fsl_dir}/data/standard/MNI152_T1_${resolution_for_anat}_symmetric.nii.gz',
-            dilated_symmetric_brain: '${environment.paths.fsl_dir}/data/standard/MNI152_T1_${resolution_for_anat}_brain_mask_symmetric_dil.nii.gz',
-            flirt_configuration_file: '${environment.paths.fsl_dir}/etc/flirtsch/T1_2_MNI152_2mm.cnf',
-          },
-          alff: {
-            enabled: false,
-            cutoff: {
-              low: 0.01,
-              high: 0.1,
-            }
-          },
-          reho: {
-            enabled: false,
-            cluster_size: 7,
-          },
-          network_centrality: {
-            enabled: false,
-            mask: '',
-            degree_centrality: {
-              binarized: true,
-              weighted: true,
-              threshold_type: 'significance',
-              threshold: 0.001
-            },
-            eigenvector: {
-              binarized: true,
-              weighted: true,
-              threshold_type: 'significance',
-              threshold: 0.001
-            },
-            local_connectivity_density: {
-              binarized: true,
-              weighted: true,
-              threshold_type: 'significance',
-              threshold: 0.001
-            },
-          },
-        }
-      }
-    },
-  }
-}
 
 export function parse(content) {
   const config = yaml.parse(content)
@@ -350,22 +156,23 @@ export function parse(content) {
   if (config.tsa_roi_paths instanceof Array) {
     config.tsa_roi_paths = config.tsa_roi_paths[0]
   }
+  if (config.tsa_roi_paths) {
+    for (let mask of Object.keys(config.tsa_roi_paths)) {
+      let analysis = config.tsa_roi_paths[mask]
+      if (typeof analysis === "string") {
+        analysis = analysis.split(",")
+      }
+      analysis = analysis.map(s => s.trim().toLowerCase())
 
-  for (let mask of Object.keys(config.tsa_roi_paths)) {
-    let analysis = config.tsa_roi_paths[mask]
-    if (typeof analysis === "string") {
-      analysis = analysis.split(",")
+      c.derivatives.timeseries_extraction.masks.push({
+        mask,
+        average: analysis.includes("avg"),
+        voxel: analysis.includes("voxel"),
+        spatial_regression: analysis.includes("spatialreg"),
+        pearson_correlation: analysis.includes("pearsoncorr"),
+        partial_correlation: analysis.includes("partialcorr"),
+      })
     }
-    analysis = analysis.map(s => s.trim().toLowerCase())
-
-    c.derivatives.timeseries_extraction.masks.push({
-      mask,
-      average: analysis.includes("avg"),
-      voxel: analysis.includes("voxel"),
-      spatial_regression: analysis.includes("spatialreg"),
-      pearson_correlation: analysis.includes("pearsoncorr"),
-      partial_correlation: analysis.includes("partialcorr"),
-    })
   }
 
   c.derivatives.timeseries_extraction.outputs.csv = config.roiTSOutputs[0]
@@ -377,20 +184,21 @@ export function parse(content) {
   if (config.sca_roi_paths instanceof Array) {
     config.sca_roi_paths = config.sca_roi_paths[0]
   }
+  if (config.sca_roi_paths) {
+    for (let mask of Object.keys(config.sca_roi_paths)) {
+      let analysis = config.sca_roi_paths[mask]
+      if (typeof analysis === "string") {
+        analysis = analysis.split(",")
+      }
+      analysis = analysis.map(s => s.trim().toLowerCase())
 
-  for (let mask of Object.keys(config.sca_roi_paths)) {
-    let analysis = config.sca_roi_paths[mask]
-    if (typeof analysis === "string") {
-      analysis = analysis.split(",")
+      c.derivatives.sca.masks.push({
+        mask,
+        average: analysis.includes("avg"),
+        dual_regression: analysis.includes("dualreg"),
+        multiple_regression: analysis.includes("multreg"),
+      })
     }
-    analysis = analysis.map(s => s.trim().toLowerCase())
-
-    c.derivatives.sca.masks.push({
-      mask,
-      average: analysis.includes("avg"),
-      dual_regression: analysis.includes("dualreg"),
-      multiple_regression: analysis.includes("multreg"),
-    })
   }
 
   c.derivatives.sca.normalize = config.mrsNorm
@@ -438,6 +246,227 @@ export function parse(content) {
 }
 
 
-export function dump(c) {
+export function dump(c, contents) {
 
+  const config = {}
+
+  config.runOnGrid = false
+  config.FSLDIR = "FSLDIR"
+  config.resourceManager = "SGE"
+  config.parallelEnvironment = "cpac"
+  config.queue = "all.q"
+  config.maximumMemoryPerParticipant = 3
+  config.maxCoresPerParticipant = 1
+  config.numParticipantsAtOnce = 1
+  config.num_ants_threads = 1
+  config.pipelineName = "cpac_default"
+  config.workingDirectory = "./cpac_runs/default/working"
+  config.crashLogDirectory = "./cpac_runs/default/crash"
+  config.logDirectory = "./cpac_runs/default/log"
+  config.outputDirectory = "./cpac_runs/default/output"
+  config.awsOutputBucketCredentials = ""
+  config.s3Encryption = [1]
+  config.write_func_outputs = [0]
+  config.write_debugging_outputs = [0]
+  config.generateQualityControlImages = [1]
+  config.removeWorkingDir = false
+  config.run_logging = true
+  config.reGenerateOutputs = false
+  config.runSymbolicLinks = [1]
+
+  config.already_skullstripped = [0]
+  config.skullstrip_option = ["AFNI"]
+  config.skullstrip_shrink_factor = 0.6
+  config.skullstrip_var_shrink_fac = true
+  config.skullstrip_shrink_factor_bot_lim = 0.4
+  config.skullstrip_avoid_vent = true
+  config.skullstrip_n_iterations = 250
+  config.skullstrip_pushout = true
+  config.skullstrip_touchup = true
+  config.skullstrip_fill_hole = 10
+  config.skullstrip_NN_smooth = 72
+  config.skullstrip_smooth_final = 20
+  config.skullstrip_avoid_eyes = true
+  config.skullstrip_use_edge = true
+  config.skullstrip_exp_frac = 0.1
+  config.skullstrip_push_to_edge = false
+  config.skullstrip_use_skull = false
+  config.skullstrip_perc_int = 0
+  config.skullstrip_max_inter_iter = 4
+  config.skullstrip_fac = 1
+  config.skullstrip_blur_fwhm = 0
+  config.bet_frac = 0.5
+  config.bet_mask_boolean = false
+  config.bet_mesh_boolean = false
+  config.bet_outline = false
+  config.bet_padding = false
+  config.bet_radius = 0
+  config.bet_reduce_bias = false
+  config.bet_remove_eyes = false
+  config.bet_robust = false
+  config.bet_skull = false
+  config.bet_surfaces = false
+  config.bet_threshold = false
+  config.bet_vertical_gradient = 0.0
+
+  config.resolution_for_anat = "2mm"
+  config.template_brain_only_for_anat = "$FSLDIR/data/standard/MNI152_T1_${resolution_for_anat}_brain.nii.gz"
+  config.template_skull_for_anat = "$FSLDIR/data/standard/MNI152_T1_${resolution_for_anat}.nii.gz"
+  config.regOption = ['ANTS']
+  config.fnirtConfig = "T1_2_MNI152_2mm"
+  config.ref_mask = "$FSLDIR/data/standard/MNI152_T1_${resolution_for_anat}_brain_mask_dil.nii.gz"
+  config.regWithSkull = [0]
+
+  config.runSegmentationPreprocessing = [1]
+  config.priors_path = "$FSLDIR/data/standard/tissuepriors/2mm"
+  config.PRIORS_WHITE = "$priors_path/avg152T1_white_bin.nii.gz"
+  config.PRIORS_GRAY = "$priors_path/avg152T1_gray_bin.nii.gz"
+  config.PRIORS_CSF = "$priors_path/avg152T1_csf_bin.nii.gz"
+
+  config.slice_timing_correction = [0]
+  config.TR = null
+  config.slice_timing_pattern = "Use NIFTI Header"
+  config.startIdx = 0
+  config.stopIdx = null
+
+  config.runEPI_DistCorr = [0]
+  config.fmap_distcorr_skullstrip = ['BET']
+  config.fmap_distcorr_frac = [0.5]
+  config.fmap_distcorr_threshold = 0.6
+  config.fmap_distcorr_deltaTE = [2.46]
+  config.fmap_distcorr_dwell_time = [0.0005]
+  config.fmap_distcorr_dwell_asym_ratio = [0.93902439]
+  config.fmap_distcorr_pedir = "-y"
+
+  config.runRegisterFuncToAnat = [1]
+  config.runBBReg = [1]
+  config.boundaryBasedRegistrationSchedule = "$FSLDIR/etc/flirtsch/bbr.sch"
+  config.func_reg_input = ['Mean Functional']
+  config.func_reg_input_volume = 0
+  config.functionalMasking = ['3dAutoMask']
+  config.runRegisterFuncToMNI = [1]
+  config.resolution_for_func_preproc = "3mm"
+  config.resolution_for_func_derivative = "3mm"
+  config.template_brain_only_for_func = "$FSLDIR/data/standard/MNI152_T1_${resolution_for_func_preproc}_brain.nii.gz"
+  config.template_skull_for_func = "$FSLDIR/data/standard/MNI152_T1_${resolution_for_func_preproc}.nii.gz"
+  config.identityMatrix = "$FSLDIR/etc/flirtsch/ident.mat"
+
+  config.runICA = [0]
+  config.aroma_denoise_type = "nonaggr"
+
+  config.runNuisance = [1]
+  config.lateral_ventricles_mask = "$FSLDIR/data/atlases/HarvardOxford/HarvardOxford-lateral-ventricles-thr25-2mm.nii.gz"
+
+  config.Regressors = [
+    { compcor: 1,
+      wm: 0,
+      csf: 1,
+      global: 1,
+      pc1: 0,
+      motion: 1,
+      linear: 1,
+      quadratic: 1,
+      gm: 0 },
+  ]
+  config.nComponents = 5
+
+  config.runFristonModel = [1]
+
+  config.runMotionSpike = ['None']
+  config.fdCalc = ['Jenkinson']
+  config.spikeThreshold = [0.5]
+  config.numRemovePrecedingFrames = 1
+  config.numRemoveSubsequentFrames = 2
+
+  config.runMedianAngleCorrection = [0]
+  config.targetAngleDeg = [90]
+
+  config.runFrequencyFiltering = [0, 1]
+  config.nuisanceBandpassFreq = [[0.01, 0.1]]
+
+  config.runROITimeseries = [1]
+  config.tsa_roi_paths =
+    [ { 's3://fcp-indi/resources/cpac/resources/CC400.nii.gz': 'Avg',
+        's3://fcp-indi/resources/cpac/resources/ez_mask_pad.nii.gz': 'Avg',
+        's3://fcp-indi/resources/cpac/resources/aal_mask_pad.nii.gz': 'Avg',
+        's3://fcp-indi/resources/cpac/resources/CC200.nii.gz': 'Avg',
+        's3://fcp-indi/resources/cpac/resources/tt_mask_pad.nii.gz': 'Avg',
+        's3://fcp-indi/resources/cpac/resources/PNAS_Smith09_rsn10.nii.gz': 'SpatialReg',
+        's3://fcp-indi/resources/cpac/resources/ho_mask_pad.nii.gz': 'Avg',
+        's3://fcp-indi/resources/cpac/resources/rois_3mm.nii.gz': 'Avg' } ]
+  config.roiTSOutputs = [true, true]
+
+  config.runSCA = [1]
+  config.sca_roi_paths = []
+  config.mrsNorm = true
+
+  config.runVMHC = [1]
+  config.template_symmetric_brain_only = "$FSLDIR/data/standard/MNI152_T1_${resolution_for_anat}_brain_symmetric.nii.gz"
+  config.template_symmetric_skull = "$FSLDIR/data/standard/MNI152_T1_${resolution_for_anat}_symmetric.nii.gz"
+  config.dilated_symmetric_brain_mask = "$FSLDIR/data/standard/MNI152_T1_${resolution_for_anat}_brain_mask_symmetric_dil.nii.gz"
+  config.configFileTwomm = "$FSLDIR/etc/flirtsch/T1_2_MNI152_2mm.cnf"
+
+  config.runALFF = [1]
+  config.highPassFreqALFF = [0.01]
+  config.lowPassFreqALFF = [0.1]
+
+  config.runReHo = [1]
+  config.clusterSize = 27
+
+  config.runNetworkCentrality = [1]
+  config.templateSpecificationFile = "s3://fcp-indi/resources/cpac/resources/mask-thr50-3mm.nii.gz"
+  config.degWeightOptions = [true, true]
+  config.degCorrelationThresholdOption = ['Significance threshold']
+  config.degCorrelationThreshold = 0.001
+  config.eigWeightOptions = [true, true]
+  config.eigCorrelationThresholdOption = ['Significance threshold']
+  config.eigCorrelationThreshold = 0.001
+  config.lfcdWeightOptions = [true, true]
+  config.lfcdCorrelationThresholdOption = ['Significance threshold']
+  config.lfcdCorrelationThreshold = 0.001
+  config.memoryAllocatedForDegreeCentrality = 3.0
+
+  config.run_smoothing = [1]
+  config.fwhm = [4]
+  config.smoothing_order = ['Before']
+  config.runZScoring = [1]
+
+  config.run_fsl_feat = [0]
+  config.numGPAModelsAtOnce = 1
+  config.modelConfigs = []
+
+  config.run_basc = [0]
+  config.basc_resolution = "4mm"
+  config.basc_proc = 2
+  config.basc_memory = 4
+  config.basc_roi_mask_file = null
+  config.basc_cross_cluster_mask_file = null
+  config.basc_similarity_metric_list = ['correlation']
+  config.basc_timeseries_bootstrap_list = 100
+  config.basc_dataset_bootstrap_list = 30
+  config.basc_n_clusters_list = 2
+  config.basc_affinity_thresh = [0.0]
+  config.basc_output_sizes = 800
+  config.basc_cross_cluster = true
+  config.basc_blocklength_list = 1
+  config.basc_group_dim_reduce = false
+  config.basc_inclusion = null
+  config.basc_pipeline = null
+  config.basc_scan_inclusion = null
+
+  config.runMDMR = [0]
+  config.mdmr_inclusion = null
+  config.mdmr_roi_file = null
+  config.mdmr_regressor_file = null
+  config.mdmr_regressor_participant_column = null
+  config.mdmr_regressor_columns = null
+  config.mdmr_permutations = 500
+  config.mdmr_parallel_nodes = 1
+
+  const configYamled = {}
+  for (let k of Object.keys(config)) {
+    configYamled[k] = yaml.stringify({ [k]: config[k] })
+  }
+
+  return yamlTemplate(configYamled)
 }
