@@ -30,33 +30,10 @@ const config = merge.smart(baseConfig, {
   module: {
     rules: [
       {
-        test: /\.global\.css$/,
+        test: /\.css$/,
         use: [
           MiniCssExtractPlugin.loader,
           'css-loader'
-        ]
-      },
-      {
-        test: /^((?!\.global).)*\.css$/,
-        use: [
-          MiniCssExtractPlugin.loader,
-          'css-loader'
-        ]
-      },
-      {
-        test: /\.global\.(scss|sass)$/,
-        use: [
-          MiniCssExtractPlugin.loader,
-          'css-loader',
-          'sass-loader'
-        ]
-      },
-      {
-        test: /^((?!\.global).)*\.(scss|sass)$/,
-        use: [
-          MiniCssExtractPlugin.loader,
-          'css-loader',
-          'sass-loader'
         ]
       },
       {

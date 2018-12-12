@@ -21,7 +21,6 @@ export default {
             plugins: [
               "@babel/plugin-transform-flow-strip-types",
               "@babel/plugin-proposal-function-bind",
-
               "@babel/plugin-proposal-export-default-from",
               "@babel/plugin-proposal-logical-assignment-operators",
               ["@babel/plugin-proposal-optional-chaining", { loose: false }],
@@ -41,10 +40,14 @@ export default {
               ["@babel/plugin-proposal-class-properties", { loose: false }],
               "@babel/plugin-proposal-json-strings",
 
-              'react-hot-loader/babel'
+              'react-hot-loader/babel',
             ]
           }
         }
+      },
+      {
+        test: /\.ya?ml$/,
+        use: 'raw-loader'
       }
     ]
   },

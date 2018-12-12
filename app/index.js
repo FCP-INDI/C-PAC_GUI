@@ -11,7 +11,6 @@ import Root from './containers/Root';
 
 import './app.global.css';
 
-
 const store = configureStore();
 
 const render = Component => {

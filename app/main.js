@@ -27,9 +27,11 @@ app.on('ready', async () => {
   }
 
   mainWindow.webContents.on("did-fail-load", function() {
-    console.log("did-fail-load");
     if (process.env.NODE_ENV === 'development') {
-      mainWindow.loadURL(`http://localhost:1212`);
+      setTimeout(
+        () => mainWindow.loadURL(`http://localhost:1212`),
+        500
+      )
     }
   });
 

@@ -57,7 +57,7 @@ const config = merge.smart(baseConfig, {
   module: {
     rules: [
       {
-        test: /\.global\.css$/,
+        test: /\.css$/,
         use: [
           'style-loader',
           {
@@ -66,20 +66,6 @@ const config = merge.smart(baseConfig, {
               sourceMap: true,
             },
           }
-        ]
-      },
-      {
-        test: /^((?!\.global).)*\.css$/,
-        use: [
-          'style-loader',
-          {
-            loader: 'css-loader',
-            options: {
-              modules: true,
-              sourceMap: true,
-              importLoaders: 1,
-            }
-          },
         ]
       },
       {

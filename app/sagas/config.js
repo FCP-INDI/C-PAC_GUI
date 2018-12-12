@@ -20,7 +20,6 @@ import {
   PIPELINE_DOWNLOAD
 } from '../actions/pipeline'
 
-import FileSaver from 'file-saver'
 
 // import { phenotype } from './config.data'
 import cpac from '@internal/c-pac'
