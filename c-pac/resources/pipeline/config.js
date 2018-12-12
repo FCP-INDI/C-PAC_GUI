@@ -2,7 +2,7 @@ export default {
   id: 'default',
   name: 'Default',
   versions: {
-    '0': {
+    'default': {
       version: '1.3.0',
       configuration: {
         anatomical: {

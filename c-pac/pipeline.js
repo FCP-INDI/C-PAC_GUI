@@ -1,8 +1,9 @@
 import yaml from 'yaml'
 
 import template from './resources/pipeline/config'
-import yamlTemplate from './resources/pipeline/yaml'
+import yamlTemplate, { raw } from './resources/pipeline/yaml'
 
+export { template, raw as rawTemplate }
 
 export function parse(content) {
   const config = yaml.parse(content)
@@ -248,7 +249,6 @@ export function parse(content) {
 
 export function dump(pipeline, version=0) {
 
-  // TODO verify version
   const c = pipeline.versions[version].configuration
 
   const config = {}

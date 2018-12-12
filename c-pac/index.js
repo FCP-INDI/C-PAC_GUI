@@ -1,6 +1,6 @@
-import { parse, dump } from './pipeline'
-import { listFiles } from './data_settings'
+import { parse, dump, template, rawTemplate } from './pipeline'
+import { listFiles, buildDataConfig } from './data_settings'
 export default {
-  pipeline: { parse, dump },
-  data_settings: { listFiles },
+  pipeline: { parse, dump, template, rawTemplate },
+  data_settings: { listFiles, buildDataConfig },
 }
