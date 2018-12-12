@@ -28,6 +28,17 @@ export function pipelineVersionDirtySave(pipeline) {
   }
 }
 
+export const PIPELINE_VERSION_DIRTY_REVERT = 'PIPELINE_VERSION_DIRTY_REVERT'
+export const PIPELINE_VERSION_DIRTY_REVERT_DONE = 'PIPELINE_VERSION_DIRTY_REVERT_DONE'
+
+export function pipelineVersionDirtyRevert(pipeline) {
+  return {
+    type: PIPELINE_VERSION_DIRTY_REVERT,
+    pipeline
+  }
+}
+
+
 export const PIPELINE_DUPLICATE = 'PIPELINE_DUPLICATE'
 export const PIPELINE_DUPLICATE_DONE = 'PIPELINE_DUPLICATE_DONE'
 
@@ -51,3 +62,14 @@ export function pipelineImport(content) {
   }
 }
 
+export const PIPELINE_DOWNLOAD = 'PIPELINE_DOWNLOAD'
+
+export function pipelineDownload(pipeline) {
+  if (!pipeline) {
+    pipeline = 'default'
+  }
+  return {
+    type: PIPELINE_DOWNLOAD,
+    pipeline
+  }
+}

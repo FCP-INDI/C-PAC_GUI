@@ -85,7 +85,7 @@ class Registration extends Component {
               </FormGroup>
               <FormGroup row>
                 <FormControlLabel
-                  label="FSL FNIRT"
+                  label="FSL FLIRT/FNIRT"
                   control={
                     <Switch
                       name="anatomical.registration.methods.fsl.enabled"

@@ -11,6 +11,7 @@ import {
   PIPELINE_NAME_UPDATE,
   PIPELINE_VERSION_DIRTY_UPDATE,
   PIPELINE_VERSION_DIRTY_SAVE,
+  PIPELINE_VERSION_DIRTY_REVERT,
   PIPELINE_DUPLICATE,
   PIPELINE_IMPORT,
 } from '../actions/pipeline'
@@ -74,6 +75,20 @@ export default function main(state, action) {
           version: '1.3.0',
           configuration: state.getIn(['config', 'pipelines', i, 'versions', '0', 'configuration'])
         }))
+        .deleteIn(['config', 'pipelines', i, 'versions', '0'])
+    }
+
+    case PIPELINE_VERSION_DIRTY_REVERT: {
+      const { pipeline: id } = action
+
+      const i = state.getIn(['config', 'pipelines'])
+                     .findIndex((p) => p.get('id') == id)
+
+      if (!state.getIn(['config', 'pipelines', i, 'versions']).has("0")) {
+        return state
+      }
+
+      return state
         .deleteIn(['config', 'pipelines', i, 'versions', '0'])
     }
 

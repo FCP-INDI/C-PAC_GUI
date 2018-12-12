@@ -102,14 +102,14 @@ class HomePage extends Component {
 
     const tools = (
       <React.Fragment>
-        <input type="file" id="pipeline" style={{display: 'none'}} />
+        <input type="file" id="pipeline" style={{display: 'none'}} onChange={e => this.handleChange(e.target.files)} />
         <Tooltip title="Create new pipeline">
           <IconButton onClick={() => this.props.pipelineDuplicate()}>
             <AddIcon />
           </IconButton>
         </Tooltip>
         <Tooltip title="Upload a pipeline">
-          <IconButton for="pipeline" component="label">
+          <IconButton htmlFor="pipeline" component="label">
               <UploadIcon />
           </IconButton>
         </Tooltip>

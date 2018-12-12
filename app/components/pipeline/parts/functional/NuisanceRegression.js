@@ -8,6 +8,8 @@ import TextField from '@material-ui/core/TextField';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import Switch from '@material-ui/core/Switch';
 import Checkbox from '@material-ui/core/Checkbox';
+import Button from '@material-ui/core/Button';
+import IconButton from '@material-ui/core/IconButton'
 
 import FormGroup from '@material-ui/core/FormGroup';
 import FormLabel from '@material-ui/core/FormLabel';
@@ -21,12 +23,51 @@ import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import TableFooter from '@material-ui/core/TableFooter';
+import { fromJS } from 'immutable';
 
+
+import {
+  AddIcon,
+  DeleteIcon
+} from '../../../../components/icons';
 
 class NuisanceRegression extends Component {
 
   static styles = theme => ({
+    footer: { textAlign: 'right', padding: theme.spacing.unit * 2 }
   });
+
+  addRegressor = (event) => {
+    const { configuration, onChange } = this.props
+    const next = configuration.getIn(['functional', 'nuisance_regression', 'regressors']).size
+
+    onChange([
+      [
+        `functional.nuisance_regression.regressors.${next}`,
+        fromJS({
+          gray_matter: false,
+          white_matter: false,
+          cerebrospinal_fluid: false,
+          compcor: false,
+          global: false,
+          principal_component: false,
+          motion: false,
+          linear: false,
+          quadratic: false,
+        })
+      ]
+    ])
+  }
+
+  removeRegressor(i) {
+    const { classes, configuration, onChange } = this.props
+    const regressor = configuration.getIn(['functional', 'nuisance_regression', 'regressors']).delete(i)
+
+    onChange([
+      [['functional', 'nuisance_regression', 'regressors'], regressor]
+    ])
+
+  }
 
   renderRegressor(regressor, i) {
     const { classes, configuration, onChange } = this.props
@@ -40,47 +81,65 @@ class NuisanceRegression extends Component {
         </TableCell>
         <TableCell padding="checkbox">
           <Checkbox
-            checked={true}
+            name={`functional.nuisance_regression.regressors.${i}.gray_matter`}
+            onChange={onChange}
+            checked={regressor.get('gray_matter')}
           />
         </TableCell>
         <TableCell padding="checkbox">
           <Checkbox
-            checked={true}
+            name={`functional.nuisance_regression.regressors.${i}.white_matter`}
+            onChange={onChange}
+            checked={regressor.get('white_matter')}
           />
         </TableCell>
         <TableCell padding="checkbox">
           <Checkbox
-            checked={true}
+            name={`functional.nuisance_regression.regressors.${i}.cerebrospinal_fluid`}
+            onChange={onChange}
+            checked={regressor.get('cerebrospinal_fluid')}
           />
         </TableCell>
         <TableCell padding="checkbox">
           <Checkbox
-            checked={true}
+            name={`functional.nuisance_regression.regressors.${i}.compcor`}
+            onChange={onChange}
+            checked={regressor.get('compcor')}
           />
         </TableCell>
         <TableCell padding="checkbox">
           <Checkbox
-            checked={true}
+            name={`functional.nuisance_regression.regressors.${i}.global`}
+            onChange={onChange}
+            checked={regressor.get('global')}
           />
         </TableCell>
         <TableCell padding="checkbox">
           <Checkbox
-            checked={true}
+            name={`functional.nuisance_regression.regressors.${i}.principal_component`}
+            onChange={onChange}
+            checked={regressor.get('principal_component')}
           />
         </TableCell>
         <TableCell padding="checkbox">
           <Checkbox
-            checked={true}
+            name={`functional.nuisance_regression.regressors.${i}.motion`}
+            onChange={onChange}
+            checked={regressor.get('motion')}
           />
         </TableCell>
         <TableCell padding="checkbox">
           <Checkbox
-            checked={true}
+            name={`functional.nuisance_regression.regressors.${i}.linear`}
+            onChange={onChange}
+            checked={regressor.get('linear')}
           />
         </TableCell>
         <TableCell padding="checkbox">
           <Checkbox
-            checked={true}
+            name={`functional.nuisance_regression.regressors.${i}.quadratic`}
+            onChange={onChange}
+            checked={regressor.get('quadratic')}
           />
         </TableCell>
       </TableRow>
@@ -217,15 +276,15 @@ class NuisanceRegression extends Component {
             <TableHead>
               <TableRow>
                 <TableCell padding="checkbox"></TableCell>
-                <TableCell></TableCell>
-                <TableCell></TableCell>
-                <TableCell></TableCell>
-                <TableCell></TableCell>
-                <TableCell></TableCell>
-                <TableCell></TableCell>
-                <TableCell></TableCell>
-                <TableCell></TableCell>
-                <TableCell></TableCell>
+                <TableCell padding="checkbox">Gray Matter</TableCell>
+                <TableCell padding="checkbox">White Matter</TableCell>
+                <TableCell padding="checkbox">Cerebrospinal Fluid</TableCell>
+                <TableCell padding="checkbox">Compcor</TableCell>
+                <TableCell padding="checkbox">Global Signal</TableCell>
+                <TableCell padding="checkbox">Principal Component</TableCell>
+                <TableCell padding="checkbox">Motion</TableCell>
+                <TableCell padding="checkbox">Linear</TableCell>
+                <TableCell padding="checkbox">Quadratic</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -233,8 +292,8 @@ class NuisanceRegression extends Component {
             </TableBody>
             <TableFooter>
               <TableRow >
-                <TableCell padding="checkbox" colSpan={7} className={classes.footer}>
-                  <Button onClick={this.addFilter.bind(this)} variant="fab" mini aria-label="Add new ROI">
+                <TableCell padding="checkbox" colSpan={10} className={classes.footer}>
+                  <Button onClick={this.addRegressor.bind(this)} variant="fab" mini>
                     <AddIcon />
                   </Button>
                 </TableCell>

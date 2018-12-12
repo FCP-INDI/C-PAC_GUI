@@ -26,9 +26,12 @@ import TableFooter from '@material-ui/core/TableFooter';
 import Icon from '@material-ui/core/Icon';
 import IconButton from '@material-ui/core/IconButton';
 import Button from '@material-ui/core/Button';
-import DeleteIcon from '@material-ui/icons/Delete';
-import AddIcon from '@material-ui/icons/Add';
-import { filter } from 'bluebird-lst';
+import { fromJS } from 'immutable';
+
+import {
+  AddIcon,
+  DeleteIcon
+} from '../../../../components/icons';
 
 
 class TemporalFiltering extends Component {
@@ -70,15 +73,15 @@ class TemporalFiltering extends Component {
     )
   }
 
-  addFilter() {
-    const { classes, configuration, onChange } = this.props
-
-    const filters = configuration.getIn(['functional', 'temporal_filtering', 'filters']).push({
-      low: 0.0, high: 0.0
-    })
+  addFilter = (event) => {
+    const { configuration, onChange } = this.props
+    const next = configuration.getIn(['functional', 'temporal_filtering', 'filters']).size
 
     onChange([
-      [['functional', 'temporal_filtering', 'filters'], filters]
+      [
+        `functional.temporal_filtering.filters.${next}`,
+        fromJS({ low: 0.0, high: 0.0 })
+      ]
     ])
   }
 

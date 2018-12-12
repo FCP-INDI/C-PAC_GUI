@@ -4,8 +4,10 @@ import { connect } from 'react-redux';
 import {
   pipelineVersionDirtyUpdate,
   pipelineVersionDirtySave,
+  pipelineVersionDirtyRevert,
   pipelineNameUpdate,
   pipelineDuplicate,
+  pipelineDownload,
 } from '../actions/pipeline'
 
 import { withStyles } from '@material-ui/core';
@@ -23,6 +25,7 @@ import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import IconButton from '@material-ui/core/IconButton'
 import Tooltip from '@material-ui/core/Tooltip'
+import Drawer from '@material-ui/core/Drawer';
 
 import getter from 'lodash.get';
 import setter from 'lodash.set';
@@ -40,6 +43,8 @@ import {
   EditIcon,
   DuplicateIcon,
 } from '../components/icons';
+
+import cpac from '@internal/c-pac'
 
 
 class PipelinePage extends Component {
@@ -67,6 +72,7 @@ class PipelinePage extends Component {
     this.state = {
       dirty,
       version,
+      default: pipeline.get('id') === 'default',
       configuration: pipeline.getIn(['versions', version, 'configuration'])
     }
   }
@@ -119,22 +125,46 @@ class PipelinePage extends Component {
     )
 
     this.setState({ configuration, dirty: true, version: "0" })
-
   }
 
-  handleSave = (name, value) => {
+  handleSave = () => {
     this.props.pipelineVersionDirtySave(this.props.pipeline.get('id'))
   };
+
+  handleRevert = () => {
+    this.props.pipelineVersionDirtyRevert(this.props.pipeline.get('id'))
+  };
+
+  handleDownload = () => {
+    const pipeline = this.props.pipeline
+    const versions = pipeline.get('versions')
+    let version = null
+    if (versions.has("0")) {
+      version = "0"
+    } else {
+      version = versions.keySeq().max()
+    }
+
+    var blob = new Blob(
+      [cpac.pipeline.dump(pipeline.toJS(), version)],
+      { type: "text/yaml;charset=utf-8" }
+    );
+
+    var anchor = document.createElement('a');
+    anchor.href = window.URL.createObjectURL(blob);
+    anchor.target = '_blank';
+    anchor.download = pipeline.get('name') + '.yml'
+    anchor.click();
+  }
 
   handleDuplicate = () => {
     this.props.pipelineDuplicate(this.props.pipeline.get('id'))
   }
 
-  handleTitleHover = () => {
-    this.setState(this.toggleTitleHoverState);
-  }
-
   handleTitleClick = () => {
+    if (this.state.default) {
+      return
+    }
     this.setState({
       isTitleEditing: true
     });
@@ -148,7 +178,14 @@ class PipelinePage extends Component {
     });
   }
 
+  handleTitleHover = () => {
+    this.setState(this.toggleTitleHoverState);
+  }
+
   toggleTitleHoverState(state) {
+    if (this.state.default) {
+      return
+    }
     return {
       isTitleHovering: !state.isTitleHovering,
     };
@@ -178,7 +215,7 @@ class PipelinePage extends Component {
         onMouseLeave={this.handleTitleHover}
         onClick={this.handleTitleClick}
         style={{
-          cursor: 'pointer',
+          cursor: this.state.default ? '' : 'pointer',
         }}
       >{ pipeline.get('name') + (this.state.dirty ? " *" : "") }</div>
     )
@@ -201,15 +238,25 @@ class PipelinePage extends Component {
         </Tooltip>
 
         <Tooltip title="Download config file">
-          <IconButton>
+          <IconButton onClick={this.handleDownload}>
             <DownloadIcon />
           </IconButton>
         </Tooltip>
 
-        <Tooltip title="Save">
-          <IconButton onClick={this.handleSave}>
-            <SaveIcon />
-          </IconButton>
+        <Tooltip title={this.state.default ? "You cannot change the default template!" : "Save"}>
+          <span>
+            <IconButton disabled={this.state.default} onClick={this.handleSave}>
+              <SaveIcon />
+            </IconButton>
+          </span>
+        </Tooltip>
+
+        <Tooltip title="Revert">
+          <span>
+            <IconButton disabled={!this.state.dirty} onClick={this.handleRevert}>
+              <RevertIcon />
+            </IconButton>
+          </span>
         </Tooltip>
       </React.Fragment>
     )
@@ -220,7 +267,12 @@ class PipelinePage extends Component {
            tools={tools}>
         {
           this.state.configuration ?
-          <PipelineEditor configuration={this.state.configuration} onChange={this.handleChange} onSave={this.handleSave} />:
+          (
+            <React.Fragment>
+              <PipelineEditor configuration={this.state.configuration} onChange={this.handleChange} onSave={this.handleSave} />
+            </React.Fragment>
+          )
+          :
           null
         }
       </Box>
@@ -239,8 +291,10 @@ const mapStateToProps = (state, props) => {
 const mapDispatchToProps = {
   pipelineVersionDirtyUpdate,
   pipelineVersionDirtySave,
+  pipelineVersionDirtyRevert,
   pipelineNameUpdate,
   pipelineDuplicate,
+  pipelineDownload,
 }
 
 const areStatesEqual = (next, prev) => {

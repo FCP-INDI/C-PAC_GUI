@@ -26,10 +26,12 @@ import TableFooter from '@material-ui/core/TableFooter';
 import Icon from '@material-ui/core/Icon';
 import IconButton from '@material-ui/core/IconButton';
 import Button from '@material-ui/core/Button';
-import DeleteIcon from '@material-ui/icons/Delete';
-import AddIcon from '@material-ui/icons/Add';
 import { fromJS } from 'immutable';
 
+import {
+  AddIcon,
+  DeleteIcon
+} from '../../../../components/icons';
 
 class TimeSeriesExtraction extends Component {
 

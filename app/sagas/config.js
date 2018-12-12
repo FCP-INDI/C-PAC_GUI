@@ -1,5 +1,5 @@
 import { delay } from 'redux-saga'
-import { select, put, takeEvery } from 'redux-saga/effects'
+import { all, select, put, takeEvery } from 'redux-saga/effects'
 import {
   CONFIG_LOAD,
   configLoading,
@@ -17,7 +17,10 @@ import {
   PIPELINE_DUPLICATE,
   PIPELINE_VERSION_DIRTY_UPDATE,
   PIPELINE_VERSION_DIRTY_SAVE,
+  PIPELINE_DOWNLOAD
 } from '../actions/pipeline'
+
+import FileSaver from 'file-saver'
 
 // import { phenotype } from './config.data'
 import cpac from '@internal/c-pac'
@@ -144,7 +147,7 @@ function* clearConfig(config) {
 }
 
 export default function* configSaga () {
-  yield [
+  yield all([
     takeEvery(CONFIG_LOAD, loadConfig),
 
     takeEvery(CONFIG_SAVE, saveConfig),
@@ -154,5 +157,5 @@ export default function* configSaga () {
     takeEvery(PIPELINE_DUPLICATE, saveConfig),
 
     takeEvery(CONFIG_CLEAR, clearConfig),
-  ]
+  ])
 }
