@@ -14,6 +14,8 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import InputLabel from '@material-ui/core/InputLabel';
 
+import Help from 'components/Help'
+import FormControlLabelled from 'components/FormControlLabelled'
 
 class SkullStripping extends Component {
 
@@ -69,41 +71,50 @@ class SkullStripping extends Component {
         <Grid item lg={8} xs={12}>
           <FormGroup>
             <FormGroup row>
-              <FormControlLabel
-                label="Already skull stripped"
-                control={
+              <Help
+                type="pipeline"
+                regex={/^already_skullstripped/}
+                help={`If inputs are already skull stripped (i.e. the structural input data is brain-only) then you can turn on this option.`}
+              >
+                <FormControlLabelled label="Already skull-stripped">
                   <Switch
                     name="anatomical.skull_stripping.enabled"
                     checked={!configuration.getIn("anatomical.skull_stripping.enabled".split("."))}
                     onChange={this.handleValueChange}
                     color="primary"
                   />
-                }
-              />
+                </FormControlLabelled>
+              </Help>
             </FormGroup>
             <FormGroup row>
-              <FormControlLabel
-                label="FSL BET"
-                control={
-                  <Switch
-                    name="anatomical.skull_stripping.methods.bet.enabled"
-                    checked={configuration.getIn("anatomical.skull_stripping.methods.bet.enabled".split("."))}
-                    onChange={this.handleValueChange}
-                    color="primary"
-                  />
-                }
-              />
-              <FormControlLabel
-                label="AFNI 3dSkullStrip"
-                control={
-                  <Switch
-                    name="anatomical.skull_stripping.methods.afni.enabled"
-                    checked={configuration.getIn("anatomical.skull_stripping.methods.afni.enabled".split("."))}
-                    onChange={this.handleValueChange}
-                    color="primary"
-                  />
-                }
-              />
+              <Help
+                type="pipeline"
+                regex={/^skullstrip_option/}
+                help={`Choice of using AFNI or FSL-BET to perform SkullStripping`}
+              >
+                <FormControlLabel
+                  label="FSL BET"
+                  control={
+                    <Switch
+                      name="anatomical.skull_stripping.methods.bet.enabled"
+                      checked={configuration.getIn("anatomical.skull_stripping.methods.bet.enabled".split("."))}
+                      onChange={this.handleValueChange}
+                      color="primary"
+                    />
+                  }
+                />
+                <FormControlLabel
+                  label="AFNI 3dSkullStrip"
+                  control={
+                    <Switch
+                      name="anatomical.skull_stripping.methods.afni.enabled"
+                      checked={configuration.getIn("anatomical.skull_stripping.methods.afni.enabled".split("."))}
+                      onChange={this.handleValueChange}
+                      color="primary"
+                    />
+                  }
+                />
+              </Help>
             </FormGroup>
           </FormGroup>
         </Grid>
@@ -112,8 +123,8 @@ class SkullStripping extends Component {
           <Typography paragraph>C-PAC provides options for configuring skull-stripping - users can select:</Typography>
           <Typography component="ul">
             <li>AFNI’s 3dSkullStrip</li>
-            <li>FSL’s BET, and can configure further parameters for each of these tools.</li>
-            <li>Providing their own brain mask for extraction</li>
+            <li>FSL’s BET, and can configure further parameters for each of these tools</li>
+            <li>Providing their own brain mask for extraction via data configuration</li>
           </Typography>
         </Grid>
       </Grid>
