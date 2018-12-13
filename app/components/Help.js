@@ -1,13 +1,13 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { withStyles } from '@material-ui/core/styles';
-import Typography from '@material-ui/core/Typography';
-import Collapse from '@material-ui/core/Collapse';
-import IconButton from '@material-ui/core/IconButton';
-import Grid from '@material-ui/core/Grid';
-import Popover from '@material-ui/core/Popover';
-import SyntaxHighlighter from 'react-syntax-highlighter';
-import { darcula as style } from 'react-syntax-highlighter/dist/styles/hljs';
+import React from 'react'
+import PropTypes from 'prop-types'
+import { withStyles } from '@material-ui/core/styles'
+import Typography from '@material-ui/core/Typography'
+import Collapse from '@material-ui/core/Collapse'
+import IconButton from '@material-ui/core/IconButton'
+import Grid from '@material-ui/core/Grid'
+import Popover from '@material-ui/core/Popover'
+import SyntaxHighlighter from 'react-syntax-highlighter'
+import { darcula as style } from 'react-syntax-highlighter/dist/styles/hljs'
 
 import cpac from '@internal/c-pac'
 
@@ -19,7 +19,7 @@ import {
 class Help extends React.Component {
   state = {
     open: false,
-  };
+  }
 
   static styles = theme => ({
     paper: {
@@ -35,15 +35,15 @@ class Help extends React.Component {
   })
 
   handleOpen = () => {
-    this.setState({ open: true });
-  };
+    this.setState({ open: true })
+  }
 
   handleClose = () => {
-    this.setState({ open: false });
-  };
+    this.setState({ open: false })
+  }
 
   render() {
-    const { classes, regex, type, help, width=600 } = this.props;
+    const { classes, regex, type, help, width=600 } = this.props
 
     let helper = help
     if (typeof help === "string") {
@@ -80,7 +80,7 @@ class Help extends React.Component {
           disableRipple
           className={classes.help}
           buttonRef={node => {
-            this.anchorEl = node;
+            this.anchorEl = node
           }}
           onClick={this.handleOpen}>
           <HelpIcon fontSize="small" />
