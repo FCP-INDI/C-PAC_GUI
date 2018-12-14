@@ -97,12 +97,24 @@ class HomePage extends Component {
     // }
   }
 
+  handleSelectPipeline = (e) => {
+    const files = e.target.files
+    if (files.length > 0) {
+      const f = files[0]
+      const reader = new FileReader()
+      reader.onload = (e) => {
+        this.props.pipelineImport(e.target.result)
+      }
+      reader.readAsText(f)
+    }
+  }
+
   render() {
     const { classes, projects, pipelines, datasets } = this.props
 
     const tools = (
       <React.Fragment>
-        <input type="file" id="pipeline" style={{display: 'none'}} onChange={e => this.handleChange(e.target.files)} />
+        <input type="file" id="pipeline" style={{display: 'none'}} onChange={this.handleSelectPipeline} />
         <Tooltip title="Create new pipeline">
           <IconButton onClick={() => this.props.pipelineDuplicate()}>
             <AddIcon />
@@ -110,7 +122,7 @@ class HomePage extends Component {
         </Tooltip>
         <Tooltip title="Upload a pipeline">
           <IconButton htmlFor="pipeline" component="label">
-              <UploadIcon />
+            <UploadIcon />
           </IconButton>
         </Tooltip>
       </React.Fragment>

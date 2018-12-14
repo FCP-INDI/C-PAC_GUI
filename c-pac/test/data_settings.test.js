@@ -2,8 +2,6 @@ import fs from 'fs'
 import assert from 'assert'
 import yaml from 'yaml'
 
-import { fullTest } from 'bids-validator/validators/bids'
-
 import { data_settings } from '..'
 
 describe('load data settings', async () => {

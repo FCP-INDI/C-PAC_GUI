@@ -17,8 +17,9 @@ import {
 } from '../actions/pipeline'
 
 import uuid from 'uuid/v4'
-import { fromJS } from 'immutable';
-import { parse } from '@internal/c-pac'
+import { fromJS } from 'immutable'
+
+import cpac from '@internal/c-pac'
 
 
 export default function main(state, action) {
@@ -94,7 +95,7 @@ export default function main(state, action) {
 
     case PIPELINE_IMPORT: {
       const { content } = action
-      parse(content)
+      cpac.pipeline.parse(content)
     }
 
     case PIPELINE_DUPLICATE: {

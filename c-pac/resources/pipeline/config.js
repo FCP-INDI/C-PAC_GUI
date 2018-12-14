@@ -192,6 +192,6 @@ export default {
           },
         }
       }
-    },
+    }
   }
 }
