@@ -5,9 +5,22 @@ A suite to manage, run and track your preprocessing pipelines.
 ## How to run
 
 ```bash
-npm install
-npm run dev
+yarn
+yarn run dev
 ```
+ or
+
+```bash
+./tools/start_dev.sh
+```
+
+## Packaging for release
+
+```bash
+./tools/build_package.sh
+```
+
+
 
 ## Ideas
 
