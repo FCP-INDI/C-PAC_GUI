@@ -1,3 +1,3 @@
-import AnatomicalPage from './AnatomicalPage'
-import FunctionalPage from './FunctionalPage'
-import DerivativesPage from './DerivativesPage'
+export AnatomicalPage from './AnatomicalPage'
+export FunctionalPage from './FunctionalPage'
+export DerivativesPage from './DerivativesPage'
