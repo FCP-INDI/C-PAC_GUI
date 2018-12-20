@@ -14,6 +14,8 @@ import FormControl from '@material-ui/core/FormControl';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormHelperText from '@material-ui/core/FormHelperText';
 
+import Help from 'components/Help'
+
 
 class MedialAngleCorrection extends Component {
 
@@ -26,16 +28,23 @@ class MedialAngleCorrection extends Component {
     return (
       <Grid container>
         <Grid item sm={12}>
-          <TextField
-            label="Target angle"
-            name="functional.median_angle_correction.target_angle"
-            value={configuration.getIn(["functional", "median_angle_correction", "target_angle"])}
-            fullWidth={true} margin="normal" variant="outlined"
-            helperText=''
-            InputProps={{
-              endAdornment: <InputAdornment position="end">°</InputAdornment>,
-            }}
-          />
+          <Help
+            type="pipeline"
+            regex={/^template_skull_for_anat/}
+            help={`Template to be used during registration. It is not necessary to change this path unless you intend to use a non-standard template.`}
+            fullWidth
+          >
+            <TextField
+              label="Target angle"
+              name="functional.median_angle_correction.target_angle"
+              value={configuration.getIn(["functional", "median_angle_correction", "target_angle"])}
+              fullWidth={true} margin="normal" variant="outlined"
+              helperText=''
+              InputProps={{
+                endAdornment: <InputAdornment position="end">°</InputAdornment>,
+              }}
+            />
+          </Help>
         </Grid>
       </Grid>
     )

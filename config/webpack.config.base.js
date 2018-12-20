@@ -2,6 +2,8 @@ import path from 'path';
 import webpack from 'webpack';
 import { dependencies as externals } from '../app/package.json';
 
+const target = process.env.TARGET == 'web' ? 'web' : 'electron-renderer'
+
 export default {
   externals: Object.keys(externals || {}),
 
@@ -68,8 +70,8 @@ export default {
   },
 
   plugins: [
-    new webpack.EnvironmentPlugin({
-      NODE_ENV: 'production'
+    new webpack.DefinePlugin({
+      TARGET: target,
     }),
 
     new webpack.NamedModulesPlugin(),

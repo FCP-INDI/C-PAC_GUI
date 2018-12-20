@@ -18,6 +18,9 @@ import Collapse from '@material-ui/core/Collapse';
 import getter from 'lodash.get';
 import setter from 'lodash.set';
 
+import Help from 'components/Help'
+import FormControlLabelled from 'components/FormControlLabelled'
+
 
 class Registration extends Component {
 
@@ -32,16 +35,22 @@ class Registration extends Component {
         <Grid item lg={8} xs={12}>
           <Grid container>
             <Grid item xs={6}>
-              <TextField label="Resolution"
-                         name="anatomical.registration.resolution"
-                         value={configuration.getIn("anatomical.registration.resolution".split("."))}
-                         onChange={onChange}
-                         fullWidth={true} margin="normal" variant="outlined"
-                         InputProps={{
-                           endAdornment: <InputAdornment position="end">mm</InputAdornment>,
-                         }}
-                         helperText='The resolution to which anatomical images should be transformed during registration. This is the resolution at which processed anatomical files will be output.'
-                         />
+              <Help
+                type="pipeline"
+                regex={/^resolution_for_anat/}
+                help={`The resolution to which anatomical images should be transformed during registration. This is the resolution at which processed anatomical files will be output.`}
+                fullWidth
+              >
+                <TextField label="Resolution"
+                  name="anatomical.registration.resolution"
+                  value={configuration.getIn("anatomical.registration.resolution".split("."))}
+                  onChange={onChange}
+                  fullWidth margin="normal" variant="outlined"
+                  InputProps={{
+                    endAdornment: <InputAdornment position="end">mm</InputAdornment>,
+                  }}
+                  />
+                </Help>
             </Grid>
           </Grid>
 
@@ -50,18 +59,31 @@ class Registration extends Component {
           </Typography>
           <Grid container>
             <Grid item xs={6}>
-              <TextField label="Brain" fullWidth={true} margin="normal" variant="outlined"
-                         name="anatomical.registration.brain_template"
-                         value={configuration.getIn("anatomical.registration.brain_template".split("."))}
-                         onChange={onChange}
-                         helperText='Template to be used during registration. It is not necessary to change this path unless you intend to use a non-standard template.' />
+              <Help
+                type="pipeline"
+                regex={/^template_brain_only_for_anat/}
+                help={`Template to be used during registration. It is not necessary to change this path unless you intend to use a non-standard template.`}
+                fullWidth
+              >
+                <TextField label="Brain" fullWidth margin="normal" variant="outlined"
+                          name="anatomical.registration.brain_template"
+                          value={configuration.getIn("anatomical.registration.brain_template".split("."))}
+                          onChange={onChange}
+                />
+              </Help>
             </Grid>
             <Grid item xs={6}>
-              <TextField label="Skull" fullWidth={true} margin="normal" variant="outlined"
-                         name="anatomical.registration.skull_template"
-                         value={configuration.getIn("anatomical.registration.skull_template".split("."))}
-                         onChange={onChange}
-                         helperText='Template to be used during registration. It is not necessary to change this path unless you intend to use a non-standard template.'/>
+              <Help
+                type="pipeline"
+                regex={/^template_skull_for_anat/}
+                help={`Template to be used during registration. It is not necessary to change this path unless you intend to use a non-standard template.`}
+                fullWidth
+              >
+                <TextField label="Skull" fullWidth margin="normal" variant="outlined"
+                          name="anatomical.registration.skull_template"
+                          value={configuration.getIn("anatomical.registration.skull_template".split("."))}
+                          onChange={onChange} />
+              </Help>
             </Grid>
           </Grid>
 
@@ -70,61 +92,81 @@ class Registration extends Component {
           </Typography>
           <Grid container>
             <Grid item xs={6}>
-              <FormGroup row>
-                <FormControlLabel
-                  label="ANTS"
-                  control={
-                    <Switch
-                      name="anatomical.registration.methods.ants.enabled"
-                      checked={configuration.getIn("anatomical.registration.methods.ants.enabled".split("."))}
-                      onChange={onChange}
-                      color="primary"
-                    />
-                  }
-                />
-              </FormGroup>
-              <FormGroup row>
-                <FormControlLabel
-                  label="FSL FLIRT/FNIRT"
-                  control={
+
+              <Help
+                type="pipeline"
+                regex={/^template_skull_for_anat/}
+                help={`Template to be used during registration. It is not necessary to change this path unless you intend to use a non-standard template.`}
+              >
+                <FormGroup row>
+                  <FormControlLabelled label="ANTS">
+                      <Switch
+                        name="anatomical.registration.methods.ants.enabled"
+                        checked={configuration.getIn("anatomical.registration.methods.ants.enabled".split("."))}
+                        onChange={onChange}
+                        color="primary"
+                      />
+                  </FormControlLabelled>
+                </FormGroup>
+                <FormGroup row>
+                  <FormControlLabelled label="FSL FLIRT/FNIRT">
                     <Switch
                       name="anatomical.registration.methods.fsl.enabled"
                       checked={configuration.getIn("anatomical.registration.methods.fsl.enabled".split("."))}
                       onChange={onChange}
                       color="primary"
                     />
-                  }
-                />
-              </FormGroup>
+                  </FormControlLabelled>
+                </FormGroup>
+              </Help>
             </Grid>
 
             <Grid item xs={6}>
               <Collapse in={configuration.getIn("anatomical.registration.methods.fsl.enabled".split("."))}>
-                <TextField label="FNIRT Configuration" fullWidth={true} margin="normal" variant="outlined"
-                           name="anatomical.registration.methods.fsl.configuration.config_file"
-                           value={configuration.getIn("anatomical.registration.methods.fsl.configuration.config_file".split("."))}
-                           onChange={onChange}
-                           helperText='Configuration file to be used by FSL to set FNIRT parameters. It is not necessary to change this path unless you intend to use custom FNIRT parameters or a non-standard template.' />
-                <TextField label="FNIRT Reference Mask" fullWidth={true} margin="normal" variant="outlined"
-                           name="anatomical.registration.methods.fsl.configuration.reference_mask"
-                           value={configuration.getIn("anatomical.registration.methods.fsl.configuration.reference_mask".split("."))}
-                           onChange={onChange}
-                           helperText='A reference mask to be used by FNIRT' />
+                <Help
+                  type="pipeline"
+                  regex={/^template_skull_for_anat/}
+                  help={`Template to be used during registration. It is not necessary to change this path unless you intend to use a non-standard template.`}
+                  fullWidth
+                >
+                  <TextField label="FNIRT Configuration" fullWidth margin="normal" variant="outlined"
+                            name="anatomical.registration.methods.fsl.configuration.config_file"
+                            value={configuration.getIn("anatomical.registration.methods.fsl.configuration.config_file".split("."))}
+                            onChange={onChange}
+                            // helperText='Configuration file to be used by FSL to set FNIRT parameters. It is not necessary to change this path unless you intend to use custom FNIRT parameters or a non-standard template.'
+                  />
+                </Help>
+
+                <Help
+                  type="pipeline"
+                  regex={/^template_skull_for_anat/}
+                  help={`Template to be used during registration. It is not necessary to change this path unless you intend to use a non-standard template.`}
+                  fullWidth
+                >
+                  <TextField label="FNIRT Reference Mask" fullWidth margin="normal" variant="outlined"
+                            name="anatomical.registration.methods.fsl.configuration.reference_mask"
+                            value={configuration.getIn("anatomical.registration.methods.fsl.configuration.reference_mask".split("."))}
+                            onChange={onChange}
+                            // helperText='A reference mask to be used by FNIRT'
+                  />
+                </Help>
               </Collapse>
 
               <Collapse in={configuration.getIn("anatomical.registration.methods.ants.enabled".split("."))}>
                 <FormControl>
-                  <FormControlLabel
-                    label="ANTS Skull-on Transform"
-                    control={
+                  <Help
+                    type="pipeline"
+                    regex={/^template_skull_for_anat/}
+                    help={`Register skull-on anatomical image to template. Calculating the transform with skull-stripped images is reported to be better, but it requires very high-quality skull-stripping. If skull-stripping is imprecise, registration with skull is preferred. This option only affects ANTS due to the fact that FNIRT already uses skull-on images for calculating warps.`}
+                  >
+                    <FormControlLabelled label="ANTS Skull-on Transform">
                       <Switch
                         name="anatomical.registration.methods.ants.configuration.skull_on"
                         checked={configuration.getIn("anatomical.registration.methods.ants.configuration.skull_on".split("."))}
                         onChange={onChange}
                       />
-                    }
-                  />
-                  <FormHelperText>Register skull-on anatomical image to template. Calculating the transform with skull-stripped images is reported to be better, but it requires very high-quality skull-stripping. If skull-stripping is imprecise, registration with skull is preferred. This option only affects ANTS due to the fact that FNIRT already uses skull-on images for calculating warps.</FormHelperText>
+                    </FormControlLabelled>
+                  </Help>
                 </FormControl>
               </Collapse>
             </Grid>

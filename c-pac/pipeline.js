@@ -9,7 +9,10 @@ export function parse(content) {
   const config = yaml.parse(content)
 
   const t = JSON.parse(JSON.stringify(template))
-  const c = t.versions['0'].configuration
+  const newver = `${new Date().getTime()}`
+  t.versions[newver] = t.versions['default']
+  delete t.versions['default']
+  const c = t.versions[newver].configuration
 
   t.name = config.pipelineName
   c.anatomical.skull_stripping.enabled = config.already_skullstripped.includes(0)
@@ -107,7 +110,7 @@ export function parse(content) {
     config.lateral_ventricles_mask
       .replace("$FSLDIR", "${environment.paths.fsl_dir}")
 
-  c.functional.nuisance_regression.compcor_components = config.nComponents
+  c.functional.nuisance_regression.compcor_components = config.nComponents[0]
   c.functional.nuisance_regression.friston_motion_regressors = config.runFristonModel.includes(1)
   c.functional.nuisance_regression.spike_denoising.no_denoising = config.runMotionSpike.includes('None')
   c.functional.nuisance_regression.spike_denoising.despiking = config.runMotionSpike.includes('De-Spiking')
@@ -118,24 +121,26 @@ export function parse(content) {
   c.functional.nuisance_regression.post_volumes = config.numRemoveSubsequentFrames
 
   c.functional.nuisance_regression.regressors = []
-  for (const regressor of config.Regressors) {
-    c.functional.nuisance_regression.regressors.push({
-      gray_matter: regressor.gm == 1,
-      white_matter: regressor.wm == 1,
-      cerebrospinal_fluid: regressor.csf == 1,
-      compcor: regressor.compcor == 1,
-      global: regressor.global == 1,
-      principal_component: regressor.pc1 == 1,
-      motion: regressor.motion == 1,
-      linear: regressor.linear == 1,
-      quadratic: regressor.quadratic == 1,
-    })
+  if (config.Regressors) {
+    for (const regressor of config.Regressors) {
+      c.functional.nuisance_regression.regressors.push({
+        gray_matter: regressor.gm == 1,
+        white_matter: regressor.wm == 1,
+        cerebrospinal_fluid: regressor.csf == 1,
+        compcor: regressor.compcor == 1,
+        global: regressor.global == 1,
+        principal_component: regressor.pc1 == 1,
+        motion: regressor.motion == 1,
+        linear: regressor.linear == 1,
+        quadratic: regressor.quadratic == 1,
+      })
+    }
   }
 
-  c.functional.median_angle_correction.enable = config.runMedianAngleCorrection.includes(1)
+  c.functional.median_angle_correction.enabled = config.runMedianAngleCorrection.includes(1)
   c.functional.median_angle_correction.target_angle = config.targetAngleDeg[0]
 
-  c.functional.temporal_filtering.enable = config.runFrequencyFiltering.includes(1)
+  c.functional.temporal_filtering.enabled = config.runFrequencyFiltering.includes(1)
   c.functional.temporal_filtering.filters = []
   for (const frequencies of config.nuisanceBandpassFreq) {
     c.functional.temporal_filtering.filters.push({
@@ -144,21 +149,21 @@ export function parse(content) {
     })
   }
 
-  c.functional.aroma.enable = config.runICA.includes(1)
+  c.functional.aroma.enabled = (config.runICA || []).includes(1)
   c.functional.aroma.denoising_strategy =
     config.aroma_denoise_type === 'nonaggr' ? 'non-aggressive' : 'aggressive'
 
-  c.functional.smoothing.enable = config.run_smoothing.includes(1)
+  c.functional.smoothing.enabled = config.run_smoothing.includes(1)
   c.functional.smoothing.kernel_fwhm = config.fwhm[0]
   c.functional.smoothing.before_zscore = config.smoothing_order[0] == 'Before'
   c.functional.smoothing.zscore_derivatives = config.runZScoring.includes(1)
 
-  c.derivatives.timeseries_extraction.enable = config.runROITimeseries.includes(1)
+  c.derivatives.timeseries_extraction.enabled = config.runROITimeseries.includes(1)
 
   if (config.tsa_roi_paths instanceof Array && config.tsa_roi_paths.length > 0) {
     config.tsa_roi_paths = config.tsa_roi_paths[0]
   }
-  if (config.tsa_roi_paths) {
+  if (typeof config.tsa_roi_paths == 'object') {
     for (let mask of Object.keys(config.tsa_roi_paths)) {
       let analysis = config.tsa_roi_paths[mask]
       if (typeof analysis === "string") {
@@ -181,12 +186,12 @@ export function parse(content) {
   c.derivatives.timeseries_extraction.outputs.numpy = config.roiTSOutputs[1]
 
 
-  c.derivatives.sca.enable = config.runSCA.includes(1)
+  c.derivatives.sca.enabled = config.runSCA.includes(1)
 
   if (config.sca_roi_paths instanceof Array && config.sca_roi_paths.length > 0) {
     config.sca_roi_paths = config.sca_roi_paths[0]
   }
-  if (config.sca_roi_paths) {
+  if (typeof config.sca_roi_paths == 'object') {
     for (let mask of Object.keys(config.sca_roi_paths)) {
       let analysis = config.sca_roi_paths[mask]
       if (typeof analysis === "string") {
@@ -205,22 +210,22 @@ export function parse(content) {
 
   c.derivatives.sca.normalize = config.mrsNorm
 
-  c.derivatives.vmhc.enable = config.runVMHC.includes(1)
+  c.derivatives.vmhc.enabled = config.runVMHC.includes(1)
   c.derivatives.vmhc.symmetric_brain = config.template_symmetric_brain_only
   c.derivatives.vmhc.symmetric_skull = config.template_symmetric_skull
   c.derivatives.vmhc.dilated_symmetric_brain = config.dilated_symmetric_brain_mask
   c.derivatives.vmhc.flirt_configuration_file = config.configFileTwomm
 
-  c.derivatives.alff.enable = config.runALFF.includes(1)
+  c.derivatives.alff.enabled = config.runALFF.includes(1)
   c.derivatives.alff.cutoff.low = config.lowPassFreqALFF[0]
   c.derivatives.alff.cutoff.high = config.highPassFreqALFF[0]
 
-  c.derivatives.reho.enable = config.runReHo.includes(1)
+  c.derivatives.reho.enabled = config.runReHo.includes(1)
   c.derivatives.reho.cluster_size = config.clusterSize
 
 
-  c.derivatives.network_centrality.enable = config.runNetworkCentrality.includes(1)
-  c.derivatives.network_centrality.mask = config.templateSpecificationFile
+  c.derivatives.network_centrality.enabled = config.runNetworkCentrality.includes(1)
+  c.derivatives.network_centrality.mask = config.templateSpecificationFile || ''
 
   const thresh_types = {
     "Significance threshold": 'significance',

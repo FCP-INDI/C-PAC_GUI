@@ -28,10 +28,12 @@ import IconButton from '@material-ui/core/IconButton';
 import Button from '@material-ui/core/Button';
 import { fromJS } from 'immutable';
 
+import Help from 'components/Help'
+
 import {
   AddIcon,
   DeleteIcon
-} from '../../../../components/icons';
+} from 'components/icons';
 
 
 class TemporalFiltering extends Component {
@@ -106,7 +108,13 @@ class TemporalFiltering extends Component {
             <Table className={classes.table}>
               <TableHead>
                 <TableRow>
-                  <TableCell padding="checkbox"></TableCell>
+                  <TableCell padding="checkbox">
+                    <Help
+                      type="pipeline"
+                      regex={/^template_skull_for_anat/}
+                      help={`Template to be used during registration. It is not necessary to change this path unless you intend to use a non-standard template.`}
+                    />
+                  </TableCell>
                   <TableCell>Low-frequency cutoff</TableCell>
                   <TableCell>High-frequency cutoff</TableCell>
                 </TableRow>

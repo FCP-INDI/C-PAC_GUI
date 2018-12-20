@@ -31,7 +31,10 @@ import { fromJS } from 'immutable';
 import {
   AddIcon,
   DeleteIcon
-} from '../../../../components/icons';
+} from 'components/icons';
+
+import Help from 'components/Help'
+
 
 class TimeSeriesExtraction extends Component {
 
@@ -83,7 +86,13 @@ class TimeSeriesExtraction extends Component {
             <Table className={classes.table}>
               <TableHead>
                 <TableRow>
-                  <TableCell padding="checkbox"></TableCell>
+                  <TableCell padding="checkbox">
+                    <Help
+                      type="pipeline"
+                      regex={/^template_skull_for_anat/}
+                      help={`Template to be used during registration. It is not necessary to change this path unless you intend to use a non-standard template.`}
+                    />
+                  </TableCell>
                   <TableCell>Roi Image</TableCell>
                   <TableCell padding="checkbox">Average</TableCell>
                   <TableCell padding="checkbox">Voxel</TableCell>
@@ -168,7 +177,14 @@ class TimeSeriesExtraction extends Component {
           </Paper>
 
           <FormGroup>
-            <FormLabel>Outputs</FormLabel>
+            <FormLabel>
+              <Help
+                type="pipeline"
+                regex={/^template_skull_for_anat/}
+                help={`Template to be used during registration. It is not necessary to change this path unless you intend to use a non-standard template.`}
+              />
+              Outputs
+            </FormLabel>
             <FormGroup row>
               <FormControlLabel
                 label="Comma-separated values (CSV)"

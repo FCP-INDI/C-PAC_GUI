@@ -55,6 +55,11 @@ class PipelinePage extends Component {
   constructor(props) {
     super(props)
     const pipeline = this.props.pipeline
+
+    if (!pipeline) {
+      return
+    }
+
     const versions = pipeline.get('versions')
 
     let dirty = false

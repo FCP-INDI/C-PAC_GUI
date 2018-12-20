@@ -95,7 +95,13 @@ export default function main(state, action) {
 
     case PIPELINE_IMPORT: {
       const { content } = action
-      cpac.pipeline.parse(content)
+      const pipelines = state.getIn(['config', 'pipelines'])
+      const newPipelineId = uuid()
+      const newPipeline = fromJS(cpac.pipeline.parse(content))
+        .set('id', newPipelineId)
+
+      const newPipelines = pipelines.push(newPipeline)
+      return state.setIn(['config', 'pipelines'], newPipelines)
     }
 
     case PIPELINE_DUPLICATE: {
@@ -128,7 +134,7 @@ export default function main(state, action) {
         .set('id', newPipelineId)
 
 
-      const newPipelines = pipelines.insert(pipelines.size, newPipeline)
+      const newPipelines = pipelines.push(newPipeline)
 
       return state.setIn(['config', 'pipelines'], newPipelines)
     }

@@ -16,6 +16,9 @@ import FormHelperText from '@material-ui/core/FormHelperText';
 
 import Collapse from '@material-ui/core/Collapse';
 
+import Help from 'components/Help'
+import FormControlLabelled from 'components/FormControlLabelled'
+
 
 class AnatomicalRegistration extends Component {
 
@@ -28,82 +31,111 @@ class AnatomicalRegistration extends Component {
     return (
       <Grid container>
         <Grid item sm={12}>
-
           <FormGroup row>
-            <FormControlLabel
-              label="Using BB Registration"
-              control={
+            <Help
+              type="pipeline"
+              regex={/^skullstrip_option/}
+              help={`Choice of using AFNI or FSL-BET to perform SkullStripping`}
+            >
+              <FormControlLabelled label="Using BB Registration">
                 <Switch
                   name="functional.anatomical_registration.bb_registration"
                   checked={configuration.getIn(["functional", "anatomical_registration", "bb_registration"])}
                   onChange={onChange}
                   color="primary"
                 />
-              }
-            />
+              </FormControlLabelled>
+            </Help>
           </FormGroup>
 
           <Collapse in={configuration.getIn(["functional", "anatomical_registration", "bb_registration"])}>
-            <TextField label="BB Registration Scheduler"
-                        fullWidth={true} margin="normal" variant="outlined"
-                        name="functional.anatomical_registration.bb_registration_scheduler"
-                        value={configuration.getIn(["functional", "anatomical_registration", "bb_registration_scheduler"])}
-                        onChange={onChange}
-                        helperText=''
-                        />
+            <Help
+              type="pipeline"
+              regex={/^skullstrip_option/}
+              help={`Choice of using AFNI or FSL-BET to perform SkullStripping`}
+              fullWidth
+            >
+              <TextField label="BB Registration Scheduler"
+                          fullWidth margin="normal" variant="outlined"
+                          name="functional.anatomical_registration.bb_registration_scheduler"
+                          value={configuration.getIn(["functional", "anatomical_registration", "bb_registration_scheduler"])}
+                          onChange={onChange}
+                          helperText=''
+                          />
+            </Help>
           </Collapse>
 
-          <TextField
-            select
-            label="Use as registration input"
-            fullWidth={true} margin="normal" variant="outlined"
-            className={classes.textField} onChange={onChange}
-            name="functional.anatomical_registration.registration_input"
-            value={configuration.getIn(["functional", "anatomical_registration", "registration_input"])}
-            helperText=''
+          <Help
+            type="pipeline"
+            regex={/^skullstrip_option/}
+            help={`Choice of using AFNI or FSL-BET to perform SkullStripping`}
+            fullWidth
           >
-            <MenuItem value={"mean"}>Mean Functional</MenuItem>
-            <MenuItem value={"selected"}>Selected Functional Volume</MenuItem>
-          </TextField>
+            <TextField
+              select
+              label="Use as registration input"
+              fullWidth margin="normal" variant="outlined"
+              className={classes.textField} onChange={onChange}
+              name="functional.anatomical_registration.registration_input"
+              value={configuration.getIn(["functional", "anatomical_registration", "registration_input"])}
+              helperText=''
+            >
+              <MenuItem value={"mean"}>Mean Functional</MenuItem>
+              <MenuItem value={"selected"}>Selected Functional Volume</MenuItem>
+            </TextField>
+          </Help>
 
           <Collapse in={configuration.getIn(["functional", "anatomical_registration", "registration_input"]) == 'selected'}>
-            <TextField
-              label="Functional Volume" onChange={onChange}
-              fullWidth={true} margin="normal" variant="outlined"
-              name="functional.anatomical_registration.functional_volume"
-              value={configuration.getIn(["functional", "anatomical_registration", "functional_volume"])}
-              helperText=''
-            />
+            <Help
+              type="pipeline"
+              regex={/^skullstrip_option/}
+              help={`Choice of using AFNI or FSL-BET to perform SkullStripping`}
+              fullWidth
+            >
+              <TextField
+                label="Functional Volume" onChange={onChange}
+                fullWidth margin="normal" variant="outlined"
+                name="functional.anatomical_registration.functional_volume"
+                value={configuration.getIn(["functional", "anatomical_registration", "functional_volume"])}
+                helperText=''
+                />
+            </Help>
           </Collapse>
 
           <FormGroup>
             <FormLabel>Functional Masking</FormLabel>
             <FormControl>
               <FormGroup row>
-                <FormControlLabel
-                  label="FSL BET"
-                  control={
+                <Help
+                  type="pipeline"
+                  regex={/^skullstrip_option/}
+                  help={`Choice of using AFNI or FSL-BET to perform SkullStripping`}
+                >
+                  <FormControlLabelled label="FSL BET">
                     <Switch
                       name="functional.anatomical_registration.functional_masking.bet"
                       checked={configuration.getIn(["functional", "anatomical_registration", "functional_masking", "bet"])}
                       onChange={onChange}
                       color="primary"
                     />
-                  }
-                />
+                  </FormControlLabelled>
+                </Help>
               </FormGroup>
               <FormGroup row>
-                <FormControlLabel
-                  label="AFNI 3dSkullStrip"
-                  control={
+                <Help
+                  type="pipeline"
+                  regex={/^skullstrip_option/}
+                  help={`Choice of using AFNI or FSL-BET to perform SkullStripping`}
+                >
+                  <FormControlLabelled label="AFNI 3dSkullStrip">
                     <Switch
                       name="functional.anatomical_registration.functional_masking.afni"
                       checked={configuration.getIn(["functional", "anatomical_registration", "functional_masking", "afni"])}
                       onChange={onChange}
                       color="primary"
                     />
-                  }
-                />
+                  </FormControlLabelled>
+                </Help>
               </FormGroup>
             </FormControl>
           </FormGroup>

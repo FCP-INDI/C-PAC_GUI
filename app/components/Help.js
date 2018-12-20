@@ -7,7 +7,7 @@ import IconButton from '@material-ui/core/IconButton'
 import Grid from '@material-ui/core/Grid'
 import Popover from '@material-ui/core/Popover'
 import SyntaxHighlighter from 'react-syntax-highlighter'
-import { darcula as style } from 'react-syntax-highlighter/dist/styles/hljs'
+import { darcula as highlightStyle } from 'react-syntax-highlighter/dist/styles/hljs'
 
 import cpac from '@internal/c-pac'
 
@@ -30,7 +30,7 @@ class Help extends React.Component {
       padding: theme.spacing.unit * 4,
     },
     help: {
-      // padding: 0
+      padding: 0
     },
   })
 
@@ -43,7 +43,7 @@ class Help extends React.Component {
   }
 
   render() {
-    const { classes, regex, type, help, width=600 } = this.props
+    const { classes, regex, type, help, mini, fullWidth, width=600 } = this.props
 
     let helper = help
     if (typeof help === "string") {
@@ -65,26 +65,63 @@ class Help extends React.Component {
 
     matchLineNumber = matchLineNumber - 0
 
-    const codeBefore = lines.slice(Math.max(0, matchLineNumber - 5), matchLineNumber)
+    const codeBefore = lines.slice(Math.max(0, matchLineNumber - 4), matchLineNumber)
     const codeAfter = lines.slice(matchLineNumber + 1, Math.min(matchLineNumber + 5, lines.length))
     const codeCurrent = lines[matchLineNumber]
 
     const code = codeBefore.join('\n') + '\n' + codeCurrent + '\n' + codeAfter.join('\n')
 
+    const style = {}
+    if (!fullWidth) {
+      style.width = 'auto'
+    }
+
+    const subStyle = {}
+    if (fullWidth) {
+      subStyle.flexGrow = 1
+    }
+
+    const buttonStyle = {}
+    if (fullWidth) {
+      buttonStyle.padding = 0
+    }
+
+    const button = (
+      <IconButton
+        aria-label="Help"
+        disableRipple
+        buttonRef={node => {
+          this.anchorEl = node
+        }}
+        style={ buttonStyle }
+        onClick={this.handleOpen}>
+        <HelpIcon fontSize="small" />
+      </IconButton>
+    )
+
     return (
       <React.Fragment>
-        { this.props.children }
 
-        <IconButton
-          aria-label="Help"
-          disableRipple
-          className={classes.help}
-          buttonRef={node => {
-            this.anchorEl = node
-          }}
-          onClick={this.handleOpen}>
-          <HelpIcon fontSize="small" />
-        </IconButton>
+        {
+          this.props.children ? (
+            mini ?
+              <React.Fragment>
+                { this.props.children }
+                { button }
+              </React.Fragment>
+            :
+            <Grid container spacing={24} alignItems={`center`} style={style}>
+              <Grid item style={subStyle}>
+                { this.props.children }
+              </Grid>
+              <Grid item style={{ padding: 5 }}>
+                { button }
+              </Grid>
+            </Grid>
+          )
+          :
+          button
+        }
 
         <Popover
           open={this.state.open}
@@ -106,12 +143,12 @@ class Help extends React.Component {
             </Grid>
             <Grid item sm={12} md={6}>
               <SyntaxHighlighter
+                wrapLines
+                showLineNumbers
                 language='yaml'
-                style={ style }
+                style={ highlightStyle }
                 customStyle={{overflow: 'hidden'}}
-                wrapLines={true}
-                showLineNumbers={true}
-                startingLineNumber={matchLineNumber - 5}
+                startingLineNumber={matchLineNumber - 4}
                 lineProps={lineNumber => ({
                   style: {
                     display: 'block', ...(
