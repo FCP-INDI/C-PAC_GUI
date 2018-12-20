@@ -15,9 +15,10 @@ import {
   SeedBasedCorrelation,
   TimeSeriesExtraction,
   VMHC
-} from './derivatives'
+} from 'containers/pipeline/parts/derivatives'
 
-class Derivatives extends Component {
+
+class DerivativesPage extends Component {
   static styles = theme => ({
     divider: {
       margin: theme.spacing.unit,
@@ -116,4 +117,4 @@ class Derivatives extends Component {
   }
 }
 
-export default withStyles(Derivatives.styles)(Derivatives);
+export default withStyles(DerivativesPage.styles)(DerivativesPage);

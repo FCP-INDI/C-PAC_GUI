@@ -8,15 +8,15 @@ import {
   pipelineNameUpdate,
   pipelineDuplicate,
   pipelineDownload,
-} from '../actions/pipeline'
+} from 'actions/pipeline'
 
 import { withStyles } from '@material-ui/core';
 
 import Grid from '@material-ui/core/Grid';
-import PipelineEditor from '../components/pipeline/PipelineEditor';
-import Header, { HeaderText, HeaderAvatar, HeaderTools } from '../components/Header';
-import Content from '../components/Content';
-import Box from '../components/Box';
+import PipelineEditor from 'containers/pipeline/PipelineEditor';
+import Header, { HeaderText, HeaderAvatar, HeaderTools } from 'components/Header';
+import Content from 'components/Content';
+import Box from 'components/Box';
 
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
@@ -42,7 +42,7 @@ import {
   RevertIcon,
   EditIcon,
   DuplicateIcon,
-} from '../components/icons';
+} from 'components/icons';
 
 import cpac from '@internal/c-pac'
 

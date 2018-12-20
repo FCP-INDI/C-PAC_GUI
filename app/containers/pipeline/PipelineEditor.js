@@ -2,8 +2,8 @@ import React, { Component } from 'react';
 
 import { withStyles } from '@material-ui/core';
 
-import Content from '../Content';
-import Header, { HeaderText, HeaderAvatar, HeaderTools } from '../Header';
+import Content from '../../components/Content';
+import Header, { HeaderText, HeaderAvatar, HeaderTools } from '../../components/Header';
 
 import Grid from '@material-ui/core/Grid';
 import Tabs from '@material-ui/core/Tabs';
@@ -21,13 +21,13 @@ import {
   RevertIcon,
   SaveIcon,
   SubjectIcon,
-} from '../icons';
+} from 'components/icons';
 
 import {
-  Anatomical,
-  Functional,
-  Derivatives,
-} from './parts'
+  AnatomicalPage,
+  FunctionalPage,
+  DerivativesPage,
+} from 'containers/pipeline/parts'
 
 import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton'
@@ -124,9 +124,9 @@ class PipelineEditor extends Component {
           : null }
         </Tabs>
 
-        { tab === 0 && <Anatomical configuration={configuration} onChange={onChange} /> }
-        { tab === 1 && <Functional configuration={configuration} onChange={onChange} /> }
-        { tab === 2 && <Derivatives configuration={configuration} onChange={onChange} /> }
+        { tab === 0 && <AnatomicalPage configuration={configuration} onChange={onChange} /> }
+        { tab === 1 && <FunctionalPage configuration={configuration} onChange={onChange} /> }
+        { tab === 2 && <DerivativesPage configuration={configuration} onChange={onChange} /> }
       </React.Fragment>
     );
   }

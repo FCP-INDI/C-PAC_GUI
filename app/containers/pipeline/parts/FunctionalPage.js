@@ -17,11 +17,12 @@ import {
   SliceTimingCorrection,
   Smoothing,
   TemporalFiltering
-} from './functional'
+} from 'containers/pipeline/parts/functional'
 
-import TristateSwitch from '../../TristateSwitch'
+import TristateSwitch from 'components/TristateSwitch'
 
-class Functional extends Component {
+
+class FunctionalPage extends Component {
   static styles = theme => ({
     divider: {
       margin: theme.spacing.unit,
@@ -136,4 +137,4 @@ class Functional extends Component {
   }
 }
 
-export default withStyles(Functional.styles)(Functional);
+export default withStyles(FunctionalPage.styles)(FunctionalPage);

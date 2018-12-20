@@ -5,9 +5,10 @@ import {
   SkullStripping,
   Registration,
   TissueSegmentation,
-} from './anatomical'
+} from 'containers/pipeline/parts/anatomical'
 
-class Anatomical extends Component {
+
+class AnatomicalPage extends Component {
 
   static styles = theme => ({
   });
@@ -34,4 +35,4 @@ class Anatomical extends Component {
   }
 }
 
-export default withStyles(Anatomical.styles)(Anatomical);
+export default withStyles(AnatomicalPage.styles)(AnatomicalPage);
