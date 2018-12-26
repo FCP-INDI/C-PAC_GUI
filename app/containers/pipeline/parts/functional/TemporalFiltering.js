@@ -111,8 +111,8 @@ class TemporalFiltering extends Component {
                   <TableCell padding="checkbox">
                     <Help
                       type="pipeline"
-                      regex={/^template_skull_for_anat/}
-                      help={`Template to be used during registration. It is not necessary to change this path unless you intend to use a non-standard template.`}
+                      regex={/^nuisanceBandpassFreq/}
+                      help={`Band-pass filters.`}
                     />
                   </TableCell>
                   <TableCell>Low-frequency cutoff</TableCell>

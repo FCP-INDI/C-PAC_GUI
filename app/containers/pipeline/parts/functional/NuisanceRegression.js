@@ -77,7 +77,7 @@ class NuisanceRegression extends Component {
     return (
       <TableRow key={i}>
         <TableCell padding="checkbox">
-          <IconButton className={classes.button} onClick={() => this.removeFilter.bind(this)(i)}>
+          <IconButton className={classes.button} onClick={() => this.removeRegressor.bind(this)(i)}>
             <DeleteIcon />
           </IconButton>
         </TableCell>
@@ -156,8 +156,8 @@ class NuisanceRegression extends Component {
         <Grid item sm={12}>
           <Help
             type="pipeline"
-            regex={/^template_skull_for_anat/}
-            help={`Template to be used during registration. It is not necessary to change this path unless you intend to use a non-standard template.`}
+            regex={/^lateral_ventricles_mask/}
+            help={`Standard Lateral Ventricles Binary Mask.`}
             fullWidth
           >
             <TextField
@@ -172,8 +172,8 @@ class NuisanceRegression extends Component {
 
           <Help
             type="pipeline"
-            regex={/^template_skull_for_anat/}
-            help={`Template to be used during registration. It is not necessary to change this path unless you intend to use a non-standard template.`}
+            regex={/^nComponents/}
+            help={`Number of Principle Components to calculate when running CompCor. We recommend 5 or 6.`}
             fullWidth
           >
             <TextField
@@ -190,8 +190,8 @@ class NuisanceRegression extends Component {
           <FormGroup row>
             <Help
               type="pipeline"
-              regex={/^template_skull_for_anat/}
-              help={`Template to be used during registration. It is not necessary to change this path unless you intend to use a non-standard template.`}
+              regex={/^runFristonModel/}
+              help={`Use the Friston 24-Parameter Model during volume realignment. If this option is turned off, only 6 parameters will be used.`}
             >
               <FormControlLabelled
                 label="Use Frinston's 24 motion regressors">
@@ -205,15 +205,14 @@ class NuisanceRegression extends Component {
             </Help>
           </FormGroup>
 
-
           <Grid container>
             <Grid item xs={6}>
               <FormGroup>
                 <FormLabel>
                   <Help
                     type="pipeline"
-                    regex={/^template_skull_for_anat/}
-                    help={`Template to be used during registration. It is not necessary to change this path unless you intend to use a non-standard template.`}
+                    regex={/^runMotionSpike/}
+                    help={`Remove or regress out volumes exhibiting excessive motion. Each of these options are mutually exclusive, and selecting more than one will create a new pipeline fork for each option. For example, de-spiking and scrubbing will not run within the same pipeline strategy.`}
                   />
                   Motion Spike De-noising
                 </FormLabel>
@@ -255,8 +254,8 @@ class NuisanceRegression extends Component {
             <Grid item xs={6}>
               <Help
                 type="pipeline"
-                regex={/^template_skull_for_anat/}
-                help={`Template to be used during registration. It is not necessary to change this path unless you intend to use a non-standard template.`}
+                regex={/^fdCalc/}
+                help={`Choose which Framewise Displacement (FD) calculation to apply the threshold to during de-spiking or scrubbing.`}
                 fullWidth
               >
                 <TextField
@@ -273,12 +272,10 @@ class NuisanceRegression extends Component {
                   <MenuItem value={"power"}>Power</MenuItem>
                 </TextField>
               </Help>
-            </Grid>
-            <Grid item xs={6}>
               <Help
                 type="pipeline"
-                regex={/^template_skull_for_anat/}
-                help={`Template to be used during registration. It is not necessary to change this path unless you intend to use a non-standard template.`}
+                regex={/^spikeThreshold/}
+                help={`Specify the maximum acceptable Framewise Displacement (FD) in millimeters. Any volume exhibiting FD greater than the value will be regressed out or scrubbed.`}
                 fullWidth
               >
                 <TextField
@@ -297,8 +294,8 @@ class NuisanceRegression extends Component {
             <Grid item xs={6}>
               <Help
                 type="pipeline"
-                regex={/^template_skull_for_anat/}
-                help={`Template to be used during registration. It is not necessary to change this path unless you intend to use a non-standard template.`}
+                regex={/^numRemovePrecedingFrames/}
+                help={`Number of volumes to de-spike or scrub preceding a volume with excessive FD.`}
                 fullWidth
               >
                 <TextField
@@ -314,8 +311,8 @@ class NuisanceRegression extends Component {
             <Grid item xs={6}>
               <Help
                 type="pipeline"
-                regex={/^template_skull_for_anat/}
-                help={`Template to be used during registration. It is not necessary to change this path unless you intend to use a non-standard template.`}
+                regex={/^numRemoveSubsequentFrames/}
+                help={`Number of volumes to de-spike or scrub subsequent to a volume with excessive FD.`}
                 fullWidth
               >
                 <TextField
@@ -330,15 +327,14 @@ class NuisanceRegression extends Component {
             </Grid>
           </Grid>
 
-
           <Table className={classes.table}>
             <TableHead>
               <TableRow>
                 <TableCell padding="checkbox">
                   <Help
-                    type="pipeline" mini
+                    type="pipeline"
                     regex={/^Regressors/}
-                    help={`Template to be used during registration. It is not necessary to change this path unless you intend to use a non-standard template.`}
+                    help={`Select which nuisance signal corrections to apply`}
                   />
                 </TableCell>
                 <TableCell padding="checkbox">

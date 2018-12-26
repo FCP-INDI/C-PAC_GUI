@@ -24,8 +24,8 @@ class SliceTimingCorrection extends Component {
 
           <Help
             type="pipeline"
-            regex={/^skullstrip_option/}
-            help={`Choice of using AFNI or FSL-BET to perform SkullStripping`}
+            regex={/^slice_timing_pattern/}
+            help={`Acquisition strategy for acquiring image slices. Slice acquisition information is read from scan parameters in the data configuration file. If this is not provided, then this option will apply.`}
             fullWidth
           >
             <TextField
@@ -49,8 +49,8 @@ class SliceTimingCorrection extends Component {
 
           <Help
             type="pipeline"
-            regex={/^skullstrip_option/}
-            help={`Choice of using AFNI or FSL-BET to perform SkullStripping`}
+            regex={/^TR/}
+            help={`Specify the TR (in seconds) at which images were acquired. If empty, TR information is then read from scan parameters in the data configuration file, or the image file header if there is no scan information in the data configuration.`}
             fullWidth
           >
           <TextField
@@ -67,8 +67,8 @@ class SliceTimingCorrection extends Component {
 
           <Help
             type="pipeline"
-            regex={/^skullstrip_option/}
-            help={`Choice of using AFNI or FSL-BET to perform SkullStripping`}
+            regex={/^startIdx/}
+            help={`First timepoint to include in analysis. Default is 0 (beginning of timeseries). First timepoint selection in the scan parameters in the data configuration file, if present, will override this selection.`}
             fullWidth
           >
             <TextField
@@ -82,8 +82,8 @@ class SliceTimingCorrection extends Component {
 
           <Help
             type="pipeline"
-            regex={/^skullstrip_option/}
-            help={`Choice of using AFNI or FSL-BET to perform SkullStripping`}
+            regex={/^stopIdx/}
+            help={`Last timepoint to include in analysis. Default is empty (end of timeseries). Last timepoint selection in the scan parameters in the data configuration file, if present, will override this selection.`}
             fullWidth
           >
             <TextField

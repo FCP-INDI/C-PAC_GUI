@@ -25,68 +25,53 @@ class TissueSegmentation extends Component {
   render() {
     const { classes, configuration, onChange } = this.props
 
-    // tissue_segmentation.priors.gray_matter
-    // tissue_segmentation.priors.cerebrospinal_fluid
-
     return (
-      <Grid container>
-        <Grid item lg={8} xs={12}>
+      <React.Fragment>
+        <Help
+          type="pipeline"
+          regex={/^PRIORS_WHITE/}
+          help={`Full path to a binarized White Matter prior probability map. It is not necessary to change this path unless you intend to use non-standard priors.`}
+          fullWidth
+        >
+          <TextField
+            label="White Matter Prior Probability Map"
+            name="anatomical.tissue_segmentation.priors.white_matter"
+            value={configuration.getIn("anatomical.tissue_segmentation.priors.white_matter".split("."))}
+            onChange={onChange}
+            fullWidth={true} margin="normal" variant="outlined"
+          />
+        </Help>
 
-          <Help
-            type="pipeline"
-            regex={/^template_skull_for_anat/}
-            help={`Template to be used during registration. It is not necessary to change this path unless you intend to use a non-standard template.`}
-            fullWidth
-          >
-            <TextField
-              label="White Matter Prior Probability Map"
-              name="anatomical.tissue_segmentation.priors.white_matter"
-              value={configuration.getIn("anatomical.tissue_segmentation.priors.white_matter".split("."))}
-              onChange={onChange}
-              fullWidth={true} margin="normal" variant="outlined"
-            />
-          </Help>
+        <Help
+          type="pipeline"
+          regex={/^PRIORS_GRAY/}
+          help={`Full path to a binarized Gray Matter prior probability map. It is not necessary to change this path unless you intend to use non-standard priors.`}
+          fullWidth
+        >
+          <TextField
+            label="Gray Matter Prior Probability Map"
+            name="anatomical.tissue_segmentation.priors.gray_matter"
+            value={configuration.getIn("anatomical.tissue_segmentation.priors.gray_matter".split("."))}
+            onChange={onChange}
+            fullWidth={true} margin="normal" variant="outlined"
+          />
+        </Help>
 
-          <Help
-            type="pipeline"
-            regex={/^template_skull_for_anat/}
-            help={`Template to be used during registration. It is not necessary to change this path unless you intend to use a non-standard template.`}
-            fullWidth
-          >
-            <TextField
-              label="Gray Matter Prior Probability Map"
-              name="anatomical.tissue_segmentation.priors.gray_matter"
-              value={configuration.getIn("anatomical.tissue_segmentation.priors.gray_matter".split("."))}
-              onChange={onChange}
-              fullWidth={true} margin="normal" variant="outlined"
-            />
-          </Help>
-
-          <Help
-            type="pipeline"
-            regex={/^template_skull_for_anat/}
-            help={`Template to be used during registration. It is not necessary to change this path unless you intend to use a non-standard template.`}
-            fullWidth
-          >
-            <TextField
-              label="Cerebrospinal Fluid Prior Probability Map"
-              name="anatomical.tissue_segmentation.priors.cerebrospinal_fluid"
-              value={configuration.getIn("anatomical.tissue_segmentation.priors.cerebrospinal_fluid".split("."))}
-              onChange={onChange}
-              fullWidth={true} margin="normal" variant="outlined"
-            />
-          </Help>
-        </Grid>
-        <Grid item lg={4} style={{ padding: 16 }}>
-          <Typography paragraph>Skull-stripping is the removal of skull and other non-brain tissue like dura and eyes from anatomical images, which could otherwise complicate co-registration and normalization steps.</Typography>
-          <Typography paragraph>C-PAC provides options for configuring skull-stripping - users can select:</Typography>
-          <Typography component="ul">
-            <li>AFNI’s 3dSkullStrip</li>
-            <li>FSL’s BET, and can configure further parameters for each of these tools.</li>
-            <li>Providing their own brain mask for extraction</li>
-          </Typography>
-        </Grid>
-      </Grid>
+        <Help
+          type="pipeline"
+          regex={/^PRIORS_CSF/}
+          help={`Full path to a binarized CSF prior probability map. It is not necessary to change this path unless you intend to use non-standard priors.`}
+          fullWidth
+        >
+          <TextField
+            label="Cerebrospinal Fluid Prior Probability Map"
+            name="anatomical.tissue_segmentation.priors.cerebrospinal_fluid"
+            value={configuration.getIn("anatomical.tissue_segmentation.priors.cerebrospinal_fluid".split("."))}
+            onChange={onChange}
+            fullWidth={true} margin="normal" variant="outlined"
+          />
+        </Help>
+      </React.Fragment>
     )
   }
 }

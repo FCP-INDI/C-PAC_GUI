@@ -13,7 +13,13 @@ export default {
             skull_template: '${environment.paths.fsl_dir}/data/standard/MNI152_T1_${pipeline.anatomical.registration.resolution}mm.nii.gz',
             methods: {
               ants: { enabled: true, configuration: { skull_on: false } },
-              fsl: { enabled: true, configuration: { config_file: '', reference_mask: '' } }
+              fsl: {
+                enabled: true,
+                configuration: {
+                  config_file: 'T1_2_MNI152_2mm',
+                  reference_mask: '$FSLDIR/data/standard/MNI152_T1_${resolution_for_anat}_brain_mask_dil.nii.gz'
+                }
+              }
             }
           },
           skull_stripping: {
@@ -38,7 +44,7 @@ export default {
             enabled: true,
             pattern: 'header',
             repetition_time: '',
-            first_timepoint: '',
+            first_timepoint: 0,
             last_timepoint: '',
           },
           distortion_correction: {
@@ -65,9 +71,9 @@ export default {
             enabled: true,
             functional_resolution: 3,
             derivative_resolution: 3,
-            brain_template: '',
-            skull_template: '',
-            identity_matrix: '',
+            brain_template: '${environment.paths.fsl_dir}/data/standard/MNI152_T1_${pipeline.functional.template_registration.functional_resolution}_brain.nii.gz',
+            skull_template: '${environment.paths.fsl_dir}/data/standard/MNI152_T1_${pipeline.functional.template_registration.functional_resolution}.nii.gz',
+            identity_matrix: '${environment.paths.fsl_dir}/etc/flirtsch/ident.mat',
 
           },
           nuisance_regression: {
@@ -117,8 +123,8 @@ export default {
             enabled: true,
             filters: [
               {
-                low: 0.01,
-                high: 0.1
+                low: 0.1,
+                high: 0.01
               },
             ]
           },

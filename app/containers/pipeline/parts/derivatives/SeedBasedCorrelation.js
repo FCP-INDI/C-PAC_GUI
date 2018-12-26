@@ -31,7 +31,9 @@ import { fromJS } from 'immutable';
 import {
   AddIcon,
   DeleteIcon
-} from '../../../../components/icons';
+} from 'components/icons';
+
+import Help from 'components/Help'
 
 
 class SeedBasedCorrelation extends Component {
@@ -76,7 +78,13 @@ class SeedBasedCorrelation extends Component {
             <Table className={classes.table}>
               <TableHead>
                 <TableRow>
-                  <TableCell padding="checkbox"></TableCell>
+                  <TableCell padding="checkbox">
+                    <Help
+                      type="pipeline"
+                      regex={/^sca_roi_paths/}
+                      help={`Paths to region-of-interest (ROI) NIFTI files (.nii or .nii.gz) to be used for time-series extraction, and then select which types of analyses to run.`}
+                    />
+                  </TableCell>
                   <TableCell>Roi Image</TableCell>
                   <TableCell padding="checkbox">Average</TableCell>
                   <TableCell padding="checkbox">Dual Reg</TableCell>
@@ -144,18 +152,23 @@ class SeedBasedCorrelation extends Component {
             </Table>
           </Paper>
 
-          <FormControlLabel
-            label="Normalize time series (dual regression)"
-            control={
-              <Switch
-                name="derivatives.sca.normalize"
-                checked={config.get('normalize')}
-                onChange={onChange}
-                color="primary"
-              />
-            }
-          />
-
+          <Help
+            type="pipeline"
+            regex={/^mrsNorm/}
+            help={`Normalize each time series before running Dual Regression SCA.`}
+          >
+            <FormControlLabel
+              label="Normalize time series (dual regression)"
+              control={
+                <Switch
+                  name="derivatives.sca.normalize"
+                  checked={config.get('normalize')}
+                  onChange={onChange}
+                  color="primary"
+                />
+              }
+            />
+          </Help>
         </Grid>
       </Grid>
     )

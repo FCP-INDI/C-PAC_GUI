@@ -31,8 +31,8 @@ class Smoothing extends Component {
         <Grid item sm={12}>
           <Help
             type="pipeline"
-            regex={/^template_skull_for_anat/}
-            help={`Template to be used during registration. It is not necessary to change this path unless you intend to use a non-standard template.`}
+            regex={/^fwhm/}
+            help={`Full Width at Half Maximum of the Gaussian kernel used during spatial smoothing.`}
             fullWidth
           >
             <TextField
@@ -53,8 +53,8 @@ class Smoothing extends Component {
               <Help
                 mini
                 type="pipeline"
-                regex={/^template_skull_for_anat/}
-                help={`Template to be used during registration. It is not necessary to change this path unless you intend to use a non-standard template.`}
+                regex={/^smoothing_order/}
+                help={`Choose whether to smooth outputs before or after z-scoring.`}
               >
                 <FormControlLabelled label="Perform smoothing before z-scoring">
                   <Switch
@@ -70,8 +70,8 @@ class Smoothing extends Component {
               <Help
                 mini
                 type="pipeline"
-                regex={/^template_skull_for_anat/}
-                help={`Template to be used during registration. It is not necessary to change this path unless you intend to use a non-standard template.`}
+                regex={/^runZScoring/}
+                help={`z-score standardize the derivatives. This is required for group-level analysis.`}
               >
                 <FormControlLabelled label="Apply z-score standarization to derivatives">
                   <Switch

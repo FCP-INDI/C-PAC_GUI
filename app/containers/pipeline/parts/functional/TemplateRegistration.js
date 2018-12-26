@@ -22,8 +22,8 @@ class TemplateRegistration extends Component {
         <Grid item sm={12}>
           <Help
             type="pipeline"
-            regex={/^template_skull_for_anat/}
-            help={`Template to be used during registration. It is not necessary to change this path unless you intend to use a non-standard template.`}
+            regex={/^resolution_for_func_preproc/}
+            help={`The resolution (in mm) to which the preprocessed, registered functional timeseries outputs are written into. Note that selecting a 1 mm or 2 mm resolution might substantially increase your RAM needs- these resolutions should be selected with caution. For most cases, 3 mm or 4 mm resolutions are suggested.`}
             fullWidth
           >
             <TextField label="Functional Resolution"
@@ -39,8 +39,8 @@ class TemplateRegistration extends Component {
 
           <Help
             type="pipeline"
-            regex={/^template_skull_for_anat/}
-            help={`Template to be used during registration. It is not necessary to change this path unless you intend to use a non-standard template.`}
+            regex={/^resolution_for_func_derivative/}
+            help={`The resolution (in mm) to which the registered derivative outputs are written into.`}
             fullWidth
           >
             <TextField label="Derivative Resolution"
@@ -56,8 +56,8 @@ class TemplateRegistration extends Component {
 
           <Help
             type="pipeline"
-            regex={/^template_skull_for_anat/}
-            help={`Template to be used during registration. It is not necessary to change this path unless you intend to use a non-standard template.`}
+            regex={/^template_brain_only_for_func/}
+            help={`Standard FSL Skull Stripped Template. Used as a reference image for functional registration.`}
             fullWidth
           >
             <TextField label="Standard Brain Template"
@@ -70,8 +70,8 @@ class TemplateRegistration extends Component {
 
           <Help
             type="pipeline"
-            regex={/^template_skull_for_anat/}
-            help={`Template to be used during registration. It is not necessary to change this path unless you intend to use a non-standard template.`}
+            regex={/^template_skull_for_func/}
+            help={`Standard FSL Anatomical Brain Image with Skull.`}
             fullWidth
           >
             <TextField label="Standard Brain + Skull Template"
@@ -84,8 +84,8 @@ class TemplateRegistration extends Component {
 
           <Help
             type="pipeline"
-            regex={/^template_skull_for_anat/}
-            help={`Template to be used during registration. It is not necessary to change this path unless you intend to use a non-standard template.`}
+            regex={/^identityMatrix/}
+            help={`Matrix containing all 1's. Used as an identity matrix during registration. It is not necessary to change this path unless you intend to use non-standard MNI registration.`}
             fullWidth
           >
             <TextField label="Standard Identity Matrix"

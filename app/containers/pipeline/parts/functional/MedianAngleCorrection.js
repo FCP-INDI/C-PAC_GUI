@@ -30,8 +30,8 @@ class MedialAngleCorrection extends Component {
         <Grid item sm={12}>
           <Help
             type="pipeline"
-            regex={/^template_skull_for_anat/}
-            help={`Template to be used during registration. It is not necessary to change this path unless you intend to use a non-standard template.`}
+            regex={/^targetAngleDeg/}
+            help={`Target angle used during Median Angle Correction.`}
             fullWidth
           >
             <TextField

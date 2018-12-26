@@ -100,11 +100,7 @@ class PipelineEditor extends Component {
           textColor="primary"
           centered
         >
-          <Tab label={(
-            <React.Fragment>
-              Anatomical
-            </React.Fragment>
-          )} />
+          <Tab label="Anatomical" />
           { configuration.getIn(["anatomical", "enabled"]) ?
           <Tab label={(
             <React.Fragment>
@@ -124,9 +120,9 @@ class PipelineEditor extends Component {
           : null }
         </Tabs>
 
-        { tab === 0 && <AnatomicalPage configuration={configuration} onChange={onChange} /> }
-        { tab === 1 && <FunctionalPage configuration={configuration} onChange={onChange} /> }
-        { tab === 2 && <DerivativesPage configuration={configuration} onChange={onChange} /> }
+        <Collapse in={tab === 0}><AnatomicalPage configuration={configuration} onChange={onChange} /></Collapse>
+        <Collapse in={tab === 1}><FunctionalPage configuration={configuration} onChange={onChange} /></Collapse>
+        <Collapse in={tab === 2}><DerivativesPage configuration={configuration} onChange={onChange} /></Collapse>
       </React.Fragment>
     );
   }

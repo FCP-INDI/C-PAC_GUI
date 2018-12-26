@@ -89,8 +89,8 @@ class TimeSeriesExtraction extends Component {
                   <TableCell padding="checkbox">
                     <Help
                       type="pipeline"
-                      regex={/^template_skull_for_anat/}
-                      help={`Template to be used during registration. It is not necessary to change this path unless you intend to use a non-standard template.`}
+                      regex={/^tsa_roi_paths/}
+                      help={`Paths to region-of-interest (ROI) NIFTI files (.nii or .nii.gz) to be used for time-series extraction, and then select which types of analyses to run.`}
                     />
                   </TableCell>
                   <TableCell>Roi Image</TableCell>
@@ -180,8 +180,8 @@ class TimeSeriesExtraction extends Component {
             <FormLabel>
               <Help
                 type="pipeline"
-                regex={/^template_skull_for_anat/}
-                help={`Template to be used during registration. It is not necessary to change this path unless you intend to use a non-standard template.`}
+                regex={/^roiTSOutputs/}
+                help={`By default, extracted time series are written as both a text file and a 1D file. Additional output formats are as a .csv spreadsheet or a Numpy array.`}
               />
               Outputs
             </FormLabel>

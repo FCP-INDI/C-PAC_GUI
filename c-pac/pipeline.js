@@ -344,7 +344,7 @@ export function dump(pipeline, version=0) {
   config.slice_timing_correction = [c.functional.slice_timing_correction.enabled ? 1 : 0]
   config.TR = c.functional.slice_timing_correction.repetition_time.trim() === "" ? null : c.functional.slice_timing_correction.repetition_time
   config.slice_timing_pattern =
-    c.functional.slice_timing_correction.pattern === "pattern" ?
+    c.functional.slice_timing_correction.pattern === "header" ?
       "Use NIFTI Header": c.functional.slice_timing_correction.pattern
 
   config.startIdx = c.functional.slice_timing_correction.first_timepoint === "" ?

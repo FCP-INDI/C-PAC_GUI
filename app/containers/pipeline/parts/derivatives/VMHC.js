@@ -14,6 +14,8 @@ import FormControl from '@material-ui/core/FormControl';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormHelperText from '@material-ui/core/FormHelperText';
 
+import Help from 'components/Help'
+
 
 class VMHC extends Component {
 
@@ -28,41 +30,65 @@ class VMHC extends Component {
     return (
       <Grid container>
         <Grid item sm={12}>
-          <TextField
-            label="Symmetric Brain Template"
-            name="derivatives.vmhc.symmetric_brain"
-            value={config.getIn(['symmetric_brain'])}
-            onChange={onChange}
-            fullWidth={true} margin="normal" variant="outlined"
-            helperText=''
-          />
+          <Help
+            type="pipeline"
+            regex={/^template_symmetric_brain_only/}
+            help={`Included as part of the 'Image Resource Files' package available on the Install page of the User Guide.`}
+            fullWidth
+          >
+            <TextField
+              label="Symmetric Brain Template"
+              name="derivatives.vmhc.symmetric_brain"
+              value={config.getIn(['symmetric_brain'])}
+              onChange={onChange}
+              fullWidth={true} margin="normal" variant="outlined"
+            />
+          </Help>
 
-          <TextField
-            label="Symmetric Brain + Skull Template"
-            name="derivatives.vmhc.symmetric_skull"
-            value={config.getIn(['symmetric_skull'])}
-            onChange={onChange}
-            fullWidth={true} margin="normal" variant="outlined"
-            helperText=''
-          />
+          <Help
+            type="pipeline"
+            regex={/^template_symmetric_skull/}
+            help={`Included as part of the 'Image Resource Files' package available on the Install page of the User Guide.`}
+            fullWidth
+          >
+            <TextField
+              label="Symmetric Brain + Skull Template"
+              name="derivatives.vmhc.symmetric_skull"
+              value={config.getIn(['symmetric_skull'])}
+              onChange={onChange}
+              fullWidth={true} margin="normal" variant="outlined"
+            />
+          </Help>
 
-          <TextField
-            label="Dilated Symmetric Brain Mask"
-            name="derivatives.vmhc.dilated_symmetric_brain"
-            value={config.getIn(['dilated_symmetric_brain'])}
-            onChange={onChange}
-            fullWidth={true} margin="normal" variant="outlined"
-            helperText=''
-          />
+          <Help
+            type="pipeline"
+            regex={/^dilated_symmetric_brain_mask/}
+            help={`Included as part of the 'Image Resource Files' package available on the Install page of the User Guide.`}
+            fullWidth
+          >
+            <TextField
+              label="Dilated Symmetric Brain Mask"
+              name="derivatives.vmhc.dilated_symmetric_brain"
+              value={config.getIn(['dilated_symmetric_brain'])}
+              onChange={onChange}
+              fullWidth={true} margin="normal" variant="outlined"
+            />
+          </Help>
 
-          <TextField
-            label="FLIRT Configuration file"
-            name="derivatives.vmhc.flirt_configuration_file"
-            value={config.getIn(['flirt_configuration_file'])}
-            onChange={onChange}
-            fullWidth={true} margin="normal" variant="outlined"
-            helperText=''
-          />
+          <Help
+            type="pipeline"
+            regex={/^configFileTwomm/}
+            help={`Included as part of the 'Image Resource Files' package available on the Install page of the User Guide.`}
+            fullWidth
+          >
+            <TextField
+              label="FLIRT Configuration file"
+              name="derivatives.vmhc.flirt_configuration_file"
+              value={config.getIn(['flirt_configuration_file'])}
+              onChange={onChange}
+              fullWidth={true} margin="normal" variant="outlined"
+            />
+          </Help>
         </Grid>
       </Grid>
     )

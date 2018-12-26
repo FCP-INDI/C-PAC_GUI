@@ -30,8 +30,8 @@ class DistortionCorrection extends Component {
         <Grid item sm={12}>
           <Help
             type="pipeline"
-            regex={/^template_skull_for_anat/}
-            help={`Template to be used during registration. It is not necessary to change this path unless you intend to use a non-standard template.`}
+            regex={/^fmap_distcorr_skullstrip/}
+            help={`Since the quality of the distortion heavily relies on the skull-stripping step, we provide a choice of method (AFNI 3dSkullStrip or FSL BET).`}
             fullWidth
           >
             <TextField
@@ -51,8 +51,8 @@ class DistortionCorrection extends Component {
 
           <Help
             type="pipeline"
-            regex={/^template_skull_for_anat/}
-            help={`Template to be used during registration. It is not necessary to change this path unless you intend to use a non-standard template.`}
+            regex={/^fmap_distcorr_frac/}
+            help={`Set the threshold value for the skull-stripping of the magnitude file. Depending on the data, a tighter extraction may be necessary in order to prevent noisy voxels from interfering with preparing the field map.`}
             fullWidth
           >
             <TextField
@@ -67,8 +67,8 @@ class DistortionCorrection extends Component {
 
           <Help
             type="pipeline"
-            regex={/^template_skull_for_anat/}
-            help={`Template to be used during registration. It is not necessary to change this path unless you intend to use a non-standard template.`}
+            regex={/^fmap_distcorr_deltaTE/}
+            help={`Set the Delta-TE value, used for preparing field map, time delay between the first and second echo images.`}
             fullWidth
           >
             <TextField
@@ -86,8 +86,8 @@ class DistortionCorrection extends Component {
 
           <Help
             type="pipeline"
-            regex={/^template_skull_for_anat/}
-            help={`Template to be used during registration. It is not necessary to change this path unless you intend to use a non-standard template.`}
+            regex={/^fmap_distcorr_dwell_time/}
+            help={`Set the Dwell Time for the FSL Fugue input.`}
             fullWidth
           >
             <TextField
@@ -105,8 +105,8 @@ class DistortionCorrection extends Component {
 
           <Help
             type="pipeline"
-            regex={/^template_skull_for_anat/}
-            help={`Template to be used during registration. It is not necessary to change this path unless you intend to use a non-standard template.`}
+            regex={/^fmap_distcorr_dwell_asym_ratio/}
+            help={`Set the asymmetric ratio value for FSL Fugue input.`}
             fullWidth
           >
             <TextField
@@ -121,8 +121,8 @@ class DistortionCorrection extends Component {
 
           <Help
             type="pipeline"
-            regex={/^template_skull_for_anat/}
-            help={`Template to be used during registration. It is not necessary to change this path unless you intend to use a non-standard template.`}
+            regex={/^fmap_distcorr_pedir/}
+            help={`Set the phase-encoding direction.`}
             fullWidth
           >
             <TextField

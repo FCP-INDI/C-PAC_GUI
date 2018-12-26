@@ -34,8 +34,8 @@ class AnatomicalRegistration extends Component {
           <FormGroup row>
             <Help
               type="pipeline"
-              regex={/^skullstrip_option/}
-              help={`Choice of using AFNI or FSL-BET to perform SkullStripping`}
+              regex={/^runBBReg/}
+              help={`Run Functional to Anatomical Registration with BB Register`}
             >
               <FormControlLabelled label="Using BB Registration">
                 <Switch
@@ -51,8 +51,8 @@ class AnatomicalRegistration extends Component {
           <Collapse in={configuration.getIn(["functional", "anatomical_registration", "bb_registration"])}>
             <Help
               type="pipeline"
-              regex={/^skullstrip_option/}
-              help={`Choice of using AFNI or FSL-BET to perform SkullStripping`}
+              regex={/^boundaryBasedRegistrationSchedule/}
+              help={`Standard FSL 5.0 Scheduler used for Boundary Based Registration. It is not necessary to change this path unless you intend to use non-standard MNI registration.`}
               fullWidth
             >
               <TextField label="BB Registration Scheduler"
@@ -67,8 +67,8 @@ class AnatomicalRegistration extends Component {
 
           <Help
             type="pipeline"
-            regex={/^skullstrip_option/}
-            help={`Choice of using AFNI or FSL-BET to perform SkullStripping`}
+            regex={/^func_reg_input/}
+            help={`Choose whether to use the mean of the functional/EPI as the input to functional-to-anatomical registration or one of the volumes from the functional 4D timeseries that you choose.`}
             fullWidth
           >
             <TextField
@@ -88,8 +88,8 @@ class AnatomicalRegistration extends Component {
           <Collapse in={configuration.getIn(["functional", "anatomical_registration", "registration_input"]) == 'selected'}>
             <Help
               type="pipeline"
-              regex={/^skullstrip_option/}
-              help={`Choice of using AFNI or FSL-BET to perform SkullStripping`}
+              regex={/^func_reg_input_volume/}
+              help={`Input the index of which volume from the functional 4D timeseries input file you wish to use as the input for functional-to-anatomical registration.`}
               fullWidth
             >
               <TextField
@@ -103,39 +103,34 @@ class AnatomicalRegistration extends Component {
           </Collapse>
 
           <FormGroup>
-            <FormLabel>Functional Masking</FormLabel>
+            <FormLabel>
+              <Help
+                type="pipeline"
+                regex={/^functionalMasking/}
+                help={`Choose which tool to be used in functional masking.`}
+              />
+              Functional Masking
+            </FormLabel>
             <FormControl>
               <FormGroup row>
-                <Help
-                  type="pipeline"
-                  regex={/^skullstrip_option/}
-                  help={`Choice of using AFNI or FSL-BET to perform SkullStripping`}
-                >
-                  <FormControlLabelled label="FSL BET">
-                    <Switch
-                      name="functional.anatomical_registration.functional_masking.bet"
-                      checked={configuration.getIn(["functional", "anatomical_registration", "functional_masking", "bet"])}
-                      onChange={onChange}
-                      color="primary"
-                    />
-                  </FormControlLabelled>
-                </Help>
+                <FormControlLabelled label="FSL BET">
+                  <Switch
+                    name="functional.anatomical_registration.functional_masking.bet"
+                    checked={configuration.getIn(["functional", "anatomical_registration", "functional_masking", "bet"])}
+                    onChange={onChange}
+                    color="primary"
+                  />
+                </FormControlLabelled>
               </FormGroup>
               <FormGroup row>
-                <Help
-                  type="pipeline"
-                  regex={/^skullstrip_option/}
-                  help={`Choice of using AFNI or FSL-BET to perform SkullStripping`}
-                >
-                  <FormControlLabelled label="AFNI 3dSkullStrip">
-                    <Switch
-                      name="functional.anatomical_registration.functional_masking.afni"
-                      checked={configuration.getIn(["functional", "anatomical_registration", "functional_masking", "afni"])}
-                      onChange={onChange}
-                      color="primary"
-                    />
-                  </FormControlLabelled>
-                </Help>
+                <FormControlLabelled label="AFNI 3dSkullStrip">
+                  <Switch
+                    name="functional.anatomical_registration.functional_masking.afni"
+                    checked={configuration.getIn(["functional", "anatomical_registration", "functional_masking", "afni"])}
+                    onChange={onChange}
+                    color="primary"
+                  />
+                </FormControlLabelled>
               </FormGroup>
             </FormControl>
           </FormGroup>
