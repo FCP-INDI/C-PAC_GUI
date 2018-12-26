@@ -40,6 +40,9 @@ class PipelineListTools extends Component {
         { name: 'YAML configs', extensions: ['yml', 'yaml'] },
       ]
     })
+    if (!configs) {
+      return
+    }
     for (let f of configs) {
       const content = fs.readFileSync(f, 'utf-8')
       this.props.pipelineImport(content)

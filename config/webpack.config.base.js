@@ -2,7 +2,7 @@ import path from 'path';
 import webpack from 'webpack';
 import { dependencies as externals } from '../app/package.json';
 
-const target = process.env.TARGET == 'web' ? 'web' : 'electron-renderer'
+const target = process.env.TARGET === 'web' ? 'web' : 'electron'
 
 export default {
   externals: Object.keys(externals || {}),
@@ -43,12 +43,12 @@ export default {
               "@babel/plugin-proposal-json-strings",
 
               'react-hot-loader/babel',
-            ]
+            ],
           }
         }
       },
       {
-        test: /\.ya?ml$/,
+        test: /\.(yml|yaml)$/,
         use: 'raw-loader'
       }
     ]
@@ -72,6 +72,10 @@ export default {
   plugins: [
     new webpack.DefinePlugin({
       TARGET: target,
+    }),
+
+    new webpack.NormalModuleReplacementPlugin(/.*\.platform$/, function(resource) {
+      resource.request = resource.request.replace(/platform$/, target);
     }),
 
     new webpack.NamedModulesPlugin(),

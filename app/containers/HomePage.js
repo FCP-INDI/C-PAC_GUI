@@ -13,7 +13,7 @@ import PipelineCard from 'components/PipelineCard'
 import DatasetCard from 'components/DatasetCard'
 
 import PipelineList from 'containers/PipelineList'
-import PipelineListTools from 'containers/PipelineListTools'
+import PipelineListTools from 'containers/PipelineListTools.platform'
 
 import IconButton from '@material-ui/core/IconButton'
 import Button from '@material-ui/core/Button'
