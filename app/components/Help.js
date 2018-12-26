@@ -43,7 +43,7 @@ class Help extends React.Component {
   }
 
   render() {
-    const { classes, regex, type, help, mini, fullWidth, width=600 } = this.props
+    const { classes, regex, type, help, mini, style: rootStyle, fullWidth, width=600 } = this.props
 
     let helper = help
     if (typeof help === "string") {
@@ -100,7 +100,7 @@ class Help extends React.Component {
         buttonRef={node => {
           this.anchorEl = node
         }}
-        style={ buttonStyle }
+        style={{ buttonStyle, ...rootStyle }}
         onClick={this.handleOpen}>
         <HelpIcon fontSize="small" />
       </IconButton>
