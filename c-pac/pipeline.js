@@ -14,7 +14,7 @@ export function parse(content) {
   delete t.versions['default']
   const c = t.versions[newver].configuration
 
-  t.name = config.pipelineName
+  t.name = config.pipelineName.trim()
   c.anatomical.skull_stripping.enabled = config.already_skullstripped.includes(0)
 
   if (typeof config.skullstrip_option === "string") {

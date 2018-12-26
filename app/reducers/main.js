@@ -100,7 +100,19 @@ export default function main(state, action) {
       const newPipeline = fromJS(cpac.pipeline.parse(content))
         .set('id', newPipelineId)
 
-      const newPipelines = pipelines.push(newPipeline)
+      let name = newPipeline.get('name').trim()
+      let iName = 2
+      if (pipelines.filter((p) => p.get('name') == name).size > 0) {
+        while(pipelines.filter((p) => p.get('name') == name + ' (' + iName + ')').size > 0) {
+          iName++
+        }
+        name = name + ' (' + iName + ')'
+      }
+
+      const newPipelines = pipelines.push(
+        newPipeline
+          .set('name', name)
+      )
       return state.setIn(['config', 'pipelines'], newPipelines)
     }
 
@@ -119,11 +131,10 @@ export default function main(state, action) {
       }
 
       let name = pipeline.get('name').trim()
-      let iName = 1
+      let iName = 2
       while(pipelines.filter((p) => p.get('name') == name + ' (' + iName + ')' ).size > 0) {
         iName++
       }
-
       name = name + ' (' + iName + ')'
 
       const newVersion = new Date().getTime().toString()
@@ -132,7 +143,6 @@ export default function main(state, action) {
         .set('versions', fromJS({ [newVersion]: pipeline.getIn(['versions', oldVersion]) }))
         .set('name', name)
         .set('id', newPipelineId)
-
 
       const newPipelines = pipelines.push(newPipeline)
 
