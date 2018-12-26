@@ -52,24 +52,31 @@ class Help extends React.Component {
       )
     }
 
-    // @TODO include other templates
-    const t = type == "pipeline" ? cpac.pipeline.rawTemplate : ""
-    const lines = t.split('\n')
+    let showCode = true
+    let matchedLine = -1
+    let matchedRelLine = -1
+    let code = ""
 
-    let matchLineNumber = -1
-    for (matchLineNumber in lines) {
-      if (regex.exec(lines[matchLineNumber])) {
-        break
+    if (type && regex){
+      // @TODO include other templates
+      const t = type == "pipeline" ? cpac.pipeline.rawTemplate : ""
+      const lines = t.split('\n')
+
+      for (matchedLine in lines) {
+        if (regex.exec(lines[matchedLine])) {
+          break
+        }
       }
+
+      matchedLine = matchedLine - 0
+      const codeBefore = lines.slice(Math.max(0, matchedLine - 4), matchedLine)
+      const codeAfter = lines.slice(matchedLine + 1, Math.min(matchedLine + 5, lines.length))
+      const codeCurrent = lines[matchedLine]
+      code = codeBefore.join('\n') + '\n' + codeCurrent + '\n' + codeAfter.join('\n')
+      matchedRelLine = codeBefore.length + 1
+    } else {
+      showCode = false
     }
-
-    matchLineNumber = matchLineNumber - 0
-
-    const codeBefore = lines.slice(Math.max(0, matchLineNumber - 4), matchLineNumber)
-    const codeAfter = lines.slice(matchLineNumber + 1, Math.min(matchLineNumber + 5, lines.length))
-    const codeCurrent = lines[matchLineNumber]
-
-    const code = codeBefore.join('\n') + '\n' + codeCurrent + '\n' + codeAfter.join('\n')
 
     const style = {}
     if (!fullWidth) {
@@ -138,27 +145,29 @@ class Help extends React.Component {
           style={{ maxWidth: width }}
         >
           <Grid container style={{ overflow: 'hidden' }}>
-            <Grid item sm={12} md={6} style={{ padding: 20 }}>
+            <Grid item sm={12} md={showCode ? 6 : 12} style={{ padding: 20 }}>
               { helper }
             </Grid>
+            { showCode ?
             <Grid item sm={12} md={6}>
               <SyntaxHighlighter
                 wrapLines
                 showLineNumbers
                 language='yaml'
-                style={ highlightStyle }
+                style={highlightStyle}
                 customStyle={{overflow: 'hidden'}}
-                startingLineNumber={matchLineNumber - 4}
+                startingLineNumber={matchedLine - 4}
                 lineProps={lineNumber => ({
                   style: {
                     display: 'block', ...(
-                      lineNumber == codeBefore.length + 1 ?
+                      lineNumber == matchedRelLine ?
                       { backgroundColor: '#FFFFFF12' } :
                       {}
                     )
                   },
                 })}>{code}</SyntaxHighlighter>
             </Grid>
+            : null }
           </Grid>
         </Popover>
       </React.Fragment>
