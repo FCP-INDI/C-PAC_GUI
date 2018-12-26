@@ -65,19 +65,35 @@ class PipelineListTools extends Component {
     }
   })
 
+  handleSelectPipeline = (e) => {
+    var files = e.target.files
+    for (var i = 0, f; f = files[i]; i++) {
+      var reader = new FileReader();
+      reader.onload = ((theFile) => (e) => {
+        this.props.pipelineImport(e.target.result)
+      })(f)
+      reader.readAsText(f)
+    }
+    e.target.value = ""
+  }
+
   render() {
     const { classes, projects, pipelines, datasets } = this.props
 
     return (
       <React.Fragment>
-        <input type="file" id="pipeline" style={{display: 'none'}} onChange={this.handleSelectPipeline} />
+        <input type="file" id="pipeline-upload" onChange={this.handleSelectPipeline} style={{
+          opacity: 0,
+          position: 'absolute',
+          zIndex: -1,
+        }} />
         <Tooltip title="Create new pipeline">
           <IconButton onClick={() => this.props.pipelineDuplicate()}>
             <AddIcon />
           </IconButton>
         </Tooltip>
         <Tooltip title="Upload a pipeline">
-          <IconButton htmlFor="pipeline" component="label">
+          <IconButton component="label" htmlFor="pipeline-upload">
             <UploadIcon />
           </IconButton>
         </Tooltip>
