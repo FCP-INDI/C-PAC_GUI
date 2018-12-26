@@ -69,7 +69,7 @@ class SkullStripping extends Component {
 
     return (
       <React.Fragment>
-        <FormGroup>
+        <FormControl>
           <FormGroup row>
             <Help
               type="pipeline"
@@ -116,7 +116,7 @@ class SkullStripping extends Component {
               />
             </Help>
           </FormGroup>
-        </FormGroup>
+        </FormControl>
       </React.Fragment>
     )
   }

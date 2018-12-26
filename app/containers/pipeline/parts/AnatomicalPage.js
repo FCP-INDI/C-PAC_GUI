@@ -1,5 +1,11 @@
 import React, { Component } from 'react';
 import { withStyles, Typography } from '@material-ui/core';
+import Grid from '@material-ui/core/Grid'
+
+import Paper from '@material-ui/core/Paper';
+import ExpansionPanel from '@material-ui/core/ExpansionPanel';
+import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
+import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 
 import {
   SkullStripping,
@@ -7,10 +13,16 @@ import {
   TissueSegmentation,
 } from 'containers/pipeline/parts/anatomical'
 
+import Help from 'components/Help'
+
 
 class AnatomicalPage extends Component {
 
   static styles = theme => ({
+    sectionTitle: {
+      paddingTop: 6,
+      paddingLeft: 6,
+    },
   });
 
   render() {
@@ -18,18 +30,59 @@ class AnatomicalPage extends Component {
 
     return (
       <React.Fragment>
-        <Typography variant="h6">
-          Skull stripping
-        </Typography>
-        <SkullStripping configuration={configuration} onChange={onChange} />
-        <Typography variant="h6">
-          Registration
-        </Typography>
-        <Registration configuration={configuration} onChange={onChange} />
-        <Typography variant="h6">
-          Tissue Segmentation
-        </Typography>
-        <TissueSegmentation configuration={configuration} onChange={onChange} />
+        <ExpansionPanel expanded>
+          <ExpansionPanelSummary disabled>
+            <Help
+              help={`Included as part of the 'Image Resource Files' package available on the Install page of the User Guide.`}
+            />
+            <Typography variant="h6" className={classes.sectionTitle}>
+              Skull stripping
+            </Typography>
+          </ExpansionPanelSummary>
+          <ExpansionPanelDetails>
+            <Grid container>
+              <Grid item xs={12}>
+                <SkullStripping configuration={configuration} onChange={onChange} />
+              </Grid>
+            </Grid>
+          </ExpansionPanelDetails>
+        </ExpansionPanel>
+
+        <ExpansionPanel expanded>
+          <ExpansionPanelSummary disabled>
+            <Help
+              help={`Included as part of the 'Image Resource Files' package available on the Install page of the User Guide.`}
+            />
+            <Typography variant="h6" className={classes.sectionTitle}>
+              Registration
+            </Typography>
+          </ExpansionPanelSummary>
+          <ExpansionPanelDetails>
+            <Grid container>
+              <Grid item xs={12}>
+                <Registration configuration={configuration} onChange={onChange} />
+              </Grid>
+            </Grid>
+          </ExpansionPanelDetails>
+        </ExpansionPanel>
+
+        <ExpansionPanel expanded>
+          <ExpansionPanelSummary disabled>
+            <Help
+              help={`Included as part of the 'Image Resource Files' package available on the Install page of the User Guide.`}
+            />
+            <Typography variant="h6" className={classes.sectionTitle}>
+              Tissue Segmentation
+            </Typography>
+          </ExpansionPanelSummary>
+          <ExpansionPanelDetails>
+            <Grid container>
+              <Grid item xs={12}>
+                <TissueSegmentation configuration={configuration} onChange={onChange} />
+              </Grid>
+            </Grid>
+          </ExpansionPanelDetails>
+        </ExpansionPanel>
       </React.Fragment>
     )
   }
