@@ -1,9 +1,9 @@
 {
-  "name": "c-pac_gui_app",
+  "name": "c-pac",
   "productName": "C-PAC",
   "version": "1.0.0",
   "description": "",
-  "main": "./main.js",
+  "main": "./main.electron.js",
   "author": {
     "name": "Anibal Solon",
     "email": "anibalsolon@gmail.com"

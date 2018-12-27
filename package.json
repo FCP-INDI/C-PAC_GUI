@@ -27,10 +27,10 @@
   "browserslist": "electron 1.6",
   "build": {
     "productName": "C-PAC",
-    "appId": "org.cmi.CPAC",
+    "appId": "org.fcp-indi.CPAC",
     "files": [
       "dist/",
-      "main.js",
+      "main.electron.js",
       "node_modules/",
       "c-pac/",
       "package.json"
