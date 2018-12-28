@@ -10,19 +10,18 @@
     "postinstall": "node -r @babel/register internals/scripts/CheckNativeDep.js && yarn run build-dll && electron-builder install-app-deps && node node_modules/fbjs-scripts/node/check-dev-engines.js package.json",
     "prestart": "yarn run build",
     "start": "cross-env NODE_ENV=production electron ./app/",
-    "dev-web": "TARGET=web npm run dev:renderer",
-    "dev-electron": "npm-run-all --parallel dev:renderer dev:main",
+    "dev:web": "TARGET=web npm run dev:renderer",
+    "dev:electron": "npm-run-all --parallel dev:renderer dev:main",
     "dev:main": "cross-env HOT=1 NODE_ENV=development electron -r @babel/register ./app/main",
     "dev:renderer": "cross-env NODE_ENV=development node --trace-warnings -r @babel/register ./node_modules/webpack-dev-server/bin/webpack-dev-server --mode development --config config/webpack.config.renderer.dev.js",
     "lint": "cross-env NODE_ENV=development eslint --cache --format=node_modules/eslint-formatter-pretty .",
     "lint:fix": "yarn run lint -- --fix",
     "lint-styles": "stylelint app/*.css app/components/*.css --syntax scss",
     "lint-styles:fix": "stylefmt -r app/*.css app/components/*.css",
-    "package": "yarn run build && build --publish never",
-    "package-all": "yarn run build && build -mwl",
-    "package-linux": "yarn run build && build --linux",
-    "package-mac": "yarn run build && build --mac",
-    "package-win": "yarn run build && build --win --x64"
+    "package": "yarn run package:all",
+    "package:all": "yarn run build && build --publish never -ml",
+    "package:linux": "yarn run build && build --publish never --linux",
+    "package:mac": "yarn run build && build --publish never --mac"
   },
   "browserslist": "electron 1.6",
   "build": {
@@ -47,11 +46,6 @@
           "type": "link",
           "path": "/Applications"
         }
-      ]
-    },
-    "win": {
-      "target": [
-        "nsis"
       ]
     },
     "linux": {
