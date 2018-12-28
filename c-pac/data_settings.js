@@ -1,6 +1,11 @@
 import yaml from 'yaml'
 import S3 from 'aws-sdk/clients/s3'
 
+import template from './resources/data_settings/config'
+import yamlTemplate from './resources/data_settings/yaml'
+
+export { template }
+
 const s3 = new S3({})
 
 const listObjects = (path, params = {}, out = []) => new Promise((resolve, reject) => {
@@ -25,16 +30,73 @@ const listObjects = (path, params = {}, out = []) => new Promise((resolve, rejec
 })
 
 export const listFiles = async (path) => {
+
+  let files = []
   if (path.indexOf('s3://') > -1) {
-    return listObjects(path, { MaxKeys: 100 })
+    files = await listObjects(path, { MaxKeys: 100 })
   }
 
   // TODO list from local
-  return []
+
+  return files.map((f) => ({
+    ...f,
+    rel: f.file.replace(path, '')
+  }))
 }
 
-export const buildDataConfig = (settings, files) => {
-  if (settings.dataFormat.toLowerCase() === 'bids') {
+export function parse(content) {
+  const settings = yaml.parse(content)
+
+  const t = JSON.parse(JSON.stringify(template))
+  const newver = `${new Date().getTime()}`
+  t.versions[newver] = t.versions['default']
+  delete t.versions['default']
+  const c = t.versions[newver].configuration
+
+  t.name = (settings.subjectListName || "").trim()
+
+  if (typeof settings.dataFormat === "string") {
+    settings.dataFormat = [settings.dataFormat]
+  }
+
+  if (!settings.dataFormat.includes("BIDS")) {
+    throw new Error('Only BIDS format is supported.')
+  }
+
+  c.format = 'BIDS'
+  c.base = settings.bidsBaseDir.replace(/\/$/, '')
+
+  return t
+}
+
+export function dump(data_settings, version='0') {
+
+  const c = data_settings.versions[version].configuration
+
+  const config = {}
+
+  config.dataFormat = ['BIDS']
+  config.bidsBaseDir = c.base.replace(/\/$/, '')
+  config.outputSubjectListLocation = ''
+  config.subjectListName = data_settings.name
+
+  // Generate valid YAML syntax
+  const configYamled = {}
+  for (let k of Object.keys(config)) {
+    configYamled[k] = yaml.stringify({ [k]: config[k] })
+  }
+
+  return yamlTemplate(configYamled)
+}
+
+export const build = async (settings, version='0') => {
+
+  const config = settings.versions[version].configuration
+
+  if (config.format.toLowerCase() === 'bids') {
+
+    const files = await listFiles(config.base)
+
     const anat = "^\\/(sub-[a-zA-Z0-9]+)\\/(?:(ses-[a-zA-Z0-9]+)\\/)?anat\\/\\1(?:_\\2)?(?:_(acq-[a-zA-Z0-9]+))?(?:_(ce-[a-zA-Z0-9]+))?(?:_(rec-[a-zA-Z0-9]+))?(?:_(run-[0-9]+))?_T1w.nii(?:.gz)?$"
     const anat_info = "^\\/(sub-[a-zA-Z0-9]+)\\/(?:(ses-[a-zA-Z0-9]+)\\/)?anat\\/\\1(?:_\\2)?(?:_(acq-[a-zA-Z0-9]+))?(?:_(ce-[a-zA-Z0-9]+))?(?:_(rec-[a-zA-Z0-9]+))?(?:_(run-[0-9]+))?_T1w.json$"
     const func = "^\\/(sub-[a-zA-Z0-9]+)\\/(?:(ses-[a-zA-Z0-9]+)\\/)?func\\/\\1(?:_\\2)?_(task-[a-zA-Z0-9]+)(?:_(acq-[a-zA-Z0-9]+))?(?:_(rec-[a-zA-Z0-9]+))?(?:_(run-[0-9]+))?(?:_(echo-[0-9]+))?_bold.nii(?:.gz)?$"
@@ -82,7 +144,8 @@ export const buildDataConfig = (settings, files) => {
       }
     }
 
+    // @TODO check for just anatomical preprocessing
     structure = Object.values(structure).filter(s => s.anat && s.func)
-    return yaml.stringify(structure)
+    return structure
   }
 }

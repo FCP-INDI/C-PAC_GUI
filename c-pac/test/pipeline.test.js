@@ -7,9 +7,9 @@ const { template, parse, dump } = pipeline
 
 describe('load pipeline', () => {
   it('should parse the YAML file', () => {
-    const contents = fs.readFileSync('./test/data/pipeline_config_template.yml', 'utf8');
+    const contents = fs.readFileSync('./resources/pipeline/pipeline_config_template.yml', 'utf8');
     const pipeline = parse(contents)
-    const config = pipeline.versions['0'].configuration
+    const config = pipeline.versions[Object.keys(pipeline.versions)[0]].configuration
 
     assert(config.anatomical.skull_stripping.enabled === true)
     assert(config.anatomical.skull_stripping.methods.afni.enabled === true)
@@ -22,10 +22,11 @@ describe('load pipeline', () => {
   })
 
   it('should dump the YAML file', () => {
-    const contents = fs.readFileSync('./test/data/pipeline_config_template.yml', 'utf8');
+    const contents = fs.readFileSync('./resources/pipeline/pipeline_config_template.yml', 'utf8');
     const pipeline = parse(contents)
-    const yamlConfig = dump(pipeline)
-    const config = parse(yamlConfig).versions['0'].configuration
+    const yamlConfig = dump(pipeline, Object.keys(pipeline.versions)[0])
+    const pipeline2 = parse(yamlConfig)
+    const config = pipeline2.versions[Object.keys(pipeline2.versions)[0]].configuration
 
     assert(config.anatomical.skull_stripping.enabled == true)
     assert(config.anatomical.skull_stripping.methods.afni.enabled == true)

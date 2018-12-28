@@ -252,7 +252,7 @@ export function parse(content) {
 }
 
 
-export function dump(pipeline, version=0) {
+export function dump(pipeline, version='0') {
 
   const c = pipeline.versions[version].configuration
 
@@ -379,7 +379,7 @@ export function dump(pipeline, version=0) {
   config.template_skull_for_func = c.functional.template_registration.skull_template
   config.identityMatrix = c.functional.template_registration.identity_matrix
 
-  config.runICA = [c.functional.aroma.enable ? 1 : 0]
+  config.runICA = [c.functional.aroma.enabled ? 1 : 0]
   config.aroma_denoise_type = c.functional.aroma.denoising_strategy === 'non-aggressive' ? "nonaggr" : "aggr"
 
   config.runNuisance = [c.functional.nuisance_regression.enabled ? 1 : 0]
@@ -417,10 +417,10 @@ export function dump(pipeline, version=0) {
   config.numRemovePrecedingFrames = c.functional.nuisance_regression.pre_volumes
   config.numRemoveSubsequentFrames = c.functional.nuisance_regression.post_volumes
 
-  config.runMedianAngleCorrection = [c.functional.median_angle_correction.enable ? 1 : 0]
+  config.runMedianAngleCorrection = [c.functional.median_angle_correction.enabled ? 1 : 0]
   config.targetAngleDeg = [c.functional.median_angle_correction.target_angle]
 
-  config.runFrequencyFiltering = [c.functional.temporal_filtering.enable ? 1 : 0]
+  config.runFrequencyFiltering = [c.functional.temporal_filtering.enabled ? 1 : 0]
   config.nuisanceBandpassFreq = []
   for (const frequencies of c.functional.temporal_filtering.filters) {
     config.nuisanceBandpassFreq.push([
@@ -429,7 +429,7 @@ export function dump(pipeline, version=0) {
     ])
   }
 
-  config.runROITimeseries = [c.derivatives.timeseries_extraction.enable ? 1 : 0]
+  config.runROITimeseries = [c.derivatives.timeseries_extraction.enabled ? 1 : 0]
 
   config.tsa_roi_paths = [{}]
 
@@ -482,7 +482,7 @@ export function dump(pipeline, version=0) {
   config.runReHo = [c.derivatives.reho.enabled ? 1 : 0]
   config.clusterSize = c.derivatives.reho.cluster_size
 
-  config.runNetworkCentrality = [c.derivatives.network_centrality.enable ? 1 : 0]
+  config.runNetworkCentrality = [c.derivatives.network_centrality.enabled ? 1 : 0]
   config.templateSpecificationFile = c.derivatives.network_centrality.mask
 
   const thresholdType = {
@@ -514,7 +514,7 @@ export function dump(pipeline, version=0) {
 
   config.memoryAllocatedForDegreeCentrality = 3.0
 
-  config.run_smoothing = [c.functional.smoothing.enable ? 1 : 0]
+  config.run_smoothing = [c.functional.smoothing.enabled ? 1 : 0]
   config.fwhm = [c.functional.smoothing.kernel_fwhm]
   config.smoothing_order = [c.functional.smoothing.before_zscore ? "Before" : "After"]
   config.runZScoring = [c.functional.smoothing.zscore_derivatives ? 1 : 0]
