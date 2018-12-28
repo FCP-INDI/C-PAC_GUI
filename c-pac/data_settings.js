@@ -21,7 +21,7 @@ const listObjects = (path, params = {}, out = []) => new Promise((resolve, rejec
 
   s3.listObjectsV2(pagingParams).promise()
     .then(({Contents, IsTruncated, NextContinuationToken}) => {
-      out.push(...Contents.map(o => ({ file: "s3://" + bucket + "/" + o.Key, size: o.Size })))
+      out.push(...Contents.map(o => ({ file: 's3://' + bucket + '/' + o.Key, size: o.Size })))
       !IsTruncated ?
         resolve(out) :
         resolve(listObjects(path, { ContinuationToken: NextContinuationToken }, out))
@@ -53,18 +53,18 @@ export function parse(content) {
   delete t.versions['default']
   const c = t.versions[newver].configuration
 
-  t.name = (settings.subjectListName || "").trim()
+  t.name = (settings.subjectListName || '').trim()
 
-  if (typeof settings.dataFormat === "string") {
+  if (typeof settings.dataFormat === 'string') {
     settings.dataFormat = [settings.dataFormat]
   }
 
-  if (!settings.dataFormat.includes("BIDS")) {
+  if (!settings.dataFormat.includes('BIDS')) {
     throw new Error('Only BIDS format is supported.')
   }
 
   c.format = 'BIDS'
-  c.base = settings.bidsBaseDir.replace(/\/$/, '')
+  c.base = (settings.bidsBaseDir || '').replace(/\/$/, '')
 
   return t
 }
@@ -97,10 +97,10 @@ export const build = async (settings, version='0') => {
 
     const files = await listFiles(config.base)
 
-    const anat = "^\\/(sub-[a-zA-Z0-9]+)\\/(?:(ses-[a-zA-Z0-9]+)\\/)?anat\\/\\1(?:_\\2)?(?:_(acq-[a-zA-Z0-9]+))?(?:_(ce-[a-zA-Z0-9]+))?(?:_(rec-[a-zA-Z0-9]+))?(?:_(run-[0-9]+))?_T1w.nii(?:.gz)?$"
-    const anat_info = "^\\/(sub-[a-zA-Z0-9]+)\\/(?:(ses-[a-zA-Z0-9]+)\\/)?anat\\/\\1(?:_\\2)?(?:_(acq-[a-zA-Z0-9]+))?(?:_(ce-[a-zA-Z0-9]+))?(?:_(rec-[a-zA-Z0-9]+))?(?:_(run-[0-9]+))?_T1w.json$"
-    const func = "^\\/(sub-[a-zA-Z0-9]+)\\/(?:(ses-[a-zA-Z0-9]+)\\/)?func\\/\\1(?:_\\2)?_(task-[a-zA-Z0-9]+)(?:_(acq-[a-zA-Z0-9]+))?(?:_(rec-[a-zA-Z0-9]+))?(?:_(run-[0-9]+))?(?:_(echo-[0-9]+))?_bold.nii(?:.gz)?$"
-    const func_info = "^\\/(sub-[a-zA-Z0-9]+)\\/(?:(ses-[a-zA-Z0-9]+)\\/)?func\\/\\1(?:_\\2)?_(task-[a-zA-Z0-9]+)(?:_(acq-[a-zA-Z0-9]+))?(?:_(rec-[a-zA-Z0-9]+))?(?:_(run-[0-9]+))?(?:_(echo-[0-9]+))?_bold.json?$"
+    const anat = '^\\/(sub-[a-zA-Z0-9]+)\\/(?:(ses-[a-zA-Z0-9]+)\\/)?anat\\/\\1(?:_\\2)?(?:_(acq-[a-zA-Z0-9]+))?(?:_(ce-[a-zA-Z0-9]+))?(?:_(rec-[a-zA-Z0-9]+))?(?:_(run-[0-9]+))?_T1w.nii(?:.gz)?$'
+    const anat_info = '^\\/(sub-[a-zA-Z0-9]+)\\/(?:(ses-[a-zA-Z0-9]+)\\/)?anat\\/\\1(?:_\\2)?(?:_(acq-[a-zA-Z0-9]+))?(?:_(ce-[a-zA-Z0-9]+))?(?:_(rec-[a-zA-Z0-9]+))?(?:_(run-[0-9]+))?_T1w.json$'
+    const func = '^\\/(sub-[a-zA-Z0-9]+)\\/(?:(ses-[a-zA-Z0-9]+)\\/)?func\\/\\1(?:_\\2)?_(task-[a-zA-Z0-9]+)(?:_(acq-[a-zA-Z0-9]+))?(?:_(rec-[a-zA-Z0-9]+))?(?:_(run-[0-9]+))?(?:_(echo-[0-9]+))?_bold.nii(?:.gz)?$'
+    const func_info = '^\\/(sub-[a-zA-Z0-9]+)\\/(?:(ses-[a-zA-Z0-9]+)\\/)?func\\/\\1(?:_\\2)?_(task-[a-zA-Z0-9]+)(?:_(acq-[a-zA-Z0-9]+))?(?:_(rec-[a-zA-Z0-9]+))?(?:_(run-[0-9]+))?(?:_(echo-[0-9]+))?_bold.json?$'
 
     let structure = {}
     const regexs = { anat, anat_info, func, func_info }
@@ -111,11 +111,11 @@ export const build = async (settings, version='0') => {
           continue
         }
 
-        const optionals = matches.slice(3).filter((v) => v).join("_")
-        const subject_id = matches[1].replace("sub-", "")
-        const unique_id = matches[2] ? matches[2].replace("ses-", "") : ""
+        const optionals = matches.slice(3).filter((v) => v).join('_')
+        const subject_id = matches[1].replace('sub-', '')
+        const unique_id = matches[2] ? matches[2].replace('ses-', '') : ''
 
-        const key = subject_id + (unique_id ? "_" + unique_id : "")
+        const key = subject_id + (unique_id ? '_' + unique_id : '')
 
         if (!(key in structure)) {
           structure[key] = {
@@ -124,18 +124,18 @@ export const build = async (settings, version='0') => {
           }
         }
 
-        if (r === "anat") {
+        if (r === 'anat') {
           if (!structure[key].anat) {
             structure[key].anat = file.file
           }
         }
-        if (r === "func") {
+        if (r === 'func') {
           if (!structure[key].func) {
             structure[key].func = {}
           }
           structure[key].func[optionals] = { ...structure[key].func[optionals], scan: file.file }
         }
-        if (r === "func_info") {
+        if (r === 'func_info') {
           if (!structure[key].func) {
             structure[key].func = {}
           }
