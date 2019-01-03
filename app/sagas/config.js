@@ -30,6 +30,10 @@ function* loadConfig (action) {
 
   const config = {
 
+    settings: {
+      advanced: false,
+    },
+
     datasets: [
       {
         id: '0000-0000-0000-0000',

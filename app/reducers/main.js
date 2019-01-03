@@ -1,5 +1,8 @@
 import {
   CONFIG_LOADED,
+
+  SETTINGS_UPDATE,
+
   ENVIRONMENT_CHECKED,
   ENVIRONMENT_SELECT,
 
@@ -34,6 +37,15 @@ export default function main(state, action) {
   switch (action.type) {
     case CONFIG_LOADED:
       return state.set('config', fromJS(action.config))
+
+    case SETTINGS_UPDATE: {
+      const { settings } = action
+
+      return state.setIn(
+        ['config', 'settings'],
+        fromJS(settings)
+      )
+    }
 
     case PIPELINE_NAME_UPDATE: {
       const { pipeline: id, name } = action

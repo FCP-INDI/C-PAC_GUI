@@ -2,7 +2,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom'
 import { Link } from 'react-router-dom'
-import { configLoad } from '../actions/main'
+import { configLoad, settingsUpdate } from '../actions/main'
 
 import classNames from 'classnames';
 import { withStyles, typography } from '@material-ui/core/styles';
@@ -22,6 +22,9 @@ import Divider from '@material-ui/core/Divider';
 import IconButton from '@material-ui/core/IconButton';
 
 import Slide from '@material-ui/core/Slide';
+import Switch from '@material-ui/core/Switch';
+
+import Help from 'components/Help'
 
 import {
   HomeIcon,
@@ -32,9 +35,10 @@ import {
   EnvironmentIcon,
   ProjectIcon,
   ProjectOpenIcon,
-} from '../components/icons';
+  AdvancedConfigIcon,
+} from 'components/icons';
 
-import Logo from '../resources/logo.png'
+import Logo from 'resources/logo.png'
 
 
 class App extends React.Component {
@@ -61,6 +65,9 @@ class App extends React.Component {
     bread: {
       flexShrink: 0,
     },
+    crumbs: {
+      flexGrow: 1,
+    },
     content: {
       overflow: 'auto',
       padding: theme.spacing.unit * 3,
@@ -79,6 +86,12 @@ class App extends React.Component {
 
   componentDidMount() {
     this.props.configLoad()
+  }
+
+  handleSettingsAdvanced = (e) => {
+    this.props.settingsUpdate(
+      this.props.main.getIn(['config', 'settings']).set('advanced', e.target.checked)
+    )
   }
 
   renderBreadcrumbs = () => {
@@ -137,6 +150,15 @@ class App extends React.Component {
             Home
           </Button>
           { crumbs }
+          <div className={classes.crumbs}>
+          </div>
+          <AdvancedConfigIcon color="secondary" />
+          <Switch
+            checked={config.getIn(['settings', 'advanced'])}
+            onChange={this.handleSettingsAdvanced}
+            color="primary"
+          />
+          <Help help={`Enable advanced options`} style={{ padding: 0 }} />
         </Toolbar>
       </AppBar>
     )
@@ -172,6 +194,7 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = {
   configLoad,
+  settingsUpdate,
 }
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(

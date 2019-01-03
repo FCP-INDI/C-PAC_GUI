@@ -52,7 +52,6 @@ export function configCleared() {
 }
 
 
-
 export const PROJECT_OPEN = 'PROJECT_OPEN'
 
 export function projectOpen(project) {
@@ -63,6 +62,14 @@ export function projectOpen(project) {
 }
 
 
+export const SETTINGS_UPDATE = 'SETTINGS_UPDATE'
+
+export function settingsUpdate(settings) {
+  return {
+    type: SETTINGS_UPDATE,
+    settings
+  }
+}
 
 
 export const ENVIRONMENT_CHECK = 'ENVIRONMENT_CHECK'
