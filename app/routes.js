@@ -28,12 +28,12 @@ export default class TemplatePage extends Component {
 
     if (projects) {
       const { history: { location: { pathname } } } = this.props
-      if (pathname.startsWith('/projects')) {
-        const pieces = pathname.split('/')
-        if (pieces.length >= 3) {
-          this.props.store.dispatch(projectOpen(pieces[2]))
-        }
-      }
+      // if (pathname.startsWith('/projects')) {
+      //   const pieces = pathname.split('/')
+      //   if (pieces.length >= 3) {
+      //     this.props.store.dispatch(projectOpen(pieces[2]))
+      //   }
+      // }
     }
   }
 
