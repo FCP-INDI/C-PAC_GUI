@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
-import { withStyles, Typography } from '@material-ui/core';
+import { withStyles, Typography, Collapse } from '@material-ui/core';
 import Grid from '@material-ui/core/Grid'
 import Divider from '@material-ui/core/Divider';
 
@@ -65,11 +66,11 @@ class SkullStripping extends Component {
   };
 
   render() {
-    const { classes, configuration } = this.props
+    const { classes, configuration, advanced } = this.props
 
     return (
       <React.Fragment>
-        <FormControl>
+        <FormControl fullWidth>
           <FormGroup row>
             <Help
               type="pipeline"
@@ -91,29 +92,39 @@ class SkullStripping extends Component {
               type="pipeline"
               regex={/^skullstrip_option/}
               help={`Choice of using AFNI or FSL-BET to perform SkullStripping`}
+              fullWidth
             >
-              <FormControlLabel
-                label="FSL BET"
-                control={
-                  <Switch
-                    name="anatomical.skull_stripping.methods.bet.enabled"
-                    checked={configuration.getIn("anatomical.skull_stripping.methods.bet.enabled".split("."))}
-                    onChange={this.handleValueChange}
-                    color="primary"
+              <Grid container>
+                <Grid item xs={6}>
+                  <FormControlLabel
+                    label="FSL BET"
+                    control={
+                      <Switch
+                        name="anatomical.skull_stripping.methods.bet.enabled"
+                        checked={configuration.getIn("anatomical.skull_stripping.methods.bet.enabled".split("."))}
+                        onChange={this.handleValueChange}
+                        color="primary"
+                      />
+                    }
                   />
-                }
-              />
-              <FormControlLabel
-                label="AFNI 3dSkullStrip"
-                control={
-                  <Switch
-                    name="anatomical.skull_stripping.methods.afni.enabled"
-                    checked={configuration.getIn("anatomical.skull_stripping.methods.afni.enabled".split("."))}
-                    onChange={this.handleValueChange}
-                    color="primary"
+                  <Collapse in={advanced}>
+                    Advanced!
+                  </Collapse>
+                </Grid>
+                <Grid item xs={6}>
+                  <FormControlLabel
+                    label="AFNI 3dSkullStrip"
+                    control={
+                      <Switch
+                        name="anatomical.skull_stripping.methods.afni.enabled"
+                        checked={configuration.getIn("anatomical.skull_stripping.methods.afni.enabled".split("."))}
+                        onChange={this.handleValueChange}
+                        color="primary"
+                      />
+                    }
                   />
-                }
-              />
+                </Grid>
+              </Grid>
             </Help>
           </FormGroup>
         </FormControl>
@@ -122,4 +133,10 @@ class SkullStripping extends Component {
   }
 }
 
-export default withStyles(SkullStripping.styles)(SkullStripping);
+const mapStateToProps = (state, props) => {
+  return {
+    advanced: state.main.getIn(['config', 'settings', 'advanced']),
+  }
+}
+
+export default connect(mapStateToProps)(withStyles(SkullStripping.styles)(SkullStripping));

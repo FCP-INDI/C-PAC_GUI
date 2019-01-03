@@ -25,8 +25,52 @@ export default {
           skull_stripping: {
             enabled: true,
             methods: {
-              afni: { enabled: true },
-              bet: { enabled: false }
+              afni: {
+                enabled: true,
+                configuration: {
+                  shrink_factor: {
+                    threshold: 0.6,
+                    vary: true,
+                    bottom_limit: 0.4
+                  },
+                  multiplier: 1,
+                  iterations: 250,
+                  avoid_eyes: true,
+                  avoid_ventricles: true,
+                  pushout: true,
+                  touchup: true,
+                  fill_hole: 10,
+                  nearest_neighbors_smooth: 72,
+                  final_smooth: 20,
+                  use_edge: true,
+                  fractional_expansion: 0.1,
+                  push_to_edge: false,
+                  use_skull: false,
+                  intersection: {
+                    ratio: 0,
+                    iterations: 4
+                  },
+                  blur_fwhm: 0,
+                }
+              },
+              bet: {
+                enabled: false,
+                configuration: {
+                  threshold: 0.5,
+                  apply_threshold: false,
+                  mask: false,
+                  mesh: false,
+                  skull: false,
+                  surfaces: false,
+                  surface_outline: false,
+                  padding: false,
+                  radius: 0,
+                  reduce_bias: false,
+                  remove_eyes: false,
+                  robust_brain_center: false,
+                  vertical_gradient: 0.0,
+                }
+              }
             }
           },
           tissue_segmentation: {
