@@ -15,6 +15,12 @@ export default createMuiTheme({
     }
   },
   overrides: {
+    MuiOutlinedInput: {
+      adornedEnd: {
+        // paddingRight: 0,
+        width: 'calc(100% - 14px)',
+      }
+    },
     MuiFormGroup: {
       root: {
         border: "1px solid rgba(0, 0, 0, 0.23)",
