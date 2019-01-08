@@ -88,7 +88,7 @@ class Help extends React.Component {
       subStyle.flexGrow = 1
     }
 
-    const buttonStyle = {}
+    const buttonStyle = { padding: 0 }
     if (fullWidth) {
       buttonStyle.padding = 0
     }
@@ -117,11 +117,11 @@ class Help extends React.Component {
                 { button }
               </React.Fragment>
             :
-            <Grid container spacing={24} alignItems={`center`} style={style}>
+            <Grid container spacing={0} wrap={`nowrap`} alignItems={`center`} style={style}>
               <Grid item style={subStyle}>
                 { this.props.children }
               </Grid>
-              <Grid item style={{ padding: 5 }}>
+              <Grid item>
                 { button }
               </Grid>
             </Grid>
