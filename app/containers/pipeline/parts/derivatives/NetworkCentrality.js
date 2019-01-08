@@ -49,7 +49,7 @@ class NetworkCentrality extends Component {
           <FormGroup>
             <FormLabel>
               <Help
-                help={``}
+                help={`Measure of local network connectivity and identifies the most connected nodes by counting the number of direct connections (edges) to all other nodes. As such, a node with high DC will have direct connections to many other nodes in the network. Degree centrality analysis tends to emphasize higher order cortical association areas while showing reduced sensitivity for paralimbic and subcortical regions (Zuo et al., 2012).`}
               />
               Degree Centrality
             </FormLabel>
@@ -58,7 +58,7 @@ class NetworkCentrality extends Component {
                 <FormGroup>
                   <FormLabel>
                     <Help
-                      help={`Connectivity weights`}
+                      help={`Connectivity weights.`}
                       type="pipeline" regex={/^degWeightOptions/}
                     />
                     Weight
@@ -135,7 +135,7 @@ class NetworkCentrality extends Component {
           <FormGroup>
             <FormLabel>
               <Help
-                help={``}
+                help={`Measure of global network connectivity. The EC of a given node reflects the number of direct connections it has with other nodes that have high centrality. Thus, the EC of a given node depends not only on its own centrality, but the centrality of the nodes it connects to. A node with high EC has connections to many other nodes that are themselves highly connected and central within the network. In contrast to DC, EC is more sensitive to paralimbic and subcortical regions (Zuo et al., 2012).`}
               />
               Eigenvector
             </FormLabel>
@@ -144,7 +144,7 @@ class NetworkCentrality extends Component {
                 <FormGroup>
                   <FormLabel>
                     <Help
-                      help={`Connectivity weights`}
+                      help={`Connectivity weights.`}
                       type="pipeline" regex={/^eigWeightOptions/}
                     />
                     Weight
@@ -221,7 +221,7 @@ class NetworkCentrality extends Component {
           <FormGroup>
             <FormLabel>
               <Help
-                help={``}
+                help={`Measure of local network connectivity. A given seed must be a voxel-based mask, unlike DC and EC which can be calculated for ROIs. lFCD mapping finds the given seed’s neighbors and neighbor’s neighbors until edges become weaker than the given threshold value. This measure was first implemented as FCDM by Tomasi and Volkow (2010).`}
               />
               Local Functional Connectivity Density
             </FormLabel>
@@ -230,7 +230,7 @@ class NetworkCentrality extends Component {
                 <FormGroup>
                   <FormLabel>
                     <Help
-                      help={`Connectivity weights`}
+                      help={`Connectivity weights.`}
                       type="pipeline" regex={/^lfcdWeightOptions/}
                     />
                     Weight
@@ -281,7 +281,6 @@ class NetworkCentrality extends Component {
                     helperText=''
                   >
                     <MenuItem value={"significance"}>Significance</MenuItem>
-                    <MenuItem value={"sparsity"}>Sparsity</MenuItem>
                     <MenuItem value={"correlation"}>Correlation</MenuItem>
                   </TextField>
                 </Help>

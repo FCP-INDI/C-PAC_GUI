@@ -70,7 +70,10 @@ class App extends React.Component {
     },
     content: {
       overflow: 'auto',
-      padding: theme.spacing.unit * 3,
+      padding: theme.spacing.unit,
+      [theme.breakpoints.up('md')]: {
+        padding: theme.spacing.unit * 3,
+      },
       backgroundColor: theme.palette.background.default,
       flexGrow: 1,
     },
@@ -133,8 +136,9 @@ class App extends React.Component {
         crumbs.push(
           <NextIcon key={crumbs.length} />
         )
+        // component={Link} to={`/pipelines/${ pipeline ? pipeline.get('id') : '' }`}
         crumbs.push(
-          <Button key={crumbs.length} size="small" component={Link} to={`/pipelines/${ pipeline ? pipeline.get('id') : '' }`}>
+          <Button key={crumbs.length} size="small">
             <PipelineIcon className={classes.icon} />
             { pipeline ? pipeline.get('name') : "Pipelines" }
           </Button>
@@ -158,7 +162,7 @@ class App extends React.Component {
             onChange={this.handleSettingsAdvanced}
             color="primary"
           />
-          <Help help={`Enable advanced options`} style={{ padding: 0 }} />
+          <Help help={`Enable advanced options.`} style={{ padding: 0 }} />
         </Toolbar>
       </AppBar>
     )

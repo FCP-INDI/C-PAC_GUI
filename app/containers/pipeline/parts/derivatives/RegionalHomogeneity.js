@@ -31,7 +31,7 @@ class RegionalHomogeneity extends Component {
           <Help
             type="pipeline"
             regex={/^clusterSize/}
-            help={`Number of neighboring voxels used when calculating ReHo`}
+            help={`Number of neighboring voxels used when calculating ReHo.`}
             fullWidth
           >
             <TextField

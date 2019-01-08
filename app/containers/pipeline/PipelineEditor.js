@@ -24,6 +24,7 @@ import {
 } from 'components/icons';
 
 import {
+  GeneralPage,
   AnatomicalPage,
   FunctionalPage,
   DerivativesPage,
@@ -98,8 +99,10 @@ class PipelineEditor extends Component {
           onChange={this.handleTabChange}
           indicatorColor="primary"
           textColor="primary"
-          centered
+          variant="scrollable"
+          scrollButtons="auto"
         >
+          <Tab label="General" />
           <Tab label="Anatomical" />
           { configuration.getIn(["anatomical", "enabled"]) ?
           <Tab label={(
@@ -120,9 +123,10 @@ class PipelineEditor extends Component {
           : null }
         </Tabs>
 
-        <Collapse in={tab === 0}><AnatomicalPage configuration={configuration} onChange={onChange} /></Collapse>
-        <Collapse in={tab === 1}><FunctionalPage configuration={configuration} onChange={onChange} /></Collapse>
-        <Collapse in={tab === 2}><DerivativesPage configuration={configuration} onChange={onChange} /></Collapse>
+        <Collapse in={tab === 0}><GeneralPage configuration={configuration} onChange={onChange} /></Collapse>
+        <Collapse in={tab === 1}><AnatomicalPage configuration={configuration} onChange={onChange} /></Collapse>
+        <Collapse in={tab === 2}><FunctionalPage configuration={configuration} onChange={onChange} /></Collapse>
+        <Collapse in={tab === 3}><DerivativesPage configuration={configuration} onChange={onChange} /></Collapse>
       </React.Fragment>
     );
   }

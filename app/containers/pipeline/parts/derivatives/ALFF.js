@@ -32,7 +32,7 @@ class ALFF extends Component {
           <Help
             type="pipeline"
             regex={/^lowPassFreqALFF/}
-            help={` Frequency cutoff (in Hz) for the low-pass filter used when calculating f/ALFF`}
+            help={` Frequency cutoff (in Hz) for the low-pass filter used when calculating f/ALFF.`}
             fullWidth
           >
             <TextField

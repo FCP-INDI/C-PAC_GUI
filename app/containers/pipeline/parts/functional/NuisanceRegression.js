@@ -334,7 +334,7 @@ class NuisanceRegression extends Component {
                   <Help
                     type="pipeline"
                     regex={/^Regressors/}
-                    help={`Select which nuisance signal corrections to apply`}
+                    help={`Select which nuisance signal corrections to apply.`}
                   />
                 </TableCell>
                 <TableCell padding="checkbox">

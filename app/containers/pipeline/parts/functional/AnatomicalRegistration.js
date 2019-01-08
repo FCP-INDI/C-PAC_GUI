@@ -35,7 +35,7 @@ class AnatomicalRegistration extends Component {
             <Help
               type="pipeline"
               regex={/^runBBReg/}
-              help={`Run Functional to Anatomical Registration with BB Register`}
+              help={`Run Functional to Anatomical Registration with BB Register.`}
             >
               <FormControlLabelled label="Using BB Registration">
                 <Switch

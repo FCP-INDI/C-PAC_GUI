@@ -5,6 +5,30 @@ export default {
     'default': {
       version: '1.3.0',
       configuration: {
+        general: {
+          environment: {
+            memory: 3,
+            cores: 1,
+            participants: 1,
+            ants_threads: 1,
+            paths: {
+              fsl: '',
+              output: './cpac_runs/default/output',
+              working: './cpac_runs/default/working',
+              crash: './cpac_runs/default/crash',
+              log: './cpac_runs/default/log',
+            },
+            outputs: {
+              extra: false,
+              debug: false,
+              logging: true,
+              regenerate: false,
+              quality_control: true,
+              create_symbolic_links: true,
+              remove_working: false,
+            },
+          },
+        },
         anatomical: {
           enabled: true,
           registration: {
@@ -29,24 +53,24 @@ export default {
                 enabled: true,
                 configuration: {
                   shrink_factor: {
-                    threshold: 0.6,
                     vary: true,
+                    threshold: 0.6,
                     bottom_limit: 0.4
                   },
                   multiplier: 1,
                   iterations: 250,
                   avoid_eyes: true,
                   avoid_ventricles: true,
+                  use_edge: true,
+                  use_skull: false,
                   pushout: true,
                   touchup: true,
+                  push_to_edge: false,
                   fill_hole: 10,
                   nearest_neighbors_smooth: 72,
                   final_smooth: 20,
-                  use_edge: true,
                   fractional_expansion: 0.1,
-                  push_to_edge: false,
-                  use_skull: false,
-                  intersection: {
+                  intersections: {
                     ratio: 0,
                     iterations: 4
                   },
@@ -224,13 +248,13 @@ export default {
             degree_centrality: {
               binarized: true,
               weighted: true,
-              threshold_type: 'significance',
+              threshold_type: 'sparsity',
               threshold: 0.001
             },
             eigenvector: {
               binarized: true,
               weighted: true,
-              threshold_type: 'significance',
+              threshold_type: 'sparsity',
               threshold: 0.001
             },
             local_connectivity_density: {
