@@ -4,13 +4,16 @@ import { withRouter } from 'react-router-dom'
 import { Link } from 'react-router-dom'
 import { configLoad, settingsUpdate } from '../actions/main'
 
+import bugsnag from '@bugsnag/js'
+import bugsnagReact from '@bugsnag/plugin-react'
+
 import classNames from 'classnames';
 import { withStyles, typography } from '@material-ui/core/styles';
 
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Button from '@material-ui/core/Button';
-import { Paper } from '@material-ui/core';
+import { Paper, Modal, Dialog } from '@material-ui/core';
 
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
@@ -25,6 +28,7 @@ import Slide from '@material-ui/core/Slide';
 import Switch from '@material-ui/core/Switch';
 
 import Help from 'components/Help'
+import ItWentWrong from 'containers/ItWentWrong'
 
 import {
   HomeIcon,
@@ -36,9 +40,16 @@ import {
   ProjectIcon,
   ProjectOpenIcon,
   AdvancedConfigIcon,
+  FeedbackIcon,
 } from 'components/icons';
 
 import Logo from 'resources/logo.png'
+
+
+const bugsnagClient = bugsnag('ed924a7990f8305f7bb59bc050b92239')
+bugsnagClient.use(bugsnagReact, React)
+
+const ErrorBoundary = bugsnagClient.getPlugin('react')
 
 
 class App extends React.Component {
@@ -54,6 +65,9 @@ class App extends React.Component {
     header: {
       display: 'flex',
       flexShrink: 0,
+    },
+    headerFiller: {
+      flexGrow: 1,
     },
     root: {
       height: '100vh',
@@ -84,8 +98,17 @@ class App extends React.Component {
     singleIcon: {
       marginRight: 0,
     },
+    feedback: {
+      position: 'absolute',
+      top: '50%',
+      left: '50%',
+      transform: 'translate(-50%, -50%)',
+    }
+  })
 
-  });
+  state = {
+    feedback: false
+  }
 
   componentDidMount() {
     this.props.configLoad()
@@ -156,7 +179,7 @@ class App extends React.Component {
           { crumbs }
           <div className={classes.crumbs}>
           </div>
-          <AdvancedConfigIcon color="secondary" />
+          <AdvancedConfigIcon color={ config.getIn(['settings', 'advanced']) ? "secondary": "disabled" } />
           <Switch
             checked={config.getIn(['settings', 'advanced'])}
             onChange={this.handleSettingsAdvanced}
@@ -168,6 +191,14 @@ class App extends React.Component {
     )
   };
 
+  handleFeedbackOpen = () => {
+    this.setState({ feedback: true })
+  }
+
+  handleFeedbackClose = () => {
+    this.setState({ feedback: false })
+  }
+
   render() {
     const { classes, theme, main } = this.props
 
@@ -177,14 +208,21 @@ class App extends React.Component {
           <Link to={`/`}>
             <img src={Logo} />
           </Link>
+          <div className={classes.headerFiller}></div>
+          <Button onClick={this.handleFeedbackOpen}><FeedbackIcon /></Button>
+          <Modal open={this.state.feedback} onClose={this.handleFeedbackClose}>
+            <div className={classes.feedback}>
+              <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSf4nQovBTrPnJ7yx5fCI47MKHIaxsOq149KS1rlg8WG066zbQ/viewform?embedded=true" width="640" height="610" frameBorder="0" marginHeight="0" marginWidth="0">Loading...</iframe>
+            </div>
+          </Modal>
         </header>
 
         <div className={classes.root}>
-
           { this.renderBreadcrumbs() }
-
           <main className={classes.content}>
-            { main.has('config') ? this.props.children : "Loading..." }
+            <ErrorBoundary FallbackComponent={ItWentWrong}>
+              { main.has('config') ? this.props.children : "Loading..." }
+            </ErrorBoundary>
           </main>
         </div>
       </div>

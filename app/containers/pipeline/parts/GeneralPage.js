@@ -255,8 +255,8 @@ class GeneralPage extends Component {
                     >
                       <FormControlLabelled label="Create organized output directory">
                         <Switch
-                          name="general.environment.outputs.create_symbolic_links"
-                          checked={configuration.getIn(['general', 'environment', 'outputs', 'create_symbolic_links'])}
+                          name="general.environment.outputs.organized"
+                          checked={configuration.getIn(['general', 'environment', 'outputs', 'organized'])}
                           onChange={this.handleValueChange}
                           color="primary"
                         />

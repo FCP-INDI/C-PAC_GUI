@@ -17,6 +17,9 @@ export default merge.smart(baseConfig, {
   target: 'web',
 
   externals: [
+    'fs',
+    'net',
+    'tls',
     'fsevents',
     'crypto-browserify',
     'argparse',
@@ -25,7 +28,9 @@ export default merge.smart(baseConfig, {
     'electron-store',
     'electron-args',
     'source-map-support',
-    'electron-debug'
+    'electron-debug',
+    'electron-simple-updater',
+    'electron-simple-publisher',
   ],
 
   entry: {

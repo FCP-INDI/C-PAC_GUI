@@ -43,6 +43,7 @@ export { default as DuplicateIcon } from '@material-ui/icons/FileCopy';
 export { default as UploadIcon } from '@material-ui/icons/CloudUpload';
 export { default as DeleteIcon } from '@material-ui/icons/Delete';
 export { default as AdvancedConfigIcon } from '@material-ui/icons/SettingsApplications';
+export { default as FeedbackIcon } from '@material-ui/icons/Feedback';
 
 // import createSvgIcon from '../utils/createSvgIcon'
 // export const BrainIcon = createSvgIcon(

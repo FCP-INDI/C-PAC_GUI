@@ -6,7 +6,6 @@ import {
   pipelineVersionDirtySave,
   pipelineVersionDirtyRevert,
   pipelineNameUpdate,
-  pipelineDuplicate,
   pipelineDownload,
 } from 'actions/pipeline'
 
@@ -41,7 +40,6 @@ import {
   SaveIcon,
   RevertIcon,
   EditIcon,
-  DuplicateIcon,
 } from 'components/icons';
 
 import cpac from '@internal/c-pac'
@@ -162,10 +160,6 @@ class PipelinePage extends Component {
     anchor.click();
   }
 
-  handleDuplicate = () => {
-    this.props.pipelineDuplicate(this.props.pipeline.get('id'))
-  }
-
   handleTitleClick = () => {
     if (this.state.default) {
       return
@@ -209,6 +203,7 @@ class PipelinePage extends Component {
             marginTop: 0,
             marginBottom: 0
           }}
+          onKeyPress={(e) => e.key == 'Enter' ? this.handleTitleSaveClick() : null}
         />
         <IconButton onClick={this.handleTitleSaveClick}>
           <SaveIcon />
@@ -236,12 +231,6 @@ class PipelinePage extends Component {
 
     const tools = (
       <React.Fragment>
-        <Tooltip title="Duplicate">
-          <IconButton onClick={this.handleDuplicate}>
-            <DuplicateIcon />
-          </IconButton>
-        </Tooltip>
-
         <Tooltip title="Download config file">
           <IconButton onClick={this.handleDownload}>
             <DownloadIcon />
@@ -298,7 +287,6 @@ const mapDispatchToProps = {
   pipelineVersionDirtySave,
   pipelineVersionDirtyRevert,
   pipelineNameUpdate,
-  pipelineDuplicate,
   pipelineDownload,
 }
 

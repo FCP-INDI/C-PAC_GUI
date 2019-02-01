@@ -38,10 +38,10 @@ export const listFiles = async (path) => {
 
   // TODO list from local
 
-  return files.map((f) => ({
-    ...f,
-    rel: f.file.replace(path, '')
-  }))
+  // return files.map((f) => ({
+  //   ...f,
+  //   rel: f.file.replace(path, '')
+  // }))
 }
 
 export function parse(content) {

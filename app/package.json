@@ -1,7 +1,7 @@
 {
   "name": "c-pac",
   "productName": "C-PAC",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "",
   "main": "./main.electron.js",
   "author": {

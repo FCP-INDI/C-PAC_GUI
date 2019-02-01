@@ -14,7 +14,8 @@ import {
   TemplateRegistration,
   SliceTimingCorrection,
   Smoothing,
-  TemporalFiltering
+  TemporalFiltering,
+  AROMA,
 } from 'containers/pipeline/parts/functional'
 
 import TristateSwitch from 'components/TristateSwitch'
@@ -91,6 +92,14 @@ class FunctionalPage extends Component {
             "Distortion Correction",
             "functional.distortion_correction.enabled",
             DistortionCorrection
+          )
+        }
+
+        {
+          this.renderSection(
+            "ICA AROMA",
+            "functional.aroma.enabled",
+            AROMA
           )
         }
 

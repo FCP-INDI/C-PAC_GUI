@@ -24,7 +24,7 @@ export default {
               logging: true,
               regenerate: false,
               quality_control: true,
-              create_symbolic_links: true,
+              organized: true,
               remove_working: false,
             },
           },

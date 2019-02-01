@@ -17,6 +17,7 @@ import {
   PIPELINE_VERSION_DIRTY_REVERT,
   PIPELINE_DUPLICATE,
   PIPELINE_IMPORT,
+  PIPELINE_DELETE,
 } from '../actions/pipeline'
 
 import uuid from 'uuid/v4'
@@ -143,7 +144,15 @@ export default function main(state, action) {
       }
 
       let name = pipeline.get('name').trim()
+      let matched = /.+\(([0-9]+)\)$/.exec(name)
+
       let iName = 2
+
+      if (matched) {
+        iName = parseInt(matched[1])
+        name = name.replace(/\(([0-9]+)\)$/, '').trim()
+      }
+
       while(pipelines.filter((p) => p.get('name') == name + ' (' + iName + ')' ).size > 0) {
         iName++
       }
@@ -159,6 +168,15 @@ export default function main(state, action) {
       const newPipelines = pipelines.push(newPipeline)
 
       return state.setIn(['config', 'pipelines'], newPipelines)
+    }
+
+    case PIPELINE_DELETE: {
+      const { pipeline: id } = action
+
+      const i = state.getIn(['config', 'pipelines'])
+                     .findIndex((p) => p.get('id') == id)
+
+      return state.deleteIn(['config', 'pipelines', i])
     }
 
     default:

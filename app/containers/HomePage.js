@@ -8,10 +8,6 @@ import Grid from '@material-ui/core/Grid'
 import Paper from '@material-ui/core/Paper'
 import Modal from '@material-ui/core/Modal'
 
-import ProjectCard from 'components/ProjectCard'
-import PipelineCard from 'components/PipelineCard'
-import DatasetCard from 'components/DatasetCard'
-
 import PipelineList from 'containers/PipelineList'
 import PipelineListTools from 'containers/PipelineListTools.platform'
 

@@ -13,6 +13,12 @@ import IconButton from '@material-ui/core/IconButton'
 import Button from '@material-ui/core/Button'
 import Tooltip from '@material-ui/core/Tooltip'
 
+import Dialog from '@material-ui/core/Dialog'
+import DialogActions from '@material-ui/core/DialogActions'
+import DialogContent from '@material-ui/core/DialogContent'
+import DialogContentText from '@material-ui/core/DialogContentText'
+import DialogTitle from '@material-ui/core/DialogTitle'
+
 import {
   PipelineIcon,
   AddIcon,
@@ -23,6 +29,7 @@ import {
 import {
   pipelineDuplicate,
   pipelineImport,
+  pipelineDelete,
 } from '../actions/pipeline'
 
 class PipelineList extends Component {
@@ -30,19 +37,64 @@ class PipelineList extends Component {
   static styles = theme => ({
   })
 
+  state = {
+    openDeleteConfirm: false,
+    pipelineToDelete: null,
+  };
+
+  handleClickOpen = (pipeline) => {
+    this.setState({ openDeleteConfirm: true, pipelineToDelete: pipeline })
+  }
+
+  handleClose = () => {
+    this.setState({ openDeleteConfirm: false, pipelineToDelete: null })
+  }
+
+  handleDeleteClose = () => {
+    if (this.state.pipelineToDelete) {
+      this.props.pipelineDelete(this.state.pipelineToDelete)
+    }
+    this.handleClose()
+  }
+
+  handleDuplicate = (pipeline) => {
+    this.props.pipelineDuplicate(pipeline)
+  }
+
   render() {
     const { classes, projects, pipelines, datasets } = this.props
 
     return (
-      <Grid container spacing={8}>
-        {
-          pipelines && pipelines.map((pipeline) => (
-            <Grid item key={pipeline.get('id')}>
-              <PipelineCard pipeline={pipeline} />
-            </Grid>
-          ))
-        }
-      </Grid>
+      <React.Fragment>
+        <Dialog
+          open={this.state.openDeleteConfirm}
+          onClose={this.handleClose}
+        >
+          <DialogTitle>Are you sure to delete this pipeline?</DialogTitle>
+          <DialogContent>
+            <DialogContentText>
+              This operation is irreversible.
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={this.handleClose} color="secondary">
+              Cancel
+            </Button>
+            <Button onClick={this.handleDeleteClose} color="secondary">
+              Delete
+            </Button>
+          </DialogActions>
+        </Dialog>
+        <Grid container spacing={8}>
+          {
+            pipelines && pipelines.map((pipeline) => (
+              <Grid item key={pipeline.get('id')}>
+                <PipelineCard onDelete={this.handleClickOpen} onDuplicate={this.handleDuplicate} pipeline={pipeline} />
+              </Grid>
+            ))
+          }
+        </Grid>
+      </React.Fragment>
     )
   }
 }
@@ -54,6 +106,7 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = {
   pipelineDuplicate,
   pipelineImport,
+  pipelineDelete,
 }
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(withStyles(PipelineList.styles)(PipelineList)))

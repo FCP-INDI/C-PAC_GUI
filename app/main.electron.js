@@ -1,4 +1,12 @@
-const { app, BrowserWindow } = require('electron')
+const { app, autoUpdater, dialog, BrowserWindow } = require('electron')
+// const updater = require('electron-simple-updater')
+
+// updater.init({
+//   autoDownload:       true,
+//   checkUpdateOnStart: false,
+//   disabled:           false,
+//   url:                'https://s3.amazonaws.com/anibalsolon-research/cmi/c-pac/updates.json',
+// })
 
 let mainWindow = null
 

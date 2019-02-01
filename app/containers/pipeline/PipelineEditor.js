@@ -74,20 +74,6 @@ class PipelineEditor extends Component {
     const { classes, onChange, configuration } = this.props
     const { tab } = this.state
 
-    const tools = (
-      <React.Fragment>
-        <Button size="small">
-          <DownloadIcon />
-        </Button>
-        <Button size="small">
-          <SaveIcon />
-        </Button>
-        <Button size="small">
-          <RevertIcon />
-        </Button>
-      </React.Fragment>
-    )
-
     const disable = (event) => {
       event.stopPropagation()
     }

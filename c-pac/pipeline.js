@@ -5,6 +5,15 @@ import yamlTemplate, { raw } from './resources/pipeline/yaml'
 
 export { template, raw as rawTemplate }
 
+function slugify(text) {
+  return text.toString().toLowerCase()
+    .replace(/\s+/g, '-')           // Replace spaces with -
+    .replace(/[^\w\-]+/g, '')       // Remove all non-word chars
+    .replace(/\-\-+/g, '-')         // Replace multiple - with single -
+    .replace(/^-+/, '')             // Trim - from start of text
+    .replace(/-+$/, '');            // Trim - from end of text
+}
+
 export function parse(content) {
   const config = yaml.parse(content)
 
@@ -15,6 +24,24 @@ export function parse(content) {
   const c = t.versions[newver].configuration
 
   t.name = config.pipelineName.trim()
+
+  c.general.environment.memory = config.maximumMemoryPerParticipant
+  c.general.environment.cores = config.maxCoresPerParticipant
+  c.general.environment.participants = config.numParticipantsAtOnce
+  c.general.environment.ants_threads = config.num_ants_threads
+  c.general.environment.paths.fsl = config.FSLDIR
+  c.general.environment.paths.output = config.outputDirectory
+  c.general.environment.paths.working = config.workingDirectory
+  c.general.environment.paths.crash = config.crashLogDirectory
+  c.general.environment.paths.log = config.logDirectory
+  c.general.environment.outputs.extra = config.write_func_outputs.includes(1)
+  c.general.environment.outputs.debug = config.write_debugging_outputs.includes(1)
+  c.general.environment.outputs.logging = config.run_logging
+  c.general.environment.outputs.regenerate = config.reGenerateOutputs
+  c.general.environment.outputs.quality_control = config.generateQualityControlImages.includes(1)
+  c.general.environment.outputs.organized = config.runSymbolicLinks.includes(1)
+  c.general.environment.outputs.remove_working = config.removeWorkingDir
+
   c.anatomical.skull_stripping.enabled = config.already_skullstripped.includes(0)
 
   if (typeof config.skullstrip_option === "string") {
@@ -263,24 +290,24 @@ export function dump(pipeline, version='0') {
   config.resourceManager = "SGE"
   config.parallelEnvironment = "cpac"
   config.queue = "all.q"
-  config.maximumMemoryPerParticipant = 3
-  config.maxCoresPerParticipant = 1
-  config.numParticipantsAtOnce = 1
-  config.num_ants_threads = 1
-  config.pipelineName = "cpac_default"
-  config.workingDirectory = "./cpac_runs/default/working"
-  config.crashLogDirectory = "./cpac_runs/default/crash"
-  config.logDirectory = "./cpac_runs/default/log"
-  config.outputDirectory = "./cpac_runs/default/output"
+  config.maximumMemoryPerParticipant = c.general.environment.memory
+  config.maxCoresPerParticipant = c.general.environment.cores
+  config.numParticipantsAtOnce = c.general.environment.participants
+  config.num_ants_threads = c.general.environment.ants_threads
+  config.pipelineName = slugify(pipeline.name)
+  config.workingDirectory = c.general.environment.paths.output
+  config.crashLogDirectory = c.general.environment.paths.working
+  config.logDirectory = c.general.environment.paths.crash
+  config.outputDirectory = c.general.environment.paths.log
   config.awsOutputBucketCredentials = ""
   config.s3Encryption = [1]
-  config.write_func_outputs = [0]
-  config.write_debugging_outputs = [0]
-  config.generateQualityControlImages = [1]
-  config.removeWorkingDir = false
-  config.run_logging = true
-  config.reGenerateOutputs = false
-  config.runSymbolicLinks = [1]
+  config.write_func_outputs = [c.general.environment.outputs.extra ? 1 : 0]
+  config.write_debugging_outputs = [c.general.environment.outputs.debug ? 1 : 0]
+  config.generateQualityControlImages = [c.general.environment.outputs.quality_control ? 1 : 0]
+  config.removeWorkingDir = c.general.environment.outputs.remove_working
+  config.run_logging = c.general.environment.outputs.logging
+  config.reGenerateOutputs = c.general.environment.outputs.regenerate
+  config.runSymbolicLinks = [c.general.environment.outputs.organized ? 1 : 0]
 
   config.already_skullstripped = [c.anatomical.skull_stripping.enabled ? 0 : 1]
   config.skullstrip_option = []

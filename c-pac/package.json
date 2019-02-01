@@ -1,11 +1,12 @@
 {
   "name": "@internal/c-pac",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "license": "MIT",
   "main": "index.js",
   "dependencies": {
     "aws-sdk": "^2.373.0",
     "dockerode": "^2.5.7",
+    "request": "^2.88.0",
     "yaml": "^1.0.3"
   },
   "devDependencies": {

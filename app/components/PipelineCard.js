@@ -21,9 +21,9 @@ import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 
 import Typography from '@material-ui/core/Typography'
 import Avatar from '@material-ui/core/Avatar'
-import green from '@material-ui/core/colors/green'
 import IconButton from '@material-ui/core/IconButton'
 import Button from '@material-ui/core/Button'
+import Tooltip from '@material-ui/core/Tooltip'
 
 import {
   EnvironmentIcon,
@@ -37,8 +37,11 @@ import {
   NavigateNextIcon,
   TimerIcon,
   LogIcon,
-  BrainIcon
-} from './icons';
+  BrainIcon,
+  DeleteIcon,
+  DuplicateIcon,
+} from './icons'
+
 
 class PipelineCard extends Component {
 
@@ -48,8 +51,9 @@ class PipelineCard extends Component {
     },
     actions: {
       display: 'flex',
-      paddingLeft: 20,
-      justifyContent: 'flex-end'
+    },
+    expand: {
+      marginLeft: 'auto',
     },
     action: {
     },
@@ -60,7 +64,7 @@ class PipelineCard extends Component {
     }
   })
 
-  handleOpen = ( pipeline) => {
+  handleOpen = (pipeline) => {
     this.props.history.push(`/pipelines/${pipeline}`)
   }
 
@@ -100,9 +104,27 @@ class PipelineCard extends Component {
           </List>
         </CardContent>
         <CardActions className={classes.actions} disableActionSpacing>
-          <IconButton className={classes.expand} onClick={() => this.handleOpen(pipeline.get('id'))}>
-            <NavigateNextIcon />
-          </IconButton>
+
+          <Tooltip title="Duplicate">
+            <IconButton onClick={() => this.props.onDuplicate(pipeline.get('id'))}>
+              <DuplicateIcon />
+            </IconButton>
+          </Tooltip>
+
+          { pipeline.get('id') != 'default' ?
+            <Tooltip title="Delete">
+              <IconButton onClick={() => this.props.onDelete(pipeline.get('id'))}>
+                <DeleteIcon />
+              </IconButton>
+            </Tooltip>
+            : null
+          }
+
+          <Tooltip title="Edit">
+            <IconButton className={classes.expand} onClick={() => this.handleOpen(pipeline.get('id'))}>
+              <NavigateNextIcon />
+            </IconButton>
+          </Tooltip>
         </CardActions>
       </Card>
     )

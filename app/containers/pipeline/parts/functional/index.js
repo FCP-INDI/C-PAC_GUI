@@ -1,5 +1,5 @@
 export AnatomicalRegistration from './AnatomicalRegistration'
-export Aroma from './Aroma'
+export AROMA from './AROMA'
 export DistortionCorrection from './DistortionCorrection'
 export MedianAngleCorrection from './MedianAngleCorrection'
 export NuisanceRegression from './NuisanceRegression'

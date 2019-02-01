@@ -73,3 +73,14 @@ export function pipelineDownload(pipeline) {
     pipeline
   }
 }
+
+
+export const PIPELINE_DELETE = 'PIPELINE_DELETE'
+export const PIPELINE_DELETE_DONE = 'PIPELINE_DELETE_DONE'
+
+export function pipelineDelete(pipeline) {
+  return {
+    type: PIPELINE_DELETE,
+    pipeline
+  }
+}
