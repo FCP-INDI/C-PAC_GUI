@@ -38,7 +38,7 @@ export default {
             methods: {
               ants: { enabled: true, configuration: { skull_on: false } },
               fsl: {
-                enabled: true,
+                enabled: false,
                 configuration: {
                   config_file: 'T1_2_MNI152_2mm',
                   reference_mask: '$FSLDIR/data/standard/MNI152_T1_${resolution_for_anat}_brain_mask_dil.nii.gz'
