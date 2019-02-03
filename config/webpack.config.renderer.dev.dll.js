@@ -3,9 +3,6 @@ import path from 'path';
 import merge from 'webpack-merge';
 import baseConfig from './webpack.config.base';
 import { dependencies } from '../package.json';
-import CheckNodeEnv from '../internals/scripts/CheckNodeEnv';
-
-CheckNodeEnv('development');
 
 const dist = path.resolve(process.cwd(), 'app', 'dist', 'dll');
 
@@ -29,7 +26,6 @@ export default merge.smart(baseConfig, {
     'electron-args',
     'source-map-support',
     'electron-debug',
-    'electron-simple-updater',
     'electron-simple-publisher',
   ],
 

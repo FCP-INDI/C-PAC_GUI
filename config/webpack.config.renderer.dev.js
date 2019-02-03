@@ -8,9 +8,6 @@ import HtmlWebpackPlugin from 'html-webpack-plugin'
 
 import baseConfig from './webpack.config.base';
 
-import CheckNodeEnv from '../internals/scripts/CheckNodeEnv';
-CheckNodeEnv('development');
-
 const port = process.env.PORT || 1212;
 const publicPath = `http://localhost:${port}`;
 
