@@ -27,9 +27,6 @@
     "package:linux": "yarn run build && build --publish never --linux",
     "package:mac": "yarn run build && build --publish never --mac"
   },
-  "updater": {
-    "url": "https://anibalsolon-research.s3.amazonaws.com/cmi/c-pac/updates.json"
-  },
   "build": {
     "productName": "C-PAC",
     "appId": "org.fcp-indi.CPAC",

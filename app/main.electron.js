@@ -1,12 +1,4 @@
 const { app, autoUpdater, dialog, BrowserWindow } = require('electron')
-// const updater = require('electron-simple-updater')
-
-// updater.init({
-//   autoDownload:       true,
-//   checkUpdateOnStart: false,
-//   disabled:           false,
-//   url:                'https://s3.amazonaws.com/anibalsolon-research/cmi/c-pac/updates.json',
-// })
 
 let mainWindow = null
 
@@ -31,7 +23,7 @@ app.on('ready', async () => {
     mainWindow.loadURL(`http://localhost:1212`);
     mainWindow.toggleDevTools()
   } else {
-    mainWindow.loadURL(`file://${__dirname}/dist/index.html`);
+    mainWindow.loadURL(`http://research.anibalsolon.com/cmi/c-pac/gui/electron/${app.getVersion()}`);
   }
 
   mainWindow.webContents.on("did-fail-load", function() {
