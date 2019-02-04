@@ -18,9 +18,10 @@ import DatasetPage from './containers/DatasetPage'
 
 import { projectOpen } from './actions/main'
 
+const GACode = process.env.NODE_ENV === 'production' ? 'UA-19224662-10' : ''
 
 let cid = localStorage.getItem('ga-cid')
-const visitor = ua('UA-XXXX-XX', cid)
+const visitor = ua(GACode, cid)
 if (!cid) {
   localStorage.setItem('ga-cid', visitor.cid)
 }
@@ -64,7 +65,7 @@ export class TemplatePage extends Component {
       visitor.pageview({
         dp: this.props.location.pathname,
         aip: 1,
-      }).send()
+      }, (error) => console.log(error)).send()
     }
   }
 
