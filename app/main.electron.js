@@ -23,8 +23,11 @@ app.on('ready', async () => {
     mainWindow.loadURL(`http://localhost:1212`);
     mainWindow.toggleDevTools()
   } else {
-    mainWindow.loadURL(`http://research.anibalsolon.com/cmi/c-pac/gui/electron/${app.getVersion()}`);
+    mainWindow.loadURL(`https://s3.amazonaws.com/fcp-indi/resources/cpac/resources/gui/0.0.1/html`);
   }
+
+  // s3://fcp-indi/resources/cpac/resources/gui/0.0.1/html
+  // s3://fcp-indi/resources/cpac/resources/gui/0.0.1/packages
 
   mainWindow.webContents.on("did-fail-load", function() {
     if (process.env.NODE_ENV === 'development') {
