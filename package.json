@@ -31,7 +31,6 @@
     "productName": "C-PAC",
     "appId": "org.fcp-indi.CPAC",
     "files": [
-      "dist/",
       "main.electron.js",
       "node_modules/",
       "c-pac/",
@@ -54,7 +53,8 @@
     "linux": {
       "target": [
         "deb",
-        "AppImage"
+        "snap",
+        "tar.gz"
       ],
       "category": "Development"
     },
