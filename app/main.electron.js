@@ -23,7 +23,7 @@ app.on('ready', async () => {
     mainWindow.loadURL(`http://localhost:1212`);
     mainWindow.toggleDevTools()
   } else {
-    mainWindow.loadURL(`https://s3.amazonaws.com/fcp-indi/resources/cpac/gui/0.0.1/html`);
+    mainWindow.loadURL(`https://s3.amazonaws.com/fcp-indi/resources/cpac/gui/0.0.1/html/index.html`);
   }
 
   // s3://fcp-indi/resources/cpac/gui/0.0.1/html
