@@ -51,17 +51,6 @@ export function configCleared() {
   }
 }
 
-
-export const PROJECT_OPEN = 'PROJECT_OPEN'
-
-export function projectOpen(project) {
-  return {
-    type: PROJECT_OPEN,
-    project
-  }
-}
-
-
 export const SETTINGS_UPDATE = 'SETTINGS_UPDATE'
 
 export function settingsUpdate(settings) {
