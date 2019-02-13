@@ -92,6 +92,10 @@ function* loadConfig (action) {
       cpac.pipeline.template
     ],
 
+    executions: [
+
+    ],
+
     // projects: [
     //   {
     //     id: 'abide',
@@ -133,6 +137,11 @@ function* loadConfig (action) {
     console.log("Using initial state")
   } else {
     console.log("Using local state")
+  }
+
+  if (!initialState.executions) {
+    initialState.executions = []
+    localStorage.setItem('state', JSON.stringify(config))
   }
 
   yield put(configLoaded(initialState))

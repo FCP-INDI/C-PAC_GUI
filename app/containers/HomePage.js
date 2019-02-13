@@ -10,6 +10,7 @@ import Modal from '@material-ui/core/Modal'
 
 import PipelineList from 'containers/PipelineList'
 import PipelineListTools from 'containers/PipelineListTools.platform'
+import ExecutionListTools from 'containers/ExecutionListTools.platform'
 
 import IconButton from '@material-ui/core/IconButton'
 import Button from '@material-ui/core/Button'
@@ -19,6 +20,7 @@ import Box from 'components/Box'
 
 import {
   PipelineIcon,
+  RunIcon,
   HelpIcon,
 } from 'components/icons'
 
@@ -52,6 +54,14 @@ class HomePage extends Component {
           <Box title="Pipelines"
               avatar={<PipelineIcon />}
               tools={<PipelineListTools />}
+              className={classes.expand}>
+            <PipelineList />
+          </Box>
+        </Grid>
+        <Grid item md={8} sm={12} className={classes.cell}>
+          <Box title="Executions"
+              avatar={<RunIcon />}
+              tools={<ExecutionListTools />}
               className={classes.expand}>
             <PipelineList />
           </Box>
