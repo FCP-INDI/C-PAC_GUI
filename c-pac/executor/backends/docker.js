@@ -13,7 +13,16 @@ export async function executions() {
   return containers
 }
 
-export async function execute(pipeline, data_config) {
+export async function execute(pipeline, data_config, execution_config) {
+
+  if (!execution_config) {
+    execution_config = {}
+  }
+
+  if (!execution_config.image) {
+    execution_config.image = 'fcpindi/c-pac:v1.4.1_dev'
+  }
+
   const name = `c-pac_${new Date().getTime()}`
 
   console.log(`Executing ${name}`)
@@ -22,7 +31,7 @@ export async function execute(pipeline, data_config) {
 
   const container = await docker.createContainer({
     name,
-    Image: 'fcpindi/c-pac:v1.4.0_dev',
+    Image: execution_config.image,
 
     AttachStdin: false,
     AttachStdout: true,
@@ -41,7 +50,7 @@ export async function execute(pipeline, data_config) {
       '/outputs',
       'participant'
     ],
-    ExposedPorts: { [availablePort]: {} },
+    ExposedPorts: { '8080': {} },
     HostConfig: {
       PortBindings: { '8080': [{ HostPort: availablePort }] },
       Binds: [
