@@ -1,5 +1,6 @@
 import Docker from 'dockerode'
 import requests from 'request'
+import freePort from 'find-free-port'
 
 const docker = new Docker({socketPath: '/var/run/docker.sock'})
 
@@ -16,6 +17,8 @@ export async function execute(pipeline, data_config) {
   const name = `c-pac_${new Date().getTime()}`
 
   console.log(`Executing ${name}`)
+
+  const availablePort = `${await freePort(49152, 65535, '127.0.0.1')}`
 
   const container = await docker.createContainer({
     name,
@@ -38,9 +41,9 @@ export async function execute(pipeline, data_config) {
       '/outputs',
       'participant'
     ],
-    ExposedPorts: { "8080": {} },
+    ExposedPorts: { [availablePort]: {} },
     HostConfig: {
-      PortBindings: { '8080': [{ HostPort: '8080' }] },
+      PortBindings: { '8080': [{ HostPort: availablePort }] },
       Binds: [
         '/tmp:/scratch',
         `/tmp/${name}_dumb:/bids_dataset`,

@@ -19,6 +19,7 @@ export default merge.smart(baseConfig, {
     'tls',
     'fsevents',
     'crypto-browserify',
+    'find-free-port',
     'argparse',
     'express',
     'devtron',
