@@ -12,7 +12,6 @@ describe('executing C-PAC', async () => {
   }).timeout(10000)
 
   it('should start an execution', async () => {
-    return
     const data_config = `
 # CPAC Data Configuration File
 # Version 1.3.0
@@ -815,9 +814,9 @@ mdmr_parallel_nodes :  1
     await execute(pipeline_config, data_config)
   }).timeout(10000)
 
-  it('should observe logs', async () => {
+  // it('should observe logs', async () => {
 
-    await logs("ab3768ca46e7524bbf282dc49779c25f7f85e7d04158c9569bc7b4d6a2dba80a")
+  //   await logs("ab3768ca46e7524bbf282dc49779c25f7f85e7d04158c9569bc7b4d6a2dba80a")
 
-  }).timeout(10000)
+  // }).timeout(10000)
 })
