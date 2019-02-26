@@ -185,7 +185,7 @@ class SkullStripping extends Component {
                         <Switch
                           name="anatomical.skull_stripping.methods.bet.configuration.apply_threshold"
                           checked={configuration.getIn(['anatomical', 'skull_stripping', 'methods', 'bet', 'configuration', 'apply_threshold'])}
-                          onChange={this.handleValueChange}
+                          onChange={onChange}
                           color="primary"
                         />
                       }
@@ -204,7 +204,7 @@ class SkullStripping extends Component {
                         <Switch
                           name="anatomical.skull_stripping.methods.bet.configuration.mask"
                           checked={configuration.getIn(['anatomical', 'skull_stripping', 'methods', 'bet', 'configuration', 'mask'])}
-                          onChange={this.handleValueChange}
+                          onChange={onChange}
                           color="primary"
                         />
                       }
@@ -223,7 +223,7 @@ class SkullStripping extends Component {
                         <Switch
                           name="anatomical.skull_stripping.methods.bet.configuration.mesh"
                           checked={configuration.getIn(['anatomical', 'skull_stripping', 'methods', 'bet', 'configuration', 'mesh'])}
-                          onChange={this.handleValueChange}
+                          onChange={onChange}
                           color="primary"
                         />
                       }
@@ -242,7 +242,7 @@ class SkullStripping extends Component {
                         <Switch
                           name="anatomical.skull_stripping.methods.bet.configuration.skull"
                           checked={configuration.getIn(['anatomical', 'skull_stripping', 'methods', 'bet', 'configuration', 'skull'])}
-                          onChange={this.handleValueChange}
+                          onChange={onChange}
                           color="primary"
                         />
                       }
@@ -261,7 +261,7 @@ class SkullStripping extends Component {
                         <Switch
                           name="anatomical.skull_stripping.methods.bet.configuration.surfaces"
                           checked={configuration.getIn(['anatomical', 'skull_stripping', 'methods', 'bet', 'configuration', 'surfaces'])}
-                          onChange={this.handleValueChange}
+                          onChange={onChange}
                           color="primary"
                         />
                       }
@@ -280,7 +280,7 @@ class SkullStripping extends Component {
                         <Switch
                           name="anatomical.skull_stripping.methods.bet.configuration.surface_outline"
                           checked={configuration.getIn(['anatomical', 'skull_stripping', 'methods', 'bet', 'configuration', 'surface_outline'])}
-                          onChange={this.handleValueChange}
+                          onChange={onChange}
                           color="primary"
                         />
                       }
@@ -299,7 +299,7 @@ class SkullStripping extends Component {
                         <Switch
                           name="anatomical.skull_stripping.methods.bet.configuration.padding"
                           checked={configuration.getIn(['anatomical', 'skull_stripping', 'methods', 'bet', 'configuration', 'padding'])}
-                          onChange={this.handleValueChange}
+                          onChange={onChange}
                           color="primary"
                         />
                       }
@@ -318,7 +318,7 @@ class SkullStripping extends Component {
                         <Switch
                           name="anatomical.skull_stripping.methods.bet.configuration.reduce_bias"
                           checked={configuration.getIn(['anatomical', 'skull_stripping', 'methods', 'bet', 'configuration', 'reduce_bias'])}
-                          onChange={this.handleValueChange}
+                          onChange={onChange}
                           color="primary"
                         />
                       }
@@ -337,7 +337,7 @@ class SkullStripping extends Component {
                         <Switch
                           name="anatomical.skull_stripping.methods.bet.configuration.remove_eyes"
                           checked={configuration.getIn(['anatomical', 'skull_stripping', 'methods', 'bet', 'configuration', 'remove_eyes'])}
-                          onChange={this.handleValueChange}
+                          onChange={onChange}
                           color="primary"
                         />
                       }
@@ -550,7 +550,7 @@ class SkullStripping extends Component {
                         <Switch
                           name="anatomical.skull_stripping.methods.afni.configuration.shrink_factor.vary"
                           checked={configuration.getIn(['anatomical', 'skull_stripping', 'methods', 'afni', 'configuration', 'shrink_factor', 'vary'])}
-                          onChange={this.handleValueChange}
+                          onChange={onChange}
                           color="primary"
                         />
                       }
@@ -569,7 +569,7 @@ class SkullStripping extends Component {
                         <Switch
                           name="anatomical.skull_stripping.methods.afni.configuration.avoid_eyes"
                           checked={configuration.getIn(['anatomical', 'skull_stripping', 'methods', 'afni', 'configuration', 'avoid_eyes'])}
-                          onChange={this.handleValueChange}
+                          onChange={onChange}
                           color="primary"
                         />
                       }
@@ -588,7 +588,7 @@ class SkullStripping extends Component {
                         <Switch
                           name="anatomical.skull_stripping.methods.afni.configuration.avoid_ventricles"
                           checked={configuration.getIn(['anatomical', 'skull_stripping', 'methods', 'afni', 'configuration', 'avoid_ventricles'])}
-                          onChange={this.handleValueChange}
+                          onChange={onChange}
                           color="primary"
                         />
                       }
@@ -607,7 +607,7 @@ class SkullStripping extends Component {
                         <Switch
                           name="anatomical.skull_stripping.methods.afni.configuration.use_edge"
                           checked={configuration.getIn(['anatomical', 'skull_stripping', 'methods', 'afni', 'configuration', 'use_edge'])}
-                          onChange={this.handleValueChange}
+                          onChange={onChange}
                           color="primary"
                         />
                       }
@@ -626,7 +626,7 @@ class SkullStripping extends Component {
                         <Switch
                           name="anatomical.skull_stripping.methods.afni.configuration.use_skull"
                           checked={configuration.getIn(['anatomical', 'skull_stripping', 'methods', 'afni', 'configuration', 'use_skull'])}
-                          onChange={this.handleValueChange}
+                          onChange={onChange}
                           color="primary"
                         />
                       }
@@ -645,7 +645,7 @@ class SkullStripping extends Component {
                         <Switch
                           name="anatomical.skull_stripping.methods.afni.configuration.pushout"
                           checked={configuration.getIn(['anatomical', 'skull_stripping', 'methods', 'afni', 'configuration', 'pushout'])}
-                          onChange={this.handleValueChange}
+                          onChange={onChange}
                           color="primary"
                         />
                       }
@@ -664,7 +664,7 @@ class SkullStripping extends Component {
                         <Switch
                           name="anatomical.skull_stripping.methods.afni.configuration.touchup"
                           checked={configuration.getIn(['anatomical', 'skull_stripping', 'methods', 'afni', 'configuration', 'touchup'])}
-                          onChange={this.handleValueChange}
+                          onChange={onChange}
                           color="primary"
                         />
                       }
@@ -683,7 +683,7 @@ class SkullStripping extends Component {
                         <Switch
                           name="anatomical.skull_stripping.methods.afni.configuration.push_to_edge"
                           checked={configuration.getIn(['anatomical', 'skull_stripping', 'methods', 'afni', 'configuration', 'push_to_edge'])}
-                          onChange={this.handleValueChange}
+                          onChange={onChange}
                           color="primary"
                         />
                       }
