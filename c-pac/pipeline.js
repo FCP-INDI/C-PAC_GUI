@@ -83,9 +83,9 @@ export function parse(content) {
       .replace("$FSLDIR", "${environment.paths.fsl_dir}")
 
   c.anatomical.tissue_segmentation.enabled = config.runSegmentationPreprocessing.includes(1)
-  c.anatomical.tissue_segmentation.priors.white_matter = config.PRIORS_WHITE.replace("$priors_path", "${environment.paths.segmentation_priors}")
-  c.anatomical.tissue_segmentation.priors.grate_matter = config.PRIORS_GRAY.replace("$priors_path", "${environment.paths.segmentation_priors}")
-  c.anatomical.tissue_segmentation.priors.cerebrospinal_fluid = config.PRIORS_CSF.replace("$priors_path", "${environment.paths.segmentation_priors}")
+  c.anatomical.tissue_segmentation.priors.white_matter = config.PRIORS_WHITE.replace("$priors_path", "${environment.paths.fsl_dir}/data/standard/tissuepriors/2mm")
+  c.anatomical.tissue_segmentation.priors.grate_matter = config.PRIORS_GRAY.replace("$priors_path", "${environment.paths.fsl_dir}/data/standard/tissuepriors/2mm")
+  c.anatomical.tissue_segmentation.priors.cerebrospinal_fluid = config.PRIORS_CSF.replace("$priors_path", "${environment.paths.fsl_dir}/data/standard/tissuepriors/2mm")
 
   c.functional.slice_timing_correction.enabled = config.slice_timing_correction.includes(1)
   c.functional.slice_timing_correction.repetition_time = !config.TR || config.TR == "None" ? '' : config.TR
@@ -362,10 +362,10 @@ export function dump(pipeline, version='0') {
   config.regWithSkull = [c.anatomical.registration.methods.ants.configuration.skull_on ? 1 : 0]
 
   config.runSegmentationPreprocessing = [c.anatomical.tissue_segmentation.enabled ? 1 : 0]
-  config.priors_path = ""
-  config.PRIORS_WHITE = c.anatomical.tissue_segmentation.priors.white_matter
-  config.PRIORS_GRAY = c.anatomical.tissue_segmentation.priors.grate_matter
-  config.PRIORS_CSF = c.anatomical.tissue_segmentation.priors.cerebrospinal_fluid
+  config.priors_path = "$FSLDIR/data/standard/tissuepriors/2mm"
+  config.PRIORS_WHITE = c.anatomical.tissue_segmentation.priors.white_matter.replace('${environment.paths.fsl_dir}', '$FSLDIR')
+  config.PRIORS_GRAY = c.anatomical.tissue_segmentation.priors.grate_matter.replace('${environment.paths.fsl_dir}', '$FSLDIR')
+  config.PRIORS_CSF = c.anatomical.tissue_segmentation.priors.cerebrospinal_fluid.replace('${environment.paths.fsl_dir}', '$FSLDIR')
 
   // @TODO review pattern and stop idx
   config.slice_timing_correction = [c.functional.slice_timing_correction.enabled ? 1 : 0]
