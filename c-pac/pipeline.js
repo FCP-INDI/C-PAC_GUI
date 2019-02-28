@@ -83,9 +83,14 @@ export function parse(content) {
       .replace("$FSLDIR", "${environment.paths.fsl_dir}")
 
   c.anatomical.tissue_segmentation.enabled = config.runSegmentationPreprocessing.includes(1)
-  c.anatomical.tissue_segmentation.priors.white_matter = config.PRIORS_WHITE.replace("$priors_path", "${environment.paths.fsl_dir}/data/standard/tissuepriors/2mm")
-  c.anatomical.tissue_segmentation.priors.grate_matter = config.PRIORS_GRAY.replace("$priors_path", "${environment.paths.fsl_dir}/data/standard/tissuepriors/2mm")
-  c.anatomical.tissue_segmentation.priors.cerebrospinal_fluid = config.PRIORS_CSF.replace("$priors_path", "${environment.paths.fsl_dir}/data/standard/tissuepriors/2mm")
+
+  let priors_path = ''
+  if (c.priors_path) {
+    priors_path = c.priors_path.replace("$FSLDIR", "${environment.paths.fsl_dir}")
+  }
+  c.anatomical.tissue_segmentation.priors.white_matter = config.PRIORS_WHITE.replace("$priors_path", priors_path)
+  c.anatomical.tissue_segmentation.priors.gray_matter = config.PRIORS_GRAY.replace("$priors_path", priors_path)
+  c.anatomical.tissue_segmentation.priors.cerebrospinal_fluid = config.PRIORS_CSF.replace("$priors_path", priors_path)
 
   c.functional.slice_timing_correction.enabled = config.slice_timing_correction.includes(1)
   c.functional.slice_timing_correction.repetition_time = !config.TR || config.TR == "None" ? '' : config.TR
@@ -171,8 +176,8 @@ export function parse(content) {
   c.functional.temporal_filtering.filters = []
   for (const frequencies of config.nuisanceBandpassFreq) {
     c.functional.temporal_filtering.filters.push({
-      low: frequencies[0],
-      high: frequencies[1],
+      low: frequencies.low,
+      high: frequencies.high,
     })
   }
 
@@ -239,8 +244,11 @@ export function parse(content) {
 
   c.derivatives.vmhc.enabled = config.runVMHC.includes(1)
   c.derivatives.vmhc.symmetric_brain = config.template_symmetric_brain_only
-  c.derivatives.vmhc.symmetric_skull = config.template_symmetric_skull
-  c.derivatives.vmhc.dilated_symmetric_brain = config.dilated_symmetric_brain_mask
+    .replace("${resolution_for_anat}", "${pipeline.anatomical.registration.resolution}mm")
+    c.derivatives.vmhc.symmetric_skull = config.template_symmetric_skull
+    .replace("${resolution_for_anat}", "${pipeline.anatomical.registration.resolution}mm")
+    c.derivatives.vmhc.dilated_symmetric_brain = config.dilated_symmetric_brain_mask
+    .replace("${resolution_for_anat}", "${pipeline.anatomical.registration.resolution}mm")
   c.derivatives.vmhc.flirt_configuration_file = config.configFileTwomm
 
   c.derivatives.alff.enabled = config.runALFF.includes(1)
@@ -280,6 +288,10 @@ export function parse(content) {
 
 
 export function dump(pipeline, version='0') {
+
+  function replacements(yaml, pipeline, environment) {
+    return eval('`' + yaml.replace(/`/g,'\\`') +'`')
+  }
 
   const c = pipeline.versions[version].configuration
 
@@ -363,9 +375,9 @@ export function dump(pipeline, version='0') {
 
   config.runSegmentationPreprocessing = [c.anatomical.tissue_segmentation.enabled ? 1 : 0]
   config.priors_path = "$FSLDIR/data/standard/tissuepriors/2mm"
-  config.PRIORS_WHITE = c.anatomical.tissue_segmentation.priors.white_matter.replace('${environment.paths.fsl_dir}', '$FSLDIR')
-  config.PRIORS_GRAY = c.anatomical.tissue_segmentation.priors.grate_matter.replace('${environment.paths.fsl_dir}', '$FSLDIR')
-  config.PRIORS_CSF = c.anatomical.tissue_segmentation.priors.cerebrospinal_fluid.replace('${environment.paths.fsl_dir}', '$FSLDIR')
+  config.PRIORS_WHITE = c.anatomical.tissue_segmentation.priors.white_matter
+  config.PRIORS_GRAY = c.anatomical.tissue_segmentation.priors.gray_matter
+  config.PRIORS_CSF = c.anatomical.tissue_segmentation.priors.cerebrospinal_fluid
 
   // @TODO review pattern and stop idx
   config.slice_timing_correction = [c.functional.slice_timing_correction.enabled ? 1 : 0]
@@ -503,8 +515,8 @@ export function dump(pipeline, version='0') {
   config.configFileTwomm = c.derivatives.vmhc.flirt_configuration_file
 
   config.runALFF = [c.derivatives.alff.enabled ? 1 : 0]
-  config.highPassFreqALFF = [c.derivatives.alff.cutoff.low]
-  config.lowPassFreqALFF = [c.derivatives.alff.cutoff.high]
+  config.highPassFreqALFF = [c.derivatives.alff.cutoff.high]
+  config.lowPassFreqALFF = [c.derivatives.alff.cutoff.low]
 
   config.runReHo = [c.derivatives.reho.enabled ? 1 : 0]
   config.clusterSize = c.derivatives.reho.cluster_size
@@ -584,5 +596,13 @@ export function dump(pipeline, version='0') {
     configYamled[k] = yaml.stringify({ [k]: config[k] })
   }
 
-  return yamlTemplate(configYamled)
+  const yamled = yamlTemplate(configYamled)
+
+  const e = {
+    paths: {
+      fsl_dir: '$FSLDIR',
+    }
+  }
+
+  return replacements(yamled, c, e)
 }
