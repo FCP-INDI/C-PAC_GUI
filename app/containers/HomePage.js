@@ -58,14 +58,14 @@ class HomePage extends Component {
             <PipelineList />
           </Box>
         </Grid>
-        <Grid item md={8} sm={12} className={classes.cell}>
+        {/* <Grid item md={8} sm={12} className={classes.cell}>
           <Box title="Executions"
               avatar={<RunIcon />}
               tools={<ExecutionListTools />}
               className={classes.expand}>
             <PipelineList />
           </Box>
-        </Grid>
+        </Grid> */}
         <Grid item md={4} sm={12} className={classes.cell}>
           <Box title="About C-PAC"
                avatar={<HelpIcon />}

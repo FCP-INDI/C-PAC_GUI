@@ -596,7 +596,10 @@ export function dump(pipeline, version='0') {
     configYamled[k] = yaml.stringify({ [k]: config[k] })
   }
 
-  const yamled = yamlTemplate(configYamled)
+  const yamled =
+    yamlTemplate(configYamled)
+      .replace(/\$\{resolution_for_anat\}/g, "${pipeline.anatomical.registration.resolution}mm")
+      .replace(/\$\{resolution_for_func_preproc\}/g, "${pipeline.functional.template_registration.functional_resolution}mm")
 
   const e = {
     paths: {
