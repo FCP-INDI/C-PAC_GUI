@@ -194,7 +194,7 @@ class NuisanceRegression extends Component {
               help={`Use the Friston 24-Parameter Model during volume realignment. If this option is turned off, only 6 parameters will be used.`}
             >
               <FormControlLabelled
-                label="Use Frinston's 24 motion regressors">
+                label="Use Friston's 24 motion regressors">
                 <Switch
                   name="functional.nuisance_regression.friston_motion_regressors"
                   checked={configuration.getIn(["functional", "nuisance_regression", "friston_motion_regressors"])}
