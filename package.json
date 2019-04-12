@@ -4,7 +4,6 @@
   "homepage": "https://github.com/FCP-INDI/C-PAC_GUI",
   "productName": "C-PAC",
   "version": "0.0.1",
-  "description": "",
   "scripts": {
     "build-dll": "cross-env NODE_ENV=development node --trace-warnings -r @babel/register ./node_modules/webpack/bin/webpack --mode development --config config/webpack.config.renderer.dev.dll.js --colors",
     "build": "cross-env OPEN_ANALYZER=false NODE_ENV=production node --trace-warnings -r @babel/register ./node_modules/webpack/bin/webpack --mode production --config config/webpack.config.renderer.prod.js --colors",
