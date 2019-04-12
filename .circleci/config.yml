@@ -10,6 +10,13 @@ jobs:
     steps:
       - checkout
       - run:
+          name: Setup Certificates
+          command: |
+            security create-keychain default.keychain
+            echo $certificate | base64 -d > default.p12
+            security import default.p12 -t agg -k default.keychain -A
+            rm -f default.p12
+      - run:
           name: Setup NVM
           command: |
             export NODE_VERSION=$(cat .nvmrc)
@@ -75,4 +82,5 @@ workflows:
   build:
     jobs:
       - build-linux
-      - build-macos
+      - build-macos:
+          context: c-pac_gui
