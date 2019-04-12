@@ -32,7 +32,7 @@ jobs:
       - run:
           command: yarn --frozen-lockfile
       - run:
-          command: yarn run package:mac
+          command: CSC_KEYCHAIN=default.keychain yarn run package:mac
 
   build-linux:
     docker:
