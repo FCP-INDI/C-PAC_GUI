@@ -1,5 +1,7 @@
 {
   "name": "c-pac_gui",
+  "description": "Configurable Pipeline for the Analysis of Connectomes",
+  "homepage": "https://github.com/FCP-INDI/C-PAC_GUI",
   "productName": "C-PAC",
   "version": "0.0.1",
   "description": "",
@@ -29,6 +31,7 @@
   },
   "build": {
     "productName": "C-PAC",
+    "appId": "org.fcp-indi.CPAC",
     "appId": "org.fcp-indi.CPAC",
     "files": [
       "main.electron.js",
