@@ -13,8 +13,8 @@ jobs:
           name: Setup Certificates
           command: |
             security create-keychain -p $keychain default.keychain
-            echo $certificate | base64 -D > ~/default.p12
-            security import ~/default.p12 -t agg -k default.keychain -P '' -A
+            echo $certificate | base64 -D > /tmp/default.p12
+            security import /tmp/default.p12 -t agg -k default.keychain -P '' -A
       - run:
           name: Setup NVM
           command: |
@@ -31,7 +31,7 @@ jobs:
       - run:
           command: yarn --frozen-lockfile
       - run:
-          command: CSC_LINK=file://~/default.p12 yarn run package:mac
+          command: CSC_LINK=file:///tmp/default.p12 yarn run package:mac
 
   build-linux:
     docker:
