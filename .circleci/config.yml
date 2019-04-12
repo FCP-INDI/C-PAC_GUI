@@ -29,18 +29,8 @@ jobs:
           command: |
             node --version
 
-      - restore_cache:
-          keys:
-            - deps-{{ checksum "yarn.lock" }}
-      - restore_cache:
-          keys:
-            - v1-electron
       - run:
           command: yarn --frozen-lockfile
-      - save_cache:
-          key: deps-{{ checksum "yarn.lock" }}
-          paths:
-            - node_modules
       - run:
           command: yarn run package:mac
 
@@ -62,18 +52,8 @@ jobs:
           command: |
             node --version
 
-      - restore_cache:
-          keys:
-            - deps-{{ checksum "yarn.lock" }}
-      - restore_cache:
-          keys:
-            - v1-electron
       - run:
           command: yarn --frozen-lockfile
-      - save_cache:
-          key: deps-{{ checksum "yarn.lock" }}
-          paths:
-            - node_modules
       - run:
           command: yarn run package:linux
 
