@@ -8,6 +8,8 @@ import Grid from '@material-ui/core/Grid'
 import Paper from '@material-ui/core/Paper'
 import Modal from '@material-ui/core/Modal'
 
+import GroupAnalysisList from 'containers/GroupAnalysisList'
+
 import PipelineList from 'containers/PipelineList'
 import PipelineListTools from 'containers/PipelineListTools.platform'
 import ExecutionListTools from 'containers/ExecutionListTools.platform'
@@ -20,6 +22,7 @@ import Box from 'components/Box'
 
 import {
   PipelineIcon,
+  GroupIcon,
   RunIcon,
   HelpIcon,
 } from 'components/icons'
@@ -46,7 +49,7 @@ class HomePage extends Component {
   })
 
   render() {
-    const { classes, projects, pipelines, datasets } = this.props
+    const { classes, pipelines } = this.props
 
     return (
       <Grid container spacing={8}>
@@ -58,6 +61,14 @@ class HomePage extends Component {
             <PipelineList />
           </Box>
         </Grid>
+        {/* <Grid item md={8} sm={12} className={classes.cell}>
+          <Box title="Group Analyses"
+              avatar={<GroupIcon />}
+              tools={<PipelineListTools />}
+              className={classes.expand}>
+            <PipelineList />
+          </Box>
+        </Grid> */}
         {/* <Grid item md={8} sm={12} className={classes.cell}>
           <Box title="Executions"
               avatar={<RunIcon />}

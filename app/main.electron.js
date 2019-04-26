@@ -3,9 +3,7 @@ const { app, autoUpdater, dialog, BrowserWindow } = require('electron')
 let mainWindow = null
 
 app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') {
-    app.quit()
-  }
+  app.quit()
 })
 
 app.on('ready', async () => {
@@ -25,9 +23,6 @@ app.on('ready', async () => {
   } else {
     mainWindow.loadURL(`https://s3.amazonaws.com/fcp-indi/resources/cpac/gui/0.0.1/html/index.html`);
   }
-
-  // s3://fcp-indi/resources/cpac/gui/0.0.1/html
-  // s3://fcp-indi/resources/cpac/gui/0.0.1/packages
 
   mainWindow.webContents.on("did-fail-load", function() {
     if (process.env.NODE_ENV === 'development') {

@@ -26,6 +26,7 @@ import TableFooter from '@material-ui/core/TableFooter';
 import Icon from '@material-ui/core/Icon';
 import IconButton from '@material-ui/core/IconButton';
 import Button from '@material-ui/core/Button';
+import Fab from '@material-ui/core/Fab';
 import { fromJS } from 'immutable';
 
 import {
@@ -167,9 +168,9 @@ class TimeSeriesExtraction extends Component {
               <TableFooter>
                 <TableRow >
                   <TableCell padding="checkbox" colSpan={7} className={classes.footer}>
-                    <Button  variant="fab" mini aria-label="Add new ROI" onClick={this.addMask}>
+                    <Fab aria-label="Add new ROI" onClick={this.addMask}>
                       <AddIcon />
-                    </Button>
+                    </Fab>
                   </TableCell>
                 </TableRow>
               </TableFooter>

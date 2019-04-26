@@ -65,7 +65,7 @@ export class TemplatePage extends Component {
       visitor.pageview({
         dp: this.props.location.pathname,
         aip: 1,
-      }, (error) => console.log(error)).send()
+      }).send()
     }
   }
 

@@ -112,8 +112,8 @@ class GeneralPage extends Component {
                 >
                   <TextField
                     label="FSL directory" fullWidth margin="normal" variant="outlined"
-                    name="general.environment.memory"
-                    value={configuration.getIn(['general', 'environment', 'memory'])}
+                    name="general.environment.paths.fsl"
+                    value={configuration.getIn(['general', 'environment', 'paths', 'fsl'])}
                     onChange={onChange}
                   />
                 </Help>
@@ -124,7 +124,7 @@ class GeneralPage extends Component {
         <ExpansionPanel expanded>
           <ExpansionPanelSummary disabled>
             <Typography variant="h6" className={classes.sectionTitle}>
-              Paths
+              Outputs
             </Typography>
           </ExpansionPanelSummary>
           <ExpansionPanelDetails>
