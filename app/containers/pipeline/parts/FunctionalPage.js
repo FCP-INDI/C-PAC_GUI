@@ -14,12 +14,8 @@ import {
   TemplateRegistration,
   SliceTimingCorrection,
   Smoothing,
-  TemporalFiltering,
   AROMA,
 } from 'containers/pipeline/parts/functional'
-
-import TristateSwitch from 'components/TristateSwitch'
-
 
 class FunctionalPage extends Component {
   static styles = theme => ({
@@ -116,14 +112,6 @@ class FunctionalPage extends Component {
             "Median Angle Correction",
             "functional.median_angle_correction.enabled",
             MedianAngleCorrection
-          )
-        }
-
-        {
-          this.renderSection(
-            "Temporal Filtering",
-            "functional.temporal_filtering.enabled",
-            TemporalFiltering
           )
         }
 

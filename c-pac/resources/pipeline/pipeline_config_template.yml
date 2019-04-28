@@ -1,5 +1,5 @@
 # CPAC Pipeline Configuration YAML file
-# Version 1.3.0
+# Version 1.4.2
 #
 # http://fcp-indi.github.io for more info.
 #
@@ -110,7 +110,7 @@ already_skullstripped :  [0]
 
 
 # Choice of using AFNI or FSL-BET to perform SkullStripping
-skullstrip_option :  AFNI
+skullstrip_option :  ['AFNI']
 
 
 # Set the threshold value controlling the brain vs non-brain voxels. Default is 0.6.
@@ -257,7 +257,15 @@ template_skull_for_anat :  $FSLDIR/data/standard/MNI152_T1_${resolution_for_anat
 
 
 # Use either ANTS or FSL (FLIRT and FNIRT) as your anatomical registration method.
-regOption :  ['ANTS']
+regOption :  ['FSL']
+
+
+# If a lesion mask is available for a T1w image, use it to improve the ANTs' registration
+use_lesion_mask : [1]
+
+
+# Use only FLIRT, without FNIRT, for anatomical-to-template registration.
+fsl_linear_reg_only :  [0]
 
 
 # Configuration file to be used by FSL to set FNIRT parameters.
@@ -298,6 +306,9 @@ PRIORS_GRAY :  $priors_path/avg152T1_gray_bin.nii.gz
 # It is not necessary to change this path unless you intend to use non-standard priors.
 PRIORS_CSF :  $priors_path/avg152T1_csf_bin.nii.gz
 
+
+# Run functional preproceessing
+runFunctional: [1]
 
 # Interpolate voxel time courses so they are sampled at the same time points.
 slice_timing_correction :  [0]
@@ -415,7 +426,7 @@ identityMatrix :  $FSLDIR/etc/flirtsch/ident.mat
 
 
 # Run ICA-AROMA de-noising.
-runICA :  [0]
+runICA :  [1]
 
 
 # Types of denoising strategy: i)nonaggr-patial component regression, ii)aggr-aggressive denoising
@@ -430,67 +441,64 @@ runNuisance :  [1]
 lateral_ventricles_mask :  $FSLDIR/data/atlases/HarvardOxford/HarvardOxford-lateral-ventricles-thr25-2mm.nii.gz
 
 
-# Select which nuisance signal corrections to apply:
-# compcor = CompCor
-# wm = White Matter
-# csf = CSF
-# gm = Gray Matter
-# global = Global Mean Signal
-# pc1 = First Principle Component
-# motion = Motion
-# linear = Linear Trend
-# quadratic = Quadratic Trend
+# Select which nuisance signal corrections to apply
 Regressors :
-  -  compcor :  1
-     wm :  0
-     csf :  1
-     global :  1
-     pc1 :  0
-     motion :  1
-     linear :  1
-     quadratic :  1
-     gm :  0
-  -  compcor :  1
-     wm :  0
-     csf :  1
-     global :  0
-     pc1 :  0
-     motion :  1
-     linear :  1
-     quadratic :  1
-     gm :  0
+
+ - Motion:
+     include_delayed: true
+     include_squared: true
+     include_delayed_squared: true
+
+   aCompCor:
+     summary:
+       method: DetrendPC
+       components: 5
+     tissues:
+       - WhiteMatter
+       - CerebrospinalFluid
+     extraction_resolution: 2
+
+   CerebrospinalFluid:
+     summary: Mean
+     extraction_resolution: 2
+     erode_mask: true
+
+   GlobalSignal:
+     summary: Mean
+
+   PolyOrt:
+    degree: 2
+
+   Bandpass:
+     bottom_frequency: 0.01
+     top_frequency: 0.1
 
 
-# Number of Principle Components to calculate when running CompCor. We recommend 5 or 6.
-nComponents : [5]
+ - Motion:
+     include_delayed: true
+     include_squared: true
+     include_delayed_squared: true
 
+   aCompCor:
+     summary:
+       method: DetrendPC
+       components: 5
+     tissues:
+       - WhiteMatter
+       - CerebrospinalFluid
+     extraction_resolution: 2
 
-# Use the Friston 24-Parameter Model during volume realignment.
-# If this option is turned off, only 6 parameters will be used.
-# These parameters will also be output as a spreadsheet.
-runFristonModel :  [1]
+   CerebrospinalFluid:
+     summary: Mean
+     extraction_resolution: 2
+     erode_mask: true
 
+   PolyOrt:
+    degree: 2
 
-# Remove or regress out volumes exhibiting excessive motion.
-# Each of these options are mutually exclusive, and selecting more than one will create a new pipeline fork for each option. For example, de-spiking and scrubbing will not run within the same pipeline strategy.
-runMotionSpike :  ['None']
-
-
-# (Motion Spike De-Noising only) Choose which Framewise Displacement (FD) calculation to apply the threshold to during de-spiking or scrubbing.
-fdCalc :  ['Jenkinson']
-
-
-# (Motion Spike De-Noising only) Specify the maximum acceptable Framewise Displacement (FD) in millimeters.
-# Any volume exhibiting FD greater than the value will be regressed out or scrubbed.
-spikeThreshold : [0.5]
-
-
-# (Motion Spike De-Noising only) Number of volumes to de-spike or scrub preceding a volume with excessive FD.
-numRemovePrecedingFrames :  1
-
-
-# (Motion Spike De-Noising only) Number of volumes to de-spike or scrub subsequent to a volume with excessive FD.
-numRemoveSubsequentFrames :  2
+   Bandpass:
+     bottom_frequency: 0.01
+     top_frequency: 0.1
 
 
 # Correct for the global signal using Median Angle Correction.
@@ -499,14 +507,6 @@ runMedianAngleCorrection :  [0]
 
 # Target angle used during Median Angle Correction.
 targetAngleDeg : [90]
-
-
-# Apply a temporal band-pass filter to functional data.
-runFrequencyFiltering :  [1, 0]
-
-
-# Define one or more band-pass filters by clicking the + button.
-nuisanceBandpassFreq : [[0.01, 0.1]]
 
 
 # Extract the average time series of one or more ROIs/seeds. Must be enabled if you wish to run Seed-based Correlation Analysis.
@@ -533,7 +533,7 @@ roiTSOutputs :  [True, True]
 
 # For each extracted ROI Average time series, CPAC will generate a whole-brain correlation map.
 # It should be noted that for a given seed/ROI, SCA maps for ROI Average time series will be the same.
-runSCA :  [1]
+runSCA :  [0]
 
 
 # Enter paths to region-of-interest (ROI) NIFTI files (.nii or .nii.gz) to be used for time-series extraction, and then select which types of analyses to run.
@@ -549,7 +549,7 @@ mrsNorm :  True
 
 
 # Calculate Voxel-mirrored Homotopic Connectivity (VMHC) for all voxels.
-runVMHC :  [1]
+runVMHC :  [0]
 
 
 # Included as part of the 'Image Resource Files' package available on the Install page of the User Guide.
@@ -573,7 +573,7 @@ configFileTwomm :  $FSLDIR/etc/flirtsch/T1_2_MNI152_2mm.cnf
 
 
 # Calculate Amplitude of Low Frequency Fluctuations (ALFF) and and fractional ALFF (f/ALFF) for all voxels.
-runALFF :  [1]
+runALFF :  [0]
 
 
 # Frequency cutoff (in Hz) for the high-pass filter used when calculating f/ALFF.
@@ -585,7 +585,7 @@ lowPassFreqALFF : [0.1]
 
 
 # Calculate Regional Homogeneity (ReHo) for all voxels.
-runReHo :  [1]
+runReHo :  [0]
 
 
 # Number of neighboring voxels used when calculating ReHo
@@ -596,7 +596,7 @@ clusterSize :  27
 
 
 # Calculate Degree, Eigenvector Centrality, or Functional Connectivity Density.
-runNetworkCentrality :  [1]
+runNetworkCentrality :  [0]
 
 
 # Full path to a NIFTI file describing the mask. Centrality will be calculated for all voxels within the mask.
@@ -608,7 +608,7 @@ degWeightOptions :  [True, True]
 
 
 # Select the type of threshold used when creating the degree centrality adjacency matrix.
-degCorrelationThresholdOption :  ['Significance threshold']
+degCorrelationThresholdOption :  ['Sparsity threshold']
 
 
 # Based on the Threshold Type selected above, enter a Threshold Value.
@@ -623,7 +623,7 @@ eigWeightOptions :  [True, True]
 
 
 # Select the type of threshold used when creating the eigenvector centrality adjacency matrix.
-eigCorrelationThresholdOption :  ['Significance threshold']
+eigCorrelationThresholdOption :  ['Sparsity threshold']
 
 
 # Based on the Threshold Type selected above, enter a Threshold Value.
@@ -675,3 +675,4 @@ smoothing_order :  ['Before']
 # On/Off - Run z-scoring and output both the z-scored and raw score versions of the outputs.
 # Off - Don't run z-scoring.
 runZScoring :  [1]
+

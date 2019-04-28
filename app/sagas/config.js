@@ -141,7 +141,12 @@ function* loadConfig (action) {
 
   if (!initialState.executions) {
     initialState.executions = []
-    localStorage.setItem('state', JSON.stringify(config))
+    localStorage.setItem('state', JSON.stringify(initialState))
+  }
+
+  if (initialState.pipelines) {
+    initialState.pipelines = initialState.pipelines.map(cpac.pipeline.normalize)
+    localStorage.setItem('state', JSON.stringify(initialState))
   }
 
   yield put(configLoaded(initialState))

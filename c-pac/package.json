@@ -5,9 +5,11 @@
   "main": "index.js",
   "dependencies": {
     "aws-sdk": "^2.373.0",
+    "deepmerge": "^3.2.0",
     "dockerode": "^2.5.7",
     "find-free-port": "^2.0.0",
     "request": "^2.88.0",
+    "semver": "^6.0.0",
     "yaml": "^1.0.3"
   },
   "devDependencies": {

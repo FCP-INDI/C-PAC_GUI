@@ -1,4 +1,6 @@
 import yaml from 'yaml'
+import semver from 'semver'
+import deepmerge from 'deepmerge'
 
 import template from './resources/pipeline/config'
 import yamlTemplate, { raw } from './resources/pipeline/yaml'
@@ -14,10 +16,169 @@ function slugify(text) {
     .replace(/-+$/, '');            // Trim - from end of text
 }
 
+function clone(obj) {
+  return JSON.parse(JSON.stringify(obj))
+}
+
+export function normalize(pipeline) {
+
+  if (pipeline.id == 'default') {
+    return clone(template)
+  }
+
+  const lastVersion = Math.max.apply(null, Object.keys(pipeline.versions))
+  let configuration = pipeline.versions[lastVersion].configuration
+
+  if (semver.gte(pipeline.versions[lastVersion].version, '1.4.1')) {
+    return pipeline
+  }
+
+  const newVersionKey = new Date().getTime().toString()
+  const newVersion = {
+    version: '1.4.1',
+  }
+
+  const newConfiguration = clone(configuration)
+
+  let nuisanceRegression = configuration.functional.nuisance_regression
+
+  const censorings = []
+  if (nuisanceRegression.spike_denoising.no_denoising) {
+    censorings.push({
+      enabled: false,
+      method: 'Kill',
+      thresholds: [],
+      number_of_previous_trs_to_censor: 1,
+      number_of_subsequent_trs_to_censor: 2,
+    })
+  }
+
+  if (nuisanceRegression.spike_denoising.scrubbing) {
+    censorings.push({
+      enabled: true,
+      method: 'Kill',
+      thresholds: [{
+        type: {'jenkinson': 'FD_J', 'power': 'FD_P'}[nuisanceRegression.fd_calculation],
+        value: nuisanceRegression.fd_threshold,
+      }],
+      number_of_previous_trs_to_censor: nuisanceRegression.pre_volumes,
+      number_of_subsequent_trs_to_censor: nuisanceRegression.post_volumes,
+    })
+  }
+
+  if (nuisanceRegression.spike_denoising.despiking) {
+    censorings.push({
+      enabled: true,
+      method: 'SpikeRegression',
+      thresholds: [{
+        type: {'jenkinson': 'FD_J', 'power': 'FD_P'}[nuisanceRegression.fd_calculation],
+        value: nuisanceRegression.fd_threshold,
+      }],
+      number_of_previous_trs_to_censor: nuisanceRegression.pre_volumes,
+      number_of_subsequent_trs_to_censor: nuisanceRegression.post_volumes,
+    })
+  }
+
+  const bandpass_filters = []
+  if (configuration.functional.temporal_filtering && configuration.functional.temporal_filtering.enabled) {
+    for (let filters of configuration.functional.temporal_filtering.filters) {
+      bandpass_filters.push({
+        enabled: true,
+        bottom_frequency: filters.high,
+        top_frequency: filters.low,
+      })
+    }
+  } else {
+    bandpass_filters.push({
+      enabled: false,
+      bottom_frequency: 0.01,
+      top_frequency: 0.1,
+    })
+  }
+
+  delete newConfiguration.functional.temporal_filtering
+
+  const newNuisanceRegression = {
+    enabled: nuisanceRegression.enabled,
+    lateral_ventricles_mask: nuisanceRegression.lateral_ventricles_mask,
+    regressors: []
+  }
+
+  for (let censoring of censorings) {
+    for (let bandpass_filter of bandpass_filters) {
+      for (let regressors_i in nuisanceRegression.regressors) {
+
+        let regressors = nuisanceRegression.regressors[regressors_i]
+        const templateRegressors = clone(template.versions.default.configuration.functional.nuisance_regression.regressors[0])
+
+        const newRegressors = {}
+        newRegressors.Motion = templateRegressors.Motion
+        newRegressors.Motion.enabled = regressors.motion
+        if (nuisanceRegression.friston_motion_regressors) {
+          newRegressors.Motion.include_delayed = true
+          newRegressors.Motion.include_squared = true
+          newRegressors.Motion.include_delayed_squared = true
+        }
+
+        newRegressors.GreyMatter = templateRegressors.GreyMatter
+        newRegressors.GreyMatter.enabled = regressors.gray_matter
+
+        newRegressors.WhiteMatter = templateRegressors.WhiteMatter
+        newRegressors.WhiteMatter.enabled = regressors.white_matter
+
+        newRegressors.CerebrospinalFluid = templateRegressors.CerebrospinalFluid
+        newRegressors.CerebrospinalFluid.enabled = regressors.cerebrospinal_fluid
+
+        newRegressors.aCompCor = templateRegressors.aCompCor
+        newRegressors.aCompCor.summary.components = nuisanceRegression.compcor_components
+        newRegressors.aCompCor.enabled = regressors.compcor
+
+        newRegressors.tCompCor = templateRegressors.tCompCor
+        newRegressors.tCompCor.enabled = false
+
+        newRegressors.GlobalSignal = templateRegressors.GlobalSignal
+        newRegressors.GlobalSignal.enabled = regressors.global
+        if (regressors.principal_component) {
+          newRegressors.GlobalSignal.enabled = true
+          newRegressors.GlobalSignal.summary = {
+            method: 'PC',
+            components: 1,
+          }
+        }
+
+        newRegressors.PolyOrt = templateRegressors.PolyOrt
+        newRegressors.PolyOrt.enabled = false
+        if (regressors.linear) {
+          newRegressors.PolyOrt.enabled = true
+          newRegressors.PolyOrt.degree = 1
+        }
+        if (regressors.quadratic) {
+          newRegressors.PolyOrt.enabled = true
+          newRegressors.PolyOrt.degree = 2
+        }
+
+        newRegressors.Bandpass = bandpass_filter
+        newRegressors.Censor = censoring
+
+        newNuisanceRegression.regressors.push(newRegressors)
+
+      }
+    }
+  }
+
+  newConfiguration.functional.nuisance_regression = newNuisanceRegression
+
+  newVersion.configuration = newConfiguration
+  pipeline.versions[newVersionKey] = newVersion
+
+  return pipeline
+}
+
+
 export function parse(content) {
   const config = yaml.parse(content)
 
-  const t = JSON.parse(JSON.stringify(template))
+  const t = clone(template)
   const newver = `${new Date().getTime()}`
   t.versions[newver] = t.versions['default']
   delete t.versions['default']
@@ -142,44 +303,50 @@ export function parse(content) {
     config.lateral_ventricles_mask
       .replace("$FSLDIR", "${environment.paths.fsl_dir}")
 
-  c.functional.nuisance_regression.compcor_components = config.nComponents[0]
-  c.functional.nuisance_regression.friston_motion_regressors = config.runFristonModel.includes(1)
-  c.functional.nuisance_regression.spike_denoising.no_denoising = config.runMotionSpike.includes('None')
-  c.functional.nuisance_regression.spike_denoising.despiking = config.runMotionSpike.includes('De-Spiking')
-  c.functional.nuisance_regression.spike_denoising.scrubbing = config.runMotionSpike.includes('Scrubbing')
-  c.functional.nuisance_regression.fd_calculation = config.fdCalc.includes('Jenkinson') ? 'jenkinson' : 'power'
-  c.functional.nuisance_regression.fd_threshold = config.spikeThreshold[0]
-  c.functional.nuisance_regression.pre_volumes = config.numRemovePrecedingFrames
-  c.functional.nuisance_regression.post_volumes = config.numRemoveSubsequentFrames
+
+  if (config.runFrequencyFiltering) {
+    throw "Invalid pipeline version, please update nuisance regression."
+  }
+
+  const templateRegressors = clone(template.versions.default.configuration.functional.nuisance_regression.regressors[0])
 
   c.functional.nuisance_regression.regressors = []
   if (config.Regressors) {
     for (const regressor of config.Regressors) {
-      c.functional.nuisance_regression.regressors.push({
-        gray_matter: regressor.gm == 1,
-        white_matter: regressor.wm == 1,
-        cerebrospinal_fluid: regressor.csf == 1,
-        compcor: regressor.compcor == 1,
-        global: regressor.global == 1,
-        principal_component: regressor.pc1 == 1,
-        motion: regressor.motion == 1,
-        linear: regressor.linear == 1,
-        quadratic: regressor.quadratic == 1,
-      })
+
+      const newRegressor = clone(templateRegressors)
+
+      for (const k of [
+        'GreyMatter',
+        'WhiteMatter',
+        'CerebrospinalFluid',
+        'aCompCor',
+        'tCompCor',
+        'GlobalSignal',
+        'Motion',
+        'PolyOrt',
+        'Bandpass',
+        'Censor',
+      ]) {
+        if (!regressor[k]) {
+          newRegressor[k].enabled = false
+          continue
+        }
+        const overwriteMerge = (destinationArray, sourceArray, options) => sourceArray
+        newRegressor[k] = deepmerge(newRegressor[k], clone(regressor[k]), { arrayMerge: overwriteMerge })
+        if (typeof(newRegressor[k].summary) === "string") {
+          newRegressor[k].summary = {
+            method: newRegressor[k].summary
+          }
+        }
+      }
+
+      c.functional.nuisance_regression.regressors.push(newRegressor)
     }
   }
 
   c.functional.median_angle_correction.enabled = config.runMedianAngleCorrection.includes(1)
   c.functional.median_angle_correction.target_angle = config.targetAngleDeg[0]
-
-  c.functional.temporal_filtering.enabled = config.runFrequencyFiltering.includes(1)
-  c.functional.temporal_filtering.filters = []
-  for (const frequencies of config.nuisanceBandpassFreq) {
-    c.functional.temporal_filtering.filters.push({
-      low: frequencies.low,
-      high: frequencies.high,
-    })
-  }
 
   c.functional.aroma.enabled = (config.runICA || []).includes(1)
   c.functional.aroma.denoising_strategy =
@@ -216,7 +383,6 @@ export function parse(content) {
 
   c.derivatives.timeseries_extraction.outputs.csv = config.roiTSOutputs[0]
   c.derivatives.timeseries_extraction.outputs.numpy = config.roiTSOutputs[1]
-
 
   c.derivatives.sca.enabled = config.runSCA.includes(1)
 
@@ -368,6 +534,10 @@ export function dump(pipeline, version='0') {
     .concat(c.anatomical.registration.methods.ants.enabled ? ["ANTS"] : [])
     .concat(c.anatomical.registration.methods.fsl.enabled ? ["FSL"] : [])
 
+  config.use_lesion_mask = [0]
+
+  config.fsl_linear_reg_only = [0]
+
   config.fnirtConfig = c.anatomical.registration.methods.fsl.configuration.config_file
   config.ref_mask = c.anatomical.registration.methods.fsl.configuration.reference_mask
 
@@ -378,6 +548,8 @@ export function dump(pipeline, version='0') {
   config.PRIORS_WHITE = c.anatomical.tissue_segmentation.priors.white_matter
   config.PRIORS_GRAY = c.anatomical.tissue_segmentation.priors.gray_matter
   config.PRIORS_CSF = c.anatomical.tissue_segmentation.priors.cerebrospinal_fluid
+
+  config.runFunctional = c.functional.enabled ? [1] : [0]
 
   // @TODO review pattern and stop idx
   config.slice_timing_correction = [c.functional.slice_timing_correction.enabled ? 1 : 0]
@@ -426,47 +598,33 @@ export function dump(pipeline, version='0') {
 
   config.Regressors = []
   for (const regressor of c.functional.nuisance_regression.regressors) {
-    config.Regressors.push({
-      compcor: regressor.compcor ? 1 : 0,
-      wm: regressor.white_matter ? 1 : 0,
-      gm: regressor.gray_matter ? 1 : 0,
-      csf: regressor.cerebrospinal_fluid ? 1 : 0,
-      global: regressor.global ? 1 : 0,
-      pc1: regressor.principal_component ? 1 : 0,
-      motion: regressor.motion ? 1 : 0,
-      linear: regressor.linear ? 1 : 0,
-      quadratic: regressor.quadratic ? 1 : 0,
-    })
+
+    const newRegressor = {}
+
+    for (const k of [
+      'GreyMatter',
+      'WhiteMatter',
+      'CerebrospinalFluid',
+      'aCompCor',
+      'tCompCor',
+      'GlobalSignal',
+      'Motion',
+      'PolyOrt',
+      'Bandpass',
+      'Censor',
+    ]){
+      if (!regressor[k].enabled) {
+        continue
+      }
+      newRegressor[k] = clone(regressor[k])
+      delete newRegressor[k].enabled
+    }
+
+    config.Regressors.push(newRegressor)
   }
-
-  config.nComponents = c.functional.nuisance_regression.compcor_components
-
-  config.runFristonModel = [c.functional.nuisance_regression.friston_motion_regressors ? 1 : 0]
-
-  config.runMotionSpike = []
-    .concat(c.functional.nuisance_regression.spike_denoising.no_denoising ? ['None'] : [])
-    .concat(c.functional.nuisance_regression.spike_denoising.despiking ? ['De-Spiking'] : [])
-    .concat(c.functional.nuisance_regression.spike_denoising.scrubbing ? ['Scrubbing'] : [])
-
-  config.fdCalc = c.functional.nuisance_regression.fd_calculation == 'jenkinson' ?
-    'Jenkinson' : 'Power'
-
-  config.spikeThreshold = [c.functional.nuisance_regression.fd_threshold]
-
-  config.numRemovePrecedingFrames = c.functional.nuisance_regression.pre_volumes
-  config.numRemoveSubsequentFrames = c.functional.nuisance_regression.post_volumes
 
   config.runMedianAngleCorrection = [c.functional.median_angle_correction.enabled ? 1 : 0]
   config.targetAngleDeg = [c.functional.median_angle_correction.target_angle]
-
-  config.runFrequencyFiltering = [c.functional.temporal_filtering.enabled ? 1 : 0]
-  config.nuisanceBandpassFreq = []
-  for (const frequencies of c.functional.temporal_filtering.filters) {
-    config.nuisanceBandpassFreq.push([
-      frequencies[0],
-      frequencies[1],
-    ])
-  }
 
   config.runROITimeseries = [c.derivatives.timeseries_extraction.enabled ? 1 : 0]
 
@@ -557,38 +715,6 @@ export function dump(pipeline, version='0') {
   config.fwhm = [c.functional.smoothing.kernel_fwhm]
   config.smoothing_order = [c.functional.smoothing.before_zscore ? "Before" : "After"]
   config.runZScoring = [c.functional.smoothing.zscore_derivatives ? 1 : 0]
-
-  config.run_fsl_feat = [0]
-  config.numGPAModelsAtOnce = 1
-  config.modelConfigs = []
-
-  config.run_basc = [0]
-  config.basc_resolution = "4mm"
-  config.basc_proc = 2
-  config.basc_memory = 4
-  config.basc_roi_mask_file = null
-  config.basc_cross_cluster_mask_file = null
-  config.basc_similarity_metric_list = ['correlation']
-  config.basc_timeseries_bootstrap_list = 100
-  config.basc_dataset_bootstrap_list = 30
-  config.basc_n_clusters_list = 2
-  config.basc_affinity_thresh = [0.0]
-  config.basc_output_sizes = 800
-  config.basc_cross_cluster = true
-  config.basc_blocklength_list = 1
-  config.basc_group_dim_reduce = false
-  config.basc_inclusion = null
-  config.basc_pipeline = null
-  config.basc_scan_inclusion = null
-
-  config.runMDMR = [0]
-  config.mdmr_inclusion = null
-  config.mdmr_roi_file = null
-  config.mdmr_regressor_file = null
-  config.mdmr_regressor_participant_column = null
-  config.mdmr_regressor_columns = null
-  config.mdmr_permutations = 500
-  config.mdmr_parallel_nodes = 1
 
   // Generate valid YAML syntax
   const configYamled = {}
