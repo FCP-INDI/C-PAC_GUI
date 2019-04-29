@@ -60,8 +60,8 @@ jobs:
       BASH_ENV: ".circleci/bashrc"
     steps:
       - checkout
-      - attach_workspace:
-          at: /tmp/workspace
+      # - attach_workspace:
+      #     at: /tmp/workspace
       - run:
           command: yarn --frozen-lockfile
       - run:
@@ -90,7 +90,8 @@ workflows:
       # - build-linux
       # - build-macos:
       #     context: c-pac_gui
-      - deploy:
+      # - deploy:
+      - deploy
           # requires:
           #   - build-linux
           #   - build-macos
