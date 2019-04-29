@@ -66,7 +66,14 @@ jobs:
           command: yarn --frozen-lockfile
       - run:
           command: yarn run build
+          
       - run:
+          name: Configure git user
+          command: |
+            git config --global user.email "ci-build@fcp-indi.github.com"
+            git config --global user.name "ci-build"
+      - run:
+          name: Build and deploy
           command: |
             VERSION=`jq -r '.version' package.json`
             git clone --single-branch --branch gh-pages git@github.com:FCP-INDI/C-PAC_GUI.git /tmp/repo
