@@ -25,10 +25,6 @@ jobs:
             echo 'nvm install v11.12.0' >> $BASH_ENV
             echo 'nvm alias default v11.12.0' >> $BASH_ENV
       - run:
-          command: |
-            node --version
-
-      - run:
           command: yarn --frozen-lockfile
       - run:
           command: CSC_LINK=file:///tmp/default.p12 yarn run package:mac
@@ -40,9 +36,6 @@ jobs:
       BASH_ENV: ".circleci/bashrc"
     steps:
       - checkout
-      - run:
-          command: |
-            node --version
       - run:
           command: yarn --frozen-lockfile
       - run:
