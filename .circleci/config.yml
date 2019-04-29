@@ -59,10 +59,22 @@ jobs:
     environment:
       BASH_ENV: ".circleci/bashrc"
     steps:
+      - checkout
       - attach_workspace:
           at: /tmp/workspace
       - run:
-          command: ls -alhr /tmp/workspace/*
+          command: yarn --frozen-lockfile
+      - run:
+          command: yarn run build
+      - run:
+          command: |
+            VERSION=`jq -r '.version' package.json`
+            git clone --single-branch --branch gh-pages git@github.com:FCP-INDI/C-PAC_GUI.git /tmp/repo
+            mv ./app/dist /tmp/repo/$VERSION
+            cd /tmp/repo
+            git add .
+            git commit -m "updates"
+            git push -f origin gh-pages
   
 workflows:
   version: 2
