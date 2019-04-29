@@ -62,7 +62,7 @@ jobs:
       - attach_workspace:
           at: /tmp/workspace
       - run:
-          command: ls -alhr /tmp/workspace
+          command: ls -alhr /tmp/workspace/*
   
 workflows:
   version: 2
