@@ -28,6 +28,12 @@ jobs:
           command: yarn --frozen-lockfile
       - run:
           command: CSC_LINK=file:///tmp/default.p12 yarn run package:mac
+      - run:
+          command: mv dist dist-mac
+      - persist_to_workspace:
+          root: .
+          paths:
+            - dist-mac
 
   build-linux:
     docker:
@@ -40,6 +46,12 @@ jobs:
           command: yarn --frozen-lockfile
       - run:
           command: yarn run package:linux
+      - run:
+          command: mv dist dist-linux
+      - persist_to_workspace:
+          root: .
+          paths:
+            - dist-linux
 
 workflows:
   version: 2
@@ -48,3 +60,7 @@ workflows:
       - build-linux
       - build-macos:
           context: c-pac_gui
+      - deploy:
+          requires:
+            - build-linux
+            - build-macos
