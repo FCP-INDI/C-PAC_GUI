@@ -13,8 +13,11 @@ const dist = path.resolve(process.cwd(), 'app', 'dist');
 const SpeedMeasurePlugin = require("speed-measure-webpack-plugin");
 const smp = new SpeedMeasurePlugin();
 
+
+const target = process.env.TARGET == 'web' ? 'web' : 'electron-renderer'
+
 const config = merge.smart(baseConfig, {
-  target: 'electron-renderer',
+  target,
 
   entry: path.join(__dirname, '../app/index.js'),
 
