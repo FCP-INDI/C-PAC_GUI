@@ -78,6 +78,7 @@ jobs:
             VERSION=`jq -r '.version' package.json`
             git clone --single-branch --branch gh-pages git@github.com:FCP-INDI/C-PAC_GUI.git /tmp/repo
             
+            mkdir -p /tmp/repo/versions
             rm -Rf /tmp/repo/versions/$VERSION 2> /dev/null | true
             mv ./app/dist /tmp/repo/versions/$VERSION
             
