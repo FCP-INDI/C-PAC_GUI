@@ -65,7 +65,13 @@ jobs:
       - run:
           command: yarn --frozen-lockfile
       - run:
-          command: yarn run build
+          command: |
+            TARGET=electron yarn run build
+            mv ./app/dist /tmp/build-electron
+      - run:
+          command: |
+            TARGET=web yarn run build
+            mv ./app/dist /tmp/build-web
           
       - run:
           name: Configure git user
@@ -78,9 +84,10 @@ jobs:
             VERSION=`jq -r '.version' package.json`
             git clone --single-branch --branch gh-pages git@github.com:FCP-INDI/C-PAC_GUI.git /tmp/repo
             
-            mkdir -p /tmp/repo/versions
             rm -Rf /tmp/repo/versions/$VERSION 2> /dev/null | true
-            mv ./app/dist /tmp/repo/versions/$VERSION
+            mkdir -p /tmp/repo/versions/$VERSION
+            mv /tmp/build-web /tmp/repo/versions/$VERSION/web
+            mv /tmp/build-electron /tmp/repo/versions/$VERSION/electron
             
             cd /tmp/repo
             git add .
