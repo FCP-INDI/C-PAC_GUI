@@ -11,13 +11,10 @@
     "postinstall": "yarn run build-dll && electron-builder install-app-deps && node node_modules/fbjs-scripts/node/check-dev-engines.js package.json",
     "prestart": "yarn run build",
     "start": "cross-env NODE_ENV=production electron ./app/",
-
     "dev:web": "TARGET=web yarn run dev:renderer",
     "dev:electron": "npm-run-all --parallel dev:renderer dev:main",
-
     "dev:main": "cross-env NODE_ENV=development node --trace-warnings -r @babel/register ./node_modules/webpack/bin/webpack --mode development --config config/webpack.config.main.dev.js && cross-env HOT=1 NODE_ENV=development node_modules/electron/dist/electron -r @babel/register ./app/dist/main",
     "dev:renderer": "cross-env NODE_ENV=development node --trace-warnings -r @babel/register ./node_modules/webpack-dev-server/bin/webpack-dev-server --mode development --config config/webpack.config.renderer.dev.js",
-
     "lint": "cross-env NODE_ENV=development eslint --cache --format=node_modules/eslint-formatter-pretty .",
     "lint:fix": "yarn run lint -- --fix",
     "lint-styles": "stylelint app/*.css app/components/*.css --syntax scss",
@@ -30,7 +27,6 @@
   },
   "build": {
     "productName": "C-PAC",
-    "appId": "org.fcp-indi.CPAC",
     "appId": "org.fcp-indi.CPAC",
     "files": [
       "main.electron.js",
@@ -165,6 +161,7 @@
     "font-awesome": "^4.7.0",
     "history": "^4.7.2",
     "immutable": "^4.0.0-rc.12",
+    "ini": "^1.3.5",
     "lodash.get": "^4.4.2",
     "lodash.isequal": "^4.5.0",
     "lodash.set": "^4.3.2",
