@@ -54,9 +54,6 @@ jobs:
   #           - dist-linux
 
   deploy:
-    branches:
-      only:
-        - master
     docker:
       - image: circleci/node:11.12.0
     environment:
@@ -106,7 +103,10 @@ workflows:
       # - build-macos:
       #     context: c-pac_gui
       # - deploy:
-      - deploy
+      - deploy:
+          filters:
+            branches:
+              only: master
           # requires:
           #   - build-linux
           #   - build-macos
