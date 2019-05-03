@@ -99,13 +99,19 @@ workflows:
   build:
     jobs:
 
-      - build-linux
+      - build-linux:
+          filters:
+            branches:
+              ignore: gh-pages
       - build-macos:
+          filters:
+            branches:
+              ignore: gh-pages
           context: c-pac_gui
       - deploy:
           filters:
             branches:
               only: master
-          # requires:
-          #   - build-linux
-          #   - build-macos
+          requires:
+            - build-linux
+            - build-macos
