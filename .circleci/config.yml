@@ -94,6 +94,7 @@ jobs:
           name: Build and deploy
           command: |
             VERSION=`jq -r '.version' package.json`
+            VERSION=$([ "${CIRCLE_BRANCH}" == "master" ] && echo "${VERSION}" || echo "${VERSION}-rc")
             git clone --single-branch --branch gh-pages git@github.com:FCP-INDI/C-PAC_GUI.git /tmp/repo
 
             rm -Rf /tmp/repo/versions/$VERSION 2> /dev/null | true
@@ -129,7 +130,9 @@ workflows:
       - deploy:
           filters:
             branches:
-              only: master
+              only:
+                - master
+                - develop
           requires:
             - build-linux
             - build-macos
