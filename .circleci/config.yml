@@ -101,8 +101,8 @@ jobs:
             mkdir -p /tmp/repo/versions/$VERSION
             # mv /tmp/workspace/dist-web-browser /tmp/repo/versions/$VERSION/browser
             mv /tmp/workspace/dist-web-electron /tmp/repo/versions/$VERSION/electron
-            mv /tmp/workspace/dist-web-linux /tmp/repo/versions/$VERSION/linux
-            mv /tmp/workspace/dist-web-macos /tmp/repo/versions/$VERSION/macos
+            mv /tmp/workspace/dist-linux /tmp/repo/versions/$VERSION/linux
+            mv /tmp/workspace/dist-macos /tmp/repo/versions/$VERSION/macos
 
             cd /tmp/repo
             git add .
