@@ -2,56 +2,56 @@ version: 2.1
 
 jobs:
 
-  # build-macos:
-  #   macos:
-  #     xcode: "9.0"
-  #   environment:
-  #     FL_OUTPUT_DIR: output
-  #   steps:
-  #     - checkout
-  #     - run:
-  #         name: Setup Certificates
-  #         command: |
-  #           security create-keychain -p $keychain default.keychain
-  #           echo $certificate | base64 -D > /tmp/default.p12
-  #           security import /tmp/default.p12 -t agg -k default.keychain -P '' -A
-  #     - run:
-  #         name: Setup NVM
-  #         command: |
-  #           export NODE_VERSION=$(cat .nvmrc)
-  #           curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.34.0/install.sh | bash -s -- --no-use
-  #           echo 'export NVM_DIR=$HOME/.nvm' >> $BASH_ENV
-  #           echo 'source $NVM_DIR/nvm.sh' >> $BASH_ENV
-  #           echo 'nvm install v11.12.0' >> $BASH_ENV
-  #           echo 'nvm alias default v11.12.0' >> $BASH_ENV
-  #     - run:
-  #         command: yarn --frozen-lockfile
-  #     - run:
-  #         command: CSC_LINK=file:///tmp/default.p12 yarn run package:mac
-  #     - run:
-  #         command: mv dist dist-mac
-  #     - persist_to_workspace:
-  #         root: .
-  #         paths:
-  #           - dist-mac
+  build-macos:
+    macos:
+      xcode: "9.0"
+    environment:
+      FL_OUTPUT_DIR: output
+    steps:
+      - checkout
+      - run:
+          name: Setup Certificates
+          command: |
+            security create-keychain -p $keychain default.keychain
+            echo $certificate | base64 -D > /tmp/default.p12
+            security import /tmp/default.p12 -t agg -k default.keychain -P '' -A
+      - run:
+          name: Setup NVM
+          command: |
+            export NODE_VERSION=$(cat .nvmrc)
+            curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.34.0/install.sh | bash -s -- --no-use
+            echo 'export NVM_DIR=$HOME/.nvm' >> $BASH_ENV
+            echo 'source $NVM_DIR/nvm.sh' >> $BASH_ENV
+            echo 'nvm install v11.12.0' >> $BASH_ENV
+            echo 'nvm alias default v11.12.0' >> $BASH_ENV
+      - run:
+          command: yarn --frozen-lockfile
+      - run:
+          command: CSC_LINK=file:///tmp/default.p12 yarn run package:mac
+      - run:
+          command: mv dist dist-mac
+      - persist_to_workspace:
+          root: .
+          paths:
+            - dist-mac
 
-  # build-linux:
-  #   docker:
-  #     - image: circleci/node:11.12.0
-  #   environment:
-  #     BASH_ENV: ".circleci/bashrc"
-  #   steps:
-  #     - checkout
-  #     - run:
-  #         command: yarn --frozen-lockfile
-  #     - run:
-  #         command: yarn run package:linux
-  #     - run:
-  #         command: mv dist dist-linux
-  #     - persist_to_workspace:
-  #         root: .
-  #         paths:
-  #           - dist-linux
+  build-linux:
+    docker:
+      - image: circleci/node:11.12.0
+    environment:
+      BASH_ENV: ".circleci/bashrc"
+    steps:
+      - checkout
+      - run:
+          command: yarn --frozen-lockfile
+      - run:
+          command: yarn run package:linux
+      - run:
+          command: mv dist dist-linux
+      - persist_to_workspace:
+          root: .
+          paths:
+            - dist-linux
 
   deploy:
     docker:
@@ -60,8 +60,8 @@ jobs:
       BASH_ENV: ".circleci/bashrc"
     steps:
       - checkout
-      # - attach_workspace:
-      #     at: /tmp/workspace
+      - attach_workspace:
+          at: /tmp/workspace
       - run:
           command: yarn --frozen-lockfile
       - run:
@@ -99,10 +99,9 @@ workflows:
   build:
     jobs:
 
-      # - build-linux
-      # - build-macos:
-      #     context: c-pac_gui
-      # - deploy:
+      - build-linux
+      - build-macos:
+          context: c-pac_gui
       - deploy:
           filters:
             branches:
