@@ -65,11 +65,11 @@ jobs:
       - run:
           command: |
             TARGET=electron yarn run build
-            mv dist dist-web-electron
+            mv ./app/dist dist-web-electron
       # - run:
       #     command: |
       #       TARGET=web yarn run build
-      #       mv dist dist-web-browser
+      #       mv ./app/dist dist-web-browser
       - persist_to_workspace:
           root: .
           paths:
