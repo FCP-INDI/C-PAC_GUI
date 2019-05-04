@@ -104,6 +104,8 @@ jobs:
             mv /tmp/workspace/dist-linux /tmp/repo/versions/$VERSION/linux
             mv /tmp/workspace/dist-macos /tmp/repo/versions/$VERSION/macos
 
+            ls -1 /tmp/repo/versions > /tmp/repo/versions.txt
+
             cd /tmp/repo
             git add .
             git commit -m "updates"
