@@ -91,7 +91,7 @@ jobs:
             git config --global user.email "ci-build@fcp-indi.github.com"
             git config --global user.name "ci-build"
       - run:
-          name: Build and deploy
+          name: Deploy
           command: |
             VERSION=`jq -r '.version' package.json`
             VERSION=$([ "${CIRCLE_BRANCH}" == "master" ] && echo "${VERSION}" || echo "${VERSION}-rc")
