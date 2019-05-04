@@ -36,10 +36,17 @@ export default {
             brain_template: '${environment.paths.fsl_dir}/data/standard/MNI152_T1_${pipeline.anatomical.registration.resolution}mm_brain.nii.gz',
             skull_template: '${environment.paths.fsl_dir}/data/standard/MNI152_T1_${pipeline.anatomical.registration.resolution}mm.nii.gz',
             methods: {
-              ants: { enabled: true, configuration: { skull_on: false } },
+              ants: {
+                enabled: true,
+                configuration: {
+                  skull_on: false,
+                  lesion_mask: true,
+                }
+              },
               fsl: {
                 enabled: false,
                 configuration: {
+                  linear_only: false,
                   config_file: 'T1_2_MNI152_2mm',
                   reference_mask: '$FSLDIR/data/standard/MNI152_T1_${resolution_for_anat}_brain_mask_dil.nii.gz'
                 }
@@ -114,6 +121,7 @@ export default {
             repetition_time: '',
             first_timepoint: 0,
             last_timepoint: '',
+            two_pass: true,
           },
           distortion_correction: {
             enabled: true,

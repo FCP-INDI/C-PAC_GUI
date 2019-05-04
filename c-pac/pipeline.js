@@ -1,4 +1,4 @@
-import yaml from 'yaml'
+import yaml from 'js-yaml'
 import semver from 'semver'
 import deepmerge from 'deepmerge'
 
@@ -29,7 +29,8 @@ export function normalize(pipeline) {
   const lastVersion = Math.max.apply(null, Object.keys(pipeline.versions))
   let configuration = pipeline.versions[lastVersion].configuration
 
-  if (semver.gte(pipeline.versions[lastVersion].version, '1.4.1')) {
+  if (pipeline.versions[lastVersion].version &&
+      semver.gte(pipeline.versions[lastVersion].version, '1.4.1')) {
     return pipeline
   }
 
@@ -167,6 +168,13 @@ export function normalize(pipeline) {
   }
 
   newConfiguration.functional.nuisance_regression = newNuisanceRegression
+  if (newConfiguration.anatomical.registration.methods.ants.configuration.lesion_mask === undefined) {
+    newConfiguration.anatomical.registration.methods.ants.configuration.lesion_mask = true
+  }
+
+  if (newConfiguration.functional.slice_timing_correction.two_pass === undefined) {
+    newConfiguration.functional.slice_timing_correction.two_pass = false
+  }
 
   newVersion.configuration = newConfiguration
   pipeline.versions[newVersionKey] = newVersion
@@ -176,7 +184,7 @@ export function normalize(pipeline) {
 
 
 export function parse(content) {
-  const config = yaml.parse(content)
+  const config = yaml.safeLoad(content)
 
   const t = clone(template)
   const newver = `${new Date().getTime()}`
@@ -233,10 +241,13 @@ export function parse(content) {
     c.anatomical.registration.methods.ants.enabled = true
   }
   c.anatomical.registration.methods.ants.configuration.skull_on = config.regWithSkull.includes(1)
+  c.anatomical.registration.methods.ants.configuration.lesion_mask = config.use_lesion_mask.includes(1)
 
   if (config.regOption.includes("FSL")) {
     c.anatomical.registration.methods.fsl.enabled = true
   }
+
+  c.anatomical.registration.methods.fsl.configuration.linear_only = config.fsl_linear_reg_only.includes(1)
   c.anatomical.registration.methods.fsl.configuration.config_file = config.fnirtConfig
   c.anatomical.registration.methods.fsl.configuration.reference_mask =
     config.ref_mask
@@ -259,6 +270,8 @@ export function parse(content) {
 
   c.functional.slice_timing_correction.first_timepoint = config.startIdx
   c.functional.slice_timing_correction.last_timepoint = !config.stopIdx || config.stopIdx == "None" ? '' : config.stopIdx
+
+  c.functional.slice_timing_correction.two_pass = config.funcional_volreg_twopass
 
   c.functional.distortion_correction.enabled = config.runEPI_DistCorr.includes(1)
   if (typeof config.fmap_distcorr_skullstrip === "string") {
@@ -534,9 +547,9 @@ export function dump(pipeline, version='0') {
     .concat(c.anatomical.registration.methods.ants.enabled ? ["ANTS"] : [])
     .concat(c.anatomical.registration.methods.fsl.enabled ? ["FSL"] : [])
 
-  config.use_lesion_mask = [0]
+  config.use_lesion_mask = [c.anatomical.registration.methods.ants.configuration.lesion_mask ? 1 : 0]
 
-  config.fsl_linear_reg_only = [0]
+  config.fsl_linear_reg_only = [c.anatomical.registration.methods.fsl.configuration.linear_only ? 1 : 0]
 
   config.fnirtConfig = c.anatomical.registration.methods.fsl.configuration.config_file
   config.ref_mask = c.anatomical.registration.methods.fsl.configuration.reference_mask
@@ -563,6 +576,8 @@ export function dump(pipeline, version='0') {
 
   config.stopIdx = c.functional.slice_timing_correction.last_timepoint === "" ?
     null : parseInt(c.functional.slice_timing_correction.last_timepoint)
+
+  config.functional_volreg_twopass = c.functional.slice_timing_correction.two_pass
 
   config.runEPI_DistCorr = [c.functional.distortion_correction.enabled ? 1 : 0]
   config.fmap_distcorr_skullstrip = [c.functional.distortion_correction.skull_stripping === 'bet' ? 'BET' : 'AFNI']
@@ -719,7 +734,20 @@ export function dump(pipeline, version='0') {
   // Generate valid YAML syntax
   const configYamled = {}
   for (let k of Object.keys(config)) {
-    configYamled[k] = yaml.stringify({ [k]: config[k] })
+
+    let flowLevel = -1
+    if (!!config[k] && config[k].constructor === Array) {
+      if (config[k].length > 0) {
+        if (config[k][0].constructor !== Object) {
+          flowLevel = 1
+        }
+      }
+    }
+
+    configYamled[k] = yaml.safeDump(
+      { [k]: config[k] },
+      { flowLevel }
+    )
   }
 
   const yamled =

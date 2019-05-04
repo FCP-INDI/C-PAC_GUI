@@ -1,6 +1,5 @@
 import fs from 'fs'
 import assert from 'assert'
-import yaml from 'yaml'
 
 import { pipeline } from '..'
 const { template, parse, dump, normalize } = pipeline

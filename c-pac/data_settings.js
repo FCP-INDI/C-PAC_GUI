@@ -1,4 +1,4 @@
-import yaml from 'yaml'
+import yaml from 'js-yaml'
 import S3 from 'aws-sdk/clients/s3'
 
 import template from './resources/data_settings/config'
@@ -45,7 +45,7 @@ export const listFiles = async (path) => {
 }
 
 export function parse(content) {
-  const settings = yaml.parse(content)
+  const settings = yaml.safeLoad(content)
 
   const t = JSON.parse(JSON.stringify(template))
   const newver = `${new Date().getTime()}`
@@ -83,7 +83,7 @@ export function dump(data_settings, version='0') {
   // Generate valid YAML syntax
   const configYamled = {}
   for (let k of Object.keys(config)) {
-    configYamled[k] = yaml.stringify({ [k]: config[k] })
+    configYamled[k] = yaml.safeDump({ [k]: config[k] })
   }
 
   return yamlTemplate(configYamled)
