@@ -1,15 +1,16 @@
 locals {
-  domain = "bucket.test.com"
+  domain = "fcp-indi.anibalsolon.com"
+  bucket = "anibalsolon-research"
 }
 
 data "aws_s3_bucket" "selected" {
-  bucket = "${locals.domain}"
+  bucket = "${local.bucket}"
 }
 
 resource "aws_cloudfront_distribution" "s3_distribution" {
   origin {
-    domain_name = "${aws_s3_bucket.selected.bucket_regional_domain_name}"
-    origin_id   = "${local.bucket}"
+    domain_name = "${data.aws_s3_bucket.selected.bucket_regional_domain_name}"
+    origin_id   = "${data.aws_s3_bucket.selected.bucket}"
 
     s3_origin_config {
       origin_access_identity = "origin-access-identity/cloudfront/ABCDEFG1234567"
@@ -20,12 +21,12 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
   is_ipv6_enabled     = true
   default_root_object = "index.html"
 
-  aliases = ["${locals.domain}"]
+  aliases = ["${local.domain}"]
 
   default_cache_behavior {
-    allowed_methods  = ["DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT"]
+    allowed_methods  = ["GET", "HEAD"]
     cached_methods   = ["GET", "HEAD"]
-    target_origin_id = "${local.bucket}"
+    target_origin_id = "${data.aws_s3_bucket.selected.bucket}"
 
     forwarded_values {
       query_string = true
@@ -42,6 +43,12 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
   }
 
   price_class = "PriceClass_All"
+
+  restrictions {
+    geo_restriction {
+      restriction_type = "none"
+    }
+  }
 
   viewer_certificate {
     cloudfront_default_certificate = true
