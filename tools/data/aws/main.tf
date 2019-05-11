@@ -8,7 +8,7 @@ data "aws_s3_bucket" "selected" {
 
 resource "aws_cloudfront_distribution" "s3_distribution" {
   origin {
-    domain_name = "${aws_s3_bucket.b.bucket_regional_domain_name}"
+    domain_name = "${aws_s3_bucket.selected.bucket_regional_domain_name}"
     origin_id   = "${local.bucket}"
 
     s3_origin_config {
@@ -20,7 +20,7 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
   is_ipv6_enabled     = true
   default_root_object = "index.html"
 
-  aliases = ["${locals.domain}]
+  aliases = ["${locals.domain}"]
 
   default_cache_behavior {
     allowed_methods  = ["DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT"]
@@ -44,7 +44,6 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
   price_class = "PriceClass_All"
 
   viewer_certificate {
-    # Recheck
     cloudfront_default_certificate = true
   }
 }
