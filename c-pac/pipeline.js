@@ -5,7 +5,7 @@ import deepmerge from 'deepmerge'
 import template from './resources/pipeline/config'
 import yamlTemplate, { raw } from './resources/pipeline/yaml'
 
-export { template, raw as rawTemplate }
+export { yamlTemplate, template, raw as rawTemplate }
 
 function slugify(text) {
   return text.toString().toLowerCase()
@@ -271,7 +271,7 @@ export function parse(content) {
   c.functional.slice_timing_correction.first_timepoint = config.startIdx
   c.functional.slice_timing_correction.last_timepoint = !config.stopIdx || config.stopIdx == "None" ? '' : config.stopIdx
 
-  c.functional.slice_timing_correction.two_pass = config.funcional_volreg_twopass
+  c.functional.slice_timing_correction.two_pass = config.functional_volreg_twopass
 
   c.functional.distortion_correction.enabled = config.runEPI_DistCorr.includes(1)
   if (typeof config.fmap_distcorr_skullstrip === "string") {
@@ -581,6 +581,7 @@ export function dump(pipeline, version='0') {
 
   config.runEPI_DistCorr = [c.functional.distortion_correction.enabled ? 1 : 0]
   config.fmap_distcorr_skullstrip = [c.functional.distortion_correction.skull_stripping === 'bet' ? 'BET' : 'AFNI']
+  config.fmap_distcorr_frac = c.functional.distortion_correction.threshold
   config.fmap_distcorr_threshold = c.functional.distortion_correction.threshold
   config.fmap_distcorr_deltaTE = [c.functional.distortion_correction.delta_te]
   config.fmap_distcorr_dwell_time = [c.functional.distortion_correction.dwell_time]
@@ -731,27 +732,7 @@ export function dump(pipeline, version='0') {
   config.smoothing_order = [c.functional.smoothing.before_zscore ? "Before" : "After"]
   config.runZScoring = [c.functional.smoothing.zscore_derivatives ? 1 : 0]
 
-  // Generate valid YAML syntax
-  const configYamled = {}
-  for (let k of Object.keys(config)) {
-
-    let flowLevel = -1
-    if (!!config[k] && config[k].constructor === Array) {
-      if (config[k].length > 0) {
-        if (config[k][0].constructor !== Object) {
-          flowLevel = 1
-        }
-      }
-    }
-
-    configYamled[k] = yaml.safeDump(
-      { [k]: config[k] },
-      { flowLevel }
-    )
-  }
-
-  const yamled =
-    yamlTemplate(configYamled)
+  const yamled = yamlTemplate(config)
       .replace(/\$\{resolution_for_anat\}/g, "${pipeline.anatomical.registration.resolution}mm")
       .replace(/\$\{resolution_for_func_preproc\}/g, "${pipeline.functional.template_registration.functional_resolution}mm")
 
