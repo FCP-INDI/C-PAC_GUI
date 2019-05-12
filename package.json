@@ -23,7 +23,8 @@
     "publish": "publish linux-x64",
     "package:all": "yarn run build && build --publish never -ml",
     "package:linux": "yarn run build && build --publish never --linux",
-    "package:mac": "yarn run build && build --publish never --mac"
+    "package:mac": "yarn run build && build --publish never --mac",
+    "clean": "rm -Rf node_modules c-pac/node_modules app/dist dist"
   },
   "build": {
     "productName": "C-PAC",
@@ -96,6 +97,7 @@
     "@babel/register": "^7.0.0",
     "babel-loader": "^8.0.4",
     "babel-plugin-add-module-exports": "^1.0.0",
+    "babel-plugin-inline-import": "^3.0.0",
     "babel-plugin-transform-es2015-modules-commonjs": "^6.26.2",
     "concurrently": "^4.0.1",
     "cross-env": "^5.1.3",
