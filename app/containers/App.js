@@ -70,7 +70,7 @@ class App extends React.Component {
       flexGrow: 1,
     },
     root: {
-      height: '100vh',
+      minHeight: 0,
       display: 'flex',
       flexDirection: 'column',
       flexGrow: 1,
