@@ -68,7 +68,7 @@ jobs:
             mv ./app/dist dist-web-electron
       - run:
           command: |
-            TARGET=web yarn run build
+            TARGET=browser yarn run build
             mv ./app/dist dist-web-browser
       - persist_to_workspace:
           root: .

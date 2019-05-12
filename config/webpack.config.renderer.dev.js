@@ -15,7 +15,7 @@ const dist = path.resolve(process.cwd(), 'app', 'dist');
 const dll = path.resolve(dist, 'dll');
 const manifest = path.resolve(dll, 'renderer.json');
 
-const target = process.env.TARGET == 'web' ? 'web' : 'electron-renderer'
+const target = process.env.TARGET == 'browser' ? 'web' : 'electron-renderer'
 
 if (!(fs.existsSync(dll) && fs.existsSync(manifest))) {
   execSync('yarn run build-dll');

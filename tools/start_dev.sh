@@ -11,5 +11,5 @@ docker run \
   -v `pwd`:/code \
   -v /code/node_modules \
   -e NODE_ENV=development \
-  -e TARGET=web \
+  -e TARGET=browser \
   fcpindi/c-pac_gui
