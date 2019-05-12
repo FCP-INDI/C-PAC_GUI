@@ -68,7 +68,7 @@ outputDirectory :  ./cpac_runs/default/output
 
 
 # If setting the 'Output Directory' to an S3 bucket, insert the path to your AWS credentials file here.
-awsOutputBucketCredentials :
+awsOutputBucketCredentials :  
 
 
 # Enable server-side 256-AES encryption on data to the S3 bucket
@@ -257,7 +257,7 @@ template_skull_for_anat :  $FSLDIR/data/standard/MNI152_T1_${resolution_for_anat
 
 
 # Use either ANTS or FSL (FLIRT and FNIRT) as your anatomical registration method.
-regOption :  ['FSL']
+regOption :  ['ANTS']
 
 
 # If a lesion mask is available for a T1w image, use it to improve the ANTs' registration
@@ -338,6 +338,10 @@ startIdx :  0
 # Last timepoint selection in the scan parameters in the data configuration file, if present, will over-ride this selection.
 # Note: the selection here applies to all scans of all participants.
 stopIdx :  None
+
+
+# This options is useful when aligning high-resolution datasets that may need more alignment than a few voxels.
+functional_volreg_twopass :  On
 
 
 # Perform field map correction using a single phase difference image, a subtraction of the two phase images from each echo. Default scanner for this method is SIEMENS.
@@ -426,7 +430,7 @@ identityMatrix :  $FSLDIR/etc/flirtsch/ident.mat
 
 
 # Run ICA-AROMA de-noising.
-runICA :  [1]
+runICA :  [0]
 
 
 # Types of denoising strategy: i)nonaggr-patial component regression, ii)aggr-aggressive denoising
@@ -462,7 +466,7 @@ Regressors :
      summary: Mean
      extraction_resolution: 2
      erode_mask: true
-
+     
    GlobalSignal:
      summary: Mean
 
@@ -478,7 +482,7 @@ Regressors :
      include_delayed: true
      include_squared: true
      include_delayed_squared: true
-
+ 
    aCompCor:
      summary:
        method: DetrendPC
@@ -533,7 +537,7 @@ roiTSOutputs :  [True, True]
 
 # For each extracted ROI Average time series, CPAC will generate a whole-brain correlation map.
 # It should be noted that for a given seed/ROI, SCA maps for ROI Average time series will be the same.
-runSCA :  [0]
+runSCA :  [1]
 
 
 # Enter paths to region-of-interest (ROI) NIFTI files (.nii or .nii.gz) to be used for time-series extraction, and then select which types of analyses to run.
@@ -549,7 +553,7 @@ mrsNorm :  True
 
 
 # Calculate Voxel-mirrored Homotopic Connectivity (VMHC) for all voxels.
-runVMHC :  [0]
+runVMHC :  [1]
 
 
 # Included as part of the 'Image Resource Files' package available on the Install page of the User Guide.
@@ -573,7 +577,7 @@ configFileTwomm :  $FSLDIR/etc/flirtsch/T1_2_MNI152_2mm.cnf
 
 
 # Calculate Amplitude of Low Frequency Fluctuations (ALFF) and and fractional ALFF (f/ALFF) for all voxels.
-runALFF :  [0]
+runALFF :  [1]
 
 
 # Frequency cutoff (in Hz) for the high-pass filter used when calculating f/ALFF.
@@ -585,7 +589,7 @@ lowPassFreqALFF : [0.1]
 
 
 # Calculate Regional Homogeneity (ReHo) for all voxels.
-runReHo :  [0]
+runReHo :  [1]
 
 
 # Number of neighboring voxels used when calculating ReHo
@@ -596,7 +600,7 @@ clusterSize :  27
 
 
 # Calculate Degree, Eigenvector Centrality, or Functional Connectivity Density.
-runNetworkCentrality :  [0]
+runNetworkCentrality :  [1]
 
 
 # Full path to a NIFTI file describing the mask. Centrality will be calculated for all voxels within the mask.
@@ -675,4 +679,3 @@ smoothing_order :  ['Before']
 # On/Off - Run z-scoring and output both the z-scored and raw score versions of the outputs.
 # Off - Don't run z-scoring.
 runZScoring :  [1]
-
