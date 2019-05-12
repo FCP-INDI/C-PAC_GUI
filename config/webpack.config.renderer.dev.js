@@ -131,7 +131,7 @@ const config = merge.smart(baseConfig, {
     new webpack.NoEmitOnErrorsPlugin(),
 
     new webpack.EnvironmentPlugin({
-      NODE_ENV: 'development'
+      NODE_ENV: 'development',
     }),
 
     new HtmlWebpackPlugin({

@@ -72,6 +72,7 @@ export default {
   plugins: [
     new webpack.DefinePlugin({
       TARGET: target,
+      VERSION: JSON.stringify(process.env.npm_package_version),
     }),
 
     new webpack.NormalModuleReplacementPlugin(/.*\.platform$/, function(resource) {

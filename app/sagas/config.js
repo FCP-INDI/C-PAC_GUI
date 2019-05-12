@@ -30,6 +30,7 @@ function* loadConfig (action) {
 
   const config = {
 
+    version: VERSION,
     settings: {
       advanced: false,
     },
@@ -146,6 +147,11 @@ function* loadConfig (action) {
 
   if (initialState.pipelines) {
     initialState.pipelines = initialState.pipelines.map(cpac.pipeline.normalize)
+    localStorage.setItem('state', JSON.stringify(initialState))
+  }
+
+  if (!initialState.version) {
+    initialState.version = VERSION
     localStorage.setItem('state', JSON.stringify(initialState))
   }
 
