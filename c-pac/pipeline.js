@@ -183,8 +183,23 @@ export function normalize(pipeline) {
 }
 
 
+function normalizeValues(config) {
+  if (typeof config === 'object') {
+    for (const key in config) {
+      config[key] = normalizeValues(config[key])
+    }
+    return config
+  } else {
+    if (config === 'On') return true
+    if (config === 'Off') return false
+    if (config === 'None') return null
+    return config
+  }
+}
+
+
 export function parse(content) {
-  const config = yaml.safeLoad(content)
+  const config = normalizeValues(yaml.safeLoad(content))
 
   const t = clone(template)
   const newver = `${new Date().getTime()}`
@@ -505,38 +520,39 @@ export function dump(pipeline, version='0') {
     .concat(c.anatomical.skull_stripping.methods.afni.enabled ? ["AFNI"] : [])
     .concat(c.anatomical.skull_stripping.methods.bet.enabled ? ["BET"] : [])
 
-  config.skullstrip_shrink_factor = 0.6
-  config.skullstrip_var_shrink_fac = true
-  config.skullstrip_shrink_factor_bot_lim = 0.4
-  config.skullstrip_avoid_vent = true
-  config.skullstrip_n_iterations = 250
-  config.skullstrip_pushout = true
-  config.skullstrip_touchup = true
-  config.skullstrip_fill_hole = 10
-  config.skullstrip_NN_smooth = 72
-  config.skullstrip_smooth_final = 20
-  config.skullstrip_avoid_eyes = true
-  config.skullstrip_use_edge = true
-  config.skullstrip_exp_frac = 0.1
-  config.skullstrip_push_to_edge = false
-  config.skullstrip_use_skull = false
-  config.skullstrip_perc_int = 0
-  config.skullstrip_max_inter_iter = 4
-  config.skullstrip_fac = 1
-  config.skullstrip_blur_fwhm = 0
-  config.bet_frac = 0.5
-  config.bet_mask_boolean = false
-  config.bet_mesh_boolean = false
-  config.bet_outline = false
-  config.bet_padding = false
-  config.bet_radius = 0
-  config.bet_reduce_bias = false
-  config.bet_remove_eyes = false
-  config.bet_robust = false
-  config.bet_skull = false
-  config.bet_surfaces = false
-  config.bet_threshold = false
-  config.bet_vertical_gradient = 0.0
+  config.skullstrip_shrink_factor = c.anatomical.skull_stripping.methods.afni.configuration.shrink_factor.threshold
+  config.skullstrip_var_shrink_fac = c.anatomical.skull_stripping.methods.afni.configuration.shrink_factor.vary
+  config.skullstrip_shrink_factor_bot_lim = c.anatomical.skull_stripping.methods.afni.configuration.shrink_factor.bottom_limit
+  config.skullstrip_avoid_vent = c.anatomical.skull_stripping.methods.afni.configuration.avoid_ventricles
+  config.skullstrip_n_iterations = c.anatomical.skull_stripping.methods.afni.configuration.iterations
+  config.skullstrip_pushout = c.anatomical.skull_stripping.methods.afni.configuration.pushout
+  config.skullstrip_touchup = c.anatomical.skull_stripping.methods.afni.configuration.touchup
+  config.skullstrip_fill_hole = c.anatomical.skull_stripping.methods.afni.configuration.fill_hole
+  config.skullstrip_NN_smooth = c.anatomical.skull_stripping.methods.afni.configuration.nearest_neighbors_smooth
+  config.skullstrip_smooth_final = c.anatomical.skull_stripping.methods.afni.configuration.final_smooth
+  config.skullstrip_avoid_eyes = c.anatomical.skull_stripping.methods.afni.configuration.avoid_eyes
+  config.skullstrip_use_edge = c.anatomical.skull_stripping.methods.afni.configuration.use_edge
+  config.skullstrip_exp_frac = c.anatomical.skull_stripping.methods.afni.configuration.use_skull
+  config.skullstrip_push_to_edge = c.anatomical.skull_stripping.methods.afni.configuration.push_to_edge
+  config.skullstrip_use_skull = c.anatomical.skull_stripping.methods.afni.configuration.use_skull
+  config.skullstrip_perc_int = c.anatomical.skull_stripping.methods.afni.configuration.intersections.ratio
+  config.skullstrip_max_inter_iter = c.anatomical.skull_stripping.methods.afni.configuration.intersections.iterations
+  config.skullstrip_fac = c.anatomical.skull_stripping.methods.afni.configuration.multiplier
+  config.skullstrip_blur_fwhm = c.anatomical.skull_stripping.methods.afni.configuration.blur_fwhm
+
+  config.bet_frac = c.anatomical.skull_stripping.methods.bet.configuration.threshold
+  config.bet_mask_boolean = c.anatomical.skull_stripping.methods.bet.configuration.mask
+  config.bet_mesh_boolean = c.anatomical.skull_stripping.methods.bet.configuration.mesh
+  config.bet_outline = c.anatomical.skull_stripping.methods.bet.configuration.surface_outline
+  config.bet_padding = c.anatomical.skull_stripping.methods.bet.configuration.padding
+  config.bet_radius = c.anatomical.skull_stripping.methods.bet.configuration.radius
+  config.bet_reduce_bias = c.anatomical.skull_stripping.methods.bet.configuration.reduce_bias
+  config.bet_remove_eyes = c.anatomical.skull_stripping.methods.bet.configuration.remove_eyes
+  config.bet_robust = c.anatomical.skull_stripping.methods.bet.configuration.robust_brain_center
+  config.bet_skull = c.anatomical.skull_stripping.methods.bet.configuration.skull
+  config.bet_surfaces = c.anatomical.skull_stripping.methods.bet.configuration.surfaces
+  config.bet_threshold = c.anatomical.skull_stripping.methods.bet.configuration.apply_threshold
+  config.bet_vertical_gradient = c.anatomical.skull_stripping.methods.bet.configuration.vertical_gradient
 
   config.resolution_for_anat = c.anatomical.registration.resolution + "mm"
   config.template_brain_only_for_anat = c.anatomical.registration.brain_template
