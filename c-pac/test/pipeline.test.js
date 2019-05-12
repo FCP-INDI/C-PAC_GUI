@@ -42,7 +42,6 @@ describe('load pipeline', () => {
   })
 
   it('should convert to new format', () => {
-
     const oldPipeline = {
       id: 'default',
       name: 'Default',
@@ -50,8 +49,20 @@ describe('load pipeline', () => {
         '0': {
           version: '1.3.0',
           configuration: {
+            anatomical: {
+              registration: {
+                methods: {
+                  ants: {
+                    configuration: {
+
+                    }
+                  }
+                }
+              }
+            },
             functional: {
               enabled: true,
+              slice_timing_correction: {},
               nuisance_regression: {
                 enabled: true,
                 lateral_ventricles_mask: '${environment.paths.fsl_dir}/data/atlases/HarvardOxford/HarvardOxford-lateral-ventricles-thr25-2mm.nii.gz',
@@ -117,7 +128,6 @@ describe('load pipeline', () => {
 
     oldPipeline.id = 'myPipeline'
     const myNewPipeline = normalize(oldPipeline)
-
 
     const lastVersion = Math.max.apply(null, Object.keys(myNewPipeline.versions))
 
@@ -213,6 +223,5 @@ describe('load pipeline', () => {
     regi++
 
     assert(myNewPipeline_nuisance_regression.regressors.length === regi)
-
   })
 })
