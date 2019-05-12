@@ -51,7 +51,7 @@ export default (config) => {
 
     configYamled[k] = yaml.safeDump(
       { [k]: config[k] },
-      { flowLevel }
+      { flowLevel, lineWidth: 9999 }
     )
   }
 
