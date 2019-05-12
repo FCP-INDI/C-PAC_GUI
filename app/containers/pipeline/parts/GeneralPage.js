@@ -31,13 +31,6 @@ class GeneralPage extends Component {
     },
   });
 
-
-  maximumMemoryPerParticipant :  3
-  maxCoresPerParticipant :  1
-  numParticipantsAtOnce :  1
-  num_ants_threads :  1
-
-
   render() {
     const { classes, configuration, onChange } = this.props
 
@@ -193,7 +186,7 @@ class GeneralPage extends Component {
                         <Switch
                           name="general.environment.outputs.extra"
                           checked={configuration.getIn(['general', 'environment', 'outputs', 'extra'])}
-                          onChange={this.handleValueChange}
+                          onChange={onChange}
                           color="primary"
                         />
                       </FormControlLabelled>
@@ -209,7 +202,7 @@ class GeneralPage extends Component {
                         <Switch
                           name="general.environment.outputs.debug"
                           checked={configuration.getIn(['general', 'environment', 'outputs', 'debug'])}
-                          onChange={this.handleValueChange}
+                          onChange={onChange}
                           color="primary"
                         />
                       </FormControlLabelled>
@@ -225,7 +218,7 @@ class GeneralPage extends Component {
                         <Switch
                           name="general.environment.outputs.logging"
                           checked={configuration.getIn(['general', 'environment', 'outputs', 'logging'])}
-                          onChange={this.handleValueChange}
+                          onChange={onChange}
                           color="primary"
                         />
                       </FormControlLabelled>
@@ -241,7 +234,7 @@ class GeneralPage extends Component {
                         <Switch
                           name="general.environment.outputs.remove_working"
                           checked={configuration.getIn(['general', 'environment', 'outputs', 'remove_working'])}
-                          onChange={this.handleValueChange}
+                          onChange={onChange}
                           color="primary"
                         />
                       </FormControlLabelled>
@@ -257,7 +250,7 @@ class GeneralPage extends Component {
                         <Switch
                           name="general.environment.outputs.organized"
                           checked={configuration.getIn(['general', 'environment', 'outputs', 'organized'])}
-                          onChange={this.handleValueChange}
+                          onChange={onChange}
                           color="primary"
                         />
                       </FormControlLabelled>
@@ -273,7 +266,7 @@ class GeneralPage extends Component {
                         <Switch
                           name="general.environment.outputs.regenerate"
                           checked={configuration.getIn(['general', 'environment', 'outputs', 'regenerate'])}
-                          onChange={this.handleValueChange}
+                          onChange={onChange}
                           color="primary"
                         />
                       </FormControlLabelled>
@@ -289,7 +282,7 @@ class GeneralPage extends Component {
                         <Switch
                           name="general.environment.outputs.quality_control"
                           checked={configuration.getIn(['general', 'environment', 'outputs', 'quality_control'])}
-                          onChange={this.handleValueChange}
+                          onChange={onChange}
                           color="primary"
                         />
                       </FormControlLabelled>
