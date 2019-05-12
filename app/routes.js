@@ -2,7 +2,7 @@
 import React, { Component } from 'react'
 import { Switch, Route } from 'react-router'
 import { withRouter } from 'react-router-dom'
-import ua from 'universal-analytics'
+// import ua from 'universal-analytics'
 
 import App from './containers/App'
 import HomePage from './containers/HomePage'
@@ -18,16 +18,16 @@ import DatasetPage from './containers/DatasetPage'
 
 import { projectOpen } from './actions/main'
 
-const GACode = process.env.NODE_ENV === 'production' ? 'UA-19224662-10' : ''
+// const GACode = process.env.NODE_ENV === 'production' ? 'UA-19224662-10' : ''
 
-let cid = localStorage.getItem('ga-cid')
-const visitor = ua(GACode, cid)
-if (!cid) {
-  localStorage.setItem('ga-cid', visitor.cid)
-}
+// let cid = localStorage.getItem('ga-cid')
+// const visitor = ua(GACode, cid)
+// if (!cid) {
+//   localStorage.setItem('ga-cid', visitor.cid)
+// }
 
-// Anonymize IP
-visitor.set("aip", 1)
+// // Anonymize IP
+// visitor.set("aip", 1)
 
 
 export class TemplatePage extends Component {
@@ -62,10 +62,10 @@ export class TemplatePage extends Component {
 
   componentDidUpdate(prevProps) {
     if (this.props.location !== prevProps.location) {
-      visitor.pageview({
-        dp: this.props.location.pathname,
-        aip: 1,
-      }).send()
+      // visitor.pageview({
+      //   dp: this.props.location.pathname,
+      //   aip: 1,
+      // }).send()
     }
   }
 

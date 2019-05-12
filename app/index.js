@@ -1,4 +1,4 @@
-import { remote } from 'electron'
+// import { remote } from 'electron'
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { AppContainer, hot } from 'react-hot-loader';
@@ -32,7 +32,7 @@ window.addEventListener('load', () => {
 
   document.addEventListener("keydown", function (e) {
     if (e.which === 123) {
-      remote.getCurrentWindow().toggleDevTools();
+      // remote.getCurrentWindow().toggleDevTools();
     } else if (e.which === 116) {
       location.reload()
     }
