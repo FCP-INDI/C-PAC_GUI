@@ -104,6 +104,10 @@ class PipelinePage extends Component {
   }
 
   handleChange = (values) => {
+    if (this.state.default) {
+      return
+    }
+
     let configuration = this.state.configuration
 
     if (values.target) {
