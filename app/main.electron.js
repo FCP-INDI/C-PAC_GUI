@@ -22,7 +22,7 @@ try {
 
 config = { ...{
   url: 'https://fcp-indi.github.io/C-PAC_GUI/versions/{version}/electron',
-  version: '0.0.1',
+  version: '0.0.2-rc',
 }, ...config }
 
 app.on('ready', async () => {
