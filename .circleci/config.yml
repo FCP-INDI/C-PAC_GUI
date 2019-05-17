@@ -25,7 +25,7 @@ jobs:
             echo 'nvm install v11.12.0' >> $BASH_ENV
             echo 'nvm alias default v11.12.0' >> $BASH_ENV
       - run:
-          command: yarn --frozen-lockfile
+          command: yarn
       - run:
           command: CSC_LINK=file:///tmp/default.p12 yarn run package:mac
       - run:
@@ -43,7 +43,7 @@ jobs:
     steps:
       - checkout
       - run:
-          command: yarn --frozen-lockfile
+          command: yarn
       - run:
           command: yarn run package:linux
       - run:
@@ -61,7 +61,7 @@ jobs:
     steps:
       - checkout
       - run:
-          command: yarn --frozen-lockfile
+          command: yarn
       - run:
           command: |
             TARGET=electron yarn run build
