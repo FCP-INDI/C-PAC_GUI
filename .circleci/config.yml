@@ -88,7 +88,9 @@ jobs:
       - run:
           name: Install deployment dependencies
           command: |
-            go get github.com/aktau/github-release
+            wget https://github.com/aktau/github-release/releases/download/v0.7.2/linux-amd64-github-release.tar.bz2
+            tar xjf linux-amd64-github-release.tar.bz2
+            mv bin/linux/amd64/github-release /bin
             npm install github-release-notes -g
       - run:
           name: Configure git user
@@ -126,15 +128,15 @@ workflows:
   build:
     jobs:
 
-      - build-linux:
-          filters:
-            branches:
-              ignore: gh-pages
-      - build-macos:
-          filters:
-            branches:
-              ignore: gh-pages
-          context: c-pac_gui
+      # - build-linux:
+      #     filters:
+      #       branches:
+      #         ignore: gh-pages
+      # - build-macos:
+      #     filters:
+      #       branches:
+      #         ignore: gh-pages
+      #     context: c-pac_gui
       - build-web:
           filters:
             branches:
@@ -146,6 +148,6 @@ workflows:
                 - master
                 - develop
           requires:
-            - build-linux
-            - build-macos
+            # - build-linux
+            # - build-macos
             - build-web
