@@ -86,6 +86,11 @@ jobs:
       - attach_workspace:
           at: /tmp/workspace
       - run:
+          name: Install deployment dependencies
+          command: |
+            go get github.com/aktau/github-release
+            npm install github-release-notes -g
+      - run:
           name: Configure git user
           command: |
             git config --global user.email "ci-build@fcp-indi.github.com"
@@ -112,6 +117,9 @@ jobs:
             git add .
             git commit -m "updates"
             git push -f origin gh-pages
+
+            gren
+            github-release
 
 workflows:
   version: 2
