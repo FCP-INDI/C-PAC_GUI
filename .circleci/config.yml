@@ -88,13 +88,12 @@ jobs:
       - run:
           name: Install deployment dependencies
           command: |
-            echo 'export PATH=/home/circleci/bin:$PATH' >> $BASH_ENV
             wget https://github.com/aktau/github-release/releases/download/v0.7.2/linux-amd64-github-release.tar.bz2 -O /home/circleci/linux-amd64-github-release.tar.bz2
             tar xjf /home/circleci/linux-amd64-github-release.tar.bz2 -C /home/circleci
-            mv /home/circleci/bin/linux/amd64/github-release /home/circleci/bin
+            sudo mv /home/circleci/bin/linux/amd64/github-release /usr/local/bin
             rm -Rf /home/circleci/bin/linux
-            chmod a+x /home/circleci/bin/*
-            npm install github-release-notes -g
+            chmod a+x /usr/local/bin/github-release
+            sudo npm install github-release-notes -g
       - run:
           name: Configure git user
           command: |
