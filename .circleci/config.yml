@@ -106,14 +106,14 @@ jobs:
             RELEASE=$(["${CIRCLE_BRANCH}" == "master"] && echo "Version ${VERSION}" || echo "Release candidate ${VERSION}")
 
             if ["${CIRCLE_BRANCH}" != "master"]; then
-              git tag --delete ${VERSION} | true
-              git push --delete origin ${VERSION} | true
-              github-release delete -u FCP-INDI -r C-PAC_GUI --tag ${VERSION} | true
+              git tag --delete "${VERSION}" | true
+              git push --delete origin "${VERSION}" | true
+              github-release delete -u FCP-INDI -r C-PAC_GUI --tag "${VERSION}" | true
             fi
 
-            git tag ${VERSION}
+            git tag "${VERSION}"
             git push --tags
-            github-release release -u FCP-INDI -r C-PAC_GUI --tag ${VERSION} --name ${RELEASE}
+            github-release release -u FCP-INDI -r C-PAC_GUI --tag "${VERSION}" --name "${RELEASE}"
 
 
             git clone --single-branch --branch gh-pages git@github.com:FCP-INDI/C-PAC_GUI.git /tmp/repo
