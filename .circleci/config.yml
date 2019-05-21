@@ -115,6 +115,11 @@ jobs:
             git tag "${VERSION}"
             git push --tags
             github-release release -u FCP-INDI -r C-PAC_GUI --tag "${VERSION}" --name "${VERSION}" ${RELEASE_OPTS}
+            github-release upload -u FCP-INDI -r C-PAC_GUI --tag "${VERSION}" --name "c-pac_gui-linux-amd64-deb" --file /tmp/workspace/dist-linux/c-pac_gui_*_amd64.deb
+            github-release upload -u FCP-INDI -r C-PAC_GUI --tag "${VERSION}" --name "c-pac_gui-linux-amd64-snap" --file /tmp/workspace/dist-linux/c-pac_gui_*_amd64.snap
+            github-release upload -u FCP-INDI -r C-PAC_GUI --tag "${VERSION}" --name "c-pac_gui-linux-amd64-tar" --file /tmp/workspace/dist-linux/c-pac_gui-*.tar.gz
+            github-release upload -u FCP-INDI -r C-PAC_GUI --tag "${VERSION}" --name "c-pac_gui-osx-amd64-dmg" --file /tmp/workspace/dist-macos/C-PAC-*.dmg
+            github-release upload -u FCP-INDI -r C-PAC_GUI --tag "${VERSION}" --name "c-pac_gui-osx-amd64-zip" --file /tmp/workspace/dist-macos/C-PAC-*-mac.zip
 
             git clone --single-branch --branch gh-pages git@github.com:FCP-INDI/C-PAC_GUI.git /tmp/repo
 
@@ -123,19 +128,12 @@ jobs:
             mv /tmp/workspace/dist-web-browser /tmp/repo/versions/$VERSION/browser
             mv /tmp/workspace/dist-web-electron /tmp/repo/versions/$VERSION/electron
 
-            find /tmp/workspace/dist-linux
-            find /tmp/workspace/dist-macos
-
-            # TODO add git-fs
-            # mv /tmp/workspace/dist-linux /tmp/repo/versions/$VERSION/linux
-            # mv /tmp/workspace/dist-macos /tmp/repo/versions/$VERSION/macos
-
             ls -1 /tmp/repo/versions > /tmp/repo/versions.txt
 
             cd /tmp/repo
             git add .
-            git commit -m "updates"
-            git push -f origin gh-pages
+            git commit -m "updates" || true
+            git push -f origin gh-pages || true
 
 workflows:
   version: 2
