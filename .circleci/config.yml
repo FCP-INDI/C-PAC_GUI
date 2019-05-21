@@ -83,8 +83,8 @@ jobs:
       BASH_ENV: ".circleci/bashrc"
     steps:
       - checkout
-      # - attach_workspace:
-      #     at: /tmp/workspace
+      - attach_workspace:
+          at: /tmp/workspace
       - run:
           name: Install deployment dependencies
           command: |
@@ -141,27 +141,26 @@ workflows:
   version: 2
   build:
     jobs:
-
-      # - build-linux:
-      #     filters:
-      #       branches:
-      #         ignore: gh-pages
-      # - build-macos:
-      #     filters:
-      #       branches:
-      #         ignore: gh-pages
-      #     context: c-pac_gui
-      # - build-web:
-      #     filters:
-      #       branches:
-      #         ignore: gh-pages
+      - build-linux:
+          filters:
+            branches:
+              ignore: gh-pages
+      - build-macos:
+          filters:
+            branches:
+              ignore: gh-pages
+          context: c-pac_gui
+      - build-web:
+          filters:
+            branches:
+              ignore: gh-pages
       - deploy:
           filters:
             branches:
               only:
                 - master
                 - develop
-          # requires:
-            # - build-linux
-            # - build-macos
-            # - build-web
+          requires:
+            - build-linux
+            - build-macos
+            - build-web
