@@ -113,7 +113,7 @@ jobs:
 
             git tag "${VERSION}"
             git push --tags
-            github-release release -u FCP-INDI -r C-PAC_GUI --tag "${VERSION}" --name "${RELEASE}"
+            # github-release release -u FCP-INDI -r C-PAC_GUI --tag "${VERSION}" --name "${RELEASE}"
 
 workflows:
   version: 2
