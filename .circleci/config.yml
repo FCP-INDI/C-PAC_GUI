@@ -105,9 +105,6 @@ jobs:
             VERSION=$([ "${CIRCLE_BRANCH}" == "master" ] && echo "${VERSION}" || echo "${VERSION}-rc")
             RELEASE=$([ "${CIRCLE_BRANCH}" == "master" ] && echo "Version ${VERSION}" || echo "Release candidate ${VERSION}")
             
-            git clone --single-branch --branch "${CIRCLE_BRANCH}" git@github.com:FCP-INDI/C-PAC_GUI.git /tmp/build-repo
-            cd /tmp/build-repo
-
             if [ "${CIRCLE_BRANCH}" != "master" ]; then
               git tag --delete "${VERSION}" || true
               git push --delete origin "${VERSION}" || true
