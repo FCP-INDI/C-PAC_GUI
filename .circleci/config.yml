@@ -108,7 +108,7 @@ jobs:
             if [ "${CIRCLE_BRANCH}" != "master" ]; then
               git tag --delete "${VERSION}" | true
               git push --delete origin "${VERSION}" | true
-              github-release delete -u FCP-INDI -r C-PAC_GUI --tag "${VERSION}" | true
+              # github-release delete -u FCP-INDI -r C-PAC_GUI --tag "${VERSION}" | true
             fi
 
             # git tag "${VERSION}"
