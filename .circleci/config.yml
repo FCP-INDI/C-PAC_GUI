@@ -105,11 +105,11 @@ jobs:
             VERSION=$([ "${CIRCLE_BRANCH}" == "master" ] && echo "${VERSION}" || echo "${VERSION}-rc")
             RELEASE=$([ "${CIRCLE_BRANCH}" == "master" ] && echo "Version ${VERSION}" || echo "Release candidate ${VERSION}")
 
-            # if [ "${CIRCLE_BRANCH}" != "master" ]; then
-            #   git tag --delete "${VERSION}" | true
-            #   git push --delete origin "${VERSION}" | true
-            #   github-release delete -u FCP-INDI -r C-PAC_GUI --tag "${VERSION}" | true
-            # fi
+            if [ "${CIRCLE_BRANCH}" != "master" ]; then
+              git tag --delete "${VERSION}" | true
+              git push --delete origin "${VERSION}" | true
+              github-release delete -u FCP-INDI -r C-PAC_GUI --tag "${VERSION}" | true
+            fi
 
             # git tag "${VERSION}"
             # git push --tags
