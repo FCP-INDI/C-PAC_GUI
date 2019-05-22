@@ -12,7 +12,7 @@ import DatasetPage from './containers/DatasetPage'
 
 const GACode = process.env.NODE_ENV === 'production' ? 'UA-19224662-10' : ''
 ReactGA.initialize(GACode, {
-  debug: true,
+  debug: process.env.NODE_ENV !== 'production',
 })
 ReactGA.set({ aip: 1 });
 
