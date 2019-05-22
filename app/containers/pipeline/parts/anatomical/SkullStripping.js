@@ -136,7 +136,12 @@ class SkullStripping extends Component {
                   />
                 }
               />
-              <IconButton onClick={() => this.handleOpenBet()}><SettingsIcon /></IconButton>
+              { configuration.getIn(['anatomical', 'skull_stripping', 'methods', 'bet', 'enabled']) ?
+                <IconButton
+                  onClick={() => this.handleOpenBet()}>
+                  <SettingsIcon />
+                </IconButton>
+              : null }
 
               <FormControlLabel
                 label="AFNI 3dSkullStrip"
@@ -149,7 +154,12 @@ class SkullStripping extends Component {
                   />
                 }
               />
-              <IconButton onClick={() => this.handleOpenAfni()}><SettingsIcon /></IconButton>
+              { configuration.getIn(['anatomical', 'skull_stripping', 'methods', 'afni', 'enabled']) ?
+                <IconButton
+                  onClick={() => this.handleOpenAfni()}>
+                  <SettingsIcon />
+                </IconButton>
+              : null }
             </Help>
           </FormGroup>
 
