@@ -2,7 +2,7 @@ import path from 'path';
 import webpack from 'webpack';
 import { dependencies as externals } from '../app/package.json';
 
-const target = process.env.TARGET === 'browser' ? 'web' : 'electron'
+const target = process.env.TARGET === 'browser' ? 'browser' : 'electron'
 
 export default {
   externals: Object.keys(externals || {}),
