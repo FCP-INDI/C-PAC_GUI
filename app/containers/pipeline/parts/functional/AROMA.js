@@ -44,8 +44,8 @@ class AROMA extends Component {
               className={classes.textField}
               helperText=''
             >
-              <MenuItem value={"non-aggressive"}>Non-Agressive</MenuItem>
-              <MenuItem value={"aggressive"}>Agressive</MenuItem>
+              <MenuItem value={"non-aggressive"}>Non-Aggressive</MenuItem>
+              <MenuItem value={"aggressive"}>Aggressive</MenuItem>
             </TextField>
           </Help>
         </Grid>
