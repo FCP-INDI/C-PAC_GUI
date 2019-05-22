@@ -16,14 +16,29 @@ import FormHelperText from '@material-ui/core/FormHelperText';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import InputLabel from '@material-ui/core/InputLabel';
 
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
+
 import Help from 'components/Help'
 import FormControlLabelled from 'components/FormControlLabelled'
+import IconButton from '@material-ui/core/IconButton'
 
+import {
+  SettingsIcon,
+} from 'components/icons';
 
 class SkullStripping extends Component {
 
   static styles = theme => ({
   });
+
+  state = {
+    betOptions: false,
+    afniOptions: false,
+  }
 
   handleValueChange = (event) => {
     const name = event.target.name
@@ -66,6 +81,22 @@ class SkullStripping extends Component {
     }
   };
 
+  handleOpenAfni = () => {
+    this.setState({ afniOptions: true })
+  }
+  
+  handleOpenBet = () => {
+    this.setState({ betOptions: true })
+  }
+  
+  handleCloseAfni = () => {
+    this.setState({ afniOptions: false })
+  }
+  
+  handleCloseBet = () => {
+    this.setState({ betOptions: false })
+  }
+
   render() {
     const { classes, configuration, advanced, onChange } = this.props
 
@@ -105,29 +136,31 @@ class SkullStripping extends Component {
                   />
                 }
               />
+              <IconButton onClick={() => this.handleOpenBet()}><SettingsIcon /></IconButton>
+
               <FormControlLabel
                 label="AFNI 3dSkullStrip"
                 control={
                   <Switch
-                    name="anatomical.skull_stripping.methods.afni.enabled"
-                    checked={configuration.getIn(['anatomical', 'skull_stripping', 'methods', 'afni', 'enabled'])}
-                    onChange={this.handleValueChange}
-                    color="primary"
+                  name="anatomical.skull_stripping.methods.afni.enabled"
+                  checked={configuration.getIn(['anatomical', 'skull_stripping', 'methods', 'afni', 'enabled'])}
+                  onChange={this.handleValueChange}
+                  color="primary"
                   />
                 }
               />
+              <IconButton onClick={() => this.handleOpenAfni()}><SettingsIcon /></IconButton>
             </Help>
           </FormGroup>
 
           <Grid container>
-            <Collapse component={Grid} unmountOnExit item md={6} in={advanced && configuration.getIn(['anatomical', 'skull_stripping', 'methods', 'bet', 'enabled'])}>
-              <FormGroup>
-                <FormLabel>
-                  <Help
-                    help={`Specific options for fine tuning the FSL BET program.`}
-                  />
-                  FSL BET options
-                </FormLabel>
+            <Dialog
+              open={this.state.betOptions && configuration.getIn(['anatomical', 'skull_stripping', 'methods', 'bet', 'enabled'])}
+              onClose={this.handleCloseBet}
+              fullWidth={true}
+            >
+              <DialogTitle>{`FSL BET Options`}</DialogTitle>
+              <DialogContent>
                 <FormGroup row>
                   <Help
                     type="pipeline"
@@ -363,16 +396,15 @@ class SkullStripping extends Component {
                     />
                   </Help>
                 </FormGroup>
-              </FormGroup>
-            </Collapse>
-            <Collapse component={Grid} unmountOnExit item md={6} in={advanced && configuration.getIn(['anatomical', 'skull_stripping', 'methods', 'afni', 'enabled'])}>
-              <FormGroup>
-                <FormLabel>
-                  <Help
-                    help={`Specific options for fine tuning the 3dSkullStrip program.`}
-                  />
-                  3dSkullStrip options
-                </FormLabel>
+              </DialogContent>
+            </Dialog>
+            <Dialog
+              open={this.state.afniOptions && configuration.getIn(['anatomical', 'skull_stripping', 'methods', 'afni', 'enabled'])}
+              onClose={this.handleCloseAfni}
+              fullWidth={true}
+            >
+              <DialogTitle>{`3dSkullStrip Options`}</DialogTitle>
+              <DialogContent>
                 <FormGroup row>
                   <Help
                     type="pipeline"
@@ -690,10 +722,8 @@ class SkullStripping extends Component {
                     />
                   </Help>
                 </FormGroup>
-
-
-              </FormGroup>
-            </Collapse>
+              </DialogContent>
+            </Dialog>
           </Grid>
         </FormControl>
       </React.Fragment>
