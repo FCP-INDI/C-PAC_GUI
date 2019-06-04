@@ -112,14 +112,18 @@ jobs:
               RELEASE_OPTS="--pre-release"
             fi
 
+            cd /tmp/workspace/dist-web-browser
+            zip -r /tmp/c-pac_gui-${VERSION}-browser.zip .
+
             git tag "${VERSION}"
             git push --tags
             github-release release -u FCP-INDI -r C-PAC_GUI --tag "${VERSION}" --name "${VERSION}" ${RELEASE_OPTS}
-            github-release upload -u FCP-INDI -r C-PAC_GUI --tag "${VERSION}" --name "c-pac_gui-linux-amd64.deb" --file /tmp/workspace/dist-linux/c-pac_gui_*_amd64.deb
-            github-release upload -u FCP-INDI -r C-PAC_GUI --tag "${VERSION}" --name "c-pac_gui-linux-amd64.snap" --file /tmp/workspace/dist-linux/c-pac_gui_*_amd64.snap
-            github-release upload -u FCP-INDI -r C-PAC_GUI --tag "${VERSION}" --name "c-pac_gui-linux-amd64.tar.gz" --file /tmp/workspace/dist-linux/c-pac_gui-*.tar.gz
-            github-release upload -u FCP-INDI -r C-PAC_GUI --tag "${VERSION}" --name "c-pac_gui-osx-amd64.dmg" --file /tmp/workspace/dist-macos/C-PAC-*.dmg
-            github-release upload -u FCP-INDI -r C-PAC_GUI --tag "${VERSION}" --name "c-pac_gui-osx-amd64.zip" --file /tmp/workspace/dist-macos/C-PAC-*-mac.zip
+            github-release upload -u FCP-INDI -r C-PAC_GUI --tag "${VERSION}" --name "c-pac_gui-${VERSION}-linux-amd64.deb" --file /tmp/workspace/dist-linux/c-pac_gui_*_amd64.deb
+            github-release upload -u FCP-INDI -r C-PAC_GUI --tag "${VERSION}" --name "c-pac_gui-${VERSION}-linux-amd64.snap" --file /tmp/workspace/dist-linux/c-pac_gui_*_amd64.snap
+            github-release upload -u FCP-INDI -r C-PAC_GUI --tag "${VERSION}" --name "c-pac_gui-${VERSION}-linux-amd64.tar.gz" --file /tmp/workspace/dist-linux/c-pac_gui-*.tar.gz
+            github-release upload -u FCP-INDI -r C-PAC_GUI --tag "${VERSION}" --name "c-pac_gui-${VERSION}-osx-amd64.dmg" --file /tmp/workspace/dist-macos/C-PAC-*.dmg
+            github-release upload -u FCP-INDI -r C-PAC_GUI --tag "${VERSION}" --name "c-pac_gui-${VERSION}-osx-amd64.zip" --file /tmp/workspace/dist-macos/C-PAC-*-mac.zip
+            github-release upload -u FCP-INDI -r C-PAC_GUI --tag "${VERSION}" --name "c-pac_gui-${VERSION}-browser.zip" --file /tmp/c-pac_gui-${VERSION}-browser.zip
 
             git clone --single-branch --branch gh-pages git@github.com:FCP-INDI/C-PAC_GUI.git /tmp/repo
 
