@@ -114,6 +114,7 @@ jobs:
 
             cd /tmp/workspace/dist-web-browser
             zip -r /tmp/c-pac_gui-${VERSION}-browser.zip .
+            cd -
 
             git tag "${VERSION}"
             git push --tags
