@@ -200,7 +200,7 @@ workflows:
           filters:
             branches:
               ignore: gh-pages
-      - deploy-release:
+      - deploy-releases:
           filters:
             branches:
               only:
