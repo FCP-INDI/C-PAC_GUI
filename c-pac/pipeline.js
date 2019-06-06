@@ -2,8 +2,10 @@ import yaml from 'js-yaml'
 import semver from 'semver'
 import deepmerge from 'deepmerge'
 
-import template from './resources/pipeline/config'
+import { default as defaultTemplate } from './resources/pipeline/config'
 import yamlTemplate, { raw } from './resources/pipeline/yaml'
+
+const template = parse(raw)
 
 export { yamlTemplate, template, raw as rawTemplate }
 
@@ -36,7 +38,7 @@ export function normalize(pipeline) {
 
   const newVersionKey = new Date().getTime().toString()
   const newVersion = {
-    version: '1.4.1',
+    version: '1.4.3',
   }
 
   const newConfiguration = clone(configuration)
@@ -110,7 +112,7 @@ export function normalize(pipeline) {
       for (let regressors_i in nuisanceRegression.regressors) {
 
         let regressors = nuisanceRegression.regressors[regressors_i]
-        const templateRegressors = clone(template.versions.default.configuration.functional.nuisance_regression.regressors[0])
+        const templateRegressors = clone(defaultTemplate.versions.default.configuration.functional.nuisance_regression.regressors[0])
 
         const newRegressors = {}
         newRegressors.Motion = templateRegressors.Motion
@@ -201,7 +203,7 @@ function normalizeValues(config) {
 export function parse(content) {
   const config = normalizeValues(yaml.safeLoad(content))
 
-  const t = clone(template)
+  const t = clone(defaultTemplate)
   const newver = `${new Date().getTime()}`
   t.versions[newver] = t.versions['default']
   delete t.versions['default']
@@ -336,7 +338,7 @@ export function parse(content) {
     throw "Invalid pipeline version, please update nuisance regression."
   }
 
-  const templateRegressors = clone(template.versions.default.configuration.functional.nuisance_regression.regressors[0])
+  const templateRegressors = clone(defaultTemplate.versions.default.configuration.functional.nuisance_regression.regressors[0])
 
   c.functional.nuisance_regression.regressors = []
   if (config.Regressors) {
@@ -451,7 +453,6 @@ export function parse(content) {
 
   c.derivatives.reho.enabled = config.runReHo.includes(1)
   c.derivatives.reho.cluster_size = config.clusterSize
-
 
   c.derivatives.network_centrality.enabled = config.runNetworkCentrality.includes(1)
   c.derivatives.network_centrality.mask = config.templateSpecificationFile || ''

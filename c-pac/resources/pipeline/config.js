@@ -3,7 +3,7 @@ export default {
   name: 'Default',
   versions: {
     'default': {
-      version: '1.4.1',
+      version: '1.4.3',
       configuration: {
         general: {
           environment: {
