@@ -465,7 +465,7 @@ Regressors :
    CerebrospinalFluid:
      summary: Mean
      extraction_resolution: 2
-     erode_mask: true
+     erode_mask: false
      
    GlobalSignal:
      summary: Mean
@@ -495,7 +495,7 @@ Regressors :
    CerebrospinalFluid:
      summary: Mean
      extraction_resolution: 2
-     erode_mask: true
+     erode_mask: false
 
    PolyOrt:
     degree: 2
