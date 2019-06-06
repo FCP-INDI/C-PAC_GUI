@@ -275,9 +275,10 @@ export function parse(content) {
   c.anatomical.tissue_segmentation.enabled = config.runSegmentationPreprocessing.includes(1)
 
   let priors_path = ''
-  if (c.priors_path) {
-    priors_path = c.priors_path.replace("$FSLDIR", "${environment.paths.fsl_dir}")
+  if (config.priors_path) {
+    priors_path = config.priors_path.replace("$FSLDIR", "${environment.paths.fsl_dir}")
   }
+
   c.anatomical.tissue_segmentation.priors.white_matter = config.PRIORS_WHITE.replace("$priors_path", priors_path)
   c.anatomical.tissue_segmentation.priors.gray_matter = config.PRIORS_GRAY.replace("$priors_path", priors_path)
   c.anatomical.tissue_segmentation.priors.cerebrospinal_fluid = config.PRIORS_CSF.replace("$priors_path", priors_path)
