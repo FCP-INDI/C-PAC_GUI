@@ -1,7 +1,6 @@
 import yaml from 'js-yaml'
 
 import raw from './pipeline_config_template.yml'
-raw.pipelineName = 'Default'
 export { raw }
 
 let rawTemplate = ''

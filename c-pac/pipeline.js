@@ -6,6 +6,7 @@ import { default as defaultTemplate } from './resources/pipeline/config'
 import yamlTemplate, { raw } from './resources/pipeline/yaml'
 
 const template = parse(raw)
+template.name = 'Default'
 
 export { yamlTemplate, template, raw as rawTemplate }
 
