@@ -7,7 +7,7 @@ import baseConfig from './webpack.config.base'
 const dist = path.resolve(process.cwd(), 'app', 'dist')
 
 const config = merge.smart(baseConfig, {
-  devtool: 'cheap-module-eval-source-map',
+  // devtool: 'cheap-module-eval-source-map',
 
   target: 'electron-main',
 
@@ -22,17 +22,17 @@ const config = merge.smart(baseConfig, {
     filename: 'main.js'
   },
 
-  optimization: {
-    minimize: false,
-    noEmitOnErrors: true,
-    removeAvailableModules: false,
-    removeEmptyChunks: false,
-    splitChunks: false,
-  },
+  // optimization: {
+  //   minimize: false,
+  //   noEmitOnErrors: true,
+  //   removeAvailableModules: false,
+  //   removeEmptyChunks: false,
+  //   splitChunks: false,
+  // },
 
   plugins: [
     new webpack.EnvironmentPlugin({
-      NODE_ENV: 'development',
+      NODE_ENV: 'production',
       VERSION: JSON.stringify(process.env.npm_package_version),
     }),
   ],

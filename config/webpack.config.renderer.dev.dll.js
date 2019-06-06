@@ -15,6 +15,7 @@ export default merge.smart(baseConfig, {
 
   externals: [
     'fs',
+    'ini',
     'net',
     'tls',
     'fsevents',

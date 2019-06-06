@@ -27,7 +27,7 @@ jobs:
       - run:
           command: yarn
       - run:
-          command: CSC_LINK=file:///tmp/default.p12 yarn run package:mac
+          command: NODE_ENV=production CSC_LINK=file:///tmp/default.p12 yarn run package:mac
       - run:
           command: mv dist dist-macos
       - persist_to_workspace:
@@ -45,7 +45,7 @@ jobs:
       - run:
           command: yarn
       - run:
-          command: yarn run package:linux
+          command: NODE_ENV=production yarn run package:linux
       - run:
           command: mv dist dist-linux
       - persist_to_workspace:
@@ -64,11 +64,11 @@ jobs:
           command: yarn
       - run:
           command: |
-            TARGET=electron yarn run build
+            NODE_ENV=production TARGET=electron yarn run build
             mv ./app/dist dist-web-electron
       - run:
           command: |
-            TARGET=browser yarn run build
+            NODE_ENV=production TARGET=browser yarn run build
             mv ./app/dist dist-web-browser
       - persist_to_workspace:
           root: .

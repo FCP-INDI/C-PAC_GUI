@@ -1,6 +1,6 @@
-const { app, autoUpdater, dialog, BrowserWindow } = require('electron')
-const ini = require('ini')
-const fs = require('fs')
+import { app, autoUpdater, dialog, BrowserWindow } from 'electron'
+import ini from 'ini'
+import fs from 'fs'
 
 let mainWindow = null
 
@@ -22,7 +22,7 @@ try {
 
 config = { ...{
   url: 'https://fcp-indi.github.io/C-PAC_GUI/versions/{version}/electron',
-  version: '0.0.2-rc',
+  version: `v${process.env.VERSION}`,
 }, ...config }
 
 app.on('ready', async () => {

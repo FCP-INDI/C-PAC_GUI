@@ -32,7 +32,7 @@ window.addEventListener('load', () => {
 
   document.addEventListener("keydown", function (e) {
     if (e.which === 123) {
-      // remote.getCurrentWindow().toggleDevTools();
+      remote.getCurrentWindow().toggleDevTools();
     } else if (e.which === 116) {
       location.reload()
     }

@@ -6,7 +6,9 @@
   "version": "0.0.2",
   "scripts": {
     "build-dll": "cross-env NODE_ENV=development node --trace-warnings -r @babel/register ./node_modules/webpack/bin/webpack --mode development --config config/webpack.config.renderer.dev.dll.js --colors",
-    "build": "cross-env OPEN_ANALYZER=false NODE_ENV=production node --trace-warnings -r @babel/register ./node_modules/webpack/bin/webpack --mode production --config config/webpack.config.renderer.prod.js --colors",
+    "build:electron": "cross-env node --trace-warnings -r @babel/register ./node_modules/webpack/bin/webpack --mode production --config config/webpack.config.main.prod.js --colors",
+    "build:renderer": "cross-env node --trace-warnings -r @babel/register ./node_modules/webpack/bin/webpack --mode production --config config/webpack.config.renderer.prod.js --colors",
+    "build:all": "yarn run build:electron && yarn run build:renderer",
     "electron-rebuild": "electron-rebuild --parallel --force --types prod,dev,optional --module-dir app",
     "postinstall": "yarn run build-dll && electron-builder install-app-deps && node node_modules/fbjs-scripts/node/check-dev-engines.js package.json",
     "prestart": "yarn run build",
@@ -21,16 +23,18 @@
     "lint-styles:fix": "stylefmt -r app/*.css app/components/*.css",
     "package": "yarn run package:all",
     "publish": "publish linux-x64",
-    "package:all": "yarn run build && build --publish never -ml",
-    "package:linux": "yarn run build && build --publish never --linux",
-    "package:mac": "yarn run build && build --publish never --mac",
-    "clean": "rm -Rf node_modules c-pac/node_modules app/dist dist"
+    "package:all": "yarn run build:all && build --publish never -ml",
+    "package:linux": "TARGET=electron yarn run build:all && build --publish never --linux",
+    "package:mac": "TARGET=electron yarn run build:all && build --publish never --mac",
+    "clean:all": "yarn run clean:deps && yarn run clean:build",
+    "clean:deps": "rm -Rf node_modules c-pac/node_modules",
+    "clean:build": "rm -Rf app/dist dist"
   },
   "build": {
     "productName": "C-PAC",
     "appId": "org.fcp-indi.CPAC",
     "files": [
-      "main.electron.js",
+      "dist/main.js",
       "node_modules/",
       "c-pac/",
       "package.json"

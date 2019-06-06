@@ -1,14 +1,15 @@
 {
   "name": "c-pac_gui",
   "productName": "C-PAC",
-  "version": "0.0.2",
   "description": "",
-  "main": "./main.electron.js",
+  "version": "0.0.0",
+  "main": "./dist/main.js",
   "author": {
     "name": "Anibal Solon",
     "email": "anibalsolon@gmail.com"
   },
   "scripts": {},
   "license": "MIT",
-  "dependencies": {}
+  "dependencies": {
+  }
 }
