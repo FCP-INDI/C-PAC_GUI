@@ -2,3 +2,4 @@
 0.0.1-rc
 0.0.2-rc
 nightly
+v0.0.2-rc
