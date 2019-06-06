@@ -112,7 +112,7 @@ jobs:
               github-release delete -u FCP-INDI -r C-PAC_GUI --tag "${VERSION}" || true
               RELEASE_OPTS="--pre-release"
             fi
-            
+
             git tag --delete "${TAG}" || true
             git push --delete origin "${TAG}" || true
             github-release delete -u FCP-INDI -r C-PAC_GUI --tag "${TAG}" || true
@@ -131,7 +131,7 @@ jobs:
             github-release upload -u FCP-INDI -r C-PAC_GUI --tag "${VERSION}" --name "c-pac_gui-${VERSION}-linux-amd64.tar.gz" --file /tmp/workspace/dist-linux/c-pac_gui-*.tar.gz
             github-release upload -u FCP-INDI -r C-PAC_GUI --tag "${VERSION}" --name "c-pac_gui-${VERSION}-osx-amd64.dmg" --file /tmp/workspace/dist-macos/C-PAC-*.dmg
             github-release upload -u FCP-INDI -r C-PAC_GUI --tag "${VERSION}" --name "c-pac_gui-${VERSION}-osx-amd64.zip" --file /tmp/workspace/dist-macos/C-PAC-*-mac.zip
-            github-release upload -u FCP-INDI -r C-PAC_GUI --tag "${VERSION}" --name "c-pac_gui-${VERSION}-browser.zip" --file /tmp/c-pac_gui-${VERSION}-browser.zip
+            github-release upload -u FCP-INDI -r C-PAC_GUI --tag "${VERSION}" --name "c-pac_gui-${VERSION}-browser.zip" --file /tmp/c-pac_gui-*-browser.zip
             
             github-release release -u FCP-INDI -r C-PAC_GUI --tag "${TAG}" --name "${TAG}" ${RELEASE_OPTS}
             github-release upload -u FCP-INDI -r C-PAC_GUI --tag "${TAG}" --name "c-pac_gui-${TAG}-linux-amd64.deb" --file /tmp/workspace/dist-linux/c-pac_gui_*_amd64.deb
