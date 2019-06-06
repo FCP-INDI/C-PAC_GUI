@@ -64,11 +64,11 @@ jobs:
           command: yarn
       - run:
           command: |
-            NODE_ENV=production TARGET=electron yarn run build:all
+            NODE_ENV=production TARGET=electron yarn run build:renderer
             mv ./app/dist dist-web-electron
       - run:
           command: |
-            NODE_ENV=production TARGET=browser yarn run build:all
+            NODE_ENV=production TARGET=browser yarn run build:renderer
             mv ./app/dist dist-web-browser
       - persist_to_workspace:
           root: .
