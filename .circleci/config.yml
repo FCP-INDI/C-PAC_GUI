@@ -76,7 +76,7 @@ jobs:
             - dist-web-electron
             - dist-web-browser
 
-  deploy:
+  deploy-releases:
     docker:
       - image: circleci/node:11.12.0
     environment:
@@ -94,12 +94,7 @@ jobs:
             rm -Rf /home/circleci/bin/linux
             chmod a+x /usr/local/bin/github-release
       - run:
-          name: Configure git user
-          command: |
-            git config --global user.email "ci-build@fcp-indi.github.com"
-            git config --global user.name "ci-build"
-      - run:
-          name: Deploy
+          name: Deploy releases
           command: |
             VERSION=v`jq -r '.version' package.json`
             VERSION_TAG=$([ "${CIRCLE_BRANCH}" == "master" ] && echo "${VERSION}" || echo "${VERSION}-rc")
@@ -148,6 +143,27 @@ jobs:
             github-release upload -u FCP-INDI -r C-PAC_GUI --tag "${TAG}" --name "c-pac_gui-${TAG}-osx-amd64.zip" --file /tmp/workspace/dist-macos/C-PAC-*-mac.zip
             github-release upload -u FCP-INDI -r C-PAC_GUI --tag "${TAG}" --name "c-pac_gui-${TAG}-browser.zip" --file /tmp/c-pac_gui-*-browser.zip
 
+  deploy-web:
+    docker:
+      - image: circleci/node:11.12.0
+    environment:
+      BASH_ENV: ".circleci/bashrc"
+    steps:
+      - checkout
+      - attach_workspace:
+          at: /tmp/workspace
+      - run:
+          name: Configure git user
+          command: |
+            git config --global user.email "ci-build@fcp-indi.github.com"
+            git config --global user.name "ci-build"
+      - run:
+          name: Deploy web-version
+          command: |
+            VERSION=v`jq -r '.version' package.json`
+            VERSION_TAG=$([ "${CIRCLE_BRANCH}" == "master" ] && echo "${VERSION}" || echo "${VERSION}-rc")
+            TAG=$([ "${CIRCLE_BRANCH}" == "master" ] && echo "latest" || echo "nightly")
+            
             git clone --single-branch --branch gh-pages git@github.com:FCP-INDI/C-PAC_GUI.git /tmp/repo
 
             rm -Rf /tmp/repo/versions/${VERSION_TAG} 2> /dev/null | true
@@ -184,7 +200,7 @@ workflows:
           filters:
             branches:
               ignore: gh-pages
-      - deploy:
+      - deploy-release:
           filters:
             branches:
               only:
@@ -193,4 +209,12 @@ workflows:
           requires:
             - build-linux
             - build-macos
+            - build-web
+      - deploy-web:
+          filters:
+            branches:
+              only:
+                - master
+                - develop
+          requires:
             - build-web
