@@ -27,7 +27,9 @@ jobs:
       - run:
           command: yarn
       - run:
-          command: NODE_ENV=production CSC_LINK=file:///tmp/default.p12 yarn run package:mac
+          command:  |
+            export NODE_ENV=$([ "${CIRCLE_BRANCH}" == "master" ] && echo "production" || echo "development")
+            CSC_LINK=file:///tmp/default.p12 yarn run package:mac
       - run:
           command: mv dist dist-macos
       - persist_to_workspace:
@@ -45,7 +47,9 @@ jobs:
       - run:
           command: yarn
       - run:
-          command: NODE_ENV=production yarn run package:linux
+          command: |
+            export NODE_ENV=$([ "${CIRCLE_BRANCH}" == "master" ] && echo "production" || echo "development")
+            yarn run package:linux
       - run:
           command: mv dist dist-linux
       - persist_to_workspace:
@@ -64,11 +68,13 @@ jobs:
           command: yarn
       - run:
           command: |
-            NODE_ENV=production TARGET=electron yarn run build:renderer
+            export NODE_ENV=$([ "${CIRCLE_BRANCH}" == "master" ] && echo "production" || echo "development")
+            TARGET=electron yarn run build:renderer
             mv ./app/dist dist-web-electron
       - run:
           command: |
-            NODE_ENV=production TARGET=browser yarn run build:renderer
+            export NODE_ENV=$([ "${CIRCLE_BRANCH}" == "master" ] && echo "production" || echo "development")
+            TARGET=browser yarn run build:renderer
             mv ./app/dist dist-web-browser
       - persist_to_workspace:
           root: .
