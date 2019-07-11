@@ -28,7 +28,8 @@
     "package:mac": "TARGET=electron yarn run build:all && build --publish never --mac",
     "clean:all": "yarn run clean:deps && yarn run clean:build",
     "clean:deps": "rm -Rf node_modules c-pac/node_modules",
-    "clean:build": "rm -Rf app/dist dist"
+    "clean:build": "rm -Rf app/dist dist",
+    "link": "cd c-pac && yarn link && cd .. & yarn link '@internal/c-pac'"
   },
   "build": {
     "productName": "C-PAC",
