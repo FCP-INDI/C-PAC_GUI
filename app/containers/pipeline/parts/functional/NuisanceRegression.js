@@ -226,7 +226,7 @@ class NuisanceRegression extends Component {
     let representation = ''
 
     const regressor_pieces = []
-    for(let reg of ['Motion', 'GlobalSignal', 'WhiteMatter', 'CerebrospinalFluid', 'GreyMatter','aCompCor', 'tCompCor', 'Bandpass', 'Censor']) {
+    for(let reg of ['Motion', 'GlobalSignal', 'WhiteMatter', 'CerebrospinalFluid', 'GreyMatter','aCompCor', 'tCompCor', 'PolyOrt', 'Bandpass', 'Censor']) {
       if (regressors[reg] === undefined) {
         continue
       }
@@ -288,6 +288,10 @@ class NuisanceRegression extends Component {
         } else {
           regressor_terms += ` ${regressor['summary']}`
         }
+      }
+
+      if (reg == 'PolyOrt') {
+        regressor_terms += ` ${regressor['degree']}`
       }
 
       if (reg == 'Bandpass') {
@@ -363,6 +367,18 @@ class NuisanceRegression extends Component {
                   color="primary"
                 />
               </FormControlLabelled>
+            </FormGroup>
+          </React.Fragment>
+        )) }
+        { this.renderRegressor(regressor, i, 'PolyOrt', 'PolyOrt', false, false, false, (
+          <React.Fragment>
+            <FormGroup>
+              <TextField label="Degree"
+                name={`functional.nuisance_regression.regressors.${i}.PolyOrt.degree`}
+                value={regressor.getIn(['PolyOrt', 'degree'])}
+                onChange={onChange}
+                fullWidth margin="normal" variant="outlined"
+              />
             </FormGroup>
           </React.Fragment>
         )) }
