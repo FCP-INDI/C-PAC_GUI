@@ -241,7 +241,10 @@ export default {
                 Censor: {
                   enabled: false,
                   method: 'Kill',
-                  thresholds: [],
+                  threshold: {
+                    type: 'FD_P',
+                    value: 0.0,
+                  },
                   number_of_previous_trs_to_censor: 1,
                   number_of_subsequent_trs_to_censor: 2,
                 },

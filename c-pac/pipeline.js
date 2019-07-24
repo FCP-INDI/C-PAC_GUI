@@ -33,7 +33,24 @@ export function normalize(pipeline) {
   let configuration = pipeline.versions[lastVersion].configuration
 
   if (pipeline.versions[lastVersion].version &&
-      semver.gte(pipeline.versions[lastVersion].version, '1.4.1')) {
+    semver.gte(pipeline.versions[lastVersion].version, '1.4.3')) {
+
+    let nuisanceRegression = configuration.functional.nuisance_regression
+    for (let regressors_i in configuration.functional.nuisance_regression.regressors) {
+      let regressors = nuisanceRegression.regressors[regressors_i]
+      if (regressors.Censor.thresholds) {
+        if (regressors.Censor.thresholds.length) {
+          regressors.Censor.threshold = regressors.Censor.thresholds[0]
+        } else {
+          regressors.Censor.enabled = false
+          regressors.Censor.threshold = {
+            type: 'FD_J',
+            value: 0.0,
+          }
+        }
+      }
+    }
+
     return pipeline
   }
 
@@ -51,7 +68,10 @@ export function normalize(pipeline) {
     censorings.push({
       enabled: false,
       method: 'Kill',
-      thresholds: [],
+      threshold: {
+        type: 'FD_J',
+        value: 0.0,
+      },
       number_of_previous_trs_to_censor: 1,
       number_of_subsequent_trs_to_censor: 2,
     })
@@ -61,10 +81,10 @@ export function normalize(pipeline) {
     censorings.push({
       enabled: true,
       method: 'Kill',
-      thresholds: [{
+      threshold: {
         type: {'jenkinson': 'FD_J', 'power': 'FD_P'}[nuisanceRegression.fd_calculation],
         value: nuisanceRegression.fd_threshold,
-      }],
+      },
       number_of_previous_trs_to_censor: nuisanceRegression.pre_volumes,
       number_of_subsequent_trs_to_censor: nuisanceRegression.post_volumes,
     })
@@ -74,10 +94,10 @@ export function normalize(pipeline) {
     censorings.push({
       enabled: true,
       method: 'SpikeRegression',
-      thresholds: [{
+      threshold: {
         type: {'jenkinson': 'FD_J', 'power': 'FD_P'}[nuisanceRegression.fd_calculation],
         value: nuisanceRegression.fd_threshold,
-      }],
+      },
       number_of_previous_trs_to_censor: nuisanceRegression.pre_volumes,
       number_of_subsequent_trs_to_censor: nuisanceRegression.post_volumes,
     })

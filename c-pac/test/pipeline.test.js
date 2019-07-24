@@ -176,8 +176,8 @@ describe('load pipeline', () => {
 
     assert(myNewPipeline_nuisance_regression.regressors[regi].Censor.enabled === true)
     assert(myNewPipeline_nuisance_regression.regressors[regi].Censor.method === 'SpikeRegression')
-    assert(myNewPipeline_nuisance_regression.regressors[regi].Censor.thresholds[0].type === 'FD_P')
-    assert(myNewPipeline_nuisance_regression.regressors[regi].Censor.thresholds[0].value === 0.2)
+    assert(myNewPipeline_nuisance_regression.regressors[regi].Censor.threshold.type === 'FD_P')
+    assert(myNewPipeline_nuisance_regression.regressors[regi].Censor.threshold.value === 0.2)
     assert(myNewPipeline_nuisance_regression.regressors[regi].Censor.number_of_previous_trs_to_censor === 2)
     assert(myNewPipeline_nuisance_regression.regressors[regi].Censor.number_of_subsequent_trs_to_censor === 3)
     assert(myNewPipeline_nuisance_regression.regressors[regi].GlobalSignal.enabled === true)
@@ -188,8 +188,8 @@ describe('load pipeline', () => {
 
     assert(myNewPipeline_nuisance_regression.regressors[regi].Censor.enabled === true)
     assert(myNewPipeline_nuisance_regression.regressors[regi].Censor.method === 'SpikeRegression')
-    assert(myNewPipeline_nuisance_regression.regressors[regi].Censor.thresholds[0].type === 'FD_P')
-    assert(myNewPipeline_nuisance_regression.regressors[regi].Censor.thresholds[0].value === 0.2)
+    assert(myNewPipeline_nuisance_regression.regressors[regi].Censor.threshold.type === 'FD_P')
+    assert(myNewPipeline_nuisance_regression.regressors[regi].Censor.threshold.value === 0.2)
     assert(myNewPipeline_nuisance_regression.regressors[regi].Censor.number_of_previous_trs_to_censor === 2)
     assert(myNewPipeline_nuisance_regression.regressors[regi].Censor.number_of_subsequent_trs_to_censor === 3)
     assert(myNewPipeline_nuisance_regression.regressors[regi].GlobalSignal.enabled === false)
@@ -200,8 +200,8 @@ describe('load pipeline', () => {
 
     assert(myNewPipeline_nuisance_regression.regressors[regi].Censor.enabled === true)
     assert(myNewPipeline_nuisance_regression.regressors[regi].Censor.method === 'SpikeRegression')
-    assert(myNewPipeline_nuisance_regression.regressors[regi].Censor.thresholds[0].type === 'FD_P')
-    assert(myNewPipeline_nuisance_regression.regressors[regi].Censor.thresholds[0].value === 0.2)
+    assert(myNewPipeline_nuisance_regression.regressors[regi].Censor.threshold.type === 'FD_P')
+    assert(myNewPipeline_nuisance_regression.regressors[regi].Censor.threshold.value === 0.2)
     assert(myNewPipeline_nuisance_regression.regressors[regi].Censor.number_of_previous_trs_to_censor === 2)
     assert(myNewPipeline_nuisance_regression.regressors[regi].Censor.number_of_subsequent_trs_to_censor === 3)
     assert(myNewPipeline_nuisance_regression.regressors[regi].GlobalSignal.enabled === true)
@@ -212,8 +212,8 @@ describe('load pipeline', () => {
 
     assert(myNewPipeline_nuisance_regression.regressors[regi].Censor.enabled === true)
     assert(myNewPipeline_nuisance_regression.regressors[regi].Censor.method === 'SpikeRegression')
-    assert(myNewPipeline_nuisance_regression.regressors[regi].Censor.thresholds[0].type === 'FD_P')
-    assert(myNewPipeline_nuisance_regression.regressors[regi].Censor.thresholds[0].value === 0.2)
+    assert(myNewPipeline_nuisance_regression.regressors[regi].Censor.threshold.type === 'FD_P')
+    assert(myNewPipeline_nuisance_regression.regressors[regi].Censor.threshold.value === 0.2)
     assert(myNewPipeline_nuisance_regression.regressors[regi].Censor.number_of_previous_trs_to_censor === 2)
     assert(myNewPipeline_nuisance_regression.regressors[regi].Censor.number_of_subsequent_trs_to_censor === 3)
     assert(myNewPipeline_nuisance_regression.regressors[regi].GlobalSignal.enabled === false)
