@@ -25,7 +25,7 @@ jobs:
             echo 'nvm install v11.12.0' >> $BASH_ENV
             echo 'nvm alias default v11.12.0' >> $BASH_ENV
       - run:
-          command: yarn
+          command: yarn && yarn run link
       - run:
           command:  |
             export NODE_ENV=$([ "${CIRCLE_BRANCH}" == "master" ] && echo "production" || echo "development")
@@ -45,7 +45,7 @@ jobs:
     steps:
       - checkout
       - run:
-          command: yarn
+          command: yarn && yarn run link
       - run:
           command: |
             export NODE_ENV=$([ "${CIRCLE_BRANCH}" == "master" ] && echo "production" || echo "development")
@@ -65,7 +65,7 @@ jobs:
     steps:
       - checkout
       - run:
-          command: yarn
+          command: yarn && yarn run link
       - run:
           command: |
             export NODE_ENV=$([ "${CIRCLE_BRANCH}" == "master" ] && echo "production" || echo "development")
