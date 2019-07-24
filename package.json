@@ -12,6 +12,7 @@
     "electron-rebuild": "electron-rebuild --parallel --force --types prod,dev,optional --module-dir app",
     "postinstall": "yarn run build-dll && electron-builder install-app-deps && node node_modules/fbjs-scripts/node/check-dev-engines.js package.json",
     "prestart": "yarn run build",
+    "link": "cd c-pac && yarn link && cd .. && yarn link @internal/c-pac",
     "start": "cross-env NODE_ENV=production electron ./app/",
     "dev:browser": "TARGET=browser yarn run dev:renderer",
     "dev:electron": "npm-run-all --parallel dev:renderer dev:electron-main",
@@ -156,7 +157,6 @@
   "dependencies": {
     "@bugsnag/js": "^5.1.0",
     "@bugsnag/plugin-react": "^5.1.0",
-    "@internal/c-pac": "file:./c-pac",
     "@material-ui/core": "^3.9.2",
     "@material-ui/icons": "^3.0.2",
     "devtron": "^1.4.0",
