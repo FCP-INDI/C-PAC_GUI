@@ -52,6 +52,7 @@ class PipelinePage extends Component {
 
   constructor(props) {
     super(props)
+
     const pipeline = this.props.pipeline
 
     if (!pipeline) {
@@ -116,7 +117,7 @@ class PipelinePage extends Component {
                       values.target.checked :
                       values.target.value
 
-      return this.handleChange([[name, value]])
+      return this.handleChange([[name, fromJS(value)]])
     }
 
     for (let [key, value] of values) {
