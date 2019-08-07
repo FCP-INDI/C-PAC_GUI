@@ -16,9 +16,6 @@ import Switch from '@material-ui/core/Switch';
 
 import Collapse from '@material-ui/core/Collapse';
 
-import getter from 'lodash.get';
-import setter from 'lodash.set';
-
 import Help from 'components/Help'
 import FormControlLabelled from 'components/FormControlLabelled'
 

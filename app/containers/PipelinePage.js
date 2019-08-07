@@ -26,9 +26,6 @@ import IconButton from '@material-ui/core/IconButton'
 import Tooltip from '@material-ui/core/Tooltip'
 import Drawer from '@material-ui/core/Drawer';
 
-import getter from 'lodash.get';
-import setter from 'lodash.set';
-
 import { fromJS } from 'immutable';
 
 import {
