@@ -119,7 +119,7 @@ class App extends React.Component {
   static mapDispatchToProps = {
     configLoad,
   }
-  
+
   static mapStateToProps = (state) => ({
     main: state.main,
   })
@@ -131,7 +131,7 @@ class App extends React.Component {
   componentDidMount() {
     this.props.configLoad()
   }
-  
+
   handleWipe = (e) => {
     localStorage.clear()
     window.location.href = '/'
@@ -164,7 +164,7 @@ class App extends React.Component {
         crumbs.push(
           <Button key={crumbs.length} size="small">
             <PipelineIcon className={classes.icon} />
-            { pipeline ? pipeline.get('name') : "Pipelines" }
+            {pipeline ? pipeline.get('name') : "Pipelines"}
           </Button>
         )
       }
@@ -177,7 +177,7 @@ class App extends React.Component {
             <HomeIcon className={classes.icon} />
             Home
           </Button>
-          { crumbs }
+          {crumbs}
           <div className={classes.crumbs}>
           </div>
           {/* <TheodoreList /> */}
@@ -206,9 +206,9 @@ class App extends React.Component {
             </Link>
             <div className={classes.headerFiller}></div>
             {
-              process.env.NODE_ENV === 'development' ? 
-              <Button onClick={this.handleWipe}><DeleteIcon /></Button> :
-              null
+              process.env.NODE_ENV === 'development' ?
+                <Button onClick={this.handleWipe}><DeleteIcon /></Button> :
+                null
             }
             <Button onClick={this.handleFeedbackOpen}><FeedbackIcon /></Button>
             <Modal open={this.state.feedback} onClose={this.handleFeedbackClose}>
@@ -219,10 +219,10 @@ class App extends React.Component {
           </header>
 
           <div className={classes.root}>
-            { this.renderBreadcrumbs() }
+            {this.renderBreadcrumbs()}
             <main className={classes.content}>
               <ErrorBoundary FallbackComponent={ItWentWrong}>
-                { main.has('config') ? this.props.children : "Loading..." }
+                {main.has('config') ? this.props.children : "Loading..."}
               </ErrorBoundary>
             </main>
           </div>
@@ -232,7 +232,7 @@ class App extends React.Component {
   }
 }
 
-const AppConnected = 
+const AppConnected =
   connect(App.mapStateToProps, App.mapDispatchToProps)(
     withStyles(App.styles, { withTheme: true })(
       App
@@ -243,7 +243,7 @@ class Shell extends React.Component {
   render() {
     return (
       <MuiThemeProvider theme={theme}>
-        <AppConnected {...this.props}>{ this.props.children }</AppConnected>
+        <AppConnected {...this.props}>{this.props.children}</AppConnected>
       </MuiThemeProvider>
     )
   }

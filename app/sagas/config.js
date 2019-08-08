@@ -23,6 +23,9 @@ import {
   PIPELINE_IMPORT
 } from '../actions/pipeline'
 
+import {
+  init as theodoreInit
+} from '../actions/theodore'
 
 // import { phenotype } from './config.data'
 import cpac from '@internal/c-pac';
@@ -36,11 +39,11 @@ async function getPipelineDefault() {
   return pipelineDefault;
 }
 
-function* loadConfig (action) {
+function* loadConfig(action) {
   yield put(configLoading(action));
 
   let initialState = null;
-  
+
   yield getPipelineDefault().then((template) => {
 
     const config = {
@@ -103,7 +106,7 @@ function* loadConfig (action) {
         //   }
         // }
       ],
-      schema: {pipeline: fromJS(cpacSchema)},
+      schema: { pipeline: fromJS(cpacSchema) },
       pipelines: [
         template
       ],
@@ -149,7 +152,7 @@ function* loadConfig (action) {
               type: 'FEAT',
               parameters: {
                 formula: 'Sex + Diagnosis + Age + MeanFD_Jenkinson + Custom_ROI_Mean',
-                
+
               }
             },
           ]
@@ -200,8 +203,8 @@ function* loadConfig (action) {
       console.log("Using initial state");
     } else {
       // Update default if necessary
-      if(!fromJS(template).equals(fromJS(initialState.pipelines[0]))) {
-        const pipelineIds = initialState.pipelines.map((p)=>p.id);
+      if (!fromJS(template).equals(fromJS(initialState.pipelines[0]))) {
+        const pipelineIds = initialState.pipelines.map((p) => p.id);
         let oldDefault = initialState.pipelines[0];
         if (oldDefault == undefined) {
           initialState.pipelines.push(template);
@@ -247,7 +250,7 @@ function* clearConfig(config) {
   yield put(configCleared(config))
 }
 
-export default function* configSaga () {
+export default function* configSaga() {
   yield all([
     takeEvery(CONFIG_LOAD, loadConfig),
     takeEvery(CONFIG_SAVE, saveConfig),
