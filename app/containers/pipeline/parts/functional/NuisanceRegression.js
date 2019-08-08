@@ -339,12 +339,12 @@ class NuisanceRegression extends Component {
                   'CerebrospinalFluid': 'Cerebrospinal Fluid'
                 }[t])).join(', ')}
               >
-                <MenuItem value="WhiteMatter">
-                  <Checkbox checked={regressor.getIn(['aCompCor', 'tissues'], fromJS(['WhiteMatter'])).indexOf('WhiteMatter') > -1} />
+                <MenuItem key="WhiteMatter" value="WhiteMatter">
+                  <Checkbox checked={regressor.getIn(['aCompCor', 'tissues'], fromJS([])).indexOf('WhiteMatter') > -1} />
                   <ListItemText primary={"White Matter"} />
                 </MenuItem>
-                <MenuItem value="CerebrospinalFluid">
-                  <Checkbox checked={regressor.getIn(['aCompCor', 'tissues'], fromJS(['WhiteMatter'])).indexOf('CerebrospinalFluid') > -1} />
+                <MenuItem key="CerebrospinalFluid" value="CerebrospinalFluid">
+                  <Checkbox checked={regressor.getIn(['aCompCor', 'tissues'], fromJS([])).indexOf('CerebrospinalFluid') > -1} />
                   <ListItemText primary={"Cerebrospinal Fluid"} />
                 </MenuItem>
               </Select>
@@ -612,7 +612,7 @@ class NuisanceRegression extends Component {
   render() {
     const { classes, configuration, onChange } = this.props
 
-    const regressors = configuration.getIn(["functional", "nuisance_regression", "regressors"]).map((r) => original.mergeDeep(r))
+    const regressors = configuration.getIn(["functional", "nuisance_regression", "regressors"]) // .map((r) => original.mergeDeep(r))
 
     let regressor = null
     if (this.state.editRegressor !== null) {
