@@ -48,10 +48,12 @@ import {
 import Logo from 'resources/logo.png'
 
 
-const bugsnagClient = bugsnag('ed924a7990f8305f7bb59bc050b92239')
-bugsnagClient.use(bugsnagReact, React)
-
-const ErrorBoundary = bugsnagClient.getPlugin('react')
+let ErrorBoundary = ({ children }) => children
+if (process.env.NODE_ENV === 'production') {
+  const bugsnagClient = bugsnag('ed924a7990f8305f7bb59bc050b92239')
+  bugsnagClient.use(bugsnagReact, React)
+  ErrorBoundary = bugsnagClient.getPlugin('react')
+}
 
 
 class App extends React.Component {
@@ -116,10 +118,10 @@ class App extends React.Component {
     this.props.configLoad()
   }
   
-  // handleWipe = (e) => {
-  //   localStorage.clear()
-  //   window.location.href = '/'
-  // }
+  handleWipe = (e) => {
+    localStorage.clear()
+    window.location.href = '/'
+  }
 
   handleSettingsAdvanced = (e) => {
     this.props.settingsUpdate(
@@ -142,21 +144,6 @@ class App extends React.Component {
     const place = this.props.location.pathname.substr(1).split('/')
     const crumbs = []
     for (let i = 0; i < place.length; i++) {
-      // if (place[i] == "projects") {
-      //   if (i + 1 < place.length) {
-      //     project = config.projects[place[++i]]
-      //   }
-
-      //   crumbs.push(
-      //     <NextIcon key={crumbs.length} />
-      //   )
-      //   crumbs.push(
-      //     <Button key={crumbs.length} size="small" component={Link} to={`/projects/${project ? project.id : ''}`}>
-      //       <ProjectIcon className={classes.icon} />
-      //       { project ? project.name : "Projects" }
-      //     </Button>
-      //   )
-      // }
       if (place[i] == "pipelines") {
 
         if (i + 1 < place.length) {
@@ -166,7 +153,6 @@ class App extends React.Component {
         crumbs.push(
           <NextIcon key={crumbs.length} />
         )
-        // component={Link} to={`/pipelines/${ pipeline ? pipeline.get('id') : '' }`}
         crumbs.push(
           <Button key={crumbs.length} size="small">
             <PipelineIcon className={classes.icon} />
@@ -219,7 +205,11 @@ class App extends React.Component {
             <img src={Logo} />
           </Link>
           <div className={classes.headerFiller}></div>
-          {/* <Button onClick={this.handleWipe}><DeleteIcon /></Button> */}
+          {
+            process.env.NODE_ENV === 'development' ? 
+            <Button onClick={this.handleWipe}><DeleteIcon /></Button> :
+            null
+          }
           <Button onClick={this.handleFeedbackOpen}><FeedbackIcon /></Button>
           <Modal open={this.state.feedback} onClose={this.handleFeedbackClose}>
             <div className={classes.feedback}>
@@ -231,15 +221,9 @@ class App extends React.Component {
         <div className={classes.root}>
           { this.renderBreadcrumbs() }
           <main className={classes.content}>
-            {
-              process.env.NODE_ENV === 'production' ? (
-                <ErrorBoundary FallbackComponent={ItWentWrong}>
-                  { main.has('config') ? this.props.children : "Loading..." }
-                </ErrorBoundary>
-              ) : (
-                main.has('config') ? this.props.children : "Loading..."
-              )
-            }
+            <ErrorBoundary FallbackComponent={ItWentWrong}>
+              { main.has('config') ? this.props.children : "Loading..." }
+            </ErrorBoundary>
           </main>
         </div>
       </div>
