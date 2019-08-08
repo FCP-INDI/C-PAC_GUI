@@ -44,7 +44,7 @@ class HeaderText extends Component {
 
   static styles = theme => ({
     root: {
-      padding: `0 ${theme.spacing.unit * 2}px`
+      padding: `0 ${theme.spacing(2)}px`
     },
   });
 
@@ -92,7 +92,7 @@ class HeaderTools extends Component {
 
   static styles = theme => ({
     root: {
-      padding: `0 ${theme.spacing.unit * 2}px`
+      padding: `0 ${theme.spacing(2)}px`
     },
   });
 

@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-
 import { withStyles } from '@material-ui/core';
 
 
@@ -22,4 +21,8 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = {
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(withStyles(TemplatePage.styles)(TemplatePage));
+export default connect(mapStateToProps, mapDispatchToProps)(
+    withStyles(TemplatePage.styles)(
+        TemplatePage
+    )
+);

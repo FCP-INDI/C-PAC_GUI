@@ -1,7 +1,7 @@
 import { createStore, applyMiddleware, compose } from 'redux'
 import { createHashHistory } from 'history'
 import createSagaMiddleware from 'redux-saga'
-import { routerMiddleware, routerActions } from 'react-router-redux'
+import { routerMiddleware } from 'connected-react-router'
 import { createLogger } from 'redux-logger'
 import rootReducer from '../reducers'
 import rootSaga from '../sagas'
@@ -16,31 +16,21 @@ const logger = createLogger({
 })
 
 export const configureStore = (initialState) => {
-  const middleware = []
-  const enhancers = []
-
-  if (process.env.NODE_ENV !== 'test') {
-    middleware.push(logger)
-  }
-
-  middleware.push(router)
-  middleware.push(sagaMiddleware)
-
-  enhancers.push(applyMiddleware(...middleware))
-
-  const actionCreators = {
-    ...routerActions,
-  }
-
   const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__
-    ? window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__({
-      actionCreators,
-    })
+    ? window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__
     : compose
 
-  const enhancer = composeEnhancers(...enhancers)
-
-  const store = createStore(rootReducer, initialState, enhancer)
+  const store = createStore(
+    rootReducer(history),
+    initialState,
+    composeEnhancers(
+      applyMiddleware(...[
+        ...(process.env.NODE_ENV !== 'test' ? [logger] : []),
+        router,
+        sagaMiddleware,
+      ])
+    )
+  )
 
   let sagaTask = sagaMiddleware.run(rootSaga)
 

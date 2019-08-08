@@ -10,11 +10,13 @@ import HomePage from './containers/HomePage'
 import PipelinePage from './containers/PipelinePage'
 import DatasetPage from './containers/DatasetPage'
 
-const GACode = process.env.NODE_ENV === 'production' ? 'UA-19224662-10' : ''
-ReactGA.initialize(GACode, {
-  debug: process.env.NODE_ENV !== 'production',
-})
-ReactGA.set({ aip: 1 });
+if (process.env.NODE_ENV === 'production') {
+  const GACode = 'UA-19224662-10'
+  ReactGA.initialize(GACode, {
+    debug: process.env.NODE_ENV !== 'production',
+  })
+  ReactGA.set({ aip: 1 });
+}
 
 export class TemplatePage extends Component {
 

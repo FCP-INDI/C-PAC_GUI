@@ -7,7 +7,7 @@ import { configLoad, settingsUpdate } from '../actions/main'
 import bugsnag from '@bugsnag/js'
 import bugsnagReact from '@bugsnag/plugin-react'
 
-import classNames from 'classnames';
+import classNames from 'clsx';
 import { withStyles, typography } from '@material-ui/core/styles';
 
 import AppBar from '@material-ui/core/AppBar';
@@ -29,9 +29,11 @@ import Switch from '@material-ui/core/Switch';
 
 import Help from 'components/Help'
 import ItWentWrong from 'containers/ItWentWrong'
+// import TheodoreList from 'containers/TheodoreList'
 
 import {
   HomeIcon,
+  DeleteIcon,
   NextIcon,
   PipelineIcon,
   SubjectIcon,
@@ -84,16 +86,16 @@ class App extends React.Component {
     },
     content: {
       overflow: 'auto',
-      padding: theme.spacing.unit,
+      padding: theme.spacing(),
       [theme.breakpoints.up('md')]: {
-        padding: theme.spacing.unit * 3,
+        padding: theme.spacing(3),
       },
       backgroundColor: theme.palette.background.default,
       flexGrow: 1,
     },
 
     icon: {
-      marginRight: theme.spacing.unit,
+      marginRight: theme.spacing(),
     },
     singleIcon: {
       marginRight: 0,
@@ -113,6 +115,11 @@ class App extends React.Component {
   componentDidMount() {
     this.props.configLoad()
   }
+  
+  // handleWipe = (e) => {
+  //   localStorage.clear()
+  //   window.location.href = '/'
+  // }
 
   handleSettingsAdvanced = (e) => {
     this.props.settingsUpdate(
@@ -179,6 +186,8 @@ class App extends React.Component {
           { crumbs }
           <div className={classes.crumbs}>
           </div>
+          {/* <TheodoreList /> */}
+          {/*
           <AdvancedConfigIcon color={ config.getIn(['settings', 'advanced']) ? "secondary": "disabled" } />
           <Switch
             checked={config.getIn(['settings', 'advanced'])}
@@ -186,6 +195,7 @@ class App extends React.Component {
             color="primary"
           />
           <Help help={`Enable advanced options.`} style={{ padding: 0 }} />
+          */}
         </Toolbar>
       </AppBar>
     )
@@ -209,6 +219,7 @@ class App extends React.Component {
             <img src={Logo} />
           </Link>
           <div className={classes.headerFiller}></div>
+          {/* <Button onClick={this.handleWipe}><DeleteIcon /></Button> */}
           <Button onClick={this.handleFeedbackOpen}><FeedbackIcon /></Button>
           <Modal open={this.state.feedback} onClose={this.handleFeedbackClose}>
             <div className={classes.feedback}>
@@ -220,9 +231,15 @@ class App extends React.Component {
         <div className={classes.root}>
           { this.renderBreadcrumbs() }
           <main className={classes.content}>
-            <ErrorBoundary FallbackComponent={ItWentWrong}>
-              { main.has('config') ? this.props.children : "Loading..." }
-            </ErrorBoundary>
+            {
+              process.env.NODE_ENV === 'production' ? (
+                <ErrorBoundary FallbackComponent={ItWentWrong}>
+                  { main.has('config') ? this.props.children : "Loading..." }
+                </ErrorBoundary>
+              ) : (
+                main.has('config') ? this.props.children : "Loading..."
+              )
+            }
           </main>
         </div>
       </div>

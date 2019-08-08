@@ -21,8 +21,8 @@ import {
 class DerivativesPage extends Component {
   static styles = theme => ({
     divider: {
-      margin: theme.spacing.unit,
-      marginBottom: theme.spacing.unit * 3,
+      margin: theme.spacing(),
+      marginBottom: theme.spacing(3),
     },
     sectionTitle: {
       paddingTop: 10

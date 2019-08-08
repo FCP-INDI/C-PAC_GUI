@@ -162,7 +162,7 @@ class NuisanceRegression extends Component {
     content: { padding: 0, minHeight: 10, margin: 0 },
     details: { padding: '0 10px 0 10px', minHeight: 10 },
     details_box: { margin: 0 },
-    footer: { textAlign: 'right', padding: theme.spacing.unit * 2 }
+    footer: { textAlign: 'right', padding: theme.spacing(2) }
   });
 
   handleEdit = (regi) => {
