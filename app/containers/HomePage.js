@@ -52,7 +52,7 @@ class HomePage extends Component {
     const { classes, pipelines } = this.props
 
     return (
-      <Grid container spacing={8}>
+      <Grid container>
         <Grid item md={8} sm={12} className={classes.cell}>
           <Box title="Pipelines"
               avatar={<PipelineIcon />}

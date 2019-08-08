@@ -11,7 +11,7 @@ export default createMuiTheme({
   },
   props: {
     MuiGrid: {
-      spacing: 8
+      spacing: 2
     }
   },
   overrides: {

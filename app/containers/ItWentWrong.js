@@ -59,7 +59,7 @@ class ItWentWrong extends Component {
     const { classes, projects, pipelines, datasets } = this.props
 
     return (
-      <Grid container spacing={8}>
+      <Grid container>
         <Grid item md={12} sm={12} className={classes.cell}>
           <Box title="Something went wrong!"
                avatar={<HelpIcon />}

@@ -80,7 +80,7 @@ class ExecutionList extends Component {
             </Button>
           </DialogActions>
         </Dialog>
-        <Grid container spacing={8}>
+        <Grid container>
           {
             pipelines && pipelines.map((pipeline) => (
               <Grid item key={pipeline.get('id')}>
