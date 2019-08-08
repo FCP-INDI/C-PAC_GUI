@@ -1,14 +1,12 @@
 import configSaga from './config';
-// import environmentSaga from './environment';
-// import dockerSaga from './docker';
+import theodoreSaga from './theodore';
 
 import { all } from 'redux-saga/effects'
 
 function* rootSaga () {
     yield all([
       configSaga(),
-      // environmentSaga(),
-      // dockerSaga()
+      theodoreSaga(),
     ])
   }
 

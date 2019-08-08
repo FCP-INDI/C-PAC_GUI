@@ -20,8 +20,10 @@ import {
   PIPELINE_DOWNLOAD
 } from '../actions/pipeline'
 
+import {
+  init as theodoreInit
+} from '../actions/theodore'
 
-// import { phenotype } from './config.data'
 import cpac from '@internal/c-pac'
 
 function* loadConfig (action) {
@@ -174,36 +176,37 @@ function* loadConfig (action) {
     // ]
   }
 
-  let initialState = null
+  let localState = null
   try {
-    initialState = JSON.parse(localStorage.getItem('state'))
+    localState = JSON.parse(localStorage.getItem('state'))
   } catch (e) {
   }
 
-  if (!initialState) {
-    initialState = config
+  if (!localState) {
+    localState = config
     localStorage.setItem('state', JSON.stringify(config))
     console.log("Using initial state")
   } else {
     console.log("Using local state")
   }
 
-  if (!initialState.executions) {
-    initialState.executions = []
-    localStorage.setItem('state', JSON.stringify(initialState))
+  if (!localState.executions) {
+    localState.executions = []
+    localStorage.setItem('state', JSON.stringify(localState))
   }
 
-  if (initialState.pipelines) {
-    initialState.pipelines = initialState.pipelines.map(cpac.pipeline.normalize)
-    localStorage.setItem('state', JSON.stringify(initialState))
+  if (localState.pipelines) {
+    localState.pipelines = localState.pipelines.map(cpac.pipeline.normalize)
+    localStorage.setItem('state', JSON.stringify(localState))
   }
 
-  if (!initialState.version) {
-    initialState.version = VERSION
-    localStorage.setItem('state', JSON.stringify(initialState))
+  if (!localState.version) {
+    localState.version = VERSION
+    localStorage.setItem('state', JSON.stringify(localState))
   }
 
-  yield put(configLoaded(initialState))
+  yield put(configLoaded(localState))
+  yield put(theodoreInit())
 }
 
 function* saveConfig() {
