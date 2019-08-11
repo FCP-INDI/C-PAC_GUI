@@ -1,25 +1,33 @@
 import { eventChannel } from 'redux-saga'
 import { fetch as realFetch } from 'whatwg-fetch'
 
-export function websocketChannel(wsURI, message_type, cancel_type) {
+export function scheduler(action, scheduler) {
+  return (act) => act.type === action && act.scheduler === scheduler
+}
+
+export function websocketChannel(scheduler, ws, message_type, cancel_type) {
   return eventChannel(emitter => {
-    const ws = new WebSocket(wsURI) 
     ws.onmessage = m => {
-      const data = JSON.parse(m.data)
-      return emitter({
-        type: message_type,
-        data,
-      })
+      const message = JSON.parse(m.data)
+      return emitter(
+        message_type instanceof Function ?
+          message_type(scheduler) :
+          { type: message_type, scheduler, message }
+        )
     }
     ws.onerror = () => {
-      return emitter({
-        type: cancel_type,
-      })
+      return emitter(
+        cancel_type instanceof Function ?
+          cancel_type(scheduler) :
+          { type: cancel_type, scheduler }
+        )
     }
     ws.onclose = () => {
-      return emitter({
-        type: cancel_type,
-      })
+      return emitter(
+        cancel_type instanceof Function ?
+          cancel_type(scheduler) :
+          { type: cancel_type, scheduler }
+      )
     }
     return () => {
       ws.close()
@@ -31,7 +39,11 @@ export async function fetch(url, init) {
   try {
     let response = await realFetch(url, init)
     if (response.ok) {
-      return { response: await response.json() }
+      if (response.headers.get('content-type').startsWith('application/json')) {
+        return { response: await response.json() }
+      } else {
+        return { response: await response.text() }
+      }
     } else {
       var error = new Error(response.statusText)
       error.response = response

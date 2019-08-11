@@ -4,38 +4,53 @@ import deepmerge from 'deepmerge'
 
 import { slugify, clone } from './utils'
 
-import { default as defaultTemplate } from './resources/data_settings/config'
-import yamlTemplate, { raw } from './resources/data_settings/yaml'
-
-const template = parse(raw)
-template.subjectListName = 'Default'
-template.outputSubjectListLocation = '.'
-
-export { yamlTemplate, template, raw as rawTemplate }
-
 export function parse(content) {
-  const settings = yaml.safeLoad(content)
+  const subjectSets = yaml.safeLoad(content)
 
-  const t = clone(defaultTemplate)
-  const newver = `${new Date().getTime()}`
-  t.versions[newver] = t.versions['default']
-  delete t.versions['default']
-  const c = t.versions[newver].configuration
+  const hasUniqueId = subjectSets.every((t) => !!t.unique_id)
+  const hasSiteId = subjectSets.every((t) => !!t.site)
 
-  t.name = (settings.subjectListName || '').trim()
-
-  if (typeof settings.dataFormat === 'string') {
-    settings.dataFormat = [settings.dataFormat]
+  if (!subjectSets.every((t) => !!t.subject_id)) {
+    throw Error('Some subjects do not have subject_id.')
   }
 
-  if (!settings.dataFormat.includes('BIDS')) {
-    throw new Error('Only BIDS format is supported.')
+  if (
+    subjectSets.some((t) => !!t.unique_id) &&
+    !hasUniqueId
+  ) {
+    throw Error('Some subjects do not have unique_id.')
   }
 
-  c.format = 'BIDS'
-  c.options.base = (settings.bidsBaseDir || '').replace(/\/$/, '')
+  if (
+    subjectSets.some((t) => !!t.site) &&
+    !hasSiteId
+  ) {
+    throw Error('Some subjects do not have site.')
+  }
 
-  return t
+  const sites = []
+  const subject_ids = []
+  const unique_ids = []
+  const sets = {}
+  for(let set of subjectSets) {
+    const { anat, func, site, subject_id, unique_id=null } = set
+    if (!(subject_id in sets)) {
+      sets[subject_id] = {}
+    }
+    sets[subject_id][unique_id] = { 
+      anatomical: anat, functionals: func, site 
+    }
+    sites.push(site)
+    unique_ids.push(unique_id)
+    subject_ids.push(subject_id)
+  }
+
+  return {
+    sets,
+    sites: [...new Set(sites)],
+    unique_ids: [...new Set(unique_ids)],
+    subject_ids: [...new Set(subject_ids)],
+  }
 }
 
 export function dump(data_settings, version='0') {

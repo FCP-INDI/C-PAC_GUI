@@ -2,6 +2,8 @@ import yaml from 'js-yaml'
 import semver from 'semver'
 import deepmerge from 'deepmerge'
 
+import { slugify, clone } from './utils'
+
 import { default as defaultTemplate } from './resources/pipeline/config'
 import yamlTemplate, { raw } from './resources/pipeline/yaml'
 
@@ -9,19 +11,6 @@ const template = parse(raw)
 template.name = 'Default'
 
 export { yamlTemplate, template, raw as rawTemplate }
-
-function slugify(text) {
-  return text.toString().toLowerCase()
-    .replace(/\s+/g, '-')           // Replace spaces with -
-    .replace(/[^\w\-]+/g, '')       // Remove all non-word chars
-    .replace(/\-\-+/g, '-')         // Replace multiple - with single -
-    .replace(/^-+/, '')             // Trim - from start of text
-    .replace(/-+$/, '');            // Trim - from end of text
-}
-
-function clone(obj) {
-  return JSON.parse(JSON.stringify(obj))
-}
 
 export function normalize(pipeline) {
 
@@ -219,7 +208,6 @@ function normalizeValues(config) {
     return config
   }
 }
-
 
 export function parse(content) {
   const config = normalizeValues(yaml.safeLoad(content))

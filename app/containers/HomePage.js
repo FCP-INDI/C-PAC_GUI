@@ -8,9 +8,8 @@ import Grid from '@material-ui/core/Grid'
 import Paper from '@material-ui/core/Paper'
 import Modal from '@material-ui/core/Modal'
 
-// import GroupAnalysisList from 'containers/GroupAnalysisList'
-// import ExecutionListTools from 'containers/ExecutionListTools.platform'
 
+import DatasetList from 'containers/DatasetList'
 import PipelineList from 'containers/PipelineList'
 import PipelineListTools from 'containers/PipelineListTools.platform'
 
@@ -22,6 +21,7 @@ import Box from 'components/Box'
 
 import {
   PipelineIcon,
+  DatasetIcon,
   GroupIcon,
   RunIcon,
   HelpIcon,
@@ -54,21 +54,24 @@ class HomePage extends Component {
     return (
       <Grid container>
         <Grid item md={8} sm={12} className={classes.cell}>
-          <Box title="Pipelines"
-              avatar={<PipelineIcon />}
-              tools={<PipelineListTools />}
-              className={classes.expand}>
-            <PipelineList />
-          </Box>
+          <Grid container>
+            <Grid item xs={12} className={classes.cell}>
+              <Box title="Pipelines"
+                  avatar={<PipelineIcon />}
+                  tools={<PipelineListTools />}
+                  className={classes.expand}>
+                <PipelineList />
+              </Box>
+            </Grid>
+            <Grid item xs={12} className={classes.cell}>
+              <Box title="Datasets"
+                  avatar={<DatasetIcon />}
+                  className={classes.expand}>
+                <DatasetList />
+              </Box>
+            </Grid>
+          </Grid>
         </Grid>
-        {/* <Grid item md={8} sm={12} className={classes.cell}>
-          <Box title="Executions"
-              avatar={<RunIcon />}
-              tools={<ExecutionListTools />}
-              className={classes.expand}>
-            <PipelineList />
-          </Box>
-        </Grid> */}
         <Grid item md={4} sm={12} className={classes.cell}>
           <Box title="About C-PAC"
                avatar={<HelpIcon />}
@@ -92,14 +95,6 @@ class HomePage extends Component {
             </Typography>
           </Box>
         </Grid>
-        {/* <Grid item md={8} sm={12} className={classes.cell}>
-          <Box title="Group Analyses"
-              avatar={<GroupIcon />}
-              tools={<PipelineListTools />}
-              className={classes.expand}>
-            <GroupAnalysisList />
-          </Box>
-        </Grid> */}
       </Grid>
     )
   }

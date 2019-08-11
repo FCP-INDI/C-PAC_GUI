@@ -1,24 +1,18 @@
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
+import React, { Component } from 'react'
+import { connect } from 'react-redux'
+import { withStyles } from '@material-ui/core'
 
-import {
-  pipelineConfigUpdate,
-  pipelineNameUpdate,
-} from '../actions/main'
+import Grid from '@material-ui/core/Grid'
+import DatasetSettingsEditor from '../components/dataset/DatasetSettingsEditor'
+import Header, { HeaderText, HeaderAvatar, HeaderTools } from '../components/Header'
+import Content from '../components/Content'
+import Box from '../components/Box'
 
-import { withStyles } from '@material-ui/core';
-
-import Grid from '@material-ui/core/Grid';
-import DatasetSettingsEditor from '../components/dataset/DatasetSettingsEditor';
-import Header, { HeaderText, HeaderAvatar, HeaderTools } from '../components/Header';
-import Content from '../components/Content';
-import Box from '../components/Box';
-
-import Tabs from '@material-ui/core/Tabs';
-import Tab from '@material-ui/core/Tab';
-import Paper from '@material-ui/core/Paper';
-import Button from '@material-ui/core/Button';
-import TextField from '@material-ui/core/TextField';
+import Tabs from '@material-ui/core/Tabs'
+import Tab from '@material-ui/core/Tab'
+import Paper from '@material-ui/core/Paper'
+import Button from '@material-ui/core/Button'
+import TextField from '@material-ui/core/TextField'
 import IconButton from '@material-ui/core/IconButton'
 
 import {
@@ -30,7 +24,11 @@ import {
   SaveIcon,
   RevertIcon,
   EditIcon
-} from '../components/icons';
+} from '../components/icons'
+
+import {
+  dataSettingsGenerateDataConfig
+} from '../actions/dataset'
 
 
 class DatasetPage extends Component {
@@ -40,87 +38,14 @@ class DatasetPage extends Component {
       padding: 20,
       marginTop: 20,
     }
-  });
-
-  constructor(props) {
-    super(props)
-    const dataset = this.props.dataset
-    this.state = {
-      settings: dataset.settings
-    }
-  }
-
-  handleChange = (name, value) => {
-    let configuration = this.state.configuration
-
-    if (!name) {
-      for (let newName in value) {
-        setter(configuration, newName, value[newName]);
-      }
-    } else {
-      setter(configuration, name, value);
-    }
-
-    this.setState({ configuration })
-  }
-
-  handleSave = (name, value) => {
-    this.props.pipelineConfigUpdate(this.props.dataset.id, name, value)
-  };
-
-  handleTitleHover = () => {
-    this.setState(this.toggleTitleHoverState);
-  }
-
-  handleTitleClick = () => {
-    this.setState({
-      isTitleEditing: true
-    });
-  }
-
-  handleTitleSaveClick = () => {
-    const name = this.title.value
-    this.props.pipelineNameUpdate(this.props.dataset.id, name)
-    this.setState({
-      isTitleEditing: false
-    });
-  }
-
-  toggleTitleHoverState(state) {
-    return {
-      isTitleHovering: !state.isTitleHovering,
-    };
-  }
-
-  renderTitle(dataset) {
-    return this.state.isTitleEditing ? (
-      <React.Fragment>
-        <TextField
-          label="Dataset Name"
-          defaultValue={dataset.name}
-          inputRef={(input) => { this.title = input; }}
-          margin="none" variant="outlined"
-          helperText=''
-          style={{
-            marginTop: 0,
-            marginBottom: 0
-          }}
-        />
-        <IconButton onClick={this.handleTitleSaveClick}>
-          <SaveIcon />
-        </IconButton>
-      </React.Fragment>
-    ) : (
-      <div
-        onMouseEnter={this.handleTitleHover}
-        onMouseLeave={this.handleTitleHover}
-        onClick={this.handleTitleClick}
-        style={{
-          cursor: 'pointer',
-          padding: '12.5px 0' // esoteric number
-        }}
-      >{ dataset.name }</div>
-    )
+  })
+  
+  handleGenerateDataConfig = () => {
+    this.props.dataSettingsGenerateDataConfig({
+      dataset: this.props.dataset.get('id'),
+      dataSettings: this.props.dataset,
+      version: this.props.version,
+    })
   }
 
   render() {
@@ -146,30 +71,44 @@ class DatasetPage extends Component {
     )
 
     return (
-      <Box title={this.renderTitle(dataset)}
+      <Box title={dataset.get('name')}
            avatar={<DatasetIcon />}
            tools={tools}>
-        {
-          this.state.settings ?
-          <DatasetSettingsEditor settings={this.state.settings} onChange={this.handleChange} onSave={this.handleSave} />:
-          null
-        }
+
+        <Button onClick={this.handleGenerateDataConfig}>Generate</Button>
+
+        <p>{ dataset.get('data') ? dataset.getIn(['data', 'sites']).toJS().join(', ') : null }</p>
+
+        <p>{ dataset.get('data') ? `${dataset.getIn(['data', 'subject_ids']).size} subjects` : null }</p>
+
       </Box>
-    );
+    )
   }
 }
 
 const mapStateToProps = (state, props) => {
-  const { match: { params: { dataset } } } = props
+  const { match: { params: { dataset: id } } } = props
+
+  if (!state.main.get('config')) {
+    return {
+      dataset: null
+    }
+  }
+
+  const dataset = state.dataset.getIn(['datasets']).find((p) => p.get('id') == id)
+  const version = dataset.get('versions').keySeq().max()
 
   return {
-    dataset: state.main.config.datasets.find((p) => p.id == dataset)
+    dataset,
+    version,
+    configuration: dataset.getIn(['versions', version, 'configuration']),
   }
 }
 
 const mapDispatchToProps = {
+  dataSettingsGenerateDataConfig,
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(
   withStyles(DatasetPage.styles)(DatasetPage)
-);
+)

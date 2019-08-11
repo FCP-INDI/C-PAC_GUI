@@ -1,11 +1,16 @@
 export const THEODORE_INIT = 'THEODORE_INIT'
 export const THEODORE_INIT_DONE = 'THEODORE_INIT_DONE'
 
-export const THEODORE_SCHEDULER_POLLING = 'THEODORE_SCHEDULER_POLLING'
+export const THEODORE_SCHEDULER_CALL = 'THEODORE_SCHEDULER_CALL'
 
-export const THEODORE_SCHEDULER_WATCH = 'THEODORE_SCHEDULER_WATCH'
-export const THEODORE_SCHEDULER_WATCH_CANCEL = 'THEODORE_SCHEDULER_WATCH_CANCEL'
-export const THEODORE_SCHEDULER_WATCH_MESSAGE = 'THEODORE_SCHEDULER_WATCH_MESSAGE'
+export const THEODORE_SCHEDULER_POLLING = 'THEODORE_SCHEDULER_POLLING'
+export const THEODORE_SCHEDULER_POLLING_CANCEL = 'THEODORE_SCHEDULER_POLLING_CANCEL'
+
+export const THEODORE_SCHEDULER_CONNECT = 'THEODORE_SCHEDULER_CONNECT'
+export const THEODORE_SCHEDULER_CONNECT_CANCEL = 'THEODORE_SCHEDULER_CONNECT_CANCEL'
+export const THEODORE_SCHEDULER_CONNECT_MESSAGE = 'THEODORE_SCHEDULER_CONNECT_MESSAGE'
+export const THEODORE_SCHEDULER_CONNECT_SEND = 'THEODORE_SCHEDULER_CONNECT_SEND'
+export const THEODORE_SCHEDULER_CONNECT_SEND_CALLBACK = 'THEODORE_SCHEDULER_CONNECT_SEND_CALLBACK'
 
 export const THEODORE_SCHEDULER_DETECT = 'THEODORE_SCHEDULER_DETECT'
 export const THEODORE_SCHEDULER_DETECT_WAIT = 'THEODORE_SCHEDULER_DETECT_WAIT'
@@ -21,29 +26,31 @@ export function init() {
   }
 }
 
-export function detect(server) {
+export function detect(scheduler) {
   return {
     type: THEODORE_SCHEDULER_DETECT,
-    server,
+    scheduler,
   }
 }
 
-export function polling() {
+export function polling(scheduler) {
   return {
     type: THEODORE_SCHEDULER_POLLING,
+    scheduler,
   }
 }
 
-export function watch(server) {
+export function watch(scheduler) {
   return {
-    type: THEODORE_SCHEDULER_WATCH,
-    server,
+    type: THEODORE_SCHEDULER_CONNECT,
+    scheduler,
   }
 }
 
-export function watchCancel() {
+export function watchCancel(scheduler) {
   return {
-    type: THEODORE_SCHEDULER_WATCH_CANCEL
+    type: THEODORE_SCHEDULER_CONNECT_CANCEL,
+    scheduler,
   }
 }
 
