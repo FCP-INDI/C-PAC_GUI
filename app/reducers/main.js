@@ -63,7 +63,7 @@ export default function main(state, action) {
 
     case PIPELINE_NAME_UPDATE: {
       const { pipeline: id, name } = action
-      const i = state.getIn(['config', 'pipelines']).findIndex((p) => p.id == id)
+      const i = state.getIn(['config', 'pipelines']).findIndex((p) => p.get('id') === id)
 
       return state.setIn([
         'config', 'pipelines', i, 'name'

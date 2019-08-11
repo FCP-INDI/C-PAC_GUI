@@ -13,7 +13,14 @@ import {
 } from '../actions/main'
 
 import {
+<<<<<<< HEAD
   PIPELINE_DELETE,
+=======
+  DATASET_CONFIG_LOADED,
+} from '../actions/dataset'
+
+import {
+>>>>>>> f2a1340 (theo data-config generation! and some other stuff)
   PIPELINE_NAME_UPDATE,
   PIPELINE_DUPLICATE,
   PIPELINE_VERSION_DIRTY_UPDATE,
@@ -27,12 +34,23 @@ import {
   init as theodoreInit
 } from '../actions/theodore'
 
+<<<<<<< HEAD
 // import { phenotype } from './config.data'
 import cpac from '@internal/c-pac';
 import { getDefaultPipeline, defaultPipelineUrl } from '@internal/c-pac/pipeline';
 import cpacSchema from '@internal/c-pac/resources/pipeline/schema.json';
 
 import { fromJS } from 'immutable';
+=======
+import {
+  datasets
+} from './config.dataset'
+
+import cpac from '@internal/c-pac'
+
+function* loadConfig (action) {
+  yield put(configLoading(action))
+>>>>>>> f2a1340 (theo data-config generation! and some other stuff)
 
 async function getPipelineDefault() {
   const pipelineDefault = await getDefaultPipeline(defaultPipelineUrl);
@@ -42,6 +60,7 @@ async function getPipelineDefault() {
 function* loadConfig(action) {
   yield put(configLoading(action));
 
+<<<<<<< HEAD
   let initialState = null;
 
   yield getPipelineDefault().then((template) => {
@@ -191,6 +210,9 @@ function* loadConfig(action) {
       //   },
       // ]
     }
+=======
+    datasets,
+>>>>>>> f2a1340 (theo data-config generation! and some other stuff)
 
     try {
       initialState = JSON.parse(localStorage.getItem('state'))
@@ -221,6 +243,7 @@ function* loadConfig(action) {
       console.log("Using local state");
     }
 
+<<<<<<< HEAD
     if (!initialState.executions) {
       initialState.executions = []
       localStorage.setItem('state', JSON.stringify(initialState))
@@ -237,6 +260,48 @@ function* loadConfig(action) {
   });
 
   yield put(configLoaded(initialState));
+=======
+  }
+
+  let localState = null
+  try {
+    localState = JSON.parse(localStorage.getItem('state'))
+  } catch (e) {
+  }
+
+  if (!localState) {
+    localState = config
+    localStorage.setItem('state', JSON.stringify(config))
+    console.log("Using initial state")
+  } else {
+    console.log("Using local state")
+  }
+
+  if (!localState.executions) {
+    localState.executions = []
+    localStorage.setItem('state', JSON.stringify(localState))
+  }
+
+  if (localState.pipelines) {
+    localState.pipelines = localState.pipelines.map(cpac.pipeline.normalize)
+    localStorage.setItem('state', JSON.stringify(localState))
+  }
+
+  if (!localState.version) {
+    localState.version = VERSION
+    localStorage.setItem('state', JSON.stringify(localState))
+  }
+
+  yield put({
+    type: DATASET_CONFIG_LOADED,
+    config: localState.datasets
+  })
+
+  delete localState.datasets
+
+  yield put(configLoaded(localState))
+  yield put(theodoreInit())
+>>>>>>> f2a1340 (theo data-config generation! and some other stuff)
 }
 
 function* saveConfig() {
