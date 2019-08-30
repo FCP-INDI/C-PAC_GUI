@@ -281,6 +281,18 @@ export function parse(content) {
   c.anatomical.registration.methods.ants.configuration.skull_on = config.regWithSkull.includes(1)
   c.anatomical.registration.methods.ants.configuration.lesion_mask = config.use_lesion_mask.includes(1)
 
+  switch (config.anatRegANTSinterpolation) {
+    case 'LanczosWindowedSinc':
+      c.anatomical.registration.methods.ants.interpolation = 'sinc'
+      break;
+    case 'Linear':
+      c.anatomical.registration.methods.ants.interpolation = 'linear'
+      break;
+    case 'BSpline':
+      c.anatomical.registration.methods.ants.interpolation = 'spline'
+      break;
+  }
+  
   if (config.regOption.includes("FSL")) {
     c.anatomical.registration.methods.fsl.enabled = true
   }
@@ -291,7 +303,19 @@ export function parse(content) {
     config.ref_mask
       .replace("${resolution_for_anat}", "${pipeline.anatomical.registration.resolution}mm")
       .replace("$FSLDIR", "${environment.paths.fsl_dir}")
-
+  
+  switch (config.anatRegFSLinterpolation) {
+    case 'sinc':
+      c.anatomical.registration.methods.fsl.interpolation = 'sinc'
+      break;
+    case 'trilinear':
+      c.anatomical.registration.methods.fsl.interpolation = 'linear'
+      break;
+    case 'spline':
+      c.anatomical.registration.methods.fsl.interpolation = 'spline'
+      break;
+  }
+  
   c.anatomical.tissue_segmentation.enabled = config.runSegmentationPreprocessing.includes(1)
 
   let priors_path = ''
@@ -338,6 +362,33 @@ export function parse(content) {
   c.functional.template_registration.enabled = config.runRegisterFuncToMNI.includes(1)
   c.functional.template_registration.functional_resolution = config.resolution_for_func_preproc.replace("mm", "")
   c.functional.template_registration.derivative_resolution = config.resolution_for_func_derivative.replace("mm", "")
+
+  if (config.regOption.includes("ANTS")) {
+    switch (config.funcRegANTSinterpolation) {
+      case 'LanczosWindowedSinc':
+        c.functional.template_registration.methods.ants.interpolation = 'sinc'
+        break;
+      case 'Linear':
+        c.functional.template_registration.methods.ants.interpolation = 'linear'
+        break;
+      case 'BSpline':
+        c.functional.template_registration.methods.ants.interpolation = 'spline'
+        break;
+    }
+  } else {
+    switch (config.funcRegFSLinterpolation) {
+      case 'sinc':
+        c.functional.template_registration.methods.fsl.interpolation = 'sinc'
+        break;
+      case 'trilinear':
+        c.functional.template_registration.methods.fsl.interpolation = 'linear'
+        break;
+      case 'spline':
+        c.functional.template_registration.methods.fsl.interpolation = 'spline'
+        break;
+    }
+  }
+
   c.functional.template_registration.brain_template =
     config.template_brain_only_for_func
       .replace("${resolution_for_func_preproc}", "${pipeline.functional.template_registration.functional_resolution}mm")
@@ -593,6 +644,33 @@ export function dump(pipeline, version='0') {
   config.fnirtConfig = c.anatomical.registration.methods.fsl.configuration.config_file
   config.ref_mask = c.anatomical.registration.methods.fsl.configuration.reference_mask
 
+  switch (c.anatomical.registration.methods.ants.interpolation) {
+    case 'linear':
+      config.funcRegANTSinterpolation = 'Linear'
+      break;
+  
+    case 'sinc':
+      config.funcRegANTSinterpolation = 'LanczosWindowedSinc'
+      break;
+
+    case 'spline':
+      config.funcRegANTSinterpolation = 'BSpline'
+      break;
+  } 
+
+  switch (c.anatomical.registration.methods.fsl.interpolation) {
+    case 'linear':
+      config.funcRegFSLinterpolation = 'trilinear'
+      break;
+  
+    case 'sinc':
+      config.funcRegFSLinterpolation = 'sinc'
+      break;
+
+    case 'spline':
+      config.funcRegFSLinterpolation = 'spline'
+      break;
+  } 
   config.regWithSkull = [c.anatomical.registration.methods.ants.configuration.skull_on ? 1 : 0]
 
   config.runSegmentationPreprocessing = [c.anatomical.tissue_segmentation.enabled ? 1 : 0]
@@ -641,6 +719,34 @@ export function dump(pipeline, version='0') {
   config.runRegisterFuncToMNI = [c.functional.template_registration.enabled ? 1 : 0]
   config.resolution_for_func_preproc = c.functional.template_registration.functional_resolution + "mm"
   config.resolution_for_func_derivative = c.functional.template_registration.derivative_resolution + "mm"
+  
+  switch (c.functional.template_registration.methods.ants.interpolation) {
+    case 'linear':
+      config.funcRegANTSinterpolation = 'Linear'
+      break;
+  
+    case 'sinc':
+      config.funcRegANTSinterpolation = 'LanczosWindowedSinc'
+      break;
+
+    case 'spline':
+      config.funcRegANTSinterpolation = 'BSpline'
+      break;
+  } 
+  
+  switch (c.functional.template_registration.methods.fsl.interpolation) {
+    case 'linear':
+      config.funcRegFSLinterpolation = 'trilinear'
+      break;
+  
+    case 'sinc':
+      config.funcRegFSLinterpolation = 'sinc'
+      break;
+
+    case 'spline':
+      config.funcRegFSLinterpolation = 'spline'
+      break;
+  } 
   config.template_brain_only_for_func = c.functional.template_registration.brain_template
   config.template_skull_for_func = c.functional.template_registration.skull_template
   config.identityMatrix = c.functional.template_registration.identity_matrix

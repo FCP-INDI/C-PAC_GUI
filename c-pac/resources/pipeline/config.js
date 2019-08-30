@@ -38,6 +38,7 @@ export default {
             methods: {
               ants: {
                 enabled: true,
+                interpolation: 'sinc', 
                 configuration: {
                   skull_on: false,
                   lesion_mask: true,
@@ -45,6 +46,7 @@ export default {
               },
               fsl: {
                 enabled: false,
+                interpolation: 'sinc',
                 configuration: {
                   linear_only: false,
                   config_file: 'T1_2_MNI152_2mm',
@@ -147,6 +149,14 @@ export default {
             enabled: true,
             functional_resolution: 3,
             derivative_resolution: 3,
+            methods: {
+              ants: {
+                interpolation: 'sinc',
+              },
+              fsl: {
+                interpolation: 'sinc',
+              },
+            },
             brain_template: '${environment.paths.fsl_dir}/data/standard/MNI152_T1_${pipeline.functional.template_registration.functional_resolution}_brain.nii.gz',
             skull_template: '${environment.paths.fsl_dir}/data/standard/MNI152_T1_${pipeline.functional.template_registration.functional_resolution}.nii.gz',
             identity_matrix: '${environment.paths.fsl_dir}/etc/flirtsch/ident.mat',
