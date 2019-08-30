@@ -2,10 +2,10 @@ import React, { Component } from 'react';
 
 import { withStyles, Typography } from '@material-ui/core';
 import Grid from '@material-ui/core/Grid';
-
+import MenuItem from '@material-ui/core/MenuItem';
 import TextField from '@material-ui/core/TextField';
 import InputAdornment from '@material-ui/core/InputAdornment';
-
+import Collapse from '@material-ui/core/Collapse';
 import Help from 'components/Help'
 
 
@@ -20,6 +20,61 @@ class TemplateRegistration extends Component {
     return (
       <Grid container>
         <Grid item sm={12}>
+
+        <Collapse in={configuration.getIn("anatomical.registration.methods.ants.enabled".split("."))}>
+
+          <Help
+              type="pipeline"
+              regex={/^funcRegANTSinterpolation/}
+              help={`We provide a choice of interpolation options (Linear, LanczosWindowedSinc, or BSpline), set LanczosWindowedSinc as the default.`}
+              fullWidth
+            >
+
+              <TextField
+                select
+                label="Interpolation Option for ANTS"
+                fullWidth margin="normal" variant="outlined"
+                className={classes.textField} onChange={onChange}
+                name="functional.template_registration.interpolation"
+                value={configuration.getIn(["functional", "template_registration", "interpolation"])}
+                helperText=''
+              >
+                <MenuItem value={"linear"}>Linear</MenuItem>
+                <MenuItem value={"sinc"}>LanczosWindowedSinc</MenuItem>
+                <MenuItem value={"spline"}>BSPline</MenuItem>
+
+              </TextField>
+            </Help>
+
+          </Collapse>
+
+          <Collapse in={configuration.getIn("anatomical.registration.methods.fsl.enabled".split("."))}>
+
+            <Help
+                type="pipeline"
+                regex={/^funcRegANTSinterpolation/}
+                help={`We provide a choice of interpolation options (Linear, Sinc, or Spline), set sinc as the default.`}
+                fullWidth
+              >
+
+                <TextField
+                  select
+                  label="Interpolation Option for FSL"
+                  fullWidth margin="normal" variant="outlined"
+                  className={classes.textField} onChange={onChange}
+                  name="functional.template_registration.interpolation"
+                  value={configuration.getIn(["functional", "template_registration", "interpolation"])}
+                  helperText=''
+                >
+                  <MenuItem value={"linear"}>Linear</MenuItem>
+                  <MenuItem value={"sinc"}>Sinc</MenuItem>
+                  <MenuItem value={"spline"}>Spline</MenuItem>
+
+                </TextField>
+              </Help>
+
+            </Collapse>
+
           <Help
             type="pipeline"
             regex={/^resolution_for_func_preproc/}
