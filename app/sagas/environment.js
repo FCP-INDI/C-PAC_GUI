@@ -149,7 +149,7 @@ runSegmentationPreprocessing :  [1]
 # These maps are included as part of the 'Image Resource Files' package
 # available on the Install page of the User Guide. It is not necessary
 # to change this path unless you intend to use non-standard priors.
-priors_path :  /usr/share/fsl/5.0/data/standard/tissuepriors/2mm
+priors_path :  $FSLDIR/data/standard/tissuepriors/2mm
 
 
 # Full path to a binarized White Matter prior probability map.

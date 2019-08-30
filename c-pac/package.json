@@ -1,13 +1,12 @@
 {
   "name": "@internal/c-pac",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "license": "MIT",
   "main": "index.js",
   "dependencies": {
-    "aws-sdk": "^2.373.0",
-    "dockerode": "^2.5.7",
-    "request": "^2.88.0",
-    "yaml": "^1.0.3"
+    "deepmerge": "^3.2.0",
+    "js-yaml": "^3.13.1",
+    "semver": "^6.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.1.2",

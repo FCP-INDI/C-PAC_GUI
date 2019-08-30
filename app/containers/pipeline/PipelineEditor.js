@@ -43,6 +43,9 @@ class PipelineEditor extends Component {
     content: {
       padding: 20,
       marginTop: 20,
+    },
+    tabWrap: {
+      flexDirection: 'row'
     }
   });
 
@@ -85,8 +88,7 @@ class PipelineEditor extends Component {
           onChange={this.handleTabChange}
           indicatorColor="primary"
           textColor="primary"
-          variant="scrollable"
-          scrollButtons="auto"
+          centered
         >
           <Tab label="General" />
           <Tab label="Anatomical" />
@@ -102,7 +104,9 @@ class PipelineEditor extends Component {
               />
               Functional
             </React.Fragment>
-          )} />
+          )} classes={{
+            wrapper: classes.tabWrap
+          }} />
           : null }
           { configuration.getIn(["derivatives", "enabled"]) ?
           <Tab label="Derivatives" />

@@ -27,12 +27,9 @@ import {
 } from '../components/icons'
 
 import {
-  pipelineDuplicate,
-  pipelineImport,
-  pipelineDelete,
 } from '../actions/pipeline'
 
-class PipelineList extends Component {
+class GroupAnalysisList extends Component {
 
   static styles = theme => ({
   })
@@ -62,7 +59,7 @@ class PipelineList extends Component {
   }
 
   render() {
-    const { classes, pipelines } = this.props
+    const { classes } = this.props
 
     return (
       <React.Fragment>
@@ -70,7 +67,7 @@ class PipelineList extends Component {
           open={this.state.openDeleteConfirm}
           onClose={this.handleClose}
         >
-          <DialogTitle>Are you sure to delete this pipeline?</DialogTitle>
+          <DialogTitle>Are you sure to delete this group analysis?</DialogTitle>
           <DialogContent>
             <DialogContentText>
               This operation is irreversible.
@@ -100,13 +97,10 @@ class PipelineList extends Component {
 }
 
 const mapStateToProps = (state) => ({
-  pipelines: state.main.getIn(['config', 'pipelines']),
+  // pipelines: state.main.getIn(['config', 'pipelines']),
 })
 
 const mapDispatchToProps = {
-  pipelineDuplicate,
-  pipelineImport,
-  pipelineDelete,
 }
 
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(withStyles(PipelineList.styles)(PipelineList)))
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(withStyles(GroupAnalysisList.styles)(GroupAnalysisList)))

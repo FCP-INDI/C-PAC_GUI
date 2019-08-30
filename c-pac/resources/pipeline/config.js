@@ -3,7 +3,7 @@ export default {
   name: 'Default',
   versions: {
     'default': {
-      version: '1.3.0',
+      version: '1.4.3',
       configuration: {
         general: {
           environment: {
@@ -12,7 +12,7 @@ export default {
             participants: 1,
             ants_threads: 1,
             paths: {
-              fsl: '',
+              fsl: '$FSLDIR',
               output: './cpac_runs/default/output',
               working: './cpac_runs/default/working',
               crash: './cpac_runs/default/crash',
@@ -36,10 +36,19 @@ export default {
             brain_template: '${environment.paths.fsl_dir}/data/standard/MNI152_T1_${pipeline.anatomical.registration.resolution}mm_brain.nii.gz',
             skull_template: '${environment.paths.fsl_dir}/data/standard/MNI152_T1_${pipeline.anatomical.registration.resolution}mm.nii.gz',
             methods: {
-              ants: { enabled: true, configuration: { skull_on: false } },
+              ants: {
+                enabled: true,
+                interpolation: 'sinc', 
+                configuration: {
+                  skull_on: false,
+                  lesion_mask: true,
+                }
+              },
               fsl: {
                 enabled: false,
+                interpolation: 'sinc',
                 configuration: {
+                  linear_only: false,
                   config_file: 'T1_2_MNI152_2mm',
                   reference_mask: '$FSLDIR/data/standard/MNI152_T1_${resolution_for_anat}_brain_mask_dil.nii.gz'
                 }
@@ -114,6 +123,7 @@ export default {
             repetition_time: '',
             first_timepoint: 0,
             last_timepoint: '',
+            two_pass: true,
           },
           distortion_correction: {
             enabled: true,
@@ -139,6 +149,14 @@ export default {
             enabled: true,
             functional_resolution: 3,
             derivative_resolution: 3,
+            methods: {
+              ants: {
+                interpolation: 'sinc',
+              },
+              fsl: {
+                interpolation: 'sinc',
+              },
+            },
             brain_template: '${environment.paths.fsl_dir}/data/standard/MNI152_T1_${pipeline.functional.template_registration.functional_resolution}_brain.nii.gz',
             skull_template: '${environment.paths.fsl_dir}/data/standard/MNI152_T1_${pipeline.functional.template_registration.functional_resolution}.nii.gz',
             identity_matrix: '${environment.paths.fsl_dir}/etc/flirtsch/ident.mat',
@@ -147,54 +165,105 @@ export default {
           nuisance_regression: {
             enabled: true,
             lateral_ventricles_mask: '${environment.paths.fsl_dir}/data/atlases/HarvardOxford/HarvardOxford-lateral-ventricles-thr25-2mm.nii.gz',
-            compcor_components: 5,
-            friston_motion_regressors: true,
-            spike_denoising: {
-              no_denoising: true,
-              despiking: false,
-              scrubbing: false,
-            },
-            fd_calculation: 'jenkinson',
-            fd_threshold: 0.2,
-            pre_volumes: 1,
-            post_volumes: 1,
             regressors: [
               {
-                gray_matter: false,
-                white_matter: false,
-                cerebrospinal_fluid: true,
-                compcor: true,
-                global: true,
-                principal_component: false,
-                motion: true,
-                linear: true,
-                quadratic: true,
-              },
-              {
-                gray_matter: false,
-                white_matter: false,
-                cerebrospinal_fluid: true,
-                compcor: true,
-                global: false,
-                principal_component: false,
-                motion: true,
-                linear: true,
-                quadratic: true,
+                GreyMatter: {
+                  enabled: true,
+                  summary: {
+                    method: 'Mean',
+                  },
+                  erode_mask: true,
+                  extraction_resolution: 2,
+                  include_delayed: false,
+                  include_squared: false,
+                  include_delayed_squared: false,
+                },
+                WhiteMatter: {
+                  enabled: true,
+                  summary: {
+                    method: 'Mean',
+                  },
+                  erode_mask: true,
+                  extraction_resolution: 2,
+                  include_delayed: false,
+                  include_squared: false,
+                  include_delayed_squared: false,
+                },
+                CerebrospinalFluid: {
+                  enabled: true,
+                  summary: {
+                    method: 'Mean',
+                  },
+                  erode_mask: false,
+                  extraction_resolution: 2,
+                  include_delayed: false,
+                  include_squared: false,
+                  include_delayed_squared: false,
+                },
+                aCompCor: {
+                  enabled: true,
+                  summary: {
+                    method: 'DetrendPC',
+                    components: 5,
+                  },
+                  tissues: ['WhiteMatter'],
+                  extraction_resolution: 2,
+                  include_delayed: false,
+                  include_squared: false,
+                  include_delayed_squared: false,
+                },
+                tCompCor: {
+                  enabled: false,
+                  summary: {
+                    method: 'PC',
+                    components: 5,
+                  },
+                  threshold: '1.5SD',
+                  by_slice: true,
+                  include_delayed: false,
+                  include_squared: false,
+                  include_delayed_squared: false,
+                },
+                GlobalSignal: {
+                  enabled: true,
+                  summary: {
+                    method: 'Mean',
+                  },
+                  include_delayed: false,
+                  include_squared: false,
+                  include_delayed_squared: false,
+                },
+                Motion: {
+                  enabled: true,
+                  include_delayed: true,
+                  include_squared: true,
+                  include_delayed_squared: true,
+                },
+                PolyOrt: {
+                  enabled: true,
+                  degree: 2,
+                },
+                Bandpass: {
+                  enabled: true,
+                  bottom_frequency: 0.01,
+                  top_frequency: 0.1,
+                },
+                Censor: {
+                  enabled: false,
+                  method: 'Kill',
+                  threshold: {
+                    type: 'FD_P',
+                    value: 0.0,
+                  },
+                  number_of_previous_trs_to_censor: 1,
+                  number_of_subsequent_trs_to_censor: 2,
+                },
               }
             ]
           },
           median_angle_correction: {
             enabled: true,
             target_angle: 90
-          },
-          temporal_filtering: {
-            enabled: true,
-            filters: [
-              {
-                low: 0.1,
-                high: 0.01
-              },
-            ]
           },
           aroma: {
             enabled: true,

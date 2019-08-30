@@ -7,7 +7,7 @@ import { configLoad, settingsUpdate } from '../actions/main'
 import bugsnag from '@bugsnag/js'
 import bugsnagReact from '@bugsnag/plugin-react'
 
-import classNames from 'classnames';
+import classNames from 'clsx';
 import { withStyles, typography } from '@material-ui/core/styles';
 
 import AppBar from '@material-ui/core/AppBar';
@@ -29,9 +29,11 @@ import Switch from '@material-ui/core/Switch';
 
 import Help from 'components/Help'
 import ItWentWrong from 'containers/ItWentWrong'
+// import TheodoreList from 'containers/TheodoreList'
 
 import {
   HomeIcon,
+  DeleteIcon,
   NextIcon,
   PipelineIcon,
   SubjectIcon,
@@ -46,10 +48,12 @@ import {
 import Logo from 'resources/logo.png'
 
 
-const bugsnagClient = bugsnag('ed924a7990f8305f7bb59bc050b92239')
-bugsnagClient.use(bugsnagReact, React)
-
-const ErrorBoundary = bugsnagClient.getPlugin('react')
+let ErrorBoundary = ({ children }) => children
+if (process.env.NODE_ENV === 'production') {
+  const bugsnagClient = bugsnag('ed924a7990f8305f7bb59bc050b92239')
+  bugsnagClient.use(bugsnagReact, React)
+  ErrorBoundary = bugsnagClient.getPlugin('react')
+}
 
 
 class App extends React.Component {
@@ -70,7 +74,7 @@ class App extends React.Component {
       flexGrow: 1,
     },
     root: {
-      height: '100vh',
+      minHeight: 0,
       display: 'flex',
       flexDirection: 'column',
       flexGrow: 1,
@@ -84,16 +88,16 @@ class App extends React.Component {
     },
     content: {
       overflow: 'auto',
-      padding: theme.spacing.unit,
+      padding: theme.spacing(),
       [theme.breakpoints.up('md')]: {
-        padding: theme.spacing.unit * 3,
+        padding: theme.spacing(3),
       },
       backgroundColor: theme.palette.background.default,
       flexGrow: 1,
     },
 
     icon: {
-      marginRight: theme.spacing.unit,
+      marginRight: theme.spacing(),
     },
     singleIcon: {
       marginRight: 0,
@@ -112,6 +116,11 @@ class App extends React.Component {
 
   componentDidMount() {
     this.props.configLoad()
+  }
+  
+  handleWipe = (e) => {
+    localStorage.clear()
+    window.location.href = '/'
   }
 
   handleSettingsAdvanced = (e) => {
@@ -135,21 +144,6 @@ class App extends React.Component {
     const place = this.props.location.pathname.substr(1).split('/')
     const crumbs = []
     for (let i = 0; i < place.length; i++) {
-      // if (place[i] == "projects") {
-      //   if (i + 1 < place.length) {
-      //     project = config.projects[place[++i]]
-      //   }
-
-      //   crumbs.push(
-      //     <NextIcon key={crumbs.length} />
-      //   )
-      //   crumbs.push(
-      //     <Button key={crumbs.length} size="small" component={Link} to={`/projects/${project ? project.id : ''}`}>
-      //       <ProjectIcon className={classes.icon} />
-      //       { project ? project.name : "Projects" }
-      //     </Button>
-      //   )
-      // }
       if (place[i] == "pipelines") {
 
         if (i + 1 < place.length) {
@@ -159,7 +153,6 @@ class App extends React.Component {
         crumbs.push(
           <NextIcon key={crumbs.length} />
         )
-        // component={Link} to={`/pipelines/${ pipeline ? pipeline.get('id') : '' }`}
         crumbs.push(
           <Button key={crumbs.length} size="small">
             <PipelineIcon className={classes.icon} />
@@ -179,6 +172,8 @@ class App extends React.Component {
           { crumbs }
           <div className={classes.crumbs}>
           </div>
+          {/* <TheodoreList /> */}
+          {/*
           <AdvancedConfigIcon color={ config.getIn(['settings', 'advanced']) ? "secondary": "disabled" } />
           <Switch
             checked={config.getIn(['settings', 'advanced'])}
@@ -186,6 +181,7 @@ class App extends React.Component {
             color="primary"
           />
           <Help help={`Enable advanced options.`} style={{ padding: 0 }} />
+          */}
         </Toolbar>
       </AppBar>
     )
@@ -209,6 +205,11 @@ class App extends React.Component {
             <img src={Logo} />
           </Link>
           <div className={classes.headerFiller}></div>
+          {
+            process.env.NODE_ENV === 'development' ? 
+            <Button onClick={this.handleWipe}><DeleteIcon /></Button> :
+            null
+          }
           <Button onClick={this.handleFeedbackOpen}><FeedbackIcon /></Button>
           <Modal open={this.state.feedback} onClose={this.handleFeedbackClose}>
             <div className={classes.feedback}>

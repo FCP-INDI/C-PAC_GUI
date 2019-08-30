@@ -1,13 +1,11 @@
-const { app, autoUpdater, dialog, BrowserWindow } = require('electron')
-const ini = require('ini')
-const fs = require('fs')
+import { app, autoUpdater, dialog, BrowserWindow } from 'electron'
+import ini from 'ini'
+import fs from 'fs'
 
 let mainWindow = null
 
 app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') {
-    app.quit()
-  }
+  app.quit()
 })
 
 const configFile = (app.getPath('userData') + '/config.ini').replace('Electron', 'C-PAC')
@@ -24,7 +22,7 @@ try {
 
 config = { ...{
   url: 'https://fcp-indi.github.io/C-PAC_GUI/versions/{version}/electron',
-  version: '0.0.1',
+  version: `v${process.env.VERSION}`,
 }, ...config }
 
 app.on('ready', async () => {

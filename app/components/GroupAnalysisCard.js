@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import { withRouter, Link } from 'react-router-dom'
 
 import classnames from 'classnames'
-import { withStyles } from '@material-ui/core'
+import { withStyles } from '@material-ui/core/styles'
 
 import Grid from '@material-ui/core/Grid'
 
@@ -21,20 +21,18 @@ import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 
 import Typography from '@material-ui/core/Typography'
 import Avatar from '@material-ui/core/Avatar'
-import blue from '@material-ui/core/colors/blue'
 import IconButton from '@material-ui/core/IconButton'
 import Button from '@material-ui/core/Button'
+import Tooltip from '@material-ui/core/Tooltip'
 
 import {
-  ProjectIcon,
-  PipelineIcon,
-  SubjectIcon,
-  LaunchIcon,
-  SettingsIcon,
-  NavigateNextIcon
-} from './icons';
+  GroupIcon,
+  NavigateNextIcon,
+  DuplicateIcon,
+} from './icons'
 
-class ProjectCard extends Component {
+
+class GroupAnalysisCard extends Component {
 
   static styles = theme => ({
     card: {
@@ -42,58 +40,52 @@ class ProjectCard extends Component {
     },
     actions: {
       display: 'flex',
-      paddingLeft: 20,
     },
     expand: {
       marginLeft: 'auto',
     },
+    action: {
+    },
     avatar: {
-      backgroundColor: blue[500],
     },
     info: {
       padding: 0
-    }
+    },
+
+    featDisabled: { opacity: 0.5 },
+    featEnabled: { opacity: 1.0 },
   })
 
-  handleOpen = (project) => {
-    this.props.history.push(`/projects/${project}`)
+  handleOpen = (pipeline) => {
+    this.props.history.push(`/pipelines/${pipeline}`)
   }
 
   render() {
-    const { classes, raised = false, project } = this.props
+    const { classes } = this.props
 
     return (
-      <Card className={classes.card} raised={raised}>
+      <Card className={classes.card}>
         <CardHeader
           avatar={
-            <Avatar aria-label={project.name} className={classes.avatar}><ProjectIcon /></Avatar>
+            <Avatar className={classes.avatar}>
+              <GroupIcon />
+            </Avatar>
           }
-          title={project.name}
+          title={'FEAT'}
+          subheader={`C-PAC ${version.get('version')}`}
         />
         <CardContent className={classes.info}>
-          <List>
-            <ListItem>
-              <ListItemIcon>
-                <PipelineIcon />
-              </ListItemIcon>
-              <ListItemText primary={`0 pipelines`} />
-            </ListItem>
-            <ListItem>
-              <ListItemIcon>
-                <SubjectIcon />
-              </ListItemIcon>
-              <ListItemText primary={`0 subjects`} />
-            </ListItem>
-          </List>
         </CardContent>
         <CardActions className={classes.actions} disableActionSpacing>
-          <IconButton className={classes.expand} onClick={() => this.handleOpen(project.id)}>
-            <NavigateNextIcon />
-          </IconButton>
+          <Tooltip title="Duplicate">
+            <IconButton>
+              <DuplicateIcon />
+            </IconButton>
+          </Tooltip>
         </CardActions>
       </Card>
     )
   }
 }
 
-export default withRouter(withStyles(ProjectCard.styles)(ProjectCard))
+export default withRouter(withStyles(GroupAnalysisCard.styles)(GroupAnalysisCard))

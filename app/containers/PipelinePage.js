@@ -26,9 +26,6 @@ import IconButton from '@material-ui/core/IconButton'
 import Tooltip from '@material-ui/core/Tooltip'
 import Drawer from '@material-ui/core/Drawer';
 
-import getter from 'lodash.get';
-import setter from 'lodash.set';
-
 import { fromJS } from 'immutable';
 
 import {
@@ -48,10 +45,17 @@ import cpac from '@internal/c-pac'
 class PipelinePage extends Component {
 
   static styles = theme => ({
+    warning: {
+      background: theme.palette.secondary.main,
+      color: theme.palette.secondary.contrastText,
+      padding: theme.spacing(2),
+      marginBottom: theme.spacing(2),
+    }
   });
 
   constructor(props) {
     super(props)
+
     const pipeline = this.props.pipeline
 
     if (!pipeline) {
@@ -104,6 +108,10 @@ class PipelinePage extends Component {
   }
 
   handleChange = (values) => {
+    if (this.state.default) {
+      return
+    }
+
     let configuration = this.state.configuration
 
     if (values.target) {
@@ -112,7 +120,7 @@ class PipelinePage extends Component {
                       values.target.checked :
                       values.target.value
 
-      return this.handleChange([[name, value]])
+      return this.handleChange([[name, fromJS(value)]])
     }
 
     for (let [key, value] of values) {
@@ -263,7 +271,12 @@ class PipelinePage extends Component {
           this.state.configuration ?
           (
             <React.Fragment>
-              <PipelineEditor configuration={this.state.configuration} onChange={this.handleChange} onSave={this.handleSave} />
+            { this.state.default ?
+              <div className={classes.warning}>
+                You cannot change the default template! Please, duplicate it to create your own pipeline.
+              </div>
+              : null }
+              <PipelineEditor default={this.state.default} configuration={this.state.configuration} onChange={this.handleChange} onSave={this.handleSave} />
             </React.Fragment>
           )
           :

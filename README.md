@@ -6,6 +6,7 @@ A suite to manage, run and track your preprocessing pipelines.
 
 ```bash
 yarn
+yarn run link
 yarn run dev
 ```
  or, using Docker,

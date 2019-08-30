@@ -6,8 +6,6 @@ import {
   ENVIRONMENT_CHECKED,
   ENVIRONMENT_SELECT,
 
-  PROJECT_LOADED,
-  PROJECT_OPEN,
 } from '../actions/main'
 
 import {

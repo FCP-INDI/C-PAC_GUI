@@ -1,10 +1,10 @@
-import React, { Component } from 'react';
-import { withStyles } from '@material-ui/core';
-import classnames from 'classnames'
+import React, { Component } from 'react'
+import { withStyles } from '@material-ui/core'
+import clsx from 'clsx'
 
-import Paper from '@material-ui/core/Paper';
-import Avatar from '@material-ui/core/Avatar';
-import Typography from '@material-ui/core/Typography';
+import Paper from '@material-ui/core/Paper'
+import Avatar from '@material-ui/core/Avatar'
+import Typography from '@material-ui/core/Typography'
 
 
 class Box extends Component {
@@ -29,7 +29,7 @@ class Box extends Component {
     },
     headerText: {
       color: "#444",
-      padding: `0 ${theme.spacing.unit * 2}px`,
+      padding: `0 ${theme.spacing(2)}px`,
       flexGrow: 1
     },
     headerAvatar: {
@@ -43,13 +43,13 @@ class Box extends Component {
       padding: 20,
       flexGrow: 1
     }
-  });
+  })
 
   render() {
-    const { classes, className, avatar, title, tools, headerVariant = 'h5' } = this.props;
+    const { classes, className, avatar, title, tools, headerVariant = 'h5' } = this.props
 
     return (
-      <div className={classnames(classes.root, className)}>
+      <div className={clsx(classes.root, className)}>
         <Paper elevation={1}>
           <div className={classes.header}>
             {
@@ -75,7 +75,7 @@ class Box extends Component {
           { this.props.children }
         </Paper>
       </div>
-    );
+    )
   }
 }
 

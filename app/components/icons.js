@@ -14,8 +14,7 @@ export { default as SettingsIcon } from '@material-ui/icons/Settings';
 export { default as EnvironmentIcon } from '@material-ui/icons/DeveloperBoard';
 export { default as RunIcon } from '@material-ui/icons/PlayCircleFilled';
 export { default as RunPausedIcon } from '@material-ui/icons/PauseCircleFilled';
-export { default as ProjectIcon } from '@material-ui/icons/Folder';
-export { default as ProjectOpenIcon } from '@material-ui/icons/FolderOpen';
+export { default as FormatIcon } from '@material-ui/icons/Folder';
 export { default as MenuIcon } from '@material-ui/icons/Menu';
 export { default as PipelineStepIcon } from '@material-ui/icons/Extension';
 export { default as PipelineExecutionTimeIcon } from '@material-ui/icons/AccessTime';
@@ -44,6 +43,8 @@ export { default as UploadIcon } from '@material-ui/icons/CloudUpload';
 export { default as DeleteIcon } from '@material-ui/icons/Delete';
 export { default as AdvancedConfigIcon } from '@material-ui/icons/SettingsApplications';
 export { default as FeedbackIcon } from '@material-ui/icons/Feedback';
+export { default as GroupIcon } from '@material-ui/icons/Group';
+export { default as BulletIcon } from '@material-ui/icons/Lens';
 
 // import createSvgIcon from '../utils/createSvgIcon'
 // export const BrainIcon = createSvgIcon(

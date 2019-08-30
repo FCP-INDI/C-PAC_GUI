@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { withRouter, Link } from 'react-router-dom'
 
-import classnames from 'classnames'
+import clsx from 'clsx'
 import { withStyles } from '@material-ui/core/styles'
 
 import Grid from '@material-ui/core/Grid'
@@ -61,7 +61,10 @@ class PipelineCard extends Component {
     },
     info: {
       padding: 0
-    }
+    },
+
+    featDisabled: { opacity: 0.5 },
+    featEnabled: { opacity: 1.0 },
   })
 
   handleOpen = (pipeline) => {
@@ -70,6 +73,34 @@ class PipelineCard extends Component {
 
   render() {
     const { classes, pipeline } = this.props
+
+    let versionId = '0'
+    const versions = pipeline.get('versions')
+    if (!versions.has("0")) {
+      versionId = versions.keySeq().max()
+    }
+
+    const version = versions.get(versionId)
+
+    const functional = version.getIn(['configuration', 'functional', 'enabled'])
+
+    let derivatives = version.getIn(['configuration', 'derivatives', 'enabled'])
+    if (derivatives) {
+      derivatives = version.getIn(['configuration', 'derivatives']).reduce(
+        (total, value) => {
+          // Ignore root flag 'enabled' under derivatives
+          if (value.get) {
+            return total + (value.get('enabled') ? 1 : 0)
+          }
+          return total
+        },
+        0
+      )
+
+      derivatives = derivatives ? derivatives : false
+    } else {
+      derivatives = 0
+    }
 
     return (
       <Card className={classes.card}>
@@ -80,6 +111,7 @@ class PipelineCard extends Component {
             </Avatar>
           }
           title={pipeline.get('name')}
+          subheader={`C-PAC ${version.get('version')}`}
         />
         <CardContent className={classes.info}>
           <List>
@@ -91,19 +123,27 @@ class PipelineCard extends Component {
             </ListItem>
             <ListItem>
               <ListItemIcon>
-                <PipelineStepIcon />
+                <PipelineStepIcon classes={{
+                  root: functional ? classes.featEnabled : classes.featDisabled
+                }} />
               </ListItemIcon>
-              <ListItemText primary={`Functional`} />
+              <ListItemText classes={{
+                  root: functional ? classes.featEnabled : classes.featDisabled
+                }}  primary={`Functional`} />
             </ListItem>
             <ListItem>
               <ListItemIcon>
-                <PipelineStepIcon />
+                <PipelineStepIcon classes={{
+                root: derivatives ? classes.featEnabled : classes.featDisabled
+              }}  />
               </ListItemIcon>
-              <ListItemText primary={`5 derivatives`} />
+              <ListItemText classes={{
+                root: derivatives ? classes.featEnabled : classes.featDisabled
+              }}  primary={`${derivatives} derivative${derivatives != 1 ? 's' : ''}`} />
             </ListItem>
           </List>
         </CardContent>
-        <CardActions className={classes.actions} disableActionSpacing>
+        <CardActions className={classes.actions}>
 
           <Tooltip title="Duplicate">
             <IconButton onClick={() => this.props.onDuplicate(pipeline.get('id'))}>

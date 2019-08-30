@@ -13,8 +13,7 @@ const dist = path.resolve(process.cwd(), 'app', 'dist');
 const SpeedMeasurePlugin = require("speed-measure-webpack-plugin");
 const smp = new SpeedMeasurePlugin();
 
-
-const target = process.env.TARGET == 'web' ? 'web' : 'electron-renderer'
+const target = process.env.TARGET == 'browser' ? 'web' : 'electron-renderer'
 
 const config = merge.smart(baseConfig, {
   target,
@@ -89,7 +88,7 @@ const config = merge.smart(baseConfig, {
 
   plugins: [
     new webpack.EnvironmentPlugin({
-      NODE_ENV: 'production'
+      NODE_ENV: 'production',
     }),
 
     new MiniCssExtractPlugin({

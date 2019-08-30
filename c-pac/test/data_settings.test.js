@@ -1,6 +1,5 @@
 import fs from 'fs'
 import assert from 'assert'
-import yaml from 'yaml'
 
 import { data_settings } from '..'
 const { parse, dump, template } = data_settings
