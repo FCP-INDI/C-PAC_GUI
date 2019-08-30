@@ -198,6 +198,7 @@ class App extends React.Component {
     const { classes, theme, main } = this.props
 
     return (
+<<<<<<< HEAD
       <MathJax.Provider>
         <div className={classes.app}>
           <header id="root-header" className={classes.header}>
@@ -217,6 +218,26 @@ class App extends React.Component {
               </div>
             </Modal>
           </header>
+=======
+      <div className={classes.app}>
+        {/* <header id="root-header" className={classes.header}>
+          <Link to={`/`}>
+            <img src={Logo} />
+          </Link>
+          <div className={classes.headerFiller}></div>
+          {
+            process.env.NODE_ENV === 'development' ? 
+            <Button onClick={this.handleWipe}><DeleteIcon /></Button> :
+            null
+          }
+          <Button onClick={this.handleFeedbackOpen}><FeedbackIcon /></Button>
+          <Modal open={this.state.feedback} onClose={this.handleFeedbackClose}>
+            <div className={classes.feedback}>
+              <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSf4nQovBTrPnJ7yx5fCI47MKHIaxsOq149KS1rlg8WG066zbQ/viewform?embedded=true" width="640" height="610" frameBorder="0" marginHeight="0" marginWidth="0">Loading...</iframe>
+            </div>
+          </Modal>
+        </header> */}
+>>>>>>> 31b5f4b (data config viewer)
 
           <div className={classes.root}>
             {this.renderBreadcrumbs()}

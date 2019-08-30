@@ -55,7 +55,7 @@ class DatasetList extends Component {
 }
 
 const mapStateToProps = (state) => ({
-  datasets: state.main.getIn(['config', 'datasets']),
+  datasets: state.dataset.getIn(['datasets']),
 })
 
 const mapDispatchToProps = {

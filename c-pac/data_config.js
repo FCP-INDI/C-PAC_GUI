@@ -29,6 +29,7 @@ export function parse(content) {
   }
 
   const sites = []
+  const series = []
   const subject_ids = []
   const unique_ids = []
   const sets = {}
@@ -41,6 +42,7 @@ export function parse(content) {
       anatomical: anat, functionals: func, site 
     }
     sites.push(site)
+    series.push(...Object.keys(func))
     unique_ids.push(unique_id)
     subject_ids.push(subject_id)
   }
@@ -48,41 +50,12 @@ export function parse(content) {
   return {
     sets,
     sites: [...new Set(sites)],
+    series: [...new Set(series)],
     unique_ids: [...new Set(unique_ids)],
     subject_ids: [...new Set(subject_ids)],
   }
 }
 
-export function dump(data_settings, version='0') {
-
-  const c = data_settings.versions[version].configuration
-
-  const config = {}
-
-  config.dataFormat = c.format
-
-  config.bidsBaseDir = c.options.base
-
-  config.anatomicalTemplate = c.options.patterns.anatomical_path_template
-  config.functionalTemplate = c.options.patterns.functional_path_template
-  config.scanParametersCSV = c.options.patterns.scan_parameters_path
-  config.brain_mask_template = c.options.patterns.brain_mask_path
-  config.fieldMapPhase = c.options.patterns.fieldmap_phase_path_template
-  config.fieldMapMagnitude = c.options.patterns.fieldmap_magnitude_path_template
-  config.anatomical_scan = c.options.patterns.anatomical_scan
-
-  config.awsCredentialsFile = c.options.aws_credential_path
-  config.subjectList = null
-  config.exclusionSubjectList = null
-  config.siteList = null
-  config.exclusionSiteList = null
-  config.sessionList = null
-  config.exclusionSessionList = null
-  config.scanList = null
-  config.exclusionScanList = null
-
-  config.outputSubjectListLocation = '.'
-  config.subjectListName = data_settings.name
-
-  return yamlTemplate(config)
+export function dump(sets) {
+  return yaml.safeDump(sets)
 }

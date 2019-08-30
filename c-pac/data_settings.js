@@ -32,7 +32,7 @@ export function parse(content) {
     throw new Error('Only BIDS format is supported.')
   }
 
-  c.format = 'BIDS'
+  c.format = 'bids'
   c.options.base = (settings.bidsBaseDir || '').replace(/\/$/, '')
 
   return t

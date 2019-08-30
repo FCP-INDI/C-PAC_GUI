@@ -14,9 +14,13 @@ import {
 
 import {
 <<<<<<< HEAD
+<<<<<<< HEAD
   PIPELINE_DELETE,
 =======
   DATASET_CONFIG_LOADED,
+=======
+  DATASET_CONFIG_LOAD,
+>>>>>>> 31b5f4b (data config viewer)
 } from '../actions/dataset'
 
 import {
@@ -35,6 +39,7 @@ import {
 } from '../actions/theodore'
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 // import { phenotype } from './config.data'
 import cpac from '@internal/c-pac';
 import { getDefaultPipeline, defaultPipelineUrl } from '@internal/c-pac/pipeline';
@@ -51,6 +56,12 @@ import cpac from '@internal/c-pac'
 function* loadConfig (action) {
   yield put(configLoading(action))
 >>>>>>> f2a1340 (theo data-config generation! and some other stuff)
+=======
+import cpac from '@internal/c-pac'
+
+function* loadConfig () {
+  yield put(configLoading())
+>>>>>>> 31b5f4b (data config viewer)
 
 async function getPipelineDefault() {
   const pipelineDefault = await getDefaultPipeline(defaultPipelineUrl);
@@ -60,6 +71,7 @@ async function getPipelineDefault() {
 function* loadConfig(action) {
   yield put(configLoading(action));
 
+<<<<<<< HEAD
 <<<<<<< HEAD
   let initialState = null;
 
@@ -218,6 +230,11 @@ function* loadConfig(action) {
       initialState = JSON.parse(localStorage.getItem('state'))
     } catch (e) {
     }
+=======
+    pipelines: [
+      cpac.pipeline.template
+    ],
+>>>>>>> 31b5f4b (data config viewer)
 
     if (!initialState) {
       initialState = config;
@@ -292,21 +309,21 @@ function* loadConfig(action) {
     localStorage.setItem('state', JSON.stringify(localState))
   }
 
-  yield put({
-    type: DATASET_CONFIG_LOADED,
-    config: localState.datasets
-  })
-
-  delete localState.datasets
-
+  yield put({ type: DATASET_CONFIG_LOAD })
   yield put(configLoaded(localState))
+
   yield put(theodoreInit())
 >>>>>>> f2a1340 (theo data-config generation! and some other stuff)
 }
 
 function* saveConfig() {
+<<<<<<< HEAD
   const config = yield select((state) => state.main.getIn(['config']));
   localStorage.setItem('state', JSON.stringify(config.toJS()));
+=======
+  const config = yield select((state) => state.main.getIn(['config']))
+  localStorage.setItem('state', JSON.stringify(config.toJS()))
+>>>>>>> 31b5f4b (data config viewer)
   yield put(configSaved())
 }
 
@@ -319,13 +336,21 @@ export default function* configSaga() {
   yield all([
     takeEvery(CONFIG_LOAD, loadConfig),
     takeEvery(CONFIG_SAVE, saveConfig),
+<<<<<<< HEAD
     takeEvery(PIPELINE_IMPORT, saveConfig),
     takeEvery(PIPELINE_IMPORT_DONE, saveConfig),
+=======
+    takeEvery(CONFIG_CLEAR, clearConfig),
+
+>>>>>>> 31b5f4b (data config viewer)
     takeEvery(PIPELINE_NAME_UPDATE, saveConfig),
     takeEvery(PIPELINE_VERSION_DIRTY_UPDATE, saveConfig),
     takeEvery(PIPELINE_VERSION_DIRTY_SAVE, saveConfig),
     takeEvery(PIPELINE_DUPLICATE, saveConfig),
+<<<<<<< HEAD
     takeEvery(PIPELINE_DELETE, saveConfig),
     takeEvery(CONFIG_CLEAR, clearConfig),
+=======
+>>>>>>> 31b5f4b (data config viewer)
   ])
 }

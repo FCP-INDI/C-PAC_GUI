@@ -67,6 +67,9 @@ class DatasetCard extends Component {
       custom: 'Custom'
     }
 
+    const version = dataset.get('versions').keySeq().max()
+    const configuration = dataset.getIn(['versions', version, 'configuration'])
+
     return (
       <Card className={classes.card} raised={raised}>
         <CardHeader
@@ -81,7 +84,7 @@ class DatasetCard extends Component {
               <ListItemIcon>
                 <FormatIcon />
               </ListItemIcon>
-              <ListItemText primary={`${labels[dataset.getIn(['settings', 'format'])]}`} />
+              <ListItemText primary={`${labels[configuration.getIn(['format'])]}`} />
             </ListItem>
           </List>
         </CardContent>

@@ -9,7 +9,7 @@ export default {
       version: '1.4.3',
 >>>>>>> f2a1340 (theo data-config generation! and some other stuff)
       configuration: {
-        format: 'BIDS',
+        format: 'bids',
         options: {
           base: '',
           aws_credential_path: null,
