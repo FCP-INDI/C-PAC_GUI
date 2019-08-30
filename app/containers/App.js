@@ -200,7 +200,7 @@ class App extends React.Component {
 
     return (
       <div className={classes.app}>
-        <header id="root-header" className={classes.header}>
+        {/* <header id="root-header" className={classes.header}>
           <Link to={`/`}>
             <img src={Logo} />
           </Link>
@@ -216,7 +216,7 @@ class App extends React.Component {
               <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSf4nQovBTrPnJ7yx5fCI47MKHIaxsOq149KS1rlg8WG066zbQ/viewform?embedded=true" width="640" height="610" frameBorder="0" marginHeight="0" marginWidth="0">Loading...</iframe>
             </div>
           </Modal>
-        </header>
+        </header> */}
 
         <div className={classes.root}>
           { this.renderBreadcrumbs() }

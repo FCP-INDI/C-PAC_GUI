@@ -5,7 +5,7 @@ export default {
     'default': {
       version: '1.4.3',
       configuration: {
-        format: 'BIDS',
+        format: 'bids',
         options: {
           base: '',
           aws_credential_path: null,

@@ -1,18 +1,11 @@
 import { fromJS } from 'immutable'
 
 import {
-  DATASET_CONFIG_LOAD_SUCCESS,
-  DATASET_GENERATE_DATA_CONFIG,
-  DATASET_GENERATE_DATA_CONFIG_SUCCESS,
-  DATASET_GENERATE_DATA_CONFIG_ERROR,
-  DATASET_GENERATE_DATA_CONFIG_SCHEDULED,
-  DATASET_GENERATE_DATA_CONFIG_GENERATED,
-  DATASET_GENERATE_DATA_CONFIG_FETCHED,
-  DATASET_GENERATE_DATA_CONFIG_FINISHED,
-} from '../actions/dataset'
+  EXECUTION_PREPROCESS
+} from '../actions/execution'
 
 const initialState = fromJS({
-  datasets: [],
+  executions: [],
 })
 
 export default function (state = initialState, action) {
@@ -25,10 +18,10 @@ export default function (state = initialState, action) {
   }
 
   switch (action.type) {
-    case DATASET_CONFIG_LOAD_SUCCESS:
-      return fromJS(action.config)
+    // case EXECUTION_CONFIG_LOAD_SUCCESS:
+    //   return fromJS(action.config)
 
-    case DATASET_GENERATE_DATA_CONFIG_SUCCESS: {
+    case EXECUTION_PREPROCESS_SAVE: {
       const { dataset: id, config } = action
       const i = state.get('datasets').findIndex((d) => d.get('id') === id)
 

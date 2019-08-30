@@ -13,7 +13,7 @@ import {
 } from '../actions/main'
 
 import {
-  DATASET_CONFIG_LOADED,
+  DATASET_CONFIG_LOAD,
 } from '../actions/dataset'
 
 import {
@@ -28,14 +28,10 @@ import {
   init as theodoreInit
 } from '../actions/theodore'
 
-import {
-  datasets
-} from './config.dataset'
-
 import cpac from '@internal/c-pac'
 
-function* loadConfig (action) {
-  yield put(configLoading(action))
+function* loadConfig () {
+  yield put(configLoading())
 
   const config = {
 
@@ -43,8 +39,6 @@ function* loadConfig (action) {
     settings: {
       advanced: false,
     },
-
-    datasets,
 
     pipelines: [
       cpac.pipeline.template
@@ -129,19 +123,14 @@ function* loadConfig (action) {
     localStorage.setItem('state', JSON.stringify(localState))
   }
 
-  yield put({
-    type: DATASET_CONFIG_LOADED,
-    config: localState.datasets
-  })
-
-  delete localState.datasets
-
+  yield put({ type: DATASET_CONFIG_LOAD })
   yield put(configLoaded(localState))
+
   yield put(theodoreInit())
 }
 
 function* saveConfig() {
-  const config = yield select((state) => state.main.getIn(['config']));
+  const config = yield select((state) => state.main.getIn(['config']))
   localStorage.setItem('state', JSON.stringify(config.toJS()))
   yield put(configSaved())
 }
@@ -154,13 +143,12 @@ function* clearConfig(config) {
 export default function* configSaga () {
   yield all([
     takeEvery(CONFIG_LOAD, loadConfig),
-
     takeEvery(CONFIG_SAVE, saveConfig),
+    takeEvery(CONFIG_CLEAR, clearConfig),
+
     takeEvery(PIPELINE_NAME_UPDATE, saveConfig),
     takeEvery(PIPELINE_VERSION_DIRTY_UPDATE, saveConfig),
     takeEvery(PIPELINE_VERSION_DIRTY_SAVE, saveConfig),
     takeEvery(PIPELINE_DUPLICATE, saveConfig),
-
-    takeEvery(CONFIG_CLEAR, clearConfig),
   ])
 }
