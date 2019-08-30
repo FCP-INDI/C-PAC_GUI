@@ -171,11 +171,17 @@ jobs:
             TAG=$([ "${CIRCLE_BRANCH}" == "master" ] && echo "latest" || echo "nightly")
             
             git clone --single-branch --branch gh-pages git@github.com:FCP-INDI/C-PAC_GUI.git /tmp/repo
+            cd /tmp/repo
 
             rm -Rf /tmp/repo/versions/${VERSION_TAG} 2> /dev/null | true
             mkdir -p /tmp/repo/versions/${VERSION_TAG}
             cp -Rf /tmp/workspace/dist-web-browser /tmp/repo/versions/${VERSION_TAG}/browser
             cp -Rf /tmp/workspace/dist-web-electron /tmp/repo/versions/${VERSION_TAG}/electron
+
+            if [ "${CIRCLE_BRANCH}" == "master" ]; then
+              find . -maxdepth 1 ! -name '.git' ! -name 'versions' ! -name 'versions.txt' ! -name '.' -delete
+              cp -Rf /tmp/workspace/dist-web-browser/* /tmp/repo
+            fi
 
             rm -Rf /tmp/repo/versions/${TAG} 2> /dev/null | true
             mkdir -p /tmp/repo/versions/${TAG}
@@ -184,7 +190,6 @@ jobs:
 
             ls -1 /tmp/repo/versions > /tmp/repo/versions.txt
 
-            cd /tmp/repo
             git add .
             git commit -m "updates" || true
             git push -f origin gh-pages || true
