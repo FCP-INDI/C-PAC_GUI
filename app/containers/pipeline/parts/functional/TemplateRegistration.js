@@ -21,9 +21,9 @@ class TemplateRegistration extends Component {
       <Grid container>
         <Grid item sm={12}>
 
-        <Collapse in={configuration.getIn("anatomical.registration.methods.ants.enabled".split("."))}>
+          <Collapse in={configuration.getIn("anatomical.registration.methods.ants.enabled".split("."))}>
 
-          <Help
+            <Help
               type="pipeline"
               regex={/^funcRegANTSinterpolation/}
               help={`We provide a choice of interpolation options (Linear, LanczosWindowedSinc, or BSpline), set LanczosWindowedSinc as the default.`}
@@ -35,8 +35,8 @@ class TemplateRegistration extends Component {
                 label="Interpolation Option for ANTS"
                 fullWidth margin="normal" variant="outlined"
                 className={classes.textField} onChange={onChange}
-                name="functional.template_registration.interpolation"
-                value={configuration.getIn(["functional", "template_registration", "interpolation"])}
+                name="functional.template_registration.methods.ants.interpolation"
+                value={configuration.getIn(["functional", "template_registration", "methods", "ants","interpolation"])}
                 helperText=''
               >
                 <MenuItem value={"linear"}>Linear</MenuItem>
@@ -51,29 +51,29 @@ class TemplateRegistration extends Component {
           <Collapse in={configuration.getIn("anatomical.registration.methods.fsl.enabled".split("."))}>
 
             <Help
-                type="pipeline"
-                regex={/^funcRegANTSinterpolation/}
-                help={`We provide a choice of interpolation options (Linear, Sinc, or Spline), set sinc as the default.`}
-                fullWidth
+              type="pipeline"
+              regex={/^funcRegFSLinterpolation/}
+              help={`We provide a choice of interpolation options (Linear, Sinc, or Spline), set sinc as the default.`}
+              fullWidth
+            >
+
+              <TextField
+                select
+                label="Interpolation Option for FSL"
+                fullWidth margin="normal" variant="outlined"
+                className={classes.textField} onChange={onChange}
+                name="functional.template_registration.methods.fsl.interpolation"
+                value={configuration.getIn(["functional", "template_registration", "methods", "fsl", "interpolation"])}
+                helperText=''
               >
+                <MenuItem value={"linear"}>Linear</MenuItem>
+                <MenuItem value={"sinc"}>Sinc</MenuItem>
+                <MenuItem value={"spline"}>Spline</MenuItem>
 
-                <TextField
-                  select
-                  label="Interpolation Option for FSL"
-                  fullWidth margin="normal" variant="outlined"
-                  className={classes.textField} onChange={onChange}
-                  name="functional.template_registration.interpolation"
-                  value={configuration.getIn(["functional", "template_registration", "interpolation"])}
-                  helperText=''
-                >
-                  <MenuItem value={"linear"}>Linear</MenuItem>
-                  <MenuItem value={"sinc"}>Sinc</MenuItem>
-                  <MenuItem value={"spline"}>Spline</MenuItem>
+              </TextField>
+            </Help>
 
-                </TextField>
-              </Help>
-
-            </Collapse>
+          </Collapse>
 
           <Help
             type="pipeline"
