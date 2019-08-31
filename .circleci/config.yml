@@ -129,7 +129,10 @@ jobs:
             zip -r /tmp/c-pac_gui-${VERSION_TAG}-browser.zip .
             cd -
 
-            git tag "${VERSION_TAG}"
+            if [ ! $(git tag -l "${VERSION_TAG}") ]; then
+              git tag "${VERSION_TAG}"
+            fi
+            
             git tag "${TAG}"
             git push --tags
 
