@@ -23,7 +23,9 @@ class TemplateRegistration extends Component {
           <Help
             type="pipeline"
             regex={/^resolution_for_func_preproc/}
-            help={`The resolution (in mm) to which the preprocessed, registered functional timeseries outputs are written into. Note that selecting a 1 mm or 2 mm resolution might substantially increase your RAM needs- these resolutions should be selected with caution. For most cases, 3 mm or 4 mm resolutions are suggested.`}
+            help={`The resolution (in mm) to which the preprocessed, registered functional timeseries outputs are written into. 
+            Optional input types: 1 one integer or float number indicating 3 same dimensions, e.g. 3 or 2.5; 2 three different integers or float numbers connected by 'x', e.g. 3x2.67x2.67. 
+            Note that selecting a 1 mm or 2 mm resolution might substantially increase your RAM needs- these resolutions should be selected with caution. For most cases, 3 mm or 4 mm resolutions are suggested.`}
             fullWidth
           >
             <TextField label="Functional Resolution"

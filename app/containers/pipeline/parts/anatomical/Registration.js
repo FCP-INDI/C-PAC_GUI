@@ -36,7 +36,8 @@ class Registration extends Component {
         <Help
           type="pipeline"
           regex={/^resolution_for_anat/}
-          help={`The resolution to which anatomical images should be transformed during registration. This is the resolution at which processed anatomical files will be output.`}
+          help={`The resolution to which anatomical images should be transformed during registration. This is the resolution at which processed anatomical files will be output.
+          Optional input types: 1 one integer or float number indicating 3 same dimensions, e.g. 3 or 2.5; 2 three different integers or float numbers connected by 'x', e.g. 3x2.67x2.67. `}
           fullWidth
         >
           <TextField label="Resolution"
