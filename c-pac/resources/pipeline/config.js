@@ -84,6 +84,7 @@ export default {
                     iterations: 4
                   },
                   blur_fwhm: 0,
+                  skullstrip_monkey: false,
                 }
               },
               bet: {
@@ -102,6 +103,14 @@ export default {
                   remove_eyes: false,
                   robust_brain_center: false,
                   vertical_gradient: 0.0,
+                }
+              },
+              niworkflows_ants: {
+                enabled: false,
+                ants_templates: {
+                  niworkflows_ants_template_path: '/ants_template/oasis/T_template0.nii.gz',
+                  niworkflows_ants_mask_path: '/ants_template/oasis/T_template0_BrainCerebellumProbabilityMask.nii.gz',
+                  niworkflows_ants_regmask_path: '/ants_template/oasis/T_template0_BrainCerebellumRegistrationMask.nii.gz',
                 }
               }
             }

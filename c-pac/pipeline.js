@@ -263,6 +263,10 @@ export function parse(content) {
     c.anatomical.skull_stripping.methods.bet.enabled = true
   }
 
+  if (config.skullstrip_option.includes("niworkflows-ants")) {
+    c.anatomical.skull_stripping.methods.niworkflows_ants.enabled = true
+  } 
+
   c.anatomical.registration.resolution = parseInt(config.resolution_for_anat.replace("mm", ""))
   c.anatomical.registration.brain_template = config.template_brain_only_for_anat
                                               .replace("${resolution_for_anat}", "${pipeline.anatomical.registration.resolution}mm")
@@ -593,6 +597,7 @@ export function dump(pipeline, version='0') {
   config.skullstrip_option = []
     .concat(c.anatomical.skull_stripping.methods.afni.enabled ? ["AFNI"] : [])
     .concat(c.anatomical.skull_stripping.methods.bet.enabled ? ["BET"] : [])
+    .concat(c.anatomical.skull_stripping.methods.niworkflows_ants.enabled ? ["niworkflows-ants"] : [])
 
   config.skullstrip_shrink_factor = c.anatomical.skull_stripping.methods.afni.configuration.shrink_factor.threshold
   config.skullstrip_var_shrink_fac = c.anatomical.skull_stripping.methods.afni.configuration.shrink_factor.vary
@@ -613,6 +618,7 @@ export function dump(pipeline, version='0') {
   config.skullstrip_max_inter_iter = c.anatomical.skull_stripping.methods.afni.configuration.intersections.iterations
   config.skullstrip_fac = c.anatomical.skull_stripping.methods.afni.configuration.multiplier
   config.skullstrip_blur_fwhm = c.anatomical.skull_stripping.methods.afni.configuration.blur_fwhm
+  config.skullstrip_monkey = c. anatomical.skull_stripping.methods.afni.configuration.skullstrip_monkey
 
   config.bet_frac = c.anatomical.skull_stripping.methods.bet.configuration.threshold
   config.bet_mask_boolean = c.anatomical.skull_stripping.methods.bet.configuration.mask
@@ -627,6 +633,10 @@ export function dump(pipeline, version='0') {
   config.bet_surfaces = c.anatomical.skull_stripping.methods.bet.configuration.surfaces
   config.bet_threshold = c.anatomical.skull_stripping.methods.bet.configuration.apply_threshold
   config.bet_vertical_gradient = c.anatomical.skull_stripping.methods.bet.configuration.vertical_gradient
+
+  config.niworkflows_ants_template_path = c.anatomical.skull_stripping.methods.niworkflows_ants.ants_templates.niworkflows_ants_template_path
+  config.niworkflows_ants_mask_path = c.anatomical.skull_stripping.methods.niworkflows_ants.ants_templates.niworkflows_ants_mask_path
+  config.niworkflows_ants_regmask_path = c.anatomical.skull_stripping.methods.niworkflows_ants.ants_templates.niworkflows_ants_regmask_path
 
   config.resolution_for_anat = c.anatomical.registration.resolution + "mm"
   config.template_brain_only_for_anat = c.anatomical.registration.brain_template
