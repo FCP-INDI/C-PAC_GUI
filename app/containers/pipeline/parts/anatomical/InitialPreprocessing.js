@@ -35,28 +35,28 @@ class InitialPreprocessing extends Component {
   static styles = theme => ({
   });
 
-  state = {
-    nlmfOptions: true,
-    n4Options: true,
-  }
+  // state = {
+  //   nlmfOptions: true,
+  //   n4Options: true,
+  // }
 
-  handleValueChange = (event) => {
-    const name = event.target.name
+  // handleValueChange = (event) => {
+  //   const name = event.target.name
 
-    const checkBoxes = [
-      "anatomical.preprocessing.methods.nlmf.enabled",
-      "anatomical.preprocessing.methods.n4.enabled"
-      // "anatomical.preprocessing.enabled"
-    ]
+  //   const checkBoxes = [
+  //     "anatomical.preprocessing.methods.nlmf.enabled",
+  //     "anatomical.preprocessing.methods.n4.enabled"
+  //     // "anatomical.preprocessing.enabled"
+  //   ]
 
-    if (!checkBoxes.includes(name)) {
-      this.props.onChange([
-        [name, event.target.value]
-      ])
+  //   if (!checkBoxes.includes(name)) {
+  //     this.props.onChange([
+  //       [name, event.target.value]
+  //     ])
 
-    } else {
-      const changes = []
-      const value = event.target.checked
+  //   } else {
+  //     const changes = []
+  //     const value = event.target.checked
 
       // if (name == "anatomical.preprocessing.enabled") {
       //   changes.push([name, !value])
@@ -66,37 +66,37 @@ class InitialPreprocessing extends Component {
       //   }
       // }
 
-      const methods = [
-        "anatomical.preprocessing.methods.nlmf.enabled",
-        "anatomical.preprocessing.methods.n4.enabled"
-      ]
-      if (methods.includes(name)) {
-        changes.push([name, value])
-        if (value) {
-          changes.push(["anatomical.preprocessing.methods.nlmf.enabled", false])
-          changes.push(["anatomical.preprocessing.methods.n4.enabled", false])
-        }
-      }
+  //     const methods = [
+  //       "anatomical.preprocessing.methods.nlmf.enabled",
+  //       "anatomical.preprocessing.methods.n4.enabled"
+  //     ]
+  //     if (methods.includes(name)) {
+  //       changes.push([name, value])
+  //       if (value) {
+  //         changes.push(["anatomical.preprocessing.methods.nlmf.enabled", false])
+  //         changes.push(["anatomical.preprocessing.methods.n4.enabled", false])
+  //       }
+  //     }
 
-      this.props.onChange(changes)
-    }
-  };
+  //     this.props.onChange(changes)
+  //   }
+  // };
 
-  handleOpenNLMF = () => {
-    this.setState({ nlmfOptions: true })
-  }
+  // handleOpenNLMF = () => {
+  //   this.setState({ nlmfOptions: true })
+  // }
 
-  handleOpenN4 = () => {
-    this.setState({ n4Options: true })
-  }
+  // handleOpenN4 = () => {
+  //   this.setState({ n4Options: true })
+  // }
   
-  handleCloseNLMF = () => {
-    this.setState({ nlmfOptions: false })
-  }
+  // handleCloseNLMF = () => {
+  //   this.setState({ nlmfOptions: false })
+  // }
 
-  handleCloseN4 = () => {
-    this.setState({ n4Options: false })
-  }
+  // handleCloseN4 = () => {
+  //   this.setState({ n4Options: false })
+  // }
 
   render() {
     const { classes, configuration, advanced, onChange } = this.props
@@ -114,15 +114,9 @@ class InitialPreprocessing extends Component {
                 <Switch
                   name="anatomical.preprocessing.methods.nlmf.enabled"
                   checked={!configuration.getIn("anatomical.preprocessing.methods.nlmf.enabled".split("."))}
-                  onChange={this.handleValueChange}
+                  onChange={onChange}
                   color="primary"
                 />
-                {/* { configuration.getIn(['anatomical', 'preprocessing', 'methods', 'nlmf', 'enabled']) ?
-                <IconButton
-                  onClick={() => this.handleOpenNLMF()}>
-                  <SettingsIcon />
-                </IconButton>
-              : null } */}
               </FormControlLabelled>
             </Help>
           </FormGroup>
@@ -137,7 +131,7 @@ class InitialPreprocessing extends Component {
                 <Switch
                   name="anatomical.preprocessing.methods.n4.enabled"
                   checked={!configuration.getIn("anatomical.preprocessing.methods.n4.enabled".split("."))}
-                  onChange={this.handleValueChange}
+                  onChange={onChange}
                   color="primary"
                 />
               </FormControlLabelled>
