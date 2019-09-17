@@ -124,7 +124,7 @@ class InitialPreprocessing extends Component {
           <FormGroup row>
             <Help
               type="pipeline"
-              regex={/^n4_bias_correction/}
+              regex={/^n4_bias_field_correction/}
               help={`Turn on to apply N4 bias correction`}
             >
               <FormControlLabelled label="N4 Bias Correction">

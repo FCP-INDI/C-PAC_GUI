@@ -243,16 +243,10 @@ export function parse(content) {
     c.anatomical.skull_stripping.methods.bet.enabled = true
   }
 
-  if (c.anatomical.registration.resolution.includes("x")) {
-    temp = config.resolution_for_anat.split("x")
-    c.anatomical.registration.resolution = []
-
-    for (i = 0; i < 3; i++) {
-      c.anatomical.registration.resolution.push(parseFloat(temp[i]))
-    }
+  if (config.resolution_for_anat.includes("x")) {
+    c.anatomical.registration.resolution = config.resolution_for_anat.split("x").map(parseFloat)
   } else {
     c.anatomical.registration.resolution = []
-
     for (i = 0; i < 3; i++) {
       c.anatomical.registration.resolution.push(parseFloat(config.resolution_for_anat))
     }
@@ -331,8 +325,26 @@ export function parse(content) {
   c.functional.anatomical_registration.functional_masking.fsl_afni = config.functionalMasking.includes('FSL_AFNI')
 
   c.functional.template_registration.enabled = config.runRegisterFuncToMNI.includes(1)
-  c.functional.template_registration.functional_resolution = config.resolution_for_func_preproc.replace("mm", "")
-  c.functional.template_registration.derivative_resolution = config.resolution_for_func_derivative.replace("mm", "")
+
+  if (config.resolution_for_func_preproc.includes("x")) {
+    c.functional.template_registration.functional_resolution = config.resolution_for_func_preproc.split("x").map(parseFloat)
+  } else {
+    c.functional.template_registration.functional_resolution = []
+    for (i = 0; i < 3; i++) {
+      c.functional.template_registration.functional_resolution.push(parseFloat(config.resolution_for_func_preproc))
+    }
+  }
+
+  if (config.resolution_for_func_derivative.includes("x")) {
+    c.functional.template_registration.derivative_resolution = config.resolution_for_func_derivative.split("x").map(parseFloat)
+  } else {
+    c.functional.template_registration.derivative_resolution = []
+    for (i = 0; i < 3; i++) {
+      c.functional.template_registration.derivative_resolution.push(parseFloat(config.resolution_for_func_derivative))
+    }
+  }
+  // c.functional.template_registration.functional_resolution = config.resolution_for_func_preproc.replace("mm", "")
+  // c.functional.template_registration.derivative_resolution = config.resolution_for_func_derivative.replace("mm", "")
   c.functional.template_registration.brain_template =
     config.template_brain_only_for_func
       .replace("${resolution_for_func_preproc}", "${pipeline.functional.template_registration.functional_resolution}mm")
@@ -572,7 +584,16 @@ export function dump(pipeline, version='0') {
   config.bet_threshold = c.anatomical.skull_stripping.methods.bet.configuration.apply_threshold
   config.bet_vertical_gradient = c.anatomical.skull_stripping.methods.bet.configuration.vertical_gradient
 
-  config.resolution_for_anat = c.anatomical.registration.resolution + "mm"
+  if (c.anatomical.registration.resolution.includes("x")) {
+    xind = []
+    for(i = 0; i < c.anatomical.registration.resolution.length; i++) {
+        if (c.anatomical.registration.resolution[i] === "x") xind.push(i)
+    }
+    config.resolution_for_anat = c.anatomical.registration.resolution.slice(0, xind[0]) + "mm" + c.anatomical.registration.resolution.slice(xind[0], xind[1]) + "mm" + c.anatomical.registration.resolution.slice(xind[1]) + "mm"
+  } else {
+    config.resolution_for_anat = c.anatomical.registration.resolution + "mm"
+  }
+
   config.template_brain_only_for_anat = c.anatomical.registration.brain_template
   config.template_skull_for_anat = c.anatomical.registration.skull_template
   config.regOption = ['ANTS']
@@ -580,6 +601,7 @@ export function dump(pipeline, version='0') {
   config.regOption = []
     .concat(c.anatomical.registration.methods.ants.enabled ? ["ANTS"] : [])
     .concat(c.anatomical.registration.methods.fsl.enabled ? ["FSL"] : [])
+    .concat(c.functional.anatomical_registration.functional_masking.fsl_afni ? ["FSL_AFNI"] : [])
 
   config.use_lesion_mask = [c.anatomical.registration.methods.ants.configuration.lesion_mask ? 1 : 0]
 
@@ -635,8 +657,28 @@ export function dump(pipeline, version='0') {
     .concat(c.functional.anatomical_registration.functional_masking.fsl_afni ? ["FSL_AFNI"] : [])
 
   config.runRegisterFuncToMNI = [c.functional.template_registration.enabled ? 1 : 0]
-  config.resolution_for_func_preproc = c.functional.template_registration.functional_resolution + "mm"
-  config.resolution_for_func_derivative = c.functional.template_registration.derivative_resolution + "mm"
+  if (c.functional.template_registration.functional_resolution.includes("x")) {
+    xind = []
+    for(i = 0; i < c.functional.template_registration.functional_resolution.length; i++) {
+        if (c.functional.template_registration.functional_resolution[i] === "x") xind.push(i)
+    }
+    config.resolution_for_func_preproc = c.functional.template_registration.functional_resolution.slice(0, xind[0]) + "mm" + c.functional.template_registration.functional_resolution.slice(xind[0], xind[1]) + "mm" + c.functional.template_registration.functional_resolution.slice(xind[1]) + "mm"
+  } else {
+    config.resolution_for_func_preproc = c.functional.template_registration.functional_resolution + "mm"
+  }
+
+  if (c.functional.template_registration.derivative_resolution.includes("x")) {
+    xind = []
+    for(i = 0; i < c.functional.template_registration.derivative_resolution.length; i++) {
+        if (c.functional.template_registration.derivative_resolution[i] === "x") xind.push(i)
+    }
+    config.resolution_for_func_derivative = c.functional.template_registration.derivative_resolution.slice(0, xind[0]) + "mm" + c.functional.template_registration.derivative_resolution.slice(xind[0], xind[1]) + "mm" + c.functional.template_registration.derivative_resolution.slice(xind[1]) + "mm"
+  } else {
+    config.resolution_for_func_derivative = c.functional.template_registration.derivative_resolution + "mm"
+  }
+
+  // config.resolution_for_func_preproc = c.functional.template_registration.functional_resolution + "mm"
+  // config.resolution_for_func_derivative = c.functional.template_registration.derivative_resolution + "mm"
   config.template_brain_only_for_func = c.functional.template_registration.brain_template
   config.template_skull_for_func = c.functional.template_registration.skull_template
   config.identityMatrix = c.functional.template_registration.identity_matrix
