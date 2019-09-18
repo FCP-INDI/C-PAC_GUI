@@ -34,7 +34,7 @@ class TissueSegmentation extends Component {
             <Help
               type="pipeline"
               regex={/^runSegmentationPreprocessing/}
-              help={`Automatically segment anatomical images into White Matter, Gray Matter, and CSF based on prior probability maps.`}
+              help={`Automatically segment anatomical images into White Matter, Gray Matter, and CSF based on probability maps.`}
             />
             Tissue Segmentation Options 
           </FormLabel>
@@ -79,7 +79,8 @@ class TissueSegmentation extends Component {
                   <FormLabel>
                     <Help
                       type="pipeline"
-                      help={`Full path to a directory containing binarized prior probability maps. These maps are included as part of the 'Image Resource Files' package available on the Install page of the User Guide. It is not necessary to change this path unless you intend to use non-standard priors.`}
+                      help={`Full path to a directory containing binarized prior probability maps.`}
+                      fullWidth
                     />
                     Tissue Prior Probability Map
                   </FormLabel>
@@ -141,7 +142,7 @@ class TissueSegmentation extends Component {
                   <FormLabel>
                     <Help
                       type="pipeline"
-                      help={`Set the threshold value for refining the resulting White Matter, Gray Matter, CSF segmentation tissue mask. The default value is 0.95.`}
+                      help={`Set the threshold value for refining the resulting White Matter, Gray Matter, CSF segmentation tissue mask. `}
                     />
                     Threshold value
                   </FormLabel>
