@@ -57,6 +57,100 @@ import {
   DuplicateIcon
 } from 'components/icons';
 
+const original = fromJS({
+  GreyMatter: {
+    enabled: false,
+    summary: {
+      method: 'Mean',
+    },
+    erode_mask: true,
+    extraction_resolution: 2,
+    include_delayed: false,
+    include_squared: false,
+    include_delayed_squared: false,
+  },
+  WhiteMatter: {
+    enabled: false,
+    summary: {
+      method: 'Mean',
+    },
+    erode_mask: true,
+    extraction_resolution: 2,
+    include_delayed: false,
+    include_squared: false,
+    include_delayed_squared: false,
+  },
+  CerebrospinalFluid: {
+    enabled: false,
+    summary: {
+      method: 'Mean',
+    },
+    erode_mask: false,
+    extraction_resolution: 2,
+    include_delayed: false,
+    include_squared: false,
+    include_delayed_squared: false,
+  },
+  aCompCor: {
+    enabled: false,
+    summary: {
+      method: 'DetrendPC',
+      components: 5,
+    },
+    tissues: ['WhiteMatter'],
+    extraction_resolution: 2,
+    include_delayed: false,
+    include_squared: false,
+    include_delayed_squared: false,
+  },
+  tCompCor: {
+    enabled: false,
+    summary: {
+      method: 'PC',
+      components: 5,
+    },
+    threshold: '1.5SD',
+    by_slice: true,
+    include_delayed: false,
+    include_squared: false,
+    include_delayed_squared: false,
+  },
+  GlobalSignal: {
+    enabled: false,
+    summary: {
+      method: 'Mean',
+    },
+    include_delayed: false,
+    include_squared: false,
+    include_delayed_squared: false,
+  },
+  Motion: {
+    enabled: false,
+    include_delayed: true,
+    include_squared: true,
+    include_delayed_squared: true,
+  },
+  PolyOrt: {
+    enabled: false,
+    degree: 2,
+  },
+  Bandpass: {
+    enabled: false,
+    bottom_frequency: 0.01,
+    top_frequency: 0.1,
+  },
+  Censor: {
+    enabled: false,
+    method: 'Kill',
+    threshold: {
+      type: 'FD_J',
+      value: 0.0,
+    },
+    number_of_previous_trs_to_censor: 1,
+    number_of_subsequent_trs_to_censor: 2,
+  },
+})
+
 class NuisanceRegression extends Component {
 
   state = {
@@ -68,7 +162,7 @@ class NuisanceRegression extends Component {
     content: { padding: 0, minHeight: 10, margin: 0 },
     details: { padding: '0 10px 0 10px', minHeight: 10 },
     details_box: { margin: 0 },
-    footer: { textAlign: 'right', padding: theme.spacing.unit * 2 }
+    footer: { textAlign: 'right', padding: theme.spacing(2) }
   });
 
   handleEdit = (regi) => {
@@ -77,9 +171,7 @@ class NuisanceRegression extends Component {
 
   handleNew = () => {
     const { classes, configuration, onChange } = this.props
-    const regressors = configuration.getIn(['functional', 'nuisance_regression', 'regressors']).push(
-      fromJS({})
-    )
+    const regressors = configuration.getIn(['functional', 'nuisance_regression', 'regressors']).push(original)
 
     onChange([
       [['functional', 'nuisance_regression', 'regressors'], regressors]
@@ -122,12 +214,19 @@ class NuisanceRegression extends Component {
       'GreyMatter': 'GM',
       'GlobalSignal': 'GR',
       'Motion': 'Mot',
+      'Bandpass': 'BP',
+    }
+
+    const censor_renaming = {
+      'FD_J': 'FD Jenkinson',
+      'FD_P': 'FD Power',
+      'DVARS': 'DVARS',
     }
 
     let representation = ''
 
     const regressor_pieces = []
-    for(let reg of ['Motion', 'GlobalSignal', 'WhiteMatter', 'CerebrospinalFluid', 'GreyMatter','aCompCor', 'tCompCor', ]) {
+    for(let reg of ['Motion', 'GlobalSignal', 'WhiteMatter', 'CerebrospinalFluid', 'GreyMatter','aCompCor', 'tCompCor', 'PolyOrt', 'Bandpass', 'Censor']) {
       if (regressors[reg] === undefined) {
         continue
       }
@@ -191,6 +290,18 @@ class NuisanceRegression extends Component {
         }
       }
 
+      if (reg == 'PolyOrt') {
+        regressor_terms += ` ${regressor['degree']}`
+      }
+
+      if (reg == 'Bandpass') {
+        regressor_terms += ` ${regressor['bottom_frequency'] || 0.00}-${regressor['top_frequency'] || 9999.00}`
+      }
+
+      if (reg == 'Censor') {
+        regressor_terms += ` ${regressor['method']} ${censor_renaming[regressor['threshold']['type']]}: ${regressor['threshold']['value']}`
+      }
+
       regressor_pieces.push(regressor_terms)
     }
 
@@ -214,35 +325,38 @@ class NuisanceRegression extends Component {
         { this.renderRegressor(regressor, i, 'WhiteMatter', 'White Matter', true, true, true) }
         { this.renderRegressor(regressor, i, 'CerebrospinalFluid', 'CerebrospinalFluid', true, true, true) }
         { this.renderRegressor(regressor, i, 'aCompCor', 'aCompCor', true, false, false, (
-          <FormControl>
-            <InputLabel>Tissues</InputLabel>
-            <Select
-              multiple
-              name={`functional.nuisance_regression.regressors.${i}.aCompCor.tissues`}
-              value={regressor.getIn(['aCompCor', 'tissues'], fromJS(['WhiteMatter'])).toJS()}
-              onChange={onChange}
-              renderValue={selected => selected.map(t => ({
-                'WhiteMatter': 'White Matter',
-                'CerebrospinalFluid': 'Cerebrospinal Fluid'
-              }[t])).join(', ')}
-            >
-              <MenuItem value="WhiteMatter">
-                <Checkbox checked={regressor.getIn(['aCompCor', 'tissues'], fromJS(['WhiteMatter'])).indexOf('WhiteMatter') > -1} />
-                <ListItemText primary={"White Matter"} />
-              </MenuItem>
-              <MenuItem value="CerebrospinalFluid">
-                <Checkbox checked={regressor.getIn(['aCompCor', 'tissues'], fromJS(['WhiteMatter'])).indexOf('CerebrospinalFluid') > -1} />
-                <ListItemText primary={"Cerebrospinal Fluid"} />
-              </MenuItem>
-            </Select>
-          </FormControl>
+          <FormGroup row>
+            <FormControl>
+              <InputLabel>Tissues</InputLabel>
+              <Select
+                multiple
+                fullWidth
+                name={`functional.nuisance_regression.regressors.${i}.aCompCor.tissues`}
+                value={regressor.getIn(['aCompCor', 'tissues'], fromJS(['WhiteMatter'])).toJS()}
+                onChange={onChange}
+                renderValue={selected => selected.map(t => ({
+                  'WhiteMatter': 'White Matter',
+                  'CerebrospinalFluid': 'Cerebrospinal Fluid'
+                }[t])).join(', ')}
+              >
+                <MenuItem key="WhiteMatter" value="WhiteMatter">
+                  <Checkbox checked={regressor.getIn(['aCompCor', 'tissues'], fromJS([])).indexOf('WhiteMatter') > -1} />
+                  <ListItemText primary={"White Matter"} />
+                </MenuItem>
+                <MenuItem key="CerebrospinalFluid" value="CerebrospinalFluid">
+                  <Checkbox checked={regressor.getIn(['aCompCor', 'tissues'], fromJS([])).indexOf('CerebrospinalFluid') > -1} />
+                  <ListItemText primary={"Cerebrospinal Fluid"} />
+                </MenuItem>
+              </Select>
+            </FormControl>
+          </FormGroup>
         )) }
         { this.renderRegressor(regressor, i, 'tCompCor', 'tCompCor', true, false, false, (
           <React.Fragment>
             <FormGroup row>
               <TextField label="Threshold"
                 name={`functional.nuisance_regression.regressors.${i}.tCompCor.threshold`}
-                value={regressor.getIn(['tCompCor', 'threshold'], '1.5SD')}
+                value={regressor.getIn(['tCompCor', 'threshold'])}
                 onChange={onChange}
                 fullWidth margin="normal" variant="outlined"
               />
@@ -251,11 +365,110 @@ class NuisanceRegression extends Component {
               <FormControlLabelled label="By Slice">
                 <Switch
                   name={`functional.nuisance_regression.regressors.${i}.tCompCor.by_slice`}
-                  checked={regressor.getIn(['tCompCor', 'by_slice'], false)}
+                  checked={regressor.getIn(['tCompCor', 'by_slice'])}
                   onChange={onChange}
                   color="primary"
                 />
               </FormControlLabelled>
+            </FormGroup>
+          </React.Fragment>
+        )) }
+        { this.renderRegressor(regressor, i, 'PolyOrt', 'PolyOrt', false, false, false, (
+          <React.Fragment>
+            <FormGroup row>
+              <TextField label="Degree"
+                name={`functional.nuisance_regression.regressors.${i}.PolyOrt.degree`}
+                value={regressor.getIn(['PolyOrt', 'degree'])}
+                onChange={onChange}
+                fullWidth margin="normal" variant="outlined"
+              />
+            </FormGroup>
+          </React.Fragment>
+        )) }
+        { this.renderRegressor(regressor, i, 'Bandpass', 'Bandpass', false, false, false, (
+          <React.Fragment>
+            <FormGroup row>
+              <TextField label="Bottom Frequency"
+                name={`functional.nuisance_regression.regressors.${i}.Bandpass.bottom_frequency`}
+                value={regressor.getIn(['Bandpass', 'bottom_frequency'])}
+                onChange={onChange}
+                fullWidth margin="normal" variant="outlined"
+                InputProps={{
+                  endAdornment: <InputAdornment position="end">Hz</InputAdornment>,
+                }}
+              />
+            </FormGroup>
+            <FormGroup row>
+              <TextField label="Top Frequency"
+                name={`functional.nuisance_regression.regressors.${i}.Bandpass.top_frequency`}
+                value={regressor.getIn(['Bandpass', 'top_frequency'])}
+                onChange={onChange}
+                fullWidth margin="normal" variant="outlined"
+                InputProps={{
+                  endAdornment: <InputAdornment position="end">Hz</InputAdornment>,
+                }}
+              />
+            </FormGroup>
+          </React.Fragment>
+        )) }
+        { this.renderRegressor(regressor, i, 'Censor', 'Censor', false, false, false, (
+          <React.Fragment>
+            <FormGroup row>
+              <TextField
+                select
+                label="Method"
+                name={`functional.nuisance_regression.regressors.${i}.Censor.method`}
+                value={regressor.getIn(["Censor", "method"], 'Kill')}
+                onChange={onChange}
+                fullWidth margin="normal" variant="outlined"
+              >
+                <MenuItem value={"Kill"}>Kill</MenuItem>
+                <MenuItem value={"Zero"}>Zero</MenuItem>
+                <MenuItem value={"Interpolate"}>Interpolate</MenuItem>
+                <MenuItem value={"SpikeRegression"}>Spike Regression</MenuItem>
+              </TextField>
+            </FormGroup>
+            <FormGroup row>
+              <TextField label="Number of previous TRs to censor"
+                name={`functional.nuisance_regression.regressors.${i}.Censor.number_of_previous_trs_to_censor`}
+                value={regressor.getIn(['Censor', 'number_of_previous_trs_to_censor'])}
+                onChange={onChange}
+                fullWidth margin="normal" variant="outlined"
+                InputProps={{
+                  endAdornment: <InputAdornment position="end">TRs</InputAdornment>,
+                }}
+              />
+            </FormGroup>
+            <FormGroup row>
+              <TextField label="Number of subsequent TRs to censor"
+                name={`functional.nuisance_regression.regressors.${i}.Censor.number_of_subsequent_trs_to_censor`}
+                value={regressor.getIn(['Censor', 'number_of_subsequent_trs_to_censor'])}
+                onChange={onChange}
+                fullWidth margin="normal" variant="outlined"
+                InputProps={{
+                  endAdornment: <InputAdornment position="end">TRs</InputAdornment>,
+                }}
+              />
+            </FormGroup>
+            <FormGroup row>
+              <TextField
+                select
+                label="Threshold type"
+                name={`functional.nuisance_regression.regressors.${i}.Censor.threshold.type`}
+                value={regressor.getIn(["Censor", "threshold", "type"])}
+                onChange={onChange}
+                fullWidth margin="normal" variant="outlined"
+              >
+                <MenuItem value={"FD_J"}>Framewise Displacement - Jenkinson</MenuItem>
+                <MenuItem value={"FD_P"}>Framewise Displacement - Power</MenuItem>
+                <MenuItem value={"DVARS"}>DVARS</MenuItem>
+              </TextField>
+              <TextField label="Threshold"
+                name={`functional.nuisance_regression.regressors.${i}.Censor.threshold.value`}
+                value={regressor.getIn(["Censor", "threshold", "value"])}
+                onChange={onChange}
+                fullWidth margin="normal" variant="outlined"
+              />
             </FormGroup>
           </React.Fragment>
         )) }
@@ -399,12 +612,11 @@ class NuisanceRegression extends Component {
   render() {
     const { classes, configuration, onChange } = this.props
 
-    const i = 0
-    const regressors = configuration.getIn(["functional", "nuisance_regression", "regressors"])
+    const regressors = configuration.getIn(["functional", "nuisance_regression", "regressors"]) // .map((r) => original.mergeDeep(r))
 
     let regressor = null
-    if (this.state.editRegressor) {
-      regressor = configuration.getIn(["functional", "nuisance_regression", "regressors", this.state.editRegressor])
+    if (this.state.editRegressor !== null) {
+      regressor = regressors.get(this.state.editRegressor)
     }
 
     return (
@@ -437,14 +649,16 @@ class NuisanceRegression extends Component {
             </FormLabel>
 
             <Dialog
-              open={this.state.editRegressor !== null}
+              open={!!regressor}
               onClose={this.handleClose}
               fullWidth={true}
             >
               <DialogTitle>{`Edit Nuisance Regressor`}</DialogTitle>
               <DialogContent>
                 {
-                  this.state.editRegressor ? this.renderDialogRegressor(regressor, this.state.editRegressor) : null
+                  regressor ?
+                  this.renderDialogRegressor(regressor, this.state.editRegressor) :
+                  null
                 }
               </DialogContent>
             </Dialog>
@@ -455,7 +669,7 @@ class NuisanceRegression extends Component {
                   <ListItem button key={i} onClick={((regi) => () => this.handleEdit(regi))(i)}>
                     <ListItemText primary={
                       <span>{ this.getRegressorLabel(regressor.toJS()) }</span>
-                    } />
+                    } style={{ padding: '0 115px 0 0' }} />
                     <ListItemSecondaryAction>
                       <IconButton onClick={((regi) => () => this.handleEdit(regi))(i)}>
                         <EditIcon />

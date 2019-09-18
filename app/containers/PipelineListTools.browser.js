@@ -38,9 +38,9 @@ class PipelineListTools extends Component {
     },
     upload: {
       position: 'absolute',
-      width: theme.spacing.unit * 50,
+      width: theme.spacing(50),
       boxShadow: theme.shadows[5],
-      padding: theme.spacing.unit * 2,
+      padding: theme.spacing(2),
       top: '50%',
       left: '50%',
       transform: 'translate(-50%, -50%)',

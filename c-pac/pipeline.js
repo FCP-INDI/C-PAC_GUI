@@ -33,7 +33,24 @@ export function normalize(pipeline) {
   let configuration = pipeline.versions[lastVersion].configuration
 
   if (pipeline.versions[lastVersion].version &&
-      semver.gte(pipeline.versions[lastVersion].version, '1.4.1')) {
+    semver.gte(pipeline.versions[lastVersion].version, '1.4.3')) {
+
+    let nuisanceRegression = configuration.functional.nuisance_regression
+    for (let regressors_i in configuration.functional.nuisance_regression.regressors) {
+      let regressors = nuisanceRegression.regressors[regressors_i]
+      if (regressors.Censor.thresholds) {
+        if (regressors.Censor.thresholds.length) {
+          regressors.Censor.threshold = regressors.Censor.thresholds[0]
+        } else {
+          regressors.Censor.enabled = false
+          regressors.Censor.threshold = {
+            type: 'FD_J',
+            value: 0.0,
+          }
+        }
+      }
+    }
+
     return pipeline
   }
 
@@ -51,7 +68,10 @@ export function normalize(pipeline) {
     censorings.push({
       enabled: false,
       method: 'Kill',
-      thresholds: [],
+      threshold: {
+        type: 'FD_J',
+        value: 0.0,
+      },
       number_of_previous_trs_to_censor: 1,
       number_of_subsequent_trs_to_censor: 2,
     })
@@ -61,10 +81,10 @@ export function normalize(pipeline) {
     censorings.push({
       enabled: true,
       method: 'Kill',
-      thresholds: [{
+      threshold: {
         type: {'jenkinson': 'FD_J', 'power': 'FD_P'}[nuisanceRegression.fd_calculation],
         value: nuisanceRegression.fd_threshold,
-      }],
+      },
       number_of_previous_trs_to_censor: nuisanceRegression.pre_volumes,
       number_of_subsequent_trs_to_censor: nuisanceRegression.post_volumes,
     })
@@ -74,10 +94,10 @@ export function normalize(pipeline) {
     censorings.push({
       enabled: true,
       method: 'SpikeRegression',
-      thresholds: [{
+      threshold: {
         type: {'jenkinson': 'FD_J', 'power': 'FD_P'}[nuisanceRegression.fd_calculation],
         value: nuisanceRegression.fd_threshold,
-      }],
+      },
       number_of_previous_trs_to_censor: nuisanceRegression.pre_volumes,
       number_of_subsequent_trs_to_censor: nuisanceRegression.post_volumes,
     })
@@ -269,6 +289,18 @@ export function parse(content) {
   c.anatomical.registration.methods.ants.configuration.skull_on = config.regWithSkull.includes(1)
   c.anatomical.registration.methods.ants.configuration.lesion_mask = config.use_lesion_mask.includes(1)
 
+  switch (config.anatRegANTSinterpolation) {
+    case 'LanczosWindowedSinc':
+      c.anatomical.registration.methods.ants.interpolation = 'sinc'
+      break;
+    case 'Linear':
+      c.anatomical.registration.methods.ants.interpolation = 'linear'
+      break;
+    case 'BSpline':
+      c.anatomical.registration.methods.ants.interpolation = 'spline'
+      break;
+  }
+  
   if (config.regOption.includes("FSL")) {
     c.anatomical.registration.methods.fsl.enabled = true
   }
@@ -279,7 +311,19 @@ export function parse(content) {
     config.ref_mask
       .replace("${resolution_for_anat}", "${pipeline.anatomical.registration.resolution}mm")
       .replace("$FSLDIR", "${environment.paths.fsl_dir}")
-
+  
+  switch (config.anatRegFSLinterpolation) {
+    case 'sinc':
+      c.anatomical.registration.methods.fsl.interpolation = 'sinc'
+      break;
+    case 'trilinear':
+      c.anatomical.registration.methods.fsl.interpolation = 'linear'
+      break;
+    case 'spline':
+      c.anatomical.registration.methods.fsl.interpolation = 'spline'
+      break;
+  }
+  
   c.anatomical.tissue_segmentation.enabled = config.runSegmentationPreprocessing.includes(1)
 
   let priors_path = ''
@@ -610,6 +654,33 @@ export function dump(pipeline, version='0') {
   config.fnirtConfig = c.anatomical.registration.methods.fsl.configuration.config_file
   config.ref_mask = c.anatomical.registration.methods.fsl.configuration.reference_mask
 
+  switch (c.anatomical.registration.methods.ants.interpolation) {
+    case 'linear':
+      config.funcRegANTSinterpolation = 'Linear'
+      break;
+  
+    case 'sinc':
+      config.funcRegANTSinterpolation = 'LanczosWindowedSinc'
+      break;
+
+    case 'spline':
+      config.funcRegANTSinterpolation = 'BSpline'
+      break;
+  } 
+
+  switch (c.anatomical.registration.methods.fsl.interpolation) {
+    case 'linear':
+      config.funcRegFSLinterpolation = 'trilinear'
+      break;
+  
+    case 'sinc':
+      config.funcRegFSLinterpolation = 'sinc'
+      break;
+
+    case 'spline':
+      config.funcRegFSLinterpolation = 'spline'
+      break;
+  } 
   config.regWithSkull = [c.anatomical.registration.methods.ants.configuration.skull_on ? 1 : 0]
 
   config.runSegmentationPreprocessing = [c.anatomical.tissue_segmentation.enabled ? 1 : 0]

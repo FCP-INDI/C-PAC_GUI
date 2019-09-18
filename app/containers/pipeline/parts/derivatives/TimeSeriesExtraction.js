@@ -40,8 +40,8 @@ import Help from 'components/Help'
 class TimeSeriesExtraction extends Component {
 
   static styles = theme => ({
-    paper: { flexGrow: 1, padding: theme.spacing.unit, marginBottom: theme.spacing.unit * 2 },
-    footer: { textAlign: 'right', padding: theme.spacing.unit * 2 }
+    paper: { flexGrow: 1, padding: theme.spacing(), marginBottom: theme.spacing(2) },
+    footer: { textAlign: 'right', padding: theme.spacing(2) }
   });
 
   addMask = (event) => {

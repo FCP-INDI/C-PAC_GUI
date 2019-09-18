@@ -4,7 +4,7 @@ import { withStyles, Typography } from '@material-ui/core';
 
 import Grid from '@material-ui/core/Grid'
 import Divider from '@material-ui/core/Divider';
-
+import MenuItem from '@material-ui/core/MenuItem';
 import FormGroup from '@material-ui/core/FormGroup';
 import FormLabel from '@material-ui/core/FormLabel';
 import FormControl from '@material-ui/core/FormControl';
@@ -15,9 +15,6 @@ import InputAdornment from '@material-ui/core/InputAdornment';
 import Switch from '@material-ui/core/Switch';
 
 import Collapse from '@material-ui/core/Collapse';
-
-import getter from 'lodash.get';
-import setter from 'lodash.set';
 
 import Help from 'components/Help'
 import FormControlLabelled from 'components/FormControlLabelled'
@@ -160,6 +157,29 @@ class Registration extends Component {
                       </FormControlLabelled>
                     </Help>
                   </FormGroup>
+
+                  <Grid item xs={8}>
+                    <Help
+                        type="pipeline"
+                        regex={/^anatRegANTSinterpolation/}
+                        help={`We provide a choice of interpolation options (Linear, LanczosWindowedSinc, or BSpline), set LanczosWindowedSinc as the default.`}
+                        fullWidth
+                      >
+                        <TextField
+                          select
+                          label="Interpolation Option for ANTS"
+                          fullWidth margin="normal" variant="outlined"
+                          className={classes.textField} onChange={onChange}
+                          name="anatomical.registration.methods.ants.interpolation"
+                          value={configuration.getIn("anatomical.registration.methods.ants.interpolation".split("."))}
+                          helperText=''
+                        >
+                          <MenuItem value={"linear"}>Linear</MenuItem>
+                          <MenuItem value={"sinc"}>LanczosWindowedSinc</MenuItem>
+                          <MenuItem value={"spline"}>BSpline</MenuItem>
+                        </TextField>
+                      </Help>
+                    </Grid>
                 </FormGroup>
               </Collapse>
               <Collapse in={configuration.getIn("anatomical.registration.methods.fsl.enabled".split("."))}>
@@ -212,6 +232,30 @@ class Registration extends Component {
                       </FormControlLabelled>
                     </Help>
                   </FormGroup>
+                    <Grid item xs={8}>
+                      <FormGroup row>
+                        <Help
+                            type="pipeline"
+                            regex={/^anatRegFSLinterpolation/}
+                            help={`We provide a choice of interpolation options (Trilinear, Sinc, or Spline), set sinc as the default.`}
+                            fullWidth
+                          >
+                            <TextField
+                              select
+                              label="Interpolation Option for FSL"
+                              fullWidth margin="normal" variant="outlined"
+                              className={classes.textField} onChange={onChange}
+                              name="anatomical.registration.methods.fsl.interpolation"
+                              value={configuration.getIn("anatomical.registration.methods.fsl.interpolation".split("."))}
+                              helperText=''
+                            >
+                              <MenuItem value={"linear"}>Trilinear</MenuItem>
+                              <MenuItem value={"sinc"}>Sinc</MenuItem>
+                              <MenuItem value={"spline"}>Spline</MenuItem>
+                            </TextField>
+                          </Help>
+                        </FormGroup>
+                      </Grid>
                 </FormGroup>
               </Collapse>
             </Grid>
