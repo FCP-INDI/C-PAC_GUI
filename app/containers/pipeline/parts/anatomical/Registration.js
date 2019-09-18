@@ -231,30 +231,30 @@ class Registration extends Component {
                       </FormControlLabelled>
                     </Help>
                   </FormGroup>
-                    <Grid item xs={8}>
-                      <FormGroup row>
-                        <Help
-                            type="pipeline"
-                            regex={/^anatRegFSLinterpolation/}
-                            help={`We provide a choice of interpolation options (Trilinear, Sinc, or Spline), set sinc as the default.`}
-                            fullWidth
+                  <Grid item xs={8}>
+                    <FormGroup row>
+                      <Help
+                          type="pipeline"
+                          regex={/^anatRegFSLinterpolation/}
+                          help={`We provide a choice of interpolation options (Trilinear, Sinc, or Spline), set sinc as the default.`}
+                          fullWidth
+                        >
+                          <TextField
+                            select
+                            label="Interpolation Option for FSL"
+                            fullWidth margin="normal" variant="outlined"
+                            className={classes.textField} onChange={onChange}
+                            name="anatomical.registration.methods.fsl.interpolation"
+                            value={configuration.getIn("anatomical.registration.methods.fsl.interpolation".split("."))}
+                            helperText=''
                           >
-                            <TextField
-                              select
-                              label="Interpolation Option for FSL"
-                              fullWidth margin="normal" variant="outlined"
-                              className={classes.textField} onChange={onChange}
-                              name="anatomical.registration.methods.fsl.interpolation"
-                              value={configuration.getIn("anatomical.registration.methods.fsl.interpolation".split("."))}
-                              helperText=''
-                            >
-                              <MenuItem value={"linear"}>Trilinear</MenuItem>
-                              <MenuItem value={"sinc"}>Sinc</MenuItem>
-                              <MenuItem value={"spline"}>Spline</MenuItem>
-                            </TextField>
-                          </Help>
-                        </FormGroup>
-                      </Grid>
+                            <MenuItem value={"linear"}>Trilinear</MenuItem>
+                            <MenuItem value={"sinc"}>Sinc</MenuItem>
+                            <MenuItem value={"spline"}>Spline</MenuItem>
+                          </TextField>
+                        </Help>
+                      </FormGroup>
+                    </Grid>
                 </FormGroup>
               </Collapse>
             </Grid>
