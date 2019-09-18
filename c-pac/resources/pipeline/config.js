@@ -57,10 +57,10 @@ export default {
             enabled: true,
             methods: {
               nlmf: {
-                enabled: true,
-              }
+                enabled: true
+              },
               n4: {
-                enabled: true,
+                enabled: true
               }
             }
           },

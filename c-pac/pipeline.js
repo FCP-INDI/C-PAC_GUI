@@ -601,7 +601,7 @@ export function dump(pipeline, version='0') {
   config.regOption = []
     .concat(c.anatomical.registration.methods.ants.enabled ? ["ANTS"] : [])
     .concat(c.anatomical.registration.methods.fsl.enabled ? ["FSL"] : [])
-    .concat(c.functional.anatomical_registration.functional_masking.fsl_afni ? ["FSL_AFNI"] : [])
+    .concat(c.anatomical.registration.methods.fsl.enabled ? ["FSL_AFNI"] : [])
 
   config.use_lesion_mask = [c.anatomical.registration.methods.ants.configuration.lesion_mask ? 1 : 0]
 
@@ -653,10 +653,11 @@ export function dump(pipeline, version='0') {
   config.func_reg_input_volume = c.functional.anatomical_registration.functional_volume
   config.functionalMasking = []
     .concat(c.functional.anatomical_registration.functional_masking.fsl ? ["FSL"] : [])
-    .concat(c.functional.anatomical_registration.functional_masking.afni ? ["AFNI"] : []
+    .concat(c.functional.anatomical_registration.functional_masking.afni ? ["AFNI"] : [])
     .concat(c.functional.anatomical_registration.functional_masking.fsl_afni ? ["FSL_AFNI"] : [])
-
+  
   config.runRegisterFuncToMNI = [c.functional.template_registration.enabled ? 1 : 0]
+
   if (c.functional.template_registration.functional_resolution.includes("x")) {
     xind = []
     for(i = 0; i < c.functional.template_registration.functional_resolution.length; i++) {
@@ -676,7 +677,7 @@ export function dump(pipeline, version='0') {
   } else {
     config.resolution_for_func_derivative = c.functional.template_registration.derivative_resolution + "mm"
   }
-
+  
   // config.resolution_for_func_preproc = c.functional.template_registration.functional_resolution + "mm"
   // config.resolution_for_func_derivative = c.functional.template_registration.derivative_resolution + "mm"
   config.template_brain_only_for_func = c.functional.template_registration.brain_template
