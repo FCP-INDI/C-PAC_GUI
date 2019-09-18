@@ -166,7 +166,7 @@ class TissueSegmentation extends Component {
                     <Help
                       type="pipeline"
                       regex={/^seg_GM_threshold_value/}
-                      help={`Set the threshold value for refining the resulting Gray Matter segmentation tissue mask. Thedefault value is 0.95.`}
+                      help={`Set the threshold value for refining the resulting Gray Matter segmentation tissue mask. The default value is 0.95.`}
                       fullWidth
                     >
                       <TextField label="Gray Matter Threshold Value"
