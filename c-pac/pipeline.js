@@ -263,15 +263,8 @@ export function parse(content) {
     c.anatomical.skull_stripping.methods.bet.enabled = true
   }
 
-  if (config.resolution_for_anat.includes("x")) {
-    c.anatomical.registration.resolution = config.resolution_for_anat.split("x").map(parseFloat)
-  } else {
-    c.anatomical.registration.resolution = []
-    for (var i = 0; i < 3; i++) {
-      c.anatomical.registration.resolution.push(parseFloat(config.resolution_for_anat))
-    }
-  }
-  
+  c.anatomical.registration.resolution = config.resolution_for_anat.replace(/mm/g,"")
+
   c.anatomical.registration.brain_template = config.template_brain_only_for_anat
                                               .replace("${resolution_for_anat}", "${pipeline.anatomical.registration.resolution}mm")
                                               .replace("$FSLDIR", "${environment.paths.fsl_dir}")
@@ -370,25 +363,8 @@ export function parse(content) {
 
   c.functional.template_registration.enabled = config.runRegisterFuncToMNI.includes(1)
 
-  if (config.resolution_for_func_preproc.includes("x")) {
-    c.functional.template_registration.functional_resolution = config.resolution_for_func_preproc.split("x").map(parseFloat)
-  } else {
-    c.functional.template_registration.functional_resolution = []
-    for (var i = 0; i < 3; i++) {
-      c.functional.template_registration.functional_resolution.push(parseFloat(config.resolution_for_func_preproc))
-    }
-  }
-
-  if (config.resolution_for_func_derivative.includes("x")) {
-    c.functional.template_registration.derivative_resolution = config.resolution_for_func_derivative.split("x").map(parseFloat)
-  } else {
-    c.functional.template_registration.derivative_resolution = []
-    for (var i = 0; i < 3; i++) {
-      c.functional.template_registration.derivative_resolution.push(parseFloat(config.resolution_for_func_derivative))
-    }
-  }
-  // c.functional.template_registration.functional_resolution = config.resolution_for_func_preproc.replace("mm", "")
-  // c.functional.template_registration.derivative_resolution = config.resolution_for_func_derivative.replace("mm", "")
+  c.functional.template_registration.functional_resolution = config.resolution_for_func_preproc.replace(/mm/g, "")
+  c.functional.template_registration.derivative_resolution = config.resolution_for_func_derivative.replace(/mm/g, "")
   c.functional.template_registration.brain_template =
     config.template_brain_only_for_func
       .replace("${resolution_for_func_preproc}", "${pipeline.functional.template_registration.functional_resolution}mm")
