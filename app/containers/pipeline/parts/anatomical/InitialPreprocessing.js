@@ -113,7 +113,7 @@ class InitialPreprocessing extends Component {
               <FormControlLabelled label="Non Local Means Filtering">
                 <Switch
                   name="anatomical.preprocessing.methods.nlmf.enabled"
-                  checked={!configuration.getIn("anatomical.preprocessing.methods.nlmf.enabled".split("."))}
+                  checked={configuration.getIn("anatomical.preprocessing.methods.nlmf.enabled".split("."))}
                   onChange={onChange}
                   color="primary"
                 />
@@ -130,7 +130,7 @@ class InitialPreprocessing extends Component {
               <FormControlLabelled label="N4 Bias Correction">
                 <Switch
                   name="anatomical.preprocessing.methods.n4.enabled"
-                  checked={!configuration.getIn("anatomical.preprocessing.methods.n4.enabled".split("."))}
+                  checked={configuration.getIn("anatomical.preprocessing.methods.n4.enabled".split("."))}
                   onChange={onChange}
                   color="primary"
                 />

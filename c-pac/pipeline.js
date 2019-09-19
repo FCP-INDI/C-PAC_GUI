@@ -267,7 +267,7 @@ export function parse(content) {
     c.anatomical.registration.resolution = config.resolution_for_anat.split("x").map(parseFloat)
   } else {
     c.anatomical.registration.resolution = []
-    for (i = 0; i < 3; i++) {
+    for (var i = 0; i < 3; i++) {
       c.anatomical.registration.resolution.push(parseFloat(config.resolution_for_anat))
     }
   }
@@ -374,7 +374,7 @@ export function parse(content) {
     c.functional.template_registration.functional_resolution = config.resolution_for_func_preproc.split("x").map(parseFloat)
   } else {
     c.functional.template_registration.functional_resolution = []
-    for (i = 0; i < 3; i++) {
+    for (var i = 0; i < 3; i++) {
       c.functional.template_registration.functional_resolution.push(parseFloat(config.resolution_for_func_preproc))
     }
   }
@@ -383,7 +383,7 @@ export function parse(content) {
     c.functional.template_registration.derivative_resolution = config.resolution_for_func_derivative.split("x").map(parseFloat)
   } else {
     c.functional.template_registration.derivative_resolution = []
-    for (i = 0; i < 3; i++) {
+    for (var i = 0; i < 3; i++) {
       c.functional.template_registration.derivative_resolution.push(parseFloat(config.resolution_for_func_derivative))
     }
   }
@@ -629,8 +629,8 @@ export function dump(pipeline, version='0') {
   config.bet_vertical_gradient = c.anatomical.skull_stripping.methods.bet.configuration.vertical_gradient
 
   if (c.anatomical.registration.resolution.includes("x")) {
-    xind = []
-    for(i = 0; i < c.anatomical.registration.resolution.length; i++) {
+    var xind = []
+    for(var i = 0; i < c.anatomical.registration.resolution.length; i++) {
         if (c.anatomical.registration.resolution[i] === "x") xind.push(i)
     }
     config.resolution_for_anat = c.anatomical.registration.resolution.slice(0, xind[0]) + "mm" + c.anatomical.registration.resolution.slice(xind[0], xind[1]) + "mm" + c.anatomical.registration.resolution.slice(xind[1]) + "mm"
@@ -730,8 +730,8 @@ export function dump(pipeline, version='0') {
   config.runRegisterFuncToMNI = [c.functional.template_registration.enabled ? 1 : 0]
 
   if (c.functional.template_registration.functional_resolution.includes("x")) {
-    xind = []
-    for(i = 0; i < c.functional.template_registration.functional_resolution.length; i++) {
+    var xind = []
+    for(var i = 0; i < c.functional.template_registration.functional_resolution.length; i++) {
         if (c.functional.template_registration.functional_resolution[i] === "x") xind.push(i)
     }
     config.resolution_for_func_preproc = c.functional.template_registration.functional_resolution.slice(0, xind[0]) + "mm" + c.functional.template_registration.functional_resolution.slice(xind[0], xind[1]) + "mm" + c.functional.template_registration.functional_resolution.slice(xind[1]) + "mm"
@@ -740,8 +740,8 @@ export function dump(pipeline, version='0') {
   }
 
   if (c.functional.template_registration.derivative_resolution.includes("x")) {
-    xind = []
-    for(i = 0; i < c.functional.template_registration.derivative_resolution.length; i++) {
+    var xind = []
+    for(var i = 0; i < c.functional.template_registration.derivative_resolution.length; i++) {
         if (c.functional.template_registration.derivative_resolution[i] === "x") xind.push(i)
     }
     config.resolution_for_func_derivative = c.functional.template_registration.derivative_resolution.slice(0, xind[0]) + "mm" + c.functional.template_registration.derivative_resolution.slice(xind[0], xind[1]) + "mm" + c.functional.template_registration.derivative_resolution.slice(xind[1]) + "mm"
