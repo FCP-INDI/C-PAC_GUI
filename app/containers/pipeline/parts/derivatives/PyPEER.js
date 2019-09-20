@@ -144,26 +144,7 @@ class PyPEER extends Component {
               helperText=''
             />
           </Help>
-
-          {/* <Grid item xs={8}>
-              <Collapse in={configuration.getIn("derivatives.pypeer.peer_scrub.enabled".split("."))}>
-                <FormGroup>
-                  <FormGroup row>
-                    <Help
-                      type="pipeline"
-                      regex={/^peer_scrub_thresh/}
-                      help={`Motion scrubbing threshold`}
-                      fullWidth
-                    >
-                      <TextField label="Motion Scrubbing Threshold" fullWidth margin="normal" variant="outlined"
-                                name="derivatives.pypeer.peer_scrub_thres"
-                                value={configuration.getIn("derivatives.pypeer.peer_scrub_thres".split("."))}
-                                onChange={onChange}
-                      />
-                    </Help>
-                  </FormGroup>
-                </Collapse>
-            </Grid> */}
+          
           </Grid>
         </Grid>
       )    
