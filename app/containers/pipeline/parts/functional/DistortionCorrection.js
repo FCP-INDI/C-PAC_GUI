@@ -104,13 +104,14 @@ class DistortionCorrection extends Component {
                     </Help>
                   </FormGroup>
       
-                  <FormGroup row>        
+                  <FormGroup row > 
                     <Help
                       type="pipeline"
-                      help={`Set the threshold value for the skull-stripping of the magnitude file. Depending on the data, a tighter extraction may be necessary in order to prevent noisy voxels from interfering with preparing the field map.`}
+                      regex={/^fmap_distcorr_threshold/}
+                      help={`Set the threshold value for the skull-stripping of the magnitude file. Depending on the data, a tighter extraction may be necessary in order to prevent noisy voxels from interfering with preparing the field map. The default value is 0.5 for BET and 0.6 for AFNI.`}
                       fullWidth
                     >
-                      <TextField
+                      <TextField 
                         label="Threshold"
                         className={classes.textField} onChange={onChange}
                         name="functional.distortion_correction.method.phasediff.threshold"

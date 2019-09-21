@@ -131,6 +131,7 @@ export default {
               phasediff: {
                 enabled: true,
                 skull_stripping: 'afni',
+                // threshold_bet: 0.5,
                 threshold: 0.6,
                 delta_te: 2.46,
                 dwell_time: 0.0005,

@@ -360,7 +360,6 @@ export function parse(content) {
 
   c.functional.distortion_correction.method.phasediff.skull_stripping = config.fmap_distcorr_skullstrip.includes('BET') ? 'bet' : 'afni'
 
-  // document.write(config.fmap_distcorr_skullstrip)
   switch (c.functional.distortion_correction.method.phasediff.skull_stripping) {
     case 'bet':
       c.functional.distortion_correction.method.phasediff.threshold = config.fmap_distcorr_frac[0]
@@ -369,17 +368,6 @@ export function parse(content) {
       c.functional.distortion_correction.method.phasediff.threshold = config.fmap_distcorr_threshold[0]
       break;
   }
-  console.log(c.functional.distortion_correction.method.phasediff.skull_stripping)
-  console.log(config.fmap_distcorr_frac[0])
-  console.log(config.fmap_distcorr_threshold[0])
-  console.log(c.functional.distortion_correction.method.phasediff.threshold)
-  
-  // if (config.fmap_distcorr_skullstrip.includes('BET')){
-  //   c.functional.distortion_correction.method.phasediff.threshold = config.fmap_distcorr_frac[0] 
-  // }
-  // if (config.fmap_distcorr_skullstrip.includes('AFNI')){
-  //   c.functional.distortion_correction.method.phasediff.threshold = config.fmap_distcorr_threshold[0] 
-  // }
   c.functional.distortion_correction.method.phasediff.delta_te = config.fmap_distcorr_deltaTE[0]
   c.functional.distortion_correction.method.phasediff.dwell_time = config.fmap_distcorr_dwell_time[0]
   c.functional.distortion_correction.method.phasediff.dwell_to_assymetric_ratio = config.fmap_distcorr_dwell_asym_ratio[0]
@@ -741,10 +729,7 @@ export function dump(pipeline, version='0') {
 
   [c.functional.distortion_correction.enabled ? 1 : 0]
   config.fmap_distcorr_skullstrip = [c.functional.distortion_correction.method.phasediff.skull_stripping === 'bet' ? 'BET' : 'AFNI']
-  
-  // if (typeof c.functional.distortion_correction.method.phasediff.skull_stripping === "string") {
-  //   c.functional.distortion_correction.method.phasediff.skull_stripping = [c.functional.distortion_correction.method.phasediff.skull_stripping]
-  // }
+
   switch (c.functional.distortion_correction.method.phasediff.skull_stripping) {
     case 'bet':
       config.fmap_distcorr_frac = [c.functional.distortion_correction.method.phasediff.threshold]
@@ -753,8 +738,6 @@ export function dump(pipeline, version='0') {
       config.fmap_distcorr_threshold = [c.functional.distortion_correction.method.phasediff.threshold]
       break;
   } 
-  // config.fmap_distcorr_frac = [c.functional.distortion_correction.method.phasediff.threshold]
-  // config.fmap_distcorr_threshold = [c.functional.distortion_correction.method.phasediff.threshold]
   config.fmap_distcorr_deltaTE = [c.functional.distortion_correction.method.phasediff.delta_te]
   config.fmap_distcorr_dwell_time = [c.functional.distortion_correction.method.phasediff.dwell_time]
   config.fmap_distcorr_dwell_asym_ratio = [c.functional.distortion_correction.method.phasediff.dwell_to_assymetric_ratio]
