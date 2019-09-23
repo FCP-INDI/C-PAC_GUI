@@ -31,7 +31,7 @@ class DistortionCorrection extends Component {
           <FormLabel>
             <Help
               type="pipeline"
-              help={`Use a single phase difference image(PhaseDiff) or AFNI 3dQWarp(Blip) to perform distortion correction.`}
+              help={`Use phase difference image(PhaseDiff) or Phase-Encoding Polarity(Blip-up/Blip-down) to perform distortion correction.`}
             />
             Options for Distortion Correction 
           </FormLabel>
