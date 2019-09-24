@@ -201,18 +201,18 @@ class TissueSegmentation extends Component {
                   <FormLabel>
                     <Help
                       type="pipeline"
-                      help={`Erosion propability, if use erosion to erode binarized tissue masks.`}
+                      help={`Erosion proportion, if use erosion to erode binarized tissue masks.`}
                     />
-                    Erosion Propability
+                    Erosion
                   </FormLabel>
                     <FormLabel>
                       <Help
                         type="pipeline"
                         regex={/^seg_erosion_prop/}
-                        help={`Set the erosion propability, if use erosion to erode binarized tissue masks.`}
+                        help={`Set the erosion proportion, if use erosion to erode binarized tissue masks.`}
                         fullWidth
                       >
-                        <TextField label="Erosion Propability"
+                        <TextField label="Erosion Proportion"
                           name="anatomical.tissue_segmentation.configuration.seg_use_erosion.erosion.seg_erosion_prop"
                           value={configuration.getIn("anatomical.tissue_segmentation.configuration.seg_use_erosion.erosion.seg_erosion_prop".split("."))}
                           onChange={onChange}
