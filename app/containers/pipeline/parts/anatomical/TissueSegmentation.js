@@ -142,9 +142,9 @@ class TissueSegmentation extends Component {
                   <FormLabel>
                     <Help
                       type="pipeline"
-                      help={`Set the threshold value for refining the resulting White Matter, Gray Matter, CSF segmentation tissue mask. `}
+                      help={`Set the threshold value for refining the resulting White Matter, Gray Matter, CSF segmentation tissue masks. `}
                     />
-                    Threshold value
+                    Threshold 
                   </FormLabel>
                   <FormLabel>
                     <Help
@@ -201,15 +201,15 @@ class TissueSegmentation extends Component {
                   <FormLabel>
                     <Help
                       type="pipeline"
-                      help={`Erosion proportion, if use erosion to erode binarized tissue masks.`}
+                      help={`Set the erosion proportion, if use erosion to erode binarized tissue masks.`}
                     />
-                    Erosion
+                    Erosion 
                   </FormLabel>
                     <FormLabel>
                       <Help
                         type="pipeline"
                         regex={/^seg_erosion_prop/}
-                        help={`Set the erosion proportion, if use erosion to erode binarized tissue masks.`}
+                        help={`Set the erosion proportion, if use erosion to erode binarized tissue masks. The default is 0.6.`}
                         fullWidth
                       >
                         <TextField label="Erosion Proportion"
