@@ -332,11 +332,17 @@ export function parse(content) {
   c.anatomical.tissue_segmentation.configuration.seg_use_priors.priors.gray_matter = config.PRIORS_GRAY.replace("$priors_path", priors_path)
   c.anatomical.tissue_segmentation.configuration.seg_use_priors.priors.cerebrospinal_fluid = config.PRIORS_CSF.replace("$priors_path", priors_path)
 
-  c.anatomical.tissue_segmentation.configuration.seg_use_threshold.enabled = config.seg_use_threshold
-  c.anatomical.tissue_segmentation.configuration.seg_use_threshold.threshold.seg_WM_threshold_value = config.seg_WM_threshold_value
-  c.anatomical.tissue_segmentation.configuration.seg_use_threshold.threshold.seg_GM_threshold_value = config.seg_GM_threshold_value
-  c.anatomical.tissue_segmentation.configuration.seg_use_threshold.threshold.seg_CSF_threshold_value = config.seg_CSF_threshold_value
-  
+  if (config.seg_use_threshold.includes("FSL-FAST Thresholding")) {
+    c.anatomical.tissue_segmentation.configuration.seg_use_fast_threshold.enabled = true
+    c.anatomical.tissue_segmentation.configuration.seg_use_customized_threshold.enabled = false
+  } else if (config.seg_use_threshold.includes("Customized Thresholding")) {
+    c.anatomical.tissue_segmentation.configuration.seg_use_fast_threshold.enabled = false
+    c.anatomical.tissue_segmentation.configuration.seg_use_customized_threshold.enabled = true
+    c.anatomical.tissue_segmentation.configuration.seg_use_customized_threshold.threshold.seg_WM_threshold_value = config.seg_WM_threshold_value
+    c.anatomical.tissue_segmentation.configuration.seg_use_customized_threshold.threshold.seg_GM_threshold_value = config.seg_GM_threshold_value
+    c.anatomical.tissue_segmentation.configuration.seg_use_customized_threshold.threshold.seg_CSF_threshold_value = config.seg_CSF_threshold_value
+  }
+    
   c.anatomical.tissue_segmentation.configuration.seg_use_erosion.enabled = config.seg_use_erosion
   c.anatomical.tissue_segmentation.configuration.seg_use_erosion.erosion.seg_erosion_prop = config.seg_erosion_prop
 
@@ -699,10 +705,19 @@ export function dump(pipeline, version='0') {
   config.PRIORS_GRAY = c.anatomical.tissue_segmentation.configuration.seg_use_priors.priors.gray_matter
   config.PRIORS_CSF = c.anatomical.tissue_segmentation.configuration.seg_use_priors.priors.cerebrospinal_fluid
 
-  config.seg_use_threshold = [c.anatomical.tissue_segmentation.configuration.seg_use_threshold.enabled ? 1 : 0]
-  config.seg_WM_threshold_value = c.anatomical.tissue_segmentation.configuration.seg_use_threshold.threshold.seg_WM_threshold_value 
-  config.seg_GM_threshold_value = c.anatomical.tissue_segmentation.configuration.seg_use_threshold.threshold.seg_GM_threshold_value 
-  config.seg_CSF_threshold_value = c.anatomical.tissue_segmentation.configuration.seg_use_threshold.threshold.seg_CSF_threshold_value 
+  if (c.anatomical.tissue_segmentation.configuration.seg_use_fast_threshold.enabled) {
+    config.seg_use_threshold = ['FSL-FAST Thresholding']
+  } else if (c.anatomical.tissue_segmentation.configuration.seg_use_customized_threshold.enabled) {
+    config.seg_use_threshold = ['Customized Thresholding']
+    config.seg_WM_threshold_value = c.anatomical.tissue_segmentation.configuration.seg_use_customized_threshold.threshold.seg_WM_threshold_value 
+    config.seg_GM_threshold_value = c.anatomical.tissue_segmentation.configuration.seg_use_customized_threshold.threshold.seg_GM_threshold_value 
+    config.seg_CSF_threshold_value = c.anatomical.tissue_segmentation.configuration.seg_use_customized_threshold.threshold.seg_CSF_threshold_value 
+  }
+  
+  // config.seg_use_threshold = [c.anatomical.tissue_segmentation.configuration.seg_use_threshold.enabled ? 1 : 0]
+  // config.seg_WM_threshold_value = c.anatomical.tissue_segmentation.configuration.seg_use_threshold.threshold.seg_WM_threshold_value 
+  // config.seg_GM_threshold_value = c.anatomical.tissue_segmentation.configuration.seg_use_threshold.threshold.seg_GM_threshold_value 
+  // config.seg_CSF_threshold_value = c.anatomical.tissue_segmentation.configuration.seg_use_threshold.threshold.seg_CSF_threshold_value 
   
   config.seg_use_erosion = [c.anatomical.tissue_segmentation.configuration.seg_use_erosion.enabled ? 1 : 0]
   config.seg_erosion_prop = c.anatomical.tissue_segmentation.configuration.seg_use_erosion.erosion.seg_erosion_prop 

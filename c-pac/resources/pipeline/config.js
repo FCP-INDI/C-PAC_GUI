@@ -126,8 +126,11 @@ export default {
                   cerebrospinal_fluid: '${environment.paths.fsl_dir}/data/standard/tissuepriors/2mm/avg152T1_csf_bin.nii.gz',
                 }
               },
-              seg_use_threshold:{
+              seg_use_fast_threshold:{
                 enabled: true,
+              },
+              seg_use_customized_threshold:{
+                enabled: false,
                 threshold: {
                   seg_WM_threshold_value: 0.95,
                   seg_GM_threshold_value: 0.95,
