@@ -10,7 +10,7 @@
     "build:renderer": "cross-env node --trace-warnings -r @babel/register ./node_modules/webpack/bin/webpack --mode production --config config/webpack.config.renderer.prod.js --colors",
     "build:all": "yarn run build:electron && yarn run build:renderer",
     "electron-rebuild": "electron-rebuild --parallel --force --types prod,dev,optional --module-dir app",
-    "postinstall": "yarn run build-dll && electron-builder install-app-deps",
+    "postinstall": "yarn run build-dll && electron-builder install-app-deps && yarn run link",
     "prestart": "yarn run build",
     "link": "cd c-pac && yarn link && cd .. && yarn link @internal/c-pac",
     "start": "cross-env NODE_ENV=production electron ./app/",
