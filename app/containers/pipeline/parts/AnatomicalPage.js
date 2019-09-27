@@ -14,6 +14,7 @@ import {
 } from 'containers/pipeline/parts/anatomical'
 
 import Help from 'components/Help'
+import InitialPreprocessing from './anatomical/InitialPreprocessing';
 
 
 class AnatomicalPage extends Component {
@@ -30,6 +31,24 @@ class AnatomicalPage extends Component {
 
     return (
       <React.Fragment>
+        <ExpansionPanel expanded>
+          <ExpansionPanelSummary disabled>
+            <Help
+              help={`Included as part of the 'Image Resource Files' package available on the Install page of the User Guide.`}
+            />
+            <Typography variant="h6" className={classes.sectionTitle}>
+              Initial Preprocessing
+            </Typography>
+          </ExpansionPanelSummary>
+          <ExpansionPanelDetails>
+            <Grid container>
+              <Grid item xs={12}>
+                <InitialPreprocessing configuration={configuration} onChange={onChange} />
+              </Grid>
+            </Grid>
+          </ExpansionPanelDetails>
+        </ExpansionPanel>
+
         <ExpansionPanel expanded>
           <ExpansionPanelSummary disabled>
             <Help

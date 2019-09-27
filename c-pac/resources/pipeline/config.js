@@ -55,6 +55,17 @@ export default {
               }
             }
           },
+          preprocessing: {
+            enabled: true,
+            methods: {
+              nlmf: {
+                enabled: false
+              },
+              n4: {
+                enabled: false
+              }
+            }
+          },
           skull_stripping: {
             enabled: true,
             methods: {
