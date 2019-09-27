@@ -50,7 +50,7 @@ export default {
                 configuration: {
                   linear_only: false,
                   config_file: 'T1_2_MNI152_2mm',
-                  reference_mask: '$FSLDIR/data/standard/MNI152_T1_${resolution_for_anat}_brain_mask_dil.nii.gz'
+                  reference_mask: '${environment.paths.fsl_dir}/data/standard/MNI152_T1_${pipeline.anatomical.registration.resolution}_brain_mask_dil.nii.gz'
                 }
               }
             }
@@ -350,9 +350,9 @@ export default {
           },
           vmhc: {
             enabled: false,
-            symmetric_brain: '${environment.paths.fsl_dir}/data/standard/MNI152_T1_${resolution_for_anat}_brain_symmetric.nii.gz',
-            symmetric_skull: '${environment.paths.fsl_dir}/data/standard/MNI152_T1_${resolution_for_anat}_symmetric.nii.gz',
-            dilated_symmetric_brain: '${environment.paths.fsl_dir}/data/standard/MNI152_T1_${resolution_for_anat}_brain_mask_symmetric_dil.nii.gz',
+            symmetric_brain: '${environment.paths.fsl_dir}/data/standard/MNI152_T1_${pipeline.anatomical.registration.resolution}_brain_symmetric.nii.gz',
+            symmetric_skull: '${environment.paths.fsl_dir}/data/standard/MNI152_T1_${pipeline.anatomical.registration.resolution}_symmetric.nii.gz',
+            dilated_symmetric_brain: '${environment.paths.fsl_dir}/data/standard/MNI152_T1_${pipeline.anatomical.registration.resolution}_brain_mask_symmetric_dil.nii.gz',
             flirt_configuration_file: '${environment.paths.fsl_dir}/etc/flirtsch/T1_2_MNI152_2mm.cnf',
           },
           alff: {
@@ -392,7 +392,7 @@ export default {
             enabled: true,
             eye_scan_names: '',
             data_scan_names: '',
-            eye_mask_path: '$FSLDIR/data/standard/MNI152_T1_${resolution_for_func_preproc}_eye_mask.nii.gz',
+            eye_mask_path: '${environment.paths.fsl_dir}/data/standard/MNI152_T1_${pipeline.functional.template_registration.functional_resolution}_eye_mask.nii.gz',
             stimulus_path: '',
             gsr: true,
             scrub: {
