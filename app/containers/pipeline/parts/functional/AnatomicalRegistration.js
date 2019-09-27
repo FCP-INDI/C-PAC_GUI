@@ -113,20 +113,30 @@ class AnatomicalRegistration extends Component {
             </FormLabel>
             <FormControl>
               <FormGroup row>
-                <FormControlLabelled label="FSL BET">
+                <FormControlLabelled label="FSL: BET">
                   <Switch
-                    name="functional.anatomical_registration.functional_masking.bet"
-                    checked={configuration.getIn(["functional", "anatomical_registration", "functional_masking", "bet"])}
+                    name="functional.anatomical_registration.functional_masking.fsl"
+                    checked={configuration.getIn(["functional", "anatomical_registration", "functional_masking", "fsl"])}
                     onChange={onChange}
                     color="primary"
                   />
                 </FormControlLabelled>
               </FormGroup>
               <FormGroup row>
-                <FormControlLabelled label="AFNI 3dSkullStrip">
+                <FormControlLabelled label="AFNI: 3dAutoMask">
                   <Switch
                     name="functional.anatomical_registration.functional_masking.afni"
                     checked={configuration.getIn(["functional", "anatomical_registration", "functional_masking", "afni"])}
+                    onChange={onChange}
+                    color="primary"
+                  />
+                </FormControlLabelled>
+              </FormGroup>
+              <FormGroup row>
+                <FormControlLabelled label="FSL+AFNI: BET+3dAutoMask">
+                  <Switch
+                    name="functional.anatomical_registration.functional_masking.fsl_afni"
+                    checked={configuration.getIn(["functional", "anatomical_registration", "functional_masking", "fsl_afni"])}
                     onChange={onChange}
                     color="primary"
                   />

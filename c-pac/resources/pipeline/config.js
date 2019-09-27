@@ -141,8 +141,9 @@ export default {
             registration_input: 'mean',
             functional_volume: 0,
             functional_masking: {
-              bet: false,
+              fsl: false,
               afni: false,
+              fsl_afni: false,
             },
           },
           template_registration: {
