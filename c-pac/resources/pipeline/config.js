@@ -170,13 +170,23 @@ export default {
             two_pass: true,
           },
           distortion_correction: {
-            enabled: true,
-            skull_stripping: 'afni',
-            threshold: 0.6,
-            delta_te: 2.46,
-            dwell_time: 0.0005,
-            dwell_to_assymetric_ratio: 0.93902439,
-            phase_encoding_direction: 'x',
+            enabled: false,
+            method: {
+              phasediff: {
+                enabled: true,
+                skull_stripping: 'afni',
+                threshold: 0.6, //would be displaced by threshold_bet or threshold_afni
+                threshold_bet: 0.5,
+                threshold_afni: 0.6,
+                delta_te: 2.46,
+                dwell_time: 0.0005,
+                dwell_to_assymetric_ratio: 0.93902439,
+                phase_encoding_direction: 'x'
+              },
+              blip: {
+                enabled: false
+              }            
+            }            
           },
           anatomical_registration: {
             enabled: true,

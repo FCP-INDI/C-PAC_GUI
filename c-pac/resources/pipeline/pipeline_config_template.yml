@@ -402,22 +402,26 @@ stopIdx :  None
 functional_volreg_twopass :  On
 
 
-# Perform field map correction using a single phase difference image, a subtraction of the two phase images from each echo. Default scanner for this method is SIEMENS.
-runEPI_DistCorr :  [0]
+# Perform distortion correction.
+# PhaseDiff - Perform field map correction using a single phase difference image, a subtraction of the two phase images from each echo. Default scanner for this method is SIEMENS.
+# Blip - Uses AFNI 3dQWarp to calculate the distortion unwarp for EPI field maps of opposite/same phase encoding direction.
+# Options: ['PhaseDiff', 'Blip', 'None']
+distortion_correction :  ["None"]
 
 
+# Options for 'PhaseDiff' distortion correction only.
 # Since the quality of the distortion heavily relies on the skull-stripping step, we provide a choice of method (AFNI 3dSkullStrip or FSL BET).
 fmap_distcorr_skullstrip :  ['BET']
 
 
-# Set the threshold value for the skull-stripping of the magnitude file. Depending on the data, a tighter extraction may be necessary in order to prevent noisy voxels from interfering with preparing the field map.
-# The default value is 0.5.
+# Set the threshold value for the skull-stripping of the magnitude file (when using BET). Depending on the data, a tighter extraction may be necessary in order to prevent noisy voxels from interfering with preparing the field map.
+# The default value is 0.5. 
 fmap_distcorr_frac : [0.5]
 
 
-# Set the threshold value for the skull-stripping of the magnitude file. Depending on the data, a tighter extraction may be necessary in order to prevent noisy voxels from interfering with preparing the field map.
-# The default value is 0.5.
-fmap_distcorr_threshold :  0.6
+# Set the threshold value for the skull-stripping of the magnitude file (when using AFNI). Depending on the data, a tighter extraction may be necessary in order to prevent noisy voxels from interfering with preparing the field map.
+# The default value is 0.6.
+fmap_distcorr_threshold : [0.6]
 
 
 # Set the Delta-TE value, used for preparing field map, time delay between the first and second echo images. Default value is 2.46 ms.

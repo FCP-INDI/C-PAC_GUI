@@ -366,17 +366,44 @@ export function parse(content) {
 
   c.functional.slice_timing_correction.two_pass = config.functional_volreg_twopass
 
-  c.functional.distortion_correction.enabled = config.runEPI_DistCorr.includes(1)
+  if (typeof config.distortion_correction === "string") {
+    config.distortion_correction = [config.distortion_correction]
+  }
+
+  if (config.distortion_correction.includes("None")) {
+    c.functional.distortion_correction.enabled = false
+  }
+
+  if (config.distortion_correction.includes("PhaseDiff")) {
+    c.functional.distortion_correction.enabled = true
+    c.functional.distortion_correction.method.phasediff.enabled = true
+  }
+
+  if (config.distortion_correction.includes("Blip")) {
+    c.functional.distortion_correction.enabled = true
+    c.functional.distortion_correction.method.blip.enabled = true
+  }
+
   if (typeof config.fmap_distcorr_skullstrip === "string") {
     config.fmap_distcorr_skullstrip = [config.fmap_distcorr_skullstrip]
   }
 
-  c.functional.distortion_correction.skull_stripping = config.fmap_distcorr_skullstrip.includes('BET') ? 'bet' : 'afni'
-  c.functional.distortion_correction.threshold = config.fmap_distcorr_threshold // TODO review on CPAC; fmap_distcorr_threshold???
-  c.functional.distortion_correction.delta_te = config.fmap_distcorr_deltaTE[0]
-  c.functional.distortion_correction.dwell_time = config.fmap_distcorr_dwell_time[0]
-  c.functional.distortion_correction.dwell_to_assymetric_ratio = config.fmap_distcorr_dwell_asym_ratio[0]
-  c.functional.distortion_correction.phase_encoding_direction = config.fmap_distcorr_pedir
+  c.functional.distortion_correction.method.phasediff.skull_stripping = config.fmap_distcorr_skullstrip.includes('BET') ? 'bet' : 'afni'
+
+  switch (c.functional.distortion_correction.method.phasediff.skull_stripping) {
+    case 'bet':
+      c.functional.distortion_correction.method.phasediff.threshold_bet = config.fmap_distcorr_frac[0]
+      c.functional.distortion_correction.method.phasediff.threshold = c.functional.distortion_correction.method.phasediff.threshold_bet
+      break;
+    case 'afni':
+      c.functional.distortion_correction.method.phasediff.threshold_afni = config.fmap_distcorr_threshold[0]
+      c.functional.distortion_correction.method.phasediff.threshold = c.functional.distortion_correction.method.phasediff.threshold_afni
+      break;
+  }
+  c.functional.distortion_correction.method.phasediff.delta_te = config.fmap_distcorr_deltaTE[0]
+  c.functional.distortion_correction.method.phasediff.dwell_time = config.fmap_distcorr_dwell_time[0]
+  c.functional.distortion_correction.method.phasediff.dwell_to_assymetric_ratio = config.fmap_distcorr_dwell_asym_ratio[0]
+  c.functional.distortion_correction.method.phasediff.phase_encoding_direction = config.fmap_distcorr_pedir
 
   c.functional.anatomical_registration.enabled = config.runRegisterFuncToAnat.includes(1)
   c.functional.anatomical_registration.bb_registration = config.runBBReg.includes(1)
@@ -770,14 +797,29 @@ export function dump(pipeline, version='0') {
 
   config.functional_volreg_twopass = c.functional.slice_timing_correction.two_pass
 
-  config.runEPI_DistCorr = [c.functional.distortion_correction.enabled ? 1 : 0]
-  config.fmap_distcorr_skullstrip = [c.functional.distortion_correction.skull_stripping === 'bet' ? 'BET' : 'AFNI']
-  config.fmap_distcorr_frac = c.functional.distortion_correction.threshold
-  config.fmap_distcorr_threshold = c.functional.distortion_correction.threshold
-  config.fmap_distcorr_deltaTE = [c.functional.distortion_correction.delta_te]
-  config.fmap_distcorr_dwell_time = [c.functional.distortion_correction.dwell_time]
-  config.fmap_distcorr_dwell_asym_ratio = [c.functional.distortion_correction.dwell_to_assymetric_ratio]
-  config.fmap_distcorr_pedir = c.functional.distortion_correction.phase_encoding_direction
+  config.distortion_correction = []
+    .concat(c.functional.distortion_correction.enabled ? ["PhaseDiff"] : [])
+    .concat(c.functional.distortion_correction.method.phasediff.enabled ? ["PhaseDiff"] : [])
+    .concat(c.functional.distortion_correction.enabled ? ["Blip"] : [])
+    .concat(c.functional.distortion_correction.method.blip.enabled ? ["Blip"] : [])
+
+  [c.functional.distortion_correction.enabled ? 1 : 0]
+  config.fmap_distcorr_skullstrip = [c.functional.distortion_correction.method.phasediff.skull_stripping === 'bet' ? 'BET' : 'AFNI']
+
+  switch (c.functional.distortion_correction.method.phasediff.skull_stripping) {
+    case 'bet':
+      c.functional.distortion_correction.method.phasediff.threshold = c.functional.distortion_correction.method.phasediff.threshold_bet
+      config.fmap_distcorr_frac = [c.functional.distortion_correction.method.phasediff.threshold]
+      break;
+    case 'afni':
+      c.functional.distortion_correction.method.phasediff.threshold = c.functional.distortion_correction.method.phasediff.threshold_afni
+      config.fmap_distcorr_threshold = [c.functional.distortion_correction.method.phasediff.threshold]
+      break;
+  } 
+  config.fmap_distcorr_deltaTE = [c.functional.distortion_correction.method.phasediff.delta_te]
+  config.fmap_distcorr_dwell_time = [c.functional.distortion_correction.method.phasediff.dwell_time]
+  config.fmap_distcorr_dwell_asym_ratio = [c.functional.distortion_correction.method.phasediff.dwell_to_assymetric_ratio]
+  config.fmap_distcorr_pedir = c.functional.distortion_correction.method.phasediff.phase_encoding_direction
 
   config.runRegisterFuncToAnat = [c.functional.anatomical_registration.enabled ? 1 : 0]
   config.runBBReg = [c.functional.anatomical_registration.bb_registration ? 1 : 0]
