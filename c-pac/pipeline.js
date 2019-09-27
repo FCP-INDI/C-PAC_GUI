@@ -267,7 +267,21 @@ export function parse(content) {
     c.anatomical.skull_stripping.methods.niworkflows_ants.enabled = true
   } 
 
-  c.anatomical.registration.resolution = parseInt(config.resolution_for_anat.replace("mm", ""))
+  if (c.anatomical.registration.resolution.includes("x")) {
+    temp = config.resolution_for_anat.split("x")
+    c.anatomical.registration.resolution = []
+
+    for (i = 0; i < 3; i++) {
+      c.anatomical.registration.resolution.push(parseFloat(temp[i]))
+    }
+  } else {
+    c.anatomical.registration.resolution = []
+
+    for (i = 0; i < 3; i++) {
+      c.anatomical.registration.resolution.push(parseFloat(config.resolution_for_anat))
+    }
+  }
+  
   c.anatomical.registration.brain_template = config.template_brain_only_for_anat
                                               .replace("${resolution_for_anat}", "${pipeline.anatomical.registration.resolution}mm")
                                               .replace("$FSLDIR", "${environment.paths.fsl_dir}")
@@ -360,8 +374,9 @@ export function parse(content) {
   c.functional.anatomical_registration.registration_input =
   config.func_reg_input.includes('Mean Functional') ? 'mean' : 'selected'
   c.functional.anatomical_registration.functional_volume = config.func_reg_input_volume
-  c.functional.anatomical_registration.functional_masking.bet = config.functionalMasking.includes('BET')
-  c.functional.anatomical_registration.functional_masking.afni = config.functionalMasking.includes('3dAutoMask')
+  c.functional.anatomical_registration.functional_masking.fsl = config.functionalMasking.includes('FSL')
+  c.functional.anatomical_registration.functional_masking.afni = config.functionalMasking.includes('AFNI')
+  c.functional.anatomical_registration.functional_masking.fsl_afni = config.functionalMasking.includes('FSL_AFNI')
 
   c.functional.template_registration.enabled = config.runRegisterFuncToMNI.includes(1)
   c.functional.template_registration.functional_resolution = config.resolution_for_func_preproc.replace("mm", "")
@@ -723,8 +738,9 @@ export function dump(pipeline, version='0') {
 
   config.func_reg_input_volume = c.functional.anatomical_registration.functional_volume
   config.functionalMasking = []
-    .concat(c.functional.anatomical_registration.functional_masking.bet ? ["BET"] : [])
-    .concat(c.functional.anatomical_registration.functional_masking.afni ? ["3dAutoMask"] : [])
+    .concat(c.functional.anatomical_registration.functional_masking.fsl ? ["FSL"] : [])
+    .concat(c.functional.anatomical_registration.functional_masking.afni ? ["AFNI"] : []
+    .concat(c.functional.anatomical_registration.functional_masking.fsl_afni ? ["FSL_AFNI"] : [])
 
   config.runRegisterFuncToMNI = [c.functional.template_registration.enabled ? 1 : 0]
   config.resolution_for_func_preproc = c.functional.template_registration.functional_resolution + "mm"

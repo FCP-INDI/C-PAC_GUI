@@ -215,7 +215,7 @@ func_reg_input_volume :  0
 
 
 # Choose which tool to be used in functional masking - AFNI 3dAutoMask or FSL BET.
-functionalMasking :  ['3dAutoMask']
+functionalMasking :  ['AFNI']
 
 
 # Register functional images to a standard MNI152 template.
