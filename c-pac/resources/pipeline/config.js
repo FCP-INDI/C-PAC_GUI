@@ -95,6 +95,7 @@ export default {
                     iterations: 4
                   },
                   blur_fwhm: 0,
+                  skullstrip_monkey: false,
                 }
               },
               bet: {
@@ -114,16 +115,48 @@ export default {
                   robust_brain_center: false,
                   vertical_gradient: 0.0,
                 }
+              },
+              niworkflows_ants: {
+                enabled: false,
+                ants_templates: {
+                  niworkflows_ants_template_path: '/ants_template/oasis/T_template0.nii.gz',
+                  niworkflows_ants_mask_path: '/ants_template/oasis/T_template0_BrainCerebellumProbabilityMask.nii.gz',
+                  niworkflows_ants_regmask_path: '/ants_template/oasis/T_template0_BrainCerebellumRegistrationMask.nii.gz',
+                }
               }
             }
           },
           tissue_segmentation: {
             enabled: true,
-            priors: {
-              white_matter: '${environment.paths.fsl_dir}/data/standard/tissuepriors/2mm/avg152T1_white_bin.nii.gz',
-              gray_matter: '${environment.paths.fsl_dir}/data/standard/tissuepriors/2mm/avg152T1_gray_bin.nii.gz',
-              cerebrospinal_fluid: '${environment.paths.fsl_dir}/data/standard/tissuepriors/2mm/avg152T1_csf_bin.nii.gz',
+            configuration: {
+              seg_use_priors: {
+                enabled: true,
+                priors: {
+                  white_matter: '${environment.paths.fsl_dir}/data/standard/tissuepriors/2mm/avg152T1_white_bin.nii.gz',
+                  gray_matter: '${environment.paths.fsl_dir}/data/standard/tissuepriors/2mm/avg152T1_gray_bin.nii.gz',
+                  cerebrospinal_fluid: '${environment.paths.fsl_dir}/data/standard/tissuepriors/2mm/avg152T1_csf_bin.nii.gz',
+                }
+              },
+              seg_use_fast_threshold:{
+                enabled: true,
+              },
+              seg_use_customized_threshold:{
+                enabled: false,
+                threshold: {
+                  seg_WM_threshold_value: 0.95,
+                  seg_GM_threshold_value: 0.95,
+                  seg_CSF_threshold_value: 0.95,
+                }
+              },
+              seg_use_erosion:{
+                enabled: false,
+                erosion: {
+                  seg_erosion_prop : 0.6
+                }
+              }
+
             }
+
           }
         },
         functional: {

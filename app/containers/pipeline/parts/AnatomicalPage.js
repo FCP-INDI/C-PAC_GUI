@@ -6,7 +6,7 @@ import Paper from '@material-ui/core/Paper';
 import ExpansionPanel from '@material-ui/core/ExpansionPanel';
 import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
-
+import Switch from '@material-ui/core/Switch';
 import {
   SkullStripping,
   Registration,
@@ -85,7 +85,36 @@ class AnatomicalPage extends Component {
           </ExpansionPanelDetails>
         </ExpansionPanel>
 
-        <ExpansionPanel expanded>
+        <ExpansionPanel expanded={configuration.getIn("anatomical.tissue_segmentation.enabled".split('.'))}>
+          <ExpansionPanelSummary>
+            <Switch
+              name="anatomical.tissue_segmentation.enabled"
+              checked={configuration.getIn("anatomical.tissue_segmentation.enabled".split("."))}
+              onChange={onChange}
+              color="primary"
+            />
+            <Typography variant="h6" className={classes.sectionTitle}>
+              Tissue Segmentation
+            </Typography>
+          </ExpansionPanelSummary>
+          {/* <ExpansionPanelDetails>
+            {
+              React.createElement(component, {
+                configuration,
+                onChange,
+              })
+            }
+          </ExpansionPanelDetails> */}
+          <ExpansionPanelDetails>
+            <Grid container>
+              <Grid item xs={12}>
+                <TissueSegmentation configuration={configuration} onChange={onChange} />
+              </Grid>
+            </Grid>
+          </ExpansionPanelDetails>
+        </ExpansionPanel>
+
+        {/* <ExpansionPanel expanded>
           <ExpansionPanelSummary disabled>
             <Help
               help={`Included as part of the 'Image Resource Files' package available on the Install page of the User Guide.`}
@@ -101,7 +130,7 @@ class AnatomicalPage extends Component {
               </Grid>
             </Grid>
           </ExpansionPanelDetails>
-        </ExpansionPanel>
+        </ExpansionPanel> */}
       </React.Fragment>
     )
   }

@@ -263,7 +263,21 @@ export function parse(content) {
     c.anatomical.skull_stripping.methods.bet.enabled = true
   }
 
+  if (config.skullstrip_option.includes("niworkflows-ants")) {
+    c.anatomical.skull_stripping.methods.niworkflows_ants.enabled = true
+  } 
+
   c.anatomical.registration.resolution = config.resolution_for_anat.replace(/mm/g,"")
+  if (c.anatomical.registration.resolution.includes("x")) {
+    temp = config.resolution_for_anat.split("x")
+    c.anatomical.registration.resolution = []
+
+    for (i = 0; i < 3; i++) {
+      c.anatomical.registration.resolution.push(parseFloat(temp[i]))
+    }
+  } else {
+    c.anatomical.registration.resolution = []
+  }
 
   c.anatomical.registration.brain_template = config.template_brain_only_for_anat
                                               .replace("${resolution_for_anat}", "${pipeline.anatomical.registration.resolution}mm")
@@ -318,15 +332,30 @@ export function parse(content) {
   }
   
   c.anatomical.tissue_segmentation.enabled = config.runSegmentationPreprocessing.includes(1)
+  c.anatomical.tissue_segmentation.configuration.seg_use_priors.enabled = config.seg_use_priors
 
   let priors_path = ''
   if (config.priors_path) {
     priors_path = config.priors_path.replace("$FSLDIR", "${environment.paths.fsl_dir}")
   }
 
-  c.anatomical.tissue_segmentation.priors.white_matter = config.PRIORS_WHITE.replace("$priors_path", priors_path)
-  c.anatomical.tissue_segmentation.priors.gray_matter = config.PRIORS_GRAY.replace("$priors_path", priors_path)
-  c.anatomical.tissue_segmentation.priors.cerebrospinal_fluid = config.PRIORS_CSF.replace("$priors_path", priors_path)
+  c.anatomical.tissue_segmentation.configuration.seg_use_priors.priors.white_matter = config.PRIORS_WHITE.replace("$priors_path", priors_path)
+  c.anatomical.tissue_segmentation.configuration.seg_use_priors.priors.gray_matter = config.PRIORS_GRAY.replace("$priors_path", priors_path)
+  c.anatomical.tissue_segmentation.configuration.seg_use_priors.priors.cerebrospinal_fluid = config.PRIORS_CSF.replace("$priors_path", priors_path)
+
+  if (config.seg_use_threshold.includes("FSL-FAST Thresholding")) {
+    c.anatomical.tissue_segmentation.configuration.seg_use_fast_threshold.enabled = true
+    c.anatomical.tissue_segmentation.configuration.seg_use_customized_threshold.enabled = false
+  } else if (config.seg_use_threshold.includes("Customized Thresholding")) {
+    c.anatomical.tissue_segmentation.configuration.seg_use_fast_threshold.enabled = false
+    c.anatomical.tissue_segmentation.configuration.seg_use_customized_threshold.enabled = true
+    c.anatomical.tissue_segmentation.configuration.seg_use_customized_threshold.threshold.seg_WM_threshold_value = config.seg_WM_threshold_value
+    c.anatomical.tissue_segmentation.configuration.seg_use_customized_threshold.threshold.seg_GM_threshold_value = config.seg_GM_threshold_value
+    c.anatomical.tissue_segmentation.configuration.seg_use_customized_threshold.threshold.seg_CSF_threshold_value = config.seg_CSF_threshold_value
+  }
+    
+  c.anatomical.tissue_segmentation.configuration.seg_use_erosion.enabled = config.seg_use_erosion
+  c.anatomical.tissue_segmentation.configuration.seg_use_erosion.erosion.seg_erosion_prop = config.seg_erosion_prop
 
   c.functional.slice_timing_correction.enabled = config.slice_timing_correction.includes(1)
   c.functional.slice_timing_correction.repetition_time = !config.TR || config.TR == "None" ? '' : config.TR
@@ -595,6 +624,7 @@ export function dump(pipeline, version='0') {
   config.skullstrip_option = []
     .concat(c.anatomical.skull_stripping.methods.afni.enabled ? ["AFNI"] : [])
     .concat(c.anatomical.skull_stripping.methods.bet.enabled ? ["BET"] : [])
+    .concat(c.anatomical.skull_stripping.methods.niworkflows_ants.enabled ? ["niworkflows-ants"] : [])
 
   config.skullstrip_shrink_factor = c.anatomical.skull_stripping.methods.afni.configuration.shrink_factor.threshold
   config.skullstrip_var_shrink_fac = c.anatomical.skull_stripping.methods.afni.configuration.shrink_factor.vary
@@ -615,6 +645,7 @@ export function dump(pipeline, version='0') {
   config.skullstrip_max_inter_iter = c.anatomical.skull_stripping.methods.afni.configuration.intersections.iterations
   config.skullstrip_fac = c.anatomical.skull_stripping.methods.afni.configuration.multiplier
   config.skullstrip_blur_fwhm = c.anatomical.skull_stripping.methods.afni.configuration.blur_fwhm
+  config.skullstrip_monkey = c. anatomical.skull_stripping.methods.afni.configuration.skullstrip_monkey
 
   config.bet_frac = c.anatomical.skull_stripping.methods.bet.configuration.threshold
   config.bet_mask_boolean = c.anatomical.skull_stripping.methods.bet.configuration.mask
@@ -639,6 +670,10 @@ export function dump(pipeline, version='0') {
   } else {
     config.resolution_for_anat = c.anatomical.registration.resolution + "mm"
   }
+
+  config.niworkflows_ants_template_path = c.anatomical.skull_stripping.methods.niworkflows_ants.ants_templates.niworkflows_ants_template_path
+  config.niworkflows_ants_mask_path = c.anatomical.skull_stripping.methods.niworkflows_ants.ants_templates.niworkflows_ants_mask_path
+  config.niworkflows_ants_regmask_path = c.anatomical.skull_stripping.methods.niworkflows_ants.ants_templates.niworkflows_ants_regmask_path
 
   config.template_brain_only_for_anat = c.anatomical.registration.brain_template
   config.template_skull_for_anat = c.anatomical.registration.skull_template
@@ -686,10 +721,28 @@ export function dump(pipeline, version='0') {
   config.regWithSkull = [c.anatomical.registration.methods.ants.configuration.skull_on ? 1 : 0]
 
   config.runSegmentationPreprocessing = [c.anatomical.tissue_segmentation.enabled ? 1 : 0]
+  config.seg_use_priors = [c.anatomical.tissue_segmentation.configuration.seg_use_priors.enabled ? 1 : 0]
   config.priors_path = "$FSLDIR/data/standard/tissuepriors/2mm"
-  config.PRIORS_WHITE = c.anatomical.tissue_segmentation.priors.white_matter
-  config.PRIORS_GRAY = c.anatomical.tissue_segmentation.priors.gray_matter
-  config.PRIORS_CSF = c.anatomical.tissue_segmentation.priors.cerebrospinal_fluid
+  config.PRIORS_WHITE = c.anatomical.tissue_segmentation.configuration.seg_use_priors.priors.white_matter
+  config.PRIORS_GRAY = c.anatomical.tissue_segmentation.configuration.seg_use_priors.priors.gray_matter
+  config.PRIORS_CSF = c.anatomical.tissue_segmentation.configuration.seg_use_priors.priors.cerebrospinal_fluid
+
+  if (c.anatomical.tissue_segmentation.configuration.seg_use_fast_threshold.enabled) {
+    config.seg_use_threshold = ['FSL-FAST Thresholding']
+  } else if (c.anatomical.tissue_segmentation.configuration.seg_use_customized_threshold.enabled) {
+    config.seg_use_threshold = ['Customized Thresholding']
+    config.seg_WM_threshold_value = c.anatomical.tissue_segmentation.configuration.seg_use_customized_threshold.threshold.seg_WM_threshold_value 
+    config.seg_GM_threshold_value = c.anatomical.tissue_segmentation.configuration.seg_use_customized_threshold.threshold.seg_GM_threshold_value 
+    config.seg_CSF_threshold_value = c.anatomical.tissue_segmentation.configuration.seg_use_customized_threshold.threshold.seg_CSF_threshold_value 
+  }
+  
+  // config.seg_use_threshold = [c.anatomical.tissue_segmentation.configuration.seg_use_threshold.enabled ? 1 : 0]
+  // config.seg_WM_threshold_value = c.anatomical.tissue_segmentation.configuration.seg_use_threshold.threshold.seg_WM_threshold_value 
+  // config.seg_GM_threshold_value = c.anatomical.tissue_segmentation.configuration.seg_use_threshold.threshold.seg_GM_threshold_value 
+  // config.seg_CSF_threshold_value = c.anatomical.tissue_segmentation.configuration.seg_use_threshold.threshold.seg_CSF_threshold_value 
+  
+  config.seg_use_erosion = [c.anatomical.tissue_segmentation.configuration.seg_use_erosion.enabled ? 1 : 0]
+  config.seg_erosion_prop = c.anatomical.tissue_segmentation.configuration.seg_use_erosion.erosion.seg_erosion_prop 
 
   config.runFunctional = c.functional.enabled ? [1] : [0]
 
