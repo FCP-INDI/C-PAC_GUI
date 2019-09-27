@@ -362,9 +362,35 @@ export function parse(content) {
   c.functional.anatomical_registration.functional_masking.fsl_afni = config.functionalMasking.includes('FSL_AFNI')
 
   c.functional.template_registration.enabled = config.runRegisterFuncToMNI.includes(1)
-
   c.functional.template_registration.functional_resolution = config.resolution_for_func_preproc.replace(/mm/g, "")
   c.functional.template_registration.derivative_resolution = config.resolution_for_func_derivative.replace(/mm/g, "")
+
+  if (config.regOption.includes("ANTS")) {
+    switch (config.funcRegANTSinterpolation) {
+      case 'LanczosWindowedSinc':
+        c.functional.template_registration.methods.ants.interpolation = 'sinc'
+        break;
+      case 'Linear':
+        c.functional.template_registration.methods.ants.interpolation = 'linear'
+        break;
+      case 'BSpline':
+        c.functional.template_registration.methods.ants.interpolation = 'spline'
+        break;
+    }
+  } else {
+    switch (config.funcRegFSLinterpolation) {
+      case 'sinc':
+        c.functional.template_registration.methods.fsl.interpolation = 'sinc'
+        break;
+      case 'trilinear':
+        c.functional.template_registration.methods.fsl.interpolation = 'linear'
+        break;
+      case 'spline':
+        c.functional.template_registration.methods.fsl.interpolation = 'spline'
+        break;
+    }
+  }
+
   c.functional.template_registration.brain_template =
     config.template_brain_only_for_func
       .replace("${resolution_for_func_preproc}", "${pipeline.functional.template_registration.functional_resolution}mm")
@@ -725,8 +751,34 @@ export function dump(pipeline, version='0') {
     config.resolution_for_func_derivative = c.functional.template_registration.derivative_resolution + "mm"
   }
   
-  // config.resolution_for_func_preproc = c.functional.template_registration.functional_resolution + "mm"
-  // config.resolution_for_func_derivative = c.functional.template_registration.derivative_resolution + "mm"
+  switch (c.functional.template_registration.methods.ants.interpolation) {
+    case 'linear':
+      config.funcRegANTSinterpolation = 'Linear'
+      break;
+  
+    case 'sinc':
+      config.funcRegANTSinterpolation = 'LanczosWindowedSinc'
+      break;
+
+    case 'spline':
+      config.funcRegANTSinterpolation = 'BSpline'
+      break;
+  } 
+  
+  switch (c.functional.template_registration.methods.fsl.interpolation) {
+    case 'linear':
+      config.funcRegFSLinterpolation = 'trilinear'
+      break;
+  
+    case 'sinc':
+      config.funcRegFSLinterpolation = 'sinc'
+      break;
+
+    case 'spline':
+      config.funcRegFSLinterpolation = 'spline'
+      break;
+  }
+
   config.template_brain_only_for_func = c.functional.template_registration.brain_template
   config.template_skull_for_func = c.functional.template_registration.skull_template
   config.identityMatrix = c.functional.template_registration.identity_matrix
