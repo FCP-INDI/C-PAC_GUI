@@ -36,8 +36,8 @@ class PyPEER extends Component {
           >
             <TextField
               label="PEER Eye Scan Names"
-              name="derivatives.pypeer.peer_eye_scan_names"
-              value={configuration.getIn(["derivatives", "pypeer", "peer_eye_scan_names"])}
+              name="derivatives.pypeer.eye_scan_names"
+              value={configuration.getIn(["derivatives", "pypeer", "eye_scan_names"])}
               onChange={onChange}
               fullWidth={true} margin="normal" variant="outlined"
               helperText=''
@@ -52,8 +52,8 @@ class PyPEER extends Component {
           >
             <TextField
               label="PEER Data Scan Names"
-              name="derivatives.pypeer.peer_data_scan_names"
-              value={configuration.getIn(["derivatives", "pypeer", "peer_data_scan_names"])}
+              name="derivatives.pypeer.data_scan_names"
+              value={configuration.getIn(["derivatives", "pypeer", "data_scan_names"])}
               onChange={onChange}
               fullWidth={true} margin="normal" variant="outlined"
               helperText=''
@@ -84,8 +84,8 @@ class PyPEER extends Component {
           >
             <TextField
               label="PyPEER Stimulus File Path"
-              name="derivatives.pypeer.peer_stimulus_path"
-              value={configuration.getIn(["derivatives", "pypeer", "peer_stimulus_path"])}
+              name="derivatives.pypeer.stimulus_path"
+              value={configuration.getIn(["derivatives", "pypeer", "stimulus_path"])}
               onChange={onChange}
               fullWidth={true} margin="normal" variant="outlined"
               helperText=''
@@ -102,8 +102,8 @@ class PyPEER extends Component {
               >
                 <FormControlLabelled label="Perform global signal regression">
                   <Switch
-                    name="derivatives.pypeer.peer_gsr"
-                    checked={configuration.getIn(["derivatives", "pypeer", "peer_gsr"])}
+                    name="derivatives.pypeer.gsr"
+                    checked={configuration.getIn(["derivatives", "pypeer", "gsr"])}
                     onChange={onChange}
                     color="primary"
                   />
@@ -119,8 +119,8 @@ class PyPEER extends Component {
               >
                 <FormControlLabelled label="Perform motion scrubbing">
                   <Switch
-                    name="derivatives.pypeer.peer_scrub.enabled"
-                    checked={configuration.getIn(["derivatives", "pypeer", "peer_scrub", "enabled"])}
+                    name="derivatives.pypeer.scrub.enabled"
+                    checked={configuration.getIn(["derivatives", "pypeer", "scrub", "enabled"])}
                     onChange={onChange}
                     color="primary"
                   />
@@ -137,8 +137,8 @@ class PyPEER extends Component {
           >
             <TextField
               label="Motion Scrubbing Threshold"
-              name="derivatives.pypeer.peer_scrub.thresh"
-              value={configuration.getIn(["derivatives", "pypeer", "peer_scrub", "thresh"])}
+              name="derivatives.pypeer.scrub.threshold"
+              value={configuration.getIn(["derivatives", "pypeer", "scrub", "threshold"])}
               onChange={onChange}
               fullWidth={true} margin="normal" variant="outlined"
               helperText=''

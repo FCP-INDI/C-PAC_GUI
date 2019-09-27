@@ -610,13 +610,13 @@ export function parse(content) {
   c.derivatives.network_centrality.local_connectivity_density.threshold = config.lfcdCorrelationThreshold
 
   c.derivatives.pypeer.enabled = config.run_pypeer.includes(1)
-  c.derivatives.pypeer.peer_eye_scan_names = String(config.peer_eye_scan_names)
-  c.derivatives.pypeer.peer_data_scan_names = String(config.peer_data_scan_names)
+  c.derivatives.pypeer.eye_scan_names = config.peer_eye_scan_names.join(', ')
+  c.derivatives.pypeer.data_scan_names = config.peer_data_scan_names.join(', ')
   c.derivatives.pypeer.eye_mask_path = config.eye_mask_path.replace("${resolution_for_func_preproc}", "${pipeline.functional.template_registration.functional_resolution}mm") 
-  c.derivatives.pypeer.peer_stimulus_path = config.peer_stimulus_path
-  c.derivatives.pypeer.peer_gsr = config.peer_gsr
-  c.derivatives.pypeer.peer_scrub.enabled = config.peer_scrub
-  c.derivatives.pypeer.peer_scrub.thresh = config.peer_scrub_thresh 
+  c.derivatives.pypeer.stimulus_path = config.peer_stimulus_path || ''
+  c.derivatives.pypeer.gsr = config.peer_gsr
+  c.derivatives.pypeer.scrub.enabled = config.peer_scrub
+  c.derivatives.pypeer.scrub.threshold = config.peer_scrub_thresh 
 
   return t
 }
@@ -1006,14 +1006,14 @@ export function dump(pipeline, version='0') {
   config.lfcdCorrelationThreshold = c.derivatives.network_centrality.local_connectivity_density.threshold
 
   config.run_pypeer = [c.derivatives.pypeer.enabled ? 1 : 0]
-  config.peer_eye_scan_names = [c.derivatives.pypeer.peer_eye_scan_names]
-  config.peer_data_scan_names = [c.derivatives.pypeer.peer_data_scan_names] 
+  config.peer_eye_scan_names = c.derivatives.pypeer.eye_scan_names.split(',').map((t) => t.trim())
+  config.peer_data_scan_names = c.derivatives.pypeer.data_scan_names.split(',').map((t) => t.trim())
   config.eye_mask_path = c.derivatives.pypeer.eye_mask_path
-  config.peer_stimulus_path = c.derivatives.pypeer.peer_stimulus_path
+  config.peer_stimulus_path = c.derivatives.pypeer.stimulus_path || ''
   
-  config.peer_gsr = c.derivatives.pypeer.peer_gsr
-  config.peer_scrub = c.derivatives.pypeer.peer_scrub.enabled 
-  config.peer_scrub_thresh = c.derivative.pypeer.peer_scrub.thresh 
+  config.peer_gsr = c.derivatives.pypeer.gsr
+  config.peer_scrub = c.derivatives.pypeer.scrub.enabled 
+  config.peer_scrub_thresh = c.derivative.pypeer.scrub.threshold 
 
   config.memoryAllocatedForDegreeCentrality = 3.0
 

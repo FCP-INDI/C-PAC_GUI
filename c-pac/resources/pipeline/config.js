@@ -390,14 +390,14 @@ export default {
           },
           pypeer: {
             enabled: true,
-            peer_eye_scan_names: '',
-            peer_data_scan_names: '',
+            eye_scan_names: '',
+            data_scan_names: '',
             eye_mask_path: '$FSLDIR/data/standard/MNI152_T1_${resolution_for_func_preproc}_eye_mask.nii.gz',
-            peer_stimulus_path: '',
-            peer_gsy: true,
-            peer_scrub: {
+            stimulus_path: '',
+            gsr: true,
+            scrub: {
               enabled: false,
-              thresh: 0.2
+              threshold: 0.2
             }
           }
         }
