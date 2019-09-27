@@ -35,69 +35,6 @@ class InitialPreprocessing extends Component {
   static styles = theme => ({
   });
 
-  // state = {
-  //   nlmfOptions: true,
-  //   n4Options: true,
-  // }
-
-  // handleValueChange = (event) => {
-  //   const name = event.target.name
-
-  //   const checkBoxes = [
-  //     "anatomical.preprocessing.methods.nlmf.enabled",
-  //     "anatomical.preprocessing.methods.n4.enabled"
-  //     // "anatomical.preprocessing.enabled"
-  //   ]
-
-  //   if (!checkBoxes.includes(name)) {
-  //     this.props.onChange([
-  //       [name, event.target.value]
-  //     ])
-
-  //   } else {
-  //     const changes = []
-  //     const value = event.target.checked
-
-      // if (name == "anatomical.preprocessing.enabled") {
-      //   changes.push([name, !value])
-      //   if (value) {
-      //     changes.push(["anatomical.preprocessing.methods.nlmf.enabled", false])
-      //     changes.push(["anatomical.preprocessing.methods.n4.enabled", false])
-      //   }
-      // }
-
-  //     const methods = [
-  //       "anatomical.preprocessing.methods.nlmf.enabled",
-  //       "anatomical.preprocessing.methods.n4.enabled"
-  //     ]
-  //     if (methods.includes(name)) {
-  //       changes.push([name, value])
-  //       if (value) {
-  //         changes.push(["anatomical.preprocessing.methods.nlmf.enabled", false])
-  //         changes.push(["anatomical.preprocessing.methods.n4.enabled", false])
-  //       }
-  //     }
-
-  //     this.props.onChange(changes)
-  //   }
-  // };
-
-  // handleOpenNLMF = () => {
-  //   this.setState({ nlmfOptions: true })
-  // }
-
-  // handleOpenN4 = () => {
-  //   this.setState({ n4Options: true })
-  // }
-  
-  // handleCloseNLMF = () => {
-  //   this.setState({ nlmfOptions: false })
-  // }
-
-  // handleCloseN4 = () => {
-  //   this.setState({ n4Options: false })
-  // }
-
   render() {
     const { classes, configuration, advanced, onChange } = this.props
 
