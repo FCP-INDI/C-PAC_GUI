@@ -188,6 +188,8 @@ skullstrip_fac :  1
 # Blur dataset after spatial normalization. Recommended when you have lots of CSF in brain and when you have protruding gyri (finger like). If so, recommended value range is 2-4. Otherwise, leave at 0.
 skullstrip_blur_fwhm :  0
 
+# Choice of using monkey option for AFNI 3dskullstrip
+skullstrip_monkey : False
 
 # Set the threshold value controling the brain vs non-brain voxels, default is 0.5
 bet_frac :  0.5
@@ -239,6 +241,20 @@ bet_threshold :  Off
 
 # Vertical gradient in fractional intensity threshold (-1,1)
 bet_vertical_gradient : 0.0
+
+# Template to be used during niworkflows-ants.
+# For skullstrip option 'niworkflows-ants' only.
+# It is not necessary to change this path unless you intend to use a non-standard template.
+# niworkflows-ants Brain extraction template
+niworkflows_ants_template_path : /ants_template/oasis/T_template0.nii.gz
+
+
+# niworkflows-ants probability mask
+niworkflows_ants_mask_path : /ants_template/oasis/T_template0_BrainCerebellumProbabilityMask.nii.gz
+
+
+# niworkflows-ants registration mask (can be optional)
+niworkflows_ants_regmask_path : /ants_template/oasis/T_template0_BrainCerebellumRegistrationMask.nii.gz
 
 
 # The resolution to which anatomical images should be transformed during registration.
