@@ -730,7 +730,6 @@ export function dump(pipeline, version='0') {
     .concat(c.functional.anatomical_registration.functional_masking.fsl_afni ? ["FSL_AFNI"] : [])
   
   config.runRegisterFuncToMNI = [c.functional.template_registration.enabled ? 1 : 0]
-
   if (c.functional.template_registration.functional_resolution.includes("x")) {
     var xind = []
     for(var i = 0; i < c.functional.template_registration.functional_resolution.length; i++) {
