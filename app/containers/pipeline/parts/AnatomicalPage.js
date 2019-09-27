@@ -97,14 +97,6 @@ class AnatomicalPage extends Component {
               Tissue Segmentation
             </Typography>
           </ExpansionPanelSummary>
-          {/* <ExpansionPanelDetails>
-            {
-              React.createElement(component, {
-                configuration,
-                onChange,
-              })
-            }
-          </ExpansionPanelDetails> */}
           <ExpansionPanelDetails>
             <Grid container>
               <Grid item xs={12}>
@@ -113,24 +105,6 @@ class AnatomicalPage extends Component {
             </Grid>
           </ExpansionPanelDetails>
         </ExpansionPanel>
-
-        {/* <ExpansionPanel expanded>
-          <ExpansionPanelSummary disabled>
-            <Help
-              help={`Included as part of the 'Image Resource Files' package available on the Install page of the User Guide.`}
-            />
-            <Typography variant="h6" className={classes.sectionTitle}>
-              Tissue Segmentation
-            </Typography>
-          </ExpansionPanelSummary>
-          <ExpansionPanelDetails>
-            <Grid container>
-              <Grid item xs={12}>
-                <TissueSegmentation configuration={configuration} onChange={onChange} />
-              </Grid>
-            </Grid>
-          </ExpansionPanelDetails>
-        </ExpansionPanel> */}
       </React.Fragment>
     )
   }
