@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { withStyles, Typography } from '@material-ui/core';
+import Grid from '@material-ui/core/Grid'
 
 import ExpansionPanel from '@material-ui/core/ExpansionPanel';
 import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
@@ -42,12 +43,16 @@ class FunctionalPage extends Component {
           </Typography>
         </ExpansionPanelSummary>
         <ExpansionPanelDetails>
-          {
-            React.createElement(component, {
-              configuration,
-              onChange,
-            })
-          }
+          <Grid container>
+              <Grid item xs={12}>
+                {
+                  React.createElement(component, {
+                  configuration,
+                  onChange,
+                  })
+                }
+              </Grid>
+            </Grid>
         </ExpansionPanelDetails>
       </ExpansionPanel>
     )

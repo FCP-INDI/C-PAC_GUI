@@ -16,6 +16,7 @@ import {
   TimeSeriesExtraction,
   VMHC
 } from 'containers/pipeline/parts/derivatives'
+import PyPEER from './derivatives/PyPEER';
 
 
 class DerivativesPage extends Component {
@@ -109,6 +110,14 @@ class DerivativesPage extends Component {
             "Regional Homogeneity",
             "derivatives.reho.enabled",
             RegionalHomogeneity
+          )
+        }
+
+        {
+          this.renderSection(
+            "PyPEER",
+            "derivatives.pypeer.enabled",
+            PyPEER
           )
         }
 

@@ -50,8 +50,19 @@ export default {
                 configuration: {
                   linear_only: false,
                   config_file: 'T1_2_MNI152_2mm',
-                  reference_mask: '$FSLDIR/data/standard/MNI152_T1_${resolution_for_anat}_brain_mask_dil.nii.gz'
+                  reference_mask: '${environment.paths.fsl_dir}/data/standard/MNI152_T1_${pipeline.anatomical.registration.resolution}_brain_mask_dil.nii.gz'
                 }
+              }
+            }
+          },
+          preprocessing: {
+            enabled: true,
+            methods: {
+              nlmf: {
+                enabled: false
+              },
+              n4: {
+                enabled: false
               }
             }
           },
@@ -84,6 +95,7 @@ export default {
                     iterations: 4
                   },
                   blur_fwhm: 0,
+                  skullstrip_monkey: false,
                 }
               },
               bet: {
@@ -103,16 +115,48 @@ export default {
                   robust_brain_center: false,
                   vertical_gradient: 0.0,
                 }
+              },
+              niworkflows_ants: {
+                enabled: false,
+                ants_templates: {
+                  niworkflows_ants_template_path: '/ants_template/oasis/T_template0.nii.gz',
+                  niworkflows_ants_mask_path: '/ants_template/oasis/T_template0_BrainCerebellumProbabilityMask.nii.gz',
+                  niworkflows_ants_regmask_path: '/ants_template/oasis/T_template0_BrainCerebellumRegistrationMask.nii.gz',
+                }
               }
             }
           },
           tissue_segmentation: {
             enabled: true,
-            priors: {
-              white_matter: '${environment.paths.fsl_dir}/data/standard/tissuepriors/2mm/avg152T1_white_bin.nii.gz',
-              gray_matter: '${environment.paths.fsl_dir}/data/standard/tissuepriors/2mm/avg152T1_gray_bin.nii.gz',
-              cerebrospinal_fluid: '${environment.paths.fsl_dir}/data/standard/tissuepriors/2mm/avg152T1_csf_bin.nii.gz',
+            configuration: {
+              seg_use_priors: {
+                enabled: true,
+                priors: {
+                  white_matter: '${environment.paths.fsl_dir}/data/standard/tissuepriors/2mm/avg152T1_white_bin.nii.gz',
+                  gray_matter: '${environment.paths.fsl_dir}/data/standard/tissuepriors/2mm/avg152T1_gray_bin.nii.gz',
+                  cerebrospinal_fluid: '${environment.paths.fsl_dir}/data/standard/tissuepriors/2mm/avg152T1_csf_bin.nii.gz',
+                }
+              },
+              seg_use_fast_threshold:{
+                enabled: true,
+              },
+              seg_use_customized_threshold:{
+                enabled: false,
+                threshold: {
+                  seg_WM_threshold_value: 0.95,
+                  seg_GM_threshold_value: 0.95,
+                  seg_CSF_threshold_value: 0.95,
+                }
+              },
+              seg_use_erosion:{
+                enabled: false,
+                erosion: {
+                  seg_erosion_prop : 0.6
+                }
+              }
+
             }
+
           }
         },
         functional: {
@@ -126,13 +170,23 @@ export default {
             two_pass: true,
           },
           distortion_correction: {
-            enabled: true,
-            skull_stripping: 'afni',
-            threshold: 0.6,
-            delta_te: 2.46,
-            dwell_time: 0.0005,
-            dwell_to_assymetric_ratio: 0.93902439,
-            phase_encoding_direction: 'x',
+            enabled: false,
+            method: {
+              phasediff: {
+                enabled: true,
+                skull_stripping: 'afni',
+                threshold: 0.6, //would be displaced by threshold_bet or threshold_afni
+                threshold_bet: 0.5,
+                threshold_afni: 0.6,
+                delta_te: 2.46,
+                dwell_time: 0.0005,
+                dwell_to_assymetric_ratio: 0.93902439,
+                phase_encoding_direction: 'x'
+              },
+              blip: {
+                enabled: false
+              }            
+            }            
           },
           anatomical_registration: {
             enabled: true,
@@ -141,8 +195,9 @@ export default {
             registration_input: 'mean',
             functional_volume: 0,
             functional_masking: {
-              bet: false,
+              fsl: false,
               afni: false,
+              fsl_afni: false,
             },
           },
           template_registration: {
@@ -295,9 +350,9 @@ export default {
           },
           vmhc: {
             enabled: false,
-            symmetric_brain: '${environment.paths.fsl_dir}/data/standard/MNI152_T1_${resolution_for_anat}_brain_symmetric.nii.gz',
-            symmetric_skull: '${environment.paths.fsl_dir}/data/standard/MNI152_T1_${resolution_for_anat}_symmetric.nii.gz',
-            dilated_symmetric_brain: '${environment.paths.fsl_dir}/data/standard/MNI152_T1_${resolution_for_anat}_brain_mask_symmetric_dil.nii.gz',
+            symmetric_brain: '${environment.paths.fsl_dir}/data/standard/MNI152_T1_${pipeline.anatomical.registration.resolution}_brain_symmetric.nii.gz',
+            symmetric_skull: '${environment.paths.fsl_dir}/data/standard/MNI152_T1_${pipeline.anatomical.registration.resolution}_symmetric.nii.gz',
+            dilated_symmetric_brain: '${environment.paths.fsl_dir}/data/standard/MNI152_T1_${pipeline.anatomical.registration.resolution}_brain_mask_symmetric_dil.nii.gz',
             flirt_configuration_file: '${environment.paths.fsl_dir}/etc/flirtsch/T1_2_MNI152_2mm.cnf',
           },
           alff: {
@@ -333,6 +388,18 @@ export default {
               threshold: 0.001
             },
           },
+          pypeer: {
+            enabled: true,
+            eye_scan_names: '',
+            data_scan_names: '',
+            eye_mask_path: '${environment.paths.fsl_dir}/data/standard/MNI152_T1_${pipeline.functional.template_registration.functional_resolution}_eye_mask.nii.gz',
+            stimulus_path: '',
+            gsr: true,
+            scrub: {
+              enabled: false,
+              threshold: 0.2
+            }
+          }
         }
       }
     }

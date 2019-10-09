@@ -263,7 +263,22 @@ export function parse(content) {
     c.anatomical.skull_stripping.methods.bet.enabled = true
   }
 
-  c.anatomical.registration.resolution = parseInt(config.resolution_for_anat.replace("mm", ""))
+  if (config.skullstrip_option.includes("niworkflows-ants")) {
+    c.anatomical.skull_stripping.methods.niworkflows_ants.enabled = true
+  } 
+
+  c.anatomical.registration.resolution = config.resolution_for_anat.replace(/mm/g,"")
+  if (c.anatomical.registration.resolution.includes("x")) {
+    temp = config.resolution_for_anat.split("x")
+    c.anatomical.registration.resolution = []
+
+    for (i = 0; i < 3; i++) {
+      c.anatomical.registration.resolution.push(parseFloat(temp[i]))
+    }
+  } else {
+    c.anatomical.registration.resolution = []
+  }
+
   c.anatomical.registration.brain_template = config.template_brain_only_for_anat
                                               .replace("${resolution_for_anat}", "${pipeline.anatomical.registration.resolution}mm")
                                               .replace("$FSLDIR", "${environment.paths.fsl_dir}")
@@ -317,15 +332,30 @@ export function parse(content) {
   }
   
   c.anatomical.tissue_segmentation.enabled = config.runSegmentationPreprocessing.includes(1)
+  c.anatomical.tissue_segmentation.configuration.seg_use_priors.enabled = config.seg_use_priors
 
   let priors_path = ''
   if (config.priors_path) {
     priors_path = config.priors_path.replace("$FSLDIR", "${environment.paths.fsl_dir}")
   }
 
-  c.anatomical.tissue_segmentation.priors.white_matter = config.PRIORS_WHITE.replace("$priors_path", priors_path)
-  c.anatomical.tissue_segmentation.priors.gray_matter = config.PRIORS_GRAY.replace("$priors_path", priors_path)
-  c.anatomical.tissue_segmentation.priors.cerebrospinal_fluid = config.PRIORS_CSF.replace("$priors_path", priors_path)
+  c.anatomical.tissue_segmentation.configuration.seg_use_priors.priors.white_matter = config.PRIORS_WHITE.replace("$priors_path", priors_path)
+  c.anatomical.tissue_segmentation.configuration.seg_use_priors.priors.gray_matter = config.PRIORS_GRAY.replace("$priors_path", priors_path)
+  c.anatomical.tissue_segmentation.configuration.seg_use_priors.priors.cerebrospinal_fluid = config.PRIORS_CSF.replace("$priors_path", priors_path)
+
+  if (config.seg_use_threshold.includes("FSL-FAST Thresholding")) {
+    c.anatomical.tissue_segmentation.configuration.seg_use_fast_threshold.enabled = true
+    c.anatomical.tissue_segmentation.configuration.seg_use_customized_threshold.enabled = false
+  } else if (config.seg_use_threshold.includes("Customized Thresholding")) {
+    c.anatomical.tissue_segmentation.configuration.seg_use_fast_threshold.enabled = false
+    c.anatomical.tissue_segmentation.configuration.seg_use_customized_threshold.enabled = true
+    c.anatomical.tissue_segmentation.configuration.seg_use_customized_threshold.threshold.seg_WM_threshold_value = config.seg_WM_threshold_value
+    c.anatomical.tissue_segmentation.configuration.seg_use_customized_threshold.threshold.seg_GM_threshold_value = config.seg_GM_threshold_value
+    c.anatomical.tissue_segmentation.configuration.seg_use_customized_threshold.threshold.seg_CSF_threshold_value = config.seg_CSF_threshold_value
+  }
+    
+  c.anatomical.tissue_segmentation.configuration.seg_use_erosion.enabled = config.seg_use_erosion
+  c.anatomical.tissue_segmentation.configuration.seg_use_erosion.erosion.seg_erosion_prop = config.seg_erosion_prop
 
   c.functional.slice_timing_correction.enabled = config.slice_timing_correction.includes(1)
   c.functional.slice_timing_correction.repetition_time = !config.TR || config.TR == "None" ? '' : config.TR
@@ -336,17 +366,44 @@ export function parse(content) {
 
   c.functional.slice_timing_correction.two_pass = config.functional_volreg_twopass
 
-  c.functional.distortion_correction.enabled = config.runEPI_DistCorr.includes(1)
+  if (typeof config.distortion_correction === "string") {
+    config.distortion_correction = [config.distortion_correction]
+  }
+
+  if (config.distortion_correction.includes("None")) {
+    c.functional.distortion_correction.enabled = false
+  }
+
+  if (config.distortion_correction.includes("PhaseDiff")) {
+    c.functional.distortion_correction.enabled = true
+    c.functional.distortion_correction.method.phasediff.enabled = true
+  }
+
+  if (config.distortion_correction.includes("Blip")) {
+    c.functional.distortion_correction.enabled = true
+    c.functional.distortion_correction.method.blip.enabled = true
+  }
+
   if (typeof config.fmap_distcorr_skullstrip === "string") {
     config.fmap_distcorr_skullstrip = [config.fmap_distcorr_skullstrip]
   }
 
-  c.functional.distortion_correction.skull_stripping = config.fmap_distcorr_skullstrip.includes('BET') ? 'bet' : 'afni'
-  c.functional.distortion_correction.threshold = config.fmap_distcorr_threshold // TODO review on CPAC; fmap_distcorr_threshold???
-  c.functional.distortion_correction.delta_te = config.fmap_distcorr_deltaTE[0]
-  c.functional.distortion_correction.dwell_time = config.fmap_distcorr_dwell_time[0]
-  c.functional.distortion_correction.dwell_to_assymetric_ratio = config.fmap_distcorr_dwell_asym_ratio[0]
-  c.functional.distortion_correction.phase_encoding_direction = config.fmap_distcorr_pedir
+  c.functional.distortion_correction.method.phasediff.skull_stripping = config.fmap_distcorr_skullstrip.includes('BET') ? 'bet' : 'afni'
+
+  switch (c.functional.distortion_correction.method.phasediff.skull_stripping) {
+    case 'bet':
+      c.functional.distortion_correction.method.phasediff.threshold_bet = config.fmap_distcorr_frac[0]
+      c.functional.distortion_correction.method.phasediff.threshold = c.functional.distortion_correction.method.phasediff.threshold_bet
+      break;
+    case 'afni':
+      c.functional.distortion_correction.method.phasediff.threshold_afni = config.fmap_distcorr_threshold[0]
+      c.functional.distortion_correction.method.phasediff.threshold = c.functional.distortion_correction.method.phasediff.threshold_afni
+      break;
+  }
+  c.functional.distortion_correction.method.phasediff.delta_te = config.fmap_distcorr_deltaTE[0]
+  c.functional.distortion_correction.method.phasediff.dwell_time = config.fmap_distcorr_dwell_time[0]
+  c.functional.distortion_correction.method.phasediff.dwell_to_assymetric_ratio = config.fmap_distcorr_dwell_asym_ratio[0]
+  c.functional.distortion_correction.method.phasediff.phase_encoding_direction = config.fmap_distcorr_pedir
 
   c.functional.anatomical_registration.enabled = config.runRegisterFuncToAnat.includes(1)
   c.functional.anatomical_registration.bb_registration = config.runBBReg.includes(1)
@@ -356,12 +413,13 @@ export function parse(content) {
   c.functional.anatomical_registration.registration_input =
   config.func_reg_input.includes('Mean Functional') ? 'mean' : 'selected'
   c.functional.anatomical_registration.functional_volume = config.func_reg_input_volume
-  c.functional.anatomical_registration.functional_masking.bet = config.functionalMasking.includes('BET')
-  c.functional.anatomical_registration.functional_masking.afni = config.functionalMasking.includes('3dAutoMask')
+  c.functional.anatomical_registration.functional_masking.fsl = config.functionalMasking.includes('FSL')
+  c.functional.anatomical_registration.functional_masking.afni = config.functionalMasking.includes('AFNI')
+  c.functional.anatomical_registration.functional_masking.fsl_afni = config.functionalMasking.includes('FSL_AFNI')
 
   c.functional.template_registration.enabled = config.runRegisterFuncToMNI.includes(1)
-  c.functional.template_registration.functional_resolution = config.resolution_for_func_preproc.replace("mm", "")
-  c.functional.template_registration.derivative_resolution = config.resolution_for_func_derivative.replace("mm", "")
+  c.functional.template_registration.functional_resolution = config.resolution_for_func_preproc.replace(/mm/g, "")
+  c.functional.template_registration.derivative_resolution = config.resolution_for_func_derivative.replace(/mm/g, "")
 
   if (config.regOption.includes("ANTS")) {
     switch (config.funcRegANTSinterpolation) {
@@ -551,6 +609,15 @@ export function parse(content) {
   c.derivatives.network_centrality.local_connectivity_density.threshold_type = thresh_types[config.lfcdCorrelationThresholdOption[0]]
   c.derivatives.network_centrality.local_connectivity_density.threshold = config.lfcdCorrelationThreshold
 
+  c.derivatives.pypeer.enabled = config.run_pypeer.includes(1)
+  c.derivatives.pypeer.eye_scan_names = config.peer_eye_scan_names.join(', ')
+  c.derivatives.pypeer.data_scan_names = config.peer_data_scan_names.join(', ')
+  c.derivatives.pypeer.eye_mask_path = config.eye_mask_path.replace("${resolution_for_func_preproc}", "${pipeline.functional.template_registration.functional_resolution}mm") 
+  c.derivatives.pypeer.stimulus_path = config.peer_stimulus_path || ''
+  c.derivatives.pypeer.gsr = config.peer_gsr
+  c.derivatives.pypeer.scrub.enabled = config.peer_scrub
+  c.derivatives.pypeer.scrub.threshold = config.peer_scrub_thresh 
+
   return t
 }
 
@@ -593,6 +660,7 @@ export function dump(pipeline, version='0') {
   config.skullstrip_option = []
     .concat(c.anatomical.skull_stripping.methods.afni.enabled ? ["AFNI"] : [])
     .concat(c.anatomical.skull_stripping.methods.bet.enabled ? ["BET"] : [])
+    .concat(c.anatomical.skull_stripping.methods.niworkflows_ants.enabled ? ["niworkflows-ants"] : [])
 
   config.skullstrip_shrink_factor = c.anatomical.skull_stripping.methods.afni.configuration.shrink_factor.threshold
   config.skullstrip_var_shrink_fac = c.anatomical.skull_stripping.methods.afni.configuration.shrink_factor.vary
@@ -613,6 +681,7 @@ export function dump(pipeline, version='0') {
   config.skullstrip_max_inter_iter = c.anatomical.skull_stripping.methods.afni.configuration.intersections.iterations
   config.skullstrip_fac = c.anatomical.skull_stripping.methods.afni.configuration.multiplier
   config.skullstrip_blur_fwhm = c.anatomical.skull_stripping.methods.afni.configuration.blur_fwhm
+  config.skullstrip_monkey = c. anatomical.skull_stripping.methods.afni.configuration.skullstrip_monkey
 
   config.bet_frac = c.anatomical.skull_stripping.methods.bet.configuration.threshold
   config.bet_mask_boolean = c.anatomical.skull_stripping.methods.bet.configuration.mask
@@ -628,7 +697,20 @@ export function dump(pipeline, version='0') {
   config.bet_threshold = c.anatomical.skull_stripping.methods.bet.configuration.apply_threshold
   config.bet_vertical_gradient = c.anatomical.skull_stripping.methods.bet.configuration.vertical_gradient
 
-  config.resolution_for_anat = c.anatomical.registration.resolution + "mm"
+  if (c.anatomical.registration.resolution.includes("x")) {
+    var xind = []
+    for(var i = 0; i < c.anatomical.registration.resolution.length; i++) {
+        if (c.anatomical.registration.resolution[i] === "x") xind.push(i)
+    }
+    config.resolution_for_anat = c.anatomical.registration.resolution.slice(0, xind[0]) + "mm" + c.anatomical.registration.resolution.slice(xind[0], xind[1]) + "mm" + c.anatomical.registration.resolution.slice(xind[1]) + "mm"
+  } else {
+    config.resolution_for_anat = c.anatomical.registration.resolution + "mm"
+  }
+
+  config.niworkflows_ants_template_path = c.anatomical.skull_stripping.methods.niworkflows_ants.ants_templates.niworkflows_ants_template_path
+  config.niworkflows_ants_mask_path = c.anatomical.skull_stripping.methods.niworkflows_ants.ants_templates.niworkflows_ants_mask_path
+  config.niworkflows_ants_regmask_path = c.anatomical.skull_stripping.methods.niworkflows_ants.ants_templates.niworkflows_ants_regmask_path
+
   config.template_brain_only_for_anat = c.anatomical.registration.brain_template
   config.template_skull_for_anat = c.anatomical.registration.skull_template
   config.regOption = ['ANTS']
@@ -636,6 +718,7 @@ export function dump(pipeline, version='0') {
   config.regOption = []
     .concat(c.anatomical.registration.methods.ants.enabled ? ["ANTS"] : [])
     .concat(c.anatomical.registration.methods.fsl.enabled ? ["FSL"] : [])
+    .concat(c.anatomical.registration.methods.fsl.enabled ? ["FSL_AFNI"] : [])
 
   config.use_lesion_mask = [c.anatomical.registration.methods.ants.configuration.lesion_mask ? 1 : 0]
 
@@ -674,10 +757,28 @@ export function dump(pipeline, version='0') {
   config.regWithSkull = [c.anatomical.registration.methods.ants.configuration.skull_on ? 1 : 0]
 
   config.runSegmentationPreprocessing = [c.anatomical.tissue_segmentation.enabled ? 1 : 0]
+  config.seg_use_priors = [c.anatomical.tissue_segmentation.configuration.seg_use_priors.enabled ? 1 : 0]
   config.priors_path = "$FSLDIR/data/standard/tissuepriors/2mm"
-  config.PRIORS_WHITE = c.anatomical.tissue_segmentation.priors.white_matter
-  config.PRIORS_GRAY = c.anatomical.tissue_segmentation.priors.gray_matter
-  config.PRIORS_CSF = c.anatomical.tissue_segmentation.priors.cerebrospinal_fluid
+  config.PRIORS_WHITE = c.anatomical.tissue_segmentation.configuration.seg_use_priors.priors.white_matter
+  config.PRIORS_GRAY = c.anatomical.tissue_segmentation.configuration.seg_use_priors.priors.gray_matter
+  config.PRIORS_CSF = c.anatomical.tissue_segmentation.configuration.seg_use_priors.priors.cerebrospinal_fluid
+
+  if (c.anatomical.tissue_segmentation.configuration.seg_use_fast_threshold.enabled) {
+    config.seg_use_threshold = ['FSL-FAST Thresholding']
+  } else if (c.anatomical.tissue_segmentation.configuration.seg_use_customized_threshold.enabled) {
+    config.seg_use_threshold = ['Customized Thresholding']
+    config.seg_WM_threshold_value = c.anatomical.tissue_segmentation.configuration.seg_use_customized_threshold.threshold.seg_WM_threshold_value 
+    config.seg_GM_threshold_value = c.anatomical.tissue_segmentation.configuration.seg_use_customized_threshold.threshold.seg_GM_threshold_value 
+    config.seg_CSF_threshold_value = c.anatomical.tissue_segmentation.configuration.seg_use_customized_threshold.threshold.seg_CSF_threshold_value 
+  }
+  
+  // config.seg_use_threshold = [c.anatomical.tissue_segmentation.configuration.seg_use_threshold.enabled ? 1 : 0]
+  // config.seg_WM_threshold_value = c.anatomical.tissue_segmentation.configuration.seg_use_threshold.threshold.seg_WM_threshold_value 
+  // config.seg_GM_threshold_value = c.anatomical.tissue_segmentation.configuration.seg_use_threshold.threshold.seg_GM_threshold_value 
+  // config.seg_CSF_threshold_value = c.anatomical.tissue_segmentation.configuration.seg_use_threshold.threshold.seg_CSF_threshold_value 
+  
+  config.seg_use_erosion = [c.anatomical.tissue_segmentation.configuration.seg_use_erosion.enabled ? 1 : 0]
+  config.seg_erosion_prop = c.anatomical.tissue_segmentation.configuration.seg_use_erosion.erosion.seg_erosion_prop 
 
   config.runFunctional = c.functional.enabled ? [1] : [0]
 
@@ -696,14 +797,29 @@ export function dump(pipeline, version='0') {
 
   config.functional_volreg_twopass = c.functional.slice_timing_correction.two_pass
 
-  config.runEPI_DistCorr = [c.functional.distortion_correction.enabled ? 1 : 0]
-  config.fmap_distcorr_skullstrip = [c.functional.distortion_correction.skull_stripping === 'bet' ? 'BET' : 'AFNI']
-  config.fmap_distcorr_frac = c.functional.distortion_correction.threshold
-  config.fmap_distcorr_threshold = c.functional.distortion_correction.threshold
-  config.fmap_distcorr_deltaTE = [c.functional.distortion_correction.delta_te]
-  config.fmap_distcorr_dwell_time = [c.functional.distortion_correction.dwell_time]
-  config.fmap_distcorr_dwell_asym_ratio = [c.functional.distortion_correction.dwell_to_assymetric_ratio]
-  config.fmap_distcorr_pedir = c.functional.distortion_correction.phase_encoding_direction
+  config.distortion_correction = []
+    .concat(c.functional.distortion_correction.enabled ? ["PhaseDiff"] : [])
+    .concat(c.functional.distortion_correction.method.phasediff.enabled ? ["PhaseDiff"] : [])
+    .concat(c.functional.distortion_correction.enabled ? ["Blip"] : [])
+    .concat(c.functional.distortion_correction.method.blip.enabled ? ["Blip"] : [])
+
+  [c.functional.distortion_correction.enabled ? 1 : 0]
+  config.fmap_distcorr_skullstrip = [c.functional.distortion_correction.method.phasediff.skull_stripping === 'bet' ? 'BET' : 'AFNI']
+
+  switch (c.functional.distortion_correction.method.phasediff.skull_stripping) {
+    case 'bet':
+      c.functional.distortion_correction.method.phasediff.threshold = c.functional.distortion_correction.method.phasediff.threshold_bet
+      config.fmap_distcorr_frac = [c.functional.distortion_correction.method.phasediff.threshold]
+      break;
+    case 'afni':
+      c.functional.distortion_correction.method.phasediff.threshold = c.functional.distortion_correction.method.phasediff.threshold_afni
+      config.fmap_distcorr_threshold = [c.functional.distortion_correction.method.phasediff.threshold]
+      break;
+  } 
+  config.fmap_distcorr_deltaTE = [c.functional.distortion_correction.method.phasediff.delta_te]
+  config.fmap_distcorr_dwell_time = [c.functional.distortion_correction.method.phasediff.dwell_time]
+  config.fmap_distcorr_dwell_asym_ratio = [c.functional.distortion_correction.method.phasediff.dwell_to_assymetric_ratio]
+  config.fmap_distcorr_pedir = c.functional.distortion_correction.method.phasediff.phase_encoding_direction
 
   config.runRegisterFuncToAnat = [c.functional.anatomical_registration.enabled ? 1 : 0]
   config.runBBReg = [c.functional.anatomical_registration.bb_registration ? 1 : 0]
@@ -713,12 +829,30 @@ export function dump(pipeline, version='0') {
 
   config.func_reg_input_volume = c.functional.anatomical_registration.functional_volume
   config.functionalMasking = []
-    .concat(c.functional.anatomical_registration.functional_masking.bet ? ["BET"] : [])
-    .concat(c.functional.anatomical_registration.functional_masking.afni ? ["3dAutoMask"] : [])
-
+    .concat(c.functional.anatomical_registration.functional_masking.fsl ? ["FSL"] : [])
+    .concat(c.functional.anatomical_registration.functional_masking.afni ? ["AFNI"] : [])
+    .concat(c.functional.anatomical_registration.functional_masking.fsl_afni ? ["FSL_AFNI"] : [])
+  
   config.runRegisterFuncToMNI = [c.functional.template_registration.enabled ? 1 : 0]
-  config.resolution_for_func_preproc = c.functional.template_registration.functional_resolution + "mm"
-  config.resolution_for_func_derivative = c.functional.template_registration.derivative_resolution + "mm"
+  if (c.functional.template_registration.functional_resolution.includes("x")) {
+    var xind = []
+    for(var i = 0; i < c.functional.template_registration.functional_resolution.length; i++) {
+        if (c.functional.template_registration.functional_resolution[i] === "x") xind.push(i)
+    }
+    config.resolution_for_func_preproc = c.functional.template_registration.functional_resolution.slice(0, xind[0]) + "mm" + c.functional.template_registration.functional_resolution.slice(xind[0], xind[1]) + "mm" + c.functional.template_registration.functional_resolution.slice(xind[1]) + "mm"
+  } else {
+    config.resolution_for_func_preproc = c.functional.template_registration.functional_resolution + "mm"
+  }
+
+  if (c.functional.template_registration.derivative_resolution.includes("x")) {
+    var xind = []
+    for(var i = 0; i < c.functional.template_registration.derivative_resolution.length; i++) {
+        if (c.functional.template_registration.derivative_resolution[i] === "x") xind.push(i)
+    }
+    config.resolution_for_func_derivative = c.functional.template_registration.derivative_resolution.slice(0, xind[0]) + "mm" + c.functional.template_registration.derivative_resolution.slice(xind[0], xind[1]) + "mm" + c.functional.template_registration.derivative_resolution.slice(xind[1]) + "mm"
+  } else {
+    config.resolution_for_func_derivative = c.functional.template_registration.derivative_resolution + "mm"
+  }
   
   switch (c.functional.template_registration.methods.ants.interpolation) {
     case 'linear':
@@ -746,7 +880,8 @@ export function dump(pipeline, version='0') {
     case 'spline':
       config.funcRegFSLinterpolation = 'spline'
       break;
-  } 
+  }
+
   config.template_brain_only_for_func = c.functional.template_registration.brain_template
   config.template_skull_for_func = c.functional.template_registration.skull_template
   config.identityMatrix = c.functional.template_registration.identity_matrix
@@ -869,6 +1004,16 @@ export function dump(pipeline, version='0') {
   ]
   config.lfcdCorrelationThresholdOption = [thresholdType[c.derivatives.network_centrality.local_connectivity_density.threshold_type]]
   config.lfcdCorrelationThreshold = c.derivatives.network_centrality.local_connectivity_density.threshold
+
+  config.run_pypeer = [c.derivatives.pypeer.enabled ? 1 : 0]
+  config.peer_eye_scan_names = c.derivatives.pypeer.eye_scan_names.split(',').map((t) => t.trim())
+  config.peer_data_scan_names = c.derivatives.pypeer.data_scan_names.split(',').map((t) => t.trim())
+  config.eye_mask_path = c.derivatives.pypeer.eye_mask_path
+  config.peer_stimulus_path = c.derivatives.pypeer.stimulus_path || ''
+  
+  config.peer_gsr = c.derivatives.pypeer.gsr
+  config.peer_scrub = c.derivatives.pypeer.scrub.enabled 
+  config.peer_scrub_thresh = c.derivative.pypeer.scrub.threshold 
 
   config.memoryAllocatedForDegreeCentrality = 3.0
 
