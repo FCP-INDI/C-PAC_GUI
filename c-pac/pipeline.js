@@ -265,6 +265,10 @@ export function parse(content) {
 
   if (config.skullstrip_option.includes("niworkflows-ants")) {
     c.anatomical.skull_stripping.methods.niworkflows_ants.enabled = true
+  }
+  
+  if (config.skullstrip_option.includes("unet")) {
+    c.anatomical.skull_stripping.methods.unet.enabled = true
   } 
 
   c.anatomical.registration.resolution = config.resolution_for_anat.replace(/mm/g,"")
@@ -416,6 +420,7 @@ export function parse(content) {
   c.functional.anatomical_registration.functional_masking.fsl = config.functionalMasking.includes('FSL')
   c.functional.anatomical_registration.functional_masking.afni = config.functionalMasking.includes('AFNI')
   c.functional.anatomical_registration.functional_masking.fsl_afni = config.functionalMasking.includes('FSL_AFNI')
+  c.functional.anatomical_registration.functional_masking.fsl_afni = config.functionalMasking.includes('Anatomical_Refined')
 
   c.functional.template_registration.enabled = config.runRegisterFuncToMNI.includes(1)
   c.functional.template_registration.functional_resolution = config.resolution_for_func_preproc.replace(/mm/g, "")
@@ -661,6 +666,7 @@ export function dump(pipeline, version='0') {
     .concat(c.anatomical.skull_stripping.methods.afni.enabled ? ["AFNI"] : [])
     .concat(c.anatomical.skull_stripping.methods.bet.enabled ? ["BET"] : [])
     .concat(c.anatomical.skull_stripping.methods.niworkflows_ants.enabled ? ["niworkflows-ants"] : [])
+    .concat(c.anatomical.skull_stripping.methods.unet.enabled ? ["unet"] : [])
 
   config.skullstrip_shrink_factor = c.anatomical.skull_stripping.methods.afni.configuration.shrink_factor.threshold
   config.skullstrip_var_shrink_fac = c.anatomical.skull_stripping.methods.afni.configuration.shrink_factor.vary
@@ -771,12 +777,7 @@ export function dump(pipeline, version='0') {
     config.seg_GM_threshold_value = c.anatomical.tissue_segmentation.configuration.seg_use_customized_threshold.threshold.seg_GM_threshold_value 
     config.seg_CSF_threshold_value = c.anatomical.tissue_segmentation.configuration.seg_use_customized_threshold.threshold.seg_CSF_threshold_value 
   }
-  
-  // config.seg_use_threshold = [c.anatomical.tissue_segmentation.configuration.seg_use_threshold.enabled ? 1 : 0]
-  // config.seg_WM_threshold_value = c.anatomical.tissue_segmentation.configuration.seg_use_threshold.threshold.seg_WM_threshold_value 
-  // config.seg_GM_threshold_value = c.anatomical.tissue_segmentation.configuration.seg_use_threshold.threshold.seg_GM_threshold_value 
-  // config.seg_CSF_threshold_value = c.anatomical.tissue_segmentation.configuration.seg_use_threshold.threshold.seg_CSF_threshold_value 
-  
+    
   config.seg_use_erosion = [c.anatomical.tissue_segmentation.configuration.seg_use_erosion.enabled ? 1 : 0]
   config.seg_erosion_prop = c.anatomical.tissue_segmentation.configuration.seg_use_erosion.erosion.seg_erosion_prop 
 
@@ -832,6 +833,7 @@ export function dump(pipeline, version='0') {
     .concat(c.functional.anatomical_registration.functional_masking.fsl ? ["FSL"] : [])
     .concat(c.functional.anatomical_registration.functional_masking.afni ? ["AFNI"] : [])
     .concat(c.functional.anatomical_registration.functional_masking.fsl_afni ? ["FSL_AFNI"] : [])
+    .concat(c.functional.anatomical_registration.functional_masking.fsl_afni ? ["Anatomical_Refined"] : [])
   
   config.runRegisterFuncToMNI = [c.functional.template_registration.enabled ? 1 : 0]
   if (c.functional.template_registration.functional_resolution.includes("x")) {

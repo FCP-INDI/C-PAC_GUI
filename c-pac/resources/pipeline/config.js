@@ -123,6 +123,9 @@ export default {
                   niworkflows_ants_mask_path: '/ants_template/oasis/T_template0_BrainCerebellumProbabilityMask.nii.gz',
                   niworkflows_ants_regmask_path: '/ants_template/oasis/T_template0_BrainCerebellumRegistrationMask.nii.gz',
                 }
+              },
+              unet: {
+                enabled: false,
               }
             }
           },
@@ -198,6 +201,7 @@ export default {
               fsl: false,
               afni: false,
               fsl_afni: false,
+              anat_refined: false,
             },
           },
           template_registration: {

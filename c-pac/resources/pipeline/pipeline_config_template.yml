@@ -117,7 +117,8 @@ n4_bias_field_correction: False
 already_skullstripped :  [0]
 
 
-# Choice of using AFNI or FSL-BET to perform SkullStripping
+# Choice of using AFNI-3dSkullStrip or FSL-BET or niworkflows-ants or UNet for monkey data to perform SkullStripping
+# Options: ['AFNI', 'BET', 'niworkflows-ants', 'unet'] 
 skullstrip_option :  ['AFNI']
 
 
@@ -461,7 +462,8 @@ func_reg_input :  ['Mean Functional']
 func_reg_input_volume :  0
 
 
-# Choose which tool to be used in functional masking - AFNI (3dAutoMask), FSL (BET) or FSL_AFNI (BET+3dAutoMask).
+# Choose which tool to be used in functional masking - AFNI (3dAutoMask), FSL (BET),  FSL_AFNI (BET+3dAutoMask), or refine functional mask by registering anatomical mask to functional space. 
+# Options: ['AFNI', 'FSL', 'FSL_AFNI', 'Anatomical_Refined']
 functionalMasking :  ['AFNI']
 
 

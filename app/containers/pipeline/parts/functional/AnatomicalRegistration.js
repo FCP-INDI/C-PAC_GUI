@@ -112,6 +112,16 @@ class AnatomicalRegistration extends Component {
               Functional Masking
             </FormLabel>
             <FormControl>
+            <FormGroup row>
+                <FormControlLabelled label="AFNI: 3dAutoMask">
+                  <Switch
+                    name="functional.anatomical_registration.functional_masking.afni"
+                    checked={configuration.getIn(["functional", "anatomical_registration", "functional_masking", "afni"])}
+                    onChange={onChange}
+                    color="primary"
+                  />
+                </FormControlLabelled>
+              </FormGroup>
               <FormGroup row>
                 <FormControlLabelled label="FSL: BET">
                   <Switch
@@ -123,20 +133,20 @@ class AnatomicalRegistration extends Component {
                 </FormControlLabelled>
               </FormGroup>
               <FormGroup row>
-                <FormControlLabelled label="AFNI: 3dAutoMask">
+                <FormControlLabelled label="FSL+AFNI: BET+3dAutoMask">
                   <Switch
-                    name="functional.anatomical_registration.functional_masking.afni"
-                    checked={configuration.getIn(["functional", "anatomical_registration", "functional_masking", "afni"])}
+                    name="functional.anatomical_registration.functional_masking.fsl_afni"
+                    checked={configuration.getIn(["functional", "anatomical_registration", "functional_masking", "fsl_afni"])}
                     onChange={onChange}
                     color="primary"
                   />
                 </FormControlLabelled>
               </FormGroup>
               <FormGroup row>
-                <FormControlLabelled label="FSL+AFNI: BET+3dAutoMask">
+                <FormControlLabelled label="Anatomical Refined: refine functional mask by registering anatomical mask to functional space">
                   <Switch
-                    name="functional.anatomical_registration.functional_masking.fsl_afni"
-                    checked={configuration.getIn(["functional", "anatomical_registration", "functional_masking", "fsl_afni"])}
+                    name="functional.anatomical_registration.functional_masking.anat_refined"
+                    checked={configuration.getIn(["functional", "anatomical_registration", "functional_masking", "anat_refined"])}
                     onChange={onChange}
                     color="primary"
                   />
