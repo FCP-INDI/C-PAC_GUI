@@ -1013,7 +1013,7 @@ export function dump(pipeline, version='0') {
   
   config.peer_gsr = c.derivatives.pypeer.gsr
   config.peer_scrub = c.derivatives.pypeer.scrub.enabled 
-  config.peer_scrub_thresh = c.derivative.pypeer.scrub.threshold 
+  config.peer_scrub_thresh = c.derivatives.pypeer.scrub.threshold 
 
   config.memoryAllocatedForDegreeCentrality = 3.0
 
