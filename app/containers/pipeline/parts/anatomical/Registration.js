@@ -42,7 +42,7 @@ class Registration extends Component {
           <InputLabel>Resolution</InputLabel>
           {
           
-            resolution.size ?
+            resolution.size !== undefined ?
 
             <Grid container>
               <Grid item xs={4}>
