@@ -356,7 +356,7 @@ export function parse(content) {
 
   c.functional.slice_timing_correction.enabled = config.slice_timing_correction.includes(1)
   c.functional.slice_timing_correction.repetition_time = !config.TR || config.TR == "None" ? '' : config.TR
-  c.functional.slice_timing_correction.pattern = config.slice_timing_pattern == "Use NIFTI Header" ? "pattern" : config.slice_timing_pattern
+  c.functional.slice_timing_correction.pattern = config.slice_timing_pattern === "Use NIFTI Header" ? "header" : config.slice_timing_pattern
 
   c.functional.slice_timing_correction.first_timepoint = config.startIdx
   c.functional.slice_timing_correction.last_timepoint = !config.stopIdx || config.stopIdx == "None" ? '' : config.stopIdx

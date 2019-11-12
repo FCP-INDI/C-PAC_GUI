@@ -89,7 +89,7 @@ class TemplateRegistration extends Component {
             <InputLabel>Functional Resolution</InputLabel>
             {
             
-              functional_resolution.size ?
+              functional_resolution.size !== undefined ?
 
               <Grid container>
                 <Grid item xs={4}>
@@ -160,7 +160,7 @@ class TemplateRegistration extends Component {
             <InputLabel>Derivative Resolution</InputLabel>
             {
             
-              derivative_resolution.size ?
+              derivative_resolution.size !== undefined ?
 
               <Grid container>
                 <Grid item xs={4}>
