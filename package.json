@@ -3,7 +3,7 @@
   "description": "Configurable Pipeline for the Analysis of Connectomes",
   "homepage": "https://github.com/FCP-INDI/C-PAC_GUI",
   "productName": "C-PAC",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "scripts": {
     "build-dll": "cross-env NODE_ENV=development node --trace-warnings -r @babel/register ./node_modules/webpack/bin/webpack --mode development --config config/webpack.config.renderer.dev.dll.js --colors",
     "build:electron": "cross-env node --trace-warnings -r @babel/register ./node_modules/webpack/bin/webpack --mode production --config config/webpack.config.main.prod.js --colors",
@@ -12,7 +12,7 @@
     "electron-rebuild": "electron-rebuild --parallel --force --types prod,dev,optional --module-dir app",
     "postinstall": "yarn run build-dll && electron-builder install-app-deps && yarn run link",
     "prestart": "yarn run build",
-    "link": "cd c-pac && yarn link && cd .. && yarn link @internal/c-pac",
+    "link": "cd c-pac && yarn && yarn link && cd .. && yarn link @internal/c-pac",
     "start": "cross-env NODE_ENV=production electron ./app/",
     "dev:browser": "TARGET=browser yarn run dev:renderer",
     "dev:electron": "npm-run-all --parallel dev:renderer dev:electron-main",
