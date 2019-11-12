@@ -4,6 +4,7 @@ import { withStyles, Typography } from '@material-ui/core';
 import Grid from '@material-ui/core/Grid';
 import MenuItem from '@material-ui/core/MenuItem';
 import TextField from '@material-ui/core/TextField';
+import InputLabel from '@material-ui/core/InputLabel';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import Collapse from '@material-ui/core/Collapse';
 import Help from 'components/Help'
@@ -16,7 +17,9 @@ class TemplateRegistration extends Component {
 
   render() {
     const { classes, configuration, onChange } = this.props
-
+    const functional_resolution = configuration.getIn(["functional", "template_registration", "functional_resolution"])
+    const derivative_resolution = configuration.getIn(["functional", "template_registration", "derivative_resolution"])
+    
     return (
       <Grid container>
         <Grid item sm={12}>
@@ -83,15 +86,69 @@ class TemplateRegistration extends Component {
             Note that selecting a 1 mm or 2 mm resolution might substantially increase your RAM needs- these resolutions should be selected with caution. For most cases, 3 mm or 4 mm resolutions are suggested.`}
             fullWidth
           >
-            <TextField label="Functional Resolution"
-              fullWidth margin="normal" variant="outlined"
-              name="functional.template_registration.functional_resolution"
-              value={configuration.getIn(["functional", "template_registration", "functional_resolution"])}
-              onChange={onChange}
-              InputProps={{
-                endAdornment: <InputAdornment position="end">mm</InputAdornment>,
-              }}
-            />
+            <InputLabel>Functional Resolution</InputLabel>
+            {
+            
+              functional_resolution.size ?
+
+              <Grid container>
+                <Grid item xs={4}>
+                  <TextField
+                    name="functional.template_registration.functional_resolution.0"
+                    value={functional_resolution.get(0)}
+                    onChange={onChange}
+                    fullWidth margin="normal" variant="outlined"
+                    InputProps={{
+                      endAdornment: <InputAdornment position="end">mm</InputAdornment>,
+                    }}
+                  />
+                </Grid>
+                <Grid item xs={4}>
+                  <TextField
+                    name="functional.template_registration.functional_resolution.1"
+                    value={functional_resolution.get(1)}
+                    onChange={onChange}
+                    fullWidth margin="normal" variant="outlined"
+                    InputProps={{
+                      endAdornment: <InputAdornment position="end">mm</InputAdornment>,
+                    }}
+                  />
+                </Grid>
+                <Grid item xs={4}>
+                  <TextField
+                    name="functional.template_registration.functional_resolution.2"
+                    value={functional_resolution.get(2)}
+                    onChange={onChange}
+                    fullWidth margin="normal" variant="outlined"
+                    InputProps={{
+                      endAdornment: <InputAdornment position="end">mm</InputAdornment>,
+                    }}
+                  />
+                </Grid>
+              </Grid>
+
+              :
+              
+              <TextField label="Resolution"
+                name="functional.template_registration.functional_resolution"
+                value={functional_resolution}
+                onChange={function(event) {
+                  if (event.target.value.includes("x")) {
+                    let values = event.target.value.replace(/[^0-9\.x]/, '').split("x").filter(Boolean).map(parseFloat)
+                    values = [...values, ...values, ...values].slice(0, 3)
+                    onChange(
+                      [[['functional', 'template_registration', 'functional_resolution'], values]]
+                    )
+                  } else {
+                    onChange(event)
+                  }
+                }}
+                fullWidth margin="normal" variant="outlined"
+                InputProps={{
+                  endAdornment: <InputAdornment position="end">mm</InputAdornment>,
+                }}
+              />
+            }
           </Help>
 
           <Help
@@ -100,15 +157,69 @@ class TemplateRegistration extends Component {
             help={`The resolution (in mm) to which the registered derivative outputs are written into.`}
             fullWidth
           >
-            <TextField label="Derivative Resolution"
-              fullWidth margin="normal" variant="outlined"
-              name="functional.template_registration.derivative_resolution"
-              value={configuration.getIn(["functional", "template_registration", "derivative_resolution"])}
-              onChange={onChange}
-              InputProps={{
-                endAdornment: <InputAdornment position="end">mm</InputAdornment>,
-              }}
-            />
+            <InputLabel>Derivative Resolution</InputLabel>
+            {
+            
+              derivative_resolution.size ?
+
+              <Grid container>
+                <Grid item xs={4}>
+                  <TextField
+                    name="functional.template_registration.derivative_resolution.0"
+                    value={derivative_resolution.get(0)}
+                    onChange={onChange}
+                    fullWidth margin="normal" variant="outlined"
+                    InputProps={{
+                      endAdornment: <InputAdornment position="end">mm</InputAdornment>,
+                    }}
+                  />
+                </Grid>
+                <Grid item xs={4}>
+                  <TextField
+                    name="functional.template_registration.derivative_resolution.1"
+                    value={derivative_resolution.get(1)}
+                    onChange={onChange}
+                    fullWidth margin="normal" variant="outlined"
+                    InputProps={{
+                      endAdornment: <InputAdornment position="end">mm</InputAdornment>,
+                    }}
+                  />
+                </Grid>
+                <Grid item xs={4}>
+                  <TextField
+                    name="functional.template_registration.derivative_resolution.2"
+                    value={derivative_resolution.get(2)}
+                    onChange={onChange}
+                    fullWidth margin="normal" variant="outlined"
+                    InputProps={{
+                      endAdornment: <InputAdornment position="end">mm</InputAdornment>,
+                    }}
+                  />
+                </Grid>
+              </Grid>
+
+              :
+              
+              <TextField label="Resolution"
+                name="functional.template_registration.derivative_resolution"
+                value={derivative_resolution}
+                onChange={function(event) {
+                  if (event.target.value.includes("x")) {
+                    let values = event.target.value.replace(/[^0-9\.x]/, '').split("x").filter(Boolean).map(parseFloat)
+                    values = [...values, ...values, ...values].slice(0, 3)
+                    onChange(
+                      [[['functional', 'template_registration', 'derivative_resolution'], values]]
+                    )
+                  } else {
+                    onChange(event)
+                  }
+                }}
+                fullWidth margin="normal" variant="outlined"
+                InputProps={{
+                  endAdornment: <InputAdornment position="end">mm</InputAdornment>,
+                }}
+              />
+            }
           </Help>
 
           <Help
