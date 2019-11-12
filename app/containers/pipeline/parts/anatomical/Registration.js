@@ -13,7 +13,7 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import TextField from '@material-ui/core/TextField';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import Switch from '@material-ui/core/Switch';
-
+import InputLabel from '@material-ui/core/InputLabel';
 import Collapse from '@material-ui/core/Collapse';
 
 import Help from 'components/Help'
@@ -28,6 +28,8 @@ class Registration extends Component {
   render() {
     const { classes, configuration, onChange } = this.props
 
+    const resolution = configuration.getIn("anatomical.registration.resolution".split("."))
+
     return (
       <React.Fragment>
         <Help
@@ -37,15 +39,69 @@ class Registration extends Component {
           Optional input types: 1 one integer or float number indicating 3 same dimensions, e.g. 3 or 2.5; 2 three different integers or float numbers connected by 'x', e.g. 3x2.67x2.67. `}
           fullWidth
         >
-          <TextField label="Resolution"
-            name="anatomical.registration.resolution"
-            value={configuration.getIn("anatomical.registration.resolution".split("."))}
-            onChange={onChange}
-            fullWidth margin="normal" variant="outlined"
-            InputProps={{
-              endAdornment: <InputAdornment position="end">mm</InputAdornment>,
-            }}
-          />
+          <InputLabel>Resolution</InputLabel>
+          {
+          
+            resolution.size ?
+
+            <Grid container>
+              <Grid item xs={4}>
+                <TextField
+                  name="anatomical.registration.resolution.0"
+                  value={resolution.get(0)}
+                  onChange={onChange}
+                  fullWidth margin="normal" variant="outlined"
+                  InputProps={{
+                    endAdornment: <InputAdornment position="end">mm</InputAdornment>,
+                  }}
+                />
+              </Grid>
+              <Grid item xs={4}>
+                <TextField
+                  name="anatomical.registration.resolution.1"
+                  value={resolution.get(1)}
+                  onChange={onChange}
+                  fullWidth margin="normal" variant="outlined"
+                  InputProps={{
+                    endAdornment: <InputAdornment position="end">mm</InputAdornment>,
+                  }}
+                />
+              </Grid>
+              <Grid item xs={4}>
+                <TextField
+                  name="anatomical.registration.resolution.2"
+                  value={resolution.get(2)}
+                  onChange={onChange}
+                  fullWidth margin="normal" variant="outlined"
+                  InputProps={{
+                    endAdornment: <InputAdornment position="end">mm</InputAdornment>,
+                  }}
+                />
+              </Grid>
+            </Grid>
+
+            :
+            
+            <TextField label="Resolution"
+              name="anatomical.registration.resolution"
+              value={resolution}
+              onChange={function(event) {
+                if (event.target.value.includes("x")) {
+                  let values = event.target.value.replace(/[^0-9\.x]/, '').split("x").filter(Boolean).map(parseFloat)
+                  values = [...values, ...values, ...values].slice(0, 3)
+                  onChange(
+                    [[['anatomical', 'registration', 'resolution'], values]]
+                  )
+                } else {
+                  onChange(event)
+                }
+              }}
+              fullWidth margin="normal" variant="outlined"
+              InputProps={{
+                endAdornment: <InputAdornment position="end">mm</InputAdornment>,
+              }}
+            />
+          }
         </Help>
 
         <FormGroup>
