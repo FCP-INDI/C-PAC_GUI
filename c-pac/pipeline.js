@@ -249,6 +249,9 @@ export function parse(content) {
   c.general.environment.outputs.organized = config.runSymbolicLinks.includes(1)
   c.general.environment.outputs.remove_working = config.removeWorkingDir
 
+  c.anatomical.preprocessing.methods.nlmf.enabled = config.non_local_means_filtering
+  c.anatomical.preprocessing.methods.n4.enabled = config.n4_bias_field_correction
+
   c.anatomical.skull_stripping.enabled = config.already_skullstripped.includes(0)
 
   if (typeof config.skullstrip_option === "string") {
@@ -655,6 +658,9 @@ export function dump(pipeline, version='0') {
   config.run_logging = c.general.environment.outputs.logging
   config.reGenerateOutputs = c.general.environment.outputs.regenerate
   config.runSymbolicLinks = [c.general.environment.outputs.organized ? 1 : 0]
+
+  config.non_local_means_filtering = [c.anatomical.preprocessing.methods.nlmf.enabled ? 0 : 1]
+  config.n4_bias_field_correction = [c.anatomical.preprocessing.methods.n4.enabled ? 0 : 1]
 
   config.already_skullstripped = [c.anatomical.skull_stripping.enabled ? 0 : 1]
   config.skullstrip_option = []

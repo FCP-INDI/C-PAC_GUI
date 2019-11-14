@@ -56,7 +56,6 @@ export default {
             }
           },
           preprocessing: {
-            enabled: true,
             methods: {
               nlmf: {
                 enabled: false
