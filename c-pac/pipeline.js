@@ -270,16 +270,13 @@ export function parse(content) {
     c.anatomical.skull_stripping.methods.niworkflows_ants.enabled = true
   } 
 
-  c.anatomical.registration.resolution = config.resolution_for_anat.replace(/mm/g,"")
-  if (c.anatomical.registration.resolution.includes("x")) {
-    temp = config.resolution_for_anat.split("x")
-    c.anatomical.registration.resolution = []
-
-    for (i = 0; i < 3; i++) {
-      c.anatomical.registration.resolution.push(parseFloat(temp[i]))
-    }
+  if (config.resolution_for_anat.includes("x")) {
+    c.anatomical.registration.resolution = 
+      config.resolution_for_anat.replace('mm', '')
+                                .split("x")
+                                .map(parseFloat)
   } else {
-    c.anatomical.registration.resolution = []
+    c.anatomical.registration.resolution = parseFloat(config.resolution_for_anat.replace('mm', ''))
   }
 
   c.anatomical.registration.brain_template = config.template_brain_only_for_anat
@@ -362,7 +359,7 @@ export function parse(content) {
 
   c.functional.slice_timing_correction.enabled = config.slice_timing_correction.includes(1)
   c.functional.slice_timing_correction.repetition_time = !config.TR || config.TR == "None" ? '' : config.TR
-  c.functional.slice_timing_correction.pattern = config.slice_timing_pattern == "Use NIFTI Header" ? "pattern" : config.slice_timing_pattern
+  c.functional.slice_timing_correction.pattern = config.slice_timing_pattern === "Use NIFTI Header" ? "header" : config.slice_timing_pattern
 
   c.functional.slice_timing_correction.first_timepoint = config.startIdx
   c.functional.slice_timing_correction.last_timepoint = !config.stopIdx || config.stopIdx == "None" ? '' : config.stopIdx
@@ -703,14 +700,10 @@ export function dump(pipeline, version='0') {
   config.bet_threshold = c.anatomical.skull_stripping.methods.bet.configuration.apply_threshold
   config.bet_vertical_gradient = c.anatomical.skull_stripping.methods.bet.configuration.vertical_gradient
 
-  if (c.anatomical.registration.resolution.includes("x")) {
-    var xind = []
-    for(var i = 0; i < c.anatomical.registration.resolution.length; i++) {
-        if (c.anatomical.registration.resolution[i] === "x") xind.push(i)
-    }
-    config.resolution_for_anat = c.anatomical.registration.resolution.slice(0, xind[0]) + "mm" + c.anatomical.registration.resolution.slice(xind[0], xind[1]) + "mm" + c.anatomical.registration.resolution.slice(xind[1]) + "mm"
-  } else {
+  if (typeof c.anatomical.registration.resolution === "number") {
     config.resolution_for_anat = c.anatomical.registration.resolution + "mm"
+  } else {
+    config.resolution_for_anat = c.anatomical.registration.resolution.join('mmx') + 'mm'
   }
 
   config.niworkflows_ants_template_path = c.anatomical.skull_stripping.methods.niworkflows_ants.ants_templates.niworkflows_ants_template_path
@@ -1019,7 +1012,7 @@ export function dump(pipeline, version='0') {
   
   config.peer_gsr = c.derivatives.pypeer.gsr
   config.peer_scrub = c.derivatives.pypeer.scrub.enabled 
-  config.peer_scrub_thresh = c.derivative.pypeer.scrub.threshold 
+  config.peer_scrub_thresh = c.derivatives.pypeer.scrub.threshold 
 
   config.memoryAllocatedForDegreeCentrality = 3.0
 

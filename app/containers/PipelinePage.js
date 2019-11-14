@@ -26,7 +26,7 @@ import IconButton from '@material-ui/core/IconButton'
 import Tooltip from '@material-ui/core/Tooltip'
 import Drawer from '@material-ui/core/Drawer';
 
-import { fromJS } from 'immutable';
+import { fromJS, isImmutable } from 'immutable';
 
 import {
   PipelineIcon,
@@ -127,7 +127,7 @@ class PipelinePage extends Component {
       if (typeof key == "string") {
         key = key.split('.')
       }
-      configuration = configuration.setIn(key, value)
+      configuration = configuration.setIn(key, isImmutable(value) ? value : fromJS(value))
     }
 
     this.props.pipelineVersionDirtyUpdate(
