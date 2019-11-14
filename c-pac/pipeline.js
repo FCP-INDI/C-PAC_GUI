@@ -346,6 +346,9 @@ export function parse(content) {
   if (config.seg_use_threshold.includes("FSL-FAST Thresholding")) {
     c.anatomical.tissue_segmentation.configuration.seg_use_fast_threshold.enabled = true
     c.anatomical.tissue_segmentation.configuration.seg_use_customized_threshold.enabled = false
+    c.anatomical.tissue_segmentation.configuration.seg_use_customized_threshold.threshold.seg_WM_threshold_value = config.seg_WM_threshold_value
+    c.anatomical.tissue_segmentation.configuration.seg_use_customized_threshold.threshold.seg_GM_threshold_value = config.seg_GM_threshold_value
+    c.anatomical.tissue_segmentation.configuration.seg_use_customized_threshold.threshold.seg_CSF_threshold_value = config.seg_CSF_threshold_value
   } else if (config.seg_use_threshold.includes("Customized Thresholding")) {
     c.anatomical.tissue_segmentation.configuration.seg_use_fast_threshold.enabled = false
     c.anatomical.tissue_segmentation.configuration.seg_use_customized_threshold.enabled = true
@@ -656,8 +659,8 @@ export function dump(pipeline, version='0') {
   config.reGenerateOutputs = c.general.environment.outputs.regenerate
   config.runSymbolicLinks = [c.general.environment.outputs.organized ? 1 : 0]
 
-  config.non_local_means_filtering = [c.anatomical.preprocessing.methods.nlmf.enabled ? 0 : 1]
-  config.n4_bias_field_correction = [c.anatomical.preprocessing.methods.n4.enabled ? 0 : 1]
+  config.non_local_means_filtering = c.anatomical.preprocessing.methods.nlmf.enabled
+  config.n4_bias_field_correction = c.anatomical.preprocessing.methods.n4.enabled
 
   config.already_skullstripped = [c.anatomical.skull_stripping.enabled ? 0 : 1]
   config.skullstrip_option = []
@@ -684,7 +687,7 @@ export function dump(pipeline, version='0') {
   config.skullstrip_max_inter_iter = c.anatomical.skull_stripping.methods.afni.configuration.intersections.iterations
   config.skullstrip_fac = c.anatomical.skull_stripping.methods.afni.configuration.multiplier
   config.skullstrip_blur_fwhm = c.anatomical.skull_stripping.methods.afni.configuration.blur_fwhm
-  config.skullstrip_monkey = c. anatomical.skull_stripping.methods.afni.configuration.skullstrip_monkey
+  config.skullstrip_monkey = c.anatomical.skull_stripping.methods.afni.configuration.skullstrip_monkey
 
   config.bet_frac = c.anatomical.skull_stripping.methods.bet.configuration.threshold
   config.bet_mask_boolean = c.anatomical.skull_stripping.methods.bet.configuration.mask
@@ -764,6 +767,9 @@ export function dump(pipeline, version='0') {
 
   if (c.anatomical.tissue_segmentation.configuration.seg_use_fast_threshold.enabled) {
     config.seg_use_threshold = ['FSL-FAST Thresholding']
+    config.seg_WM_threshold_value = c.anatomical.tissue_segmentation.configuration.seg_use_customized_threshold.threshold.seg_WM_threshold_value 
+    config.seg_GM_threshold_value = c.anatomical.tissue_segmentation.configuration.seg_use_customized_threshold.threshold.seg_GM_threshold_value 
+    config.seg_CSF_threshold_value = c.anatomical.tissue_segmentation.configuration.seg_use_customized_threshold.threshold.seg_CSF_threshold_value 
   } else if (c.anatomical.tissue_segmentation.configuration.seg_use_customized_threshold.enabled) {
     config.seg_use_threshold = ['Customized Thresholding']
     config.seg_WM_threshold_value = c.anatomical.tissue_segmentation.configuration.seg_use_customized_threshold.threshold.seg_WM_threshold_value 

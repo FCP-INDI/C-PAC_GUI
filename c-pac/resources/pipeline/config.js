@@ -58,10 +58,10 @@ export default {
           preprocessing: {
             methods: {
               nlmf: {
-                enabled: false
+                enabled: false,
               },
               n4: {
-                enabled: false
+                enabled: false,
               }
             }
           },
