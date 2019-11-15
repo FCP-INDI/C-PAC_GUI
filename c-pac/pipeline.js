@@ -777,11 +777,6 @@ export function dump(pipeline, version='0') {
     config.seg_CSF_threshold_value = c.anatomical.tissue_segmentation.configuration.seg_use_customized_threshold.threshold.seg_CSF_threshold_value 
   }
   
-  // config.seg_use_threshold = [c.anatomical.tissue_segmentation.configuration.seg_use_threshold.enabled ? 1 : 0]
-  // config.seg_WM_threshold_value = c.anatomical.tissue_segmentation.configuration.seg_use_threshold.threshold.seg_WM_threshold_value 
-  // config.seg_GM_threshold_value = c.anatomical.tissue_segmentation.configuration.seg_use_threshold.threshold.seg_GM_threshold_value 
-  // config.seg_CSF_threshold_value = c.anatomical.tissue_segmentation.configuration.seg_use_threshold.threshold.seg_CSF_threshold_value 
-  
   config.seg_use_erosion = [c.anatomical.tissue_segmentation.configuration.seg_use_erosion.enabled ? 1 : 0]
   config.seg_erosion_prop = c.anatomical.tissue_segmentation.configuration.seg_use_erosion.erosion.seg_erosion_prop 
 
