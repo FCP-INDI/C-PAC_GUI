@@ -58,7 +58,7 @@ import {
 } from 'components/icons';
 
 const original = fromJS({
-  GreyMatter: {
+  GrayMatter: {
     enabled: false,
     summary: {
       method: 'Mean',
@@ -211,7 +211,7 @@ class NuisanceRegression extends Component {
     const renaming = {
       'WhiteMatter': 'WM',
       'CerebrospinalFluid': 'CSF',
-      'GreyMatter': 'GM',
+      'GrayMatter': 'GM',
       'GlobalSignal': 'GR',
       'Motion': 'Mot',
       'Bandpass': 'BP',
@@ -226,7 +226,10 @@ class NuisanceRegression extends Component {
     let representation = ''
 
     const regressor_pieces = []
-    for(let reg of ['Motion', 'GlobalSignal', 'WhiteMatter', 'CerebrospinalFluid', 'GreyMatter','aCompCor', 'tCompCor', 'PolyOrt', 'Bandpass', 'Censor']) {
+    for(let reg of [
+      'Motion', 'GlobalSignal', 'WhiteMatter', 'CerebrospinalFluid',
+      'GrayMatter','aCompCor', 'tCompCor', 'PolyOrt', 'Bandpass', 'Censor'
+    ]) {
       if (regressors[reg] === undefined) {
         continue
       }
@@ -321,7 +324,7 @@ class NuisanceRegression extends Component {
       <React.Fragment>
         { this.renderRegressor(regressor, i, 'Motion', 'Motion', true) }
         { this.renderRegressor(regressor, i, 'GlobalSignal', 'Global Signal', true, true) }
-        { this.renderRegressor(regressor, i, 'GreyMatter', 'Grey Matter', true, true, true) }
+        { this.renderRegressor(regressor, i, 'GrayMatter', 'Gray Matter', true, true, true) }
         { this.renderRegressor(regressor, i, 'WhiteMatter', 'White Matter', true, true, true) }
         { this.renderRegressor(regressor, i, 'CerebrospinalFluid', 'CerebrospinalFluid', true, true, true) }
         { this.renderRegressor(regressor, i, 'aCompCor', 'aCompCor', true, false, false, (

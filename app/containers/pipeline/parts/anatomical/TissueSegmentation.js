@@ -35,8 +35,8 @@ class TissueSegmentation extends Component {
     const name = event.target.name
 
     const checkBoxes = [
-      "anatomical.tissue_segmentation.configuration.seg_use_fast_threshold.enabled",
-      "anatomical.tissue_segmentation.configuration.seg_use_customized_threshold.enabled",
+      "anatomical.tissue_segmentation.configuration.fast_threshold.enabled",
+      "anatomical.tissue_segmentation.configuration.custom_threshold.enabled",
     ]
 
     if (!checkBoxes.includes(name)) {
@@ -48,15 +48,15 @@ class TissueSegmentation extends Component {
       const changes = []
       const value = event.target.checked
 
-      if (name == "anatomical.tissue_segmentation.configuration.seg_use_fast_threshold.enabled") {
+      if (name == "anatomical.tissue_segmentation.configuration.fast_threshold.enabled") {
         changes.push([name, value])
         if (value) {
-          changes.push(["anatomical.tissue_segmentation.configuration.seg_use_customized_threshold.enabled", false])
+          changes.push(["anatomical.tissue_segmentation.configuration.custom_threshold.enabled", false])
         }
-      } else if (name == "anatomical.tissue_segmentation.configuration.seg_use_customized_threshold.enabled") {
+      } else if (name == "anatomical.tissue_segmentation.configuration.custom_threshold.enabled") {
         changes.push([name, value])
         if (value) {
-          changes.push(["anatomical.tissue_segmentation.configuration.seg_use_fast_threshold.enabled", false])
+          changes.push(["anatomical.tissue_segmentation.configuration.fast_threshold.enabled", false])
         }
       }
 
@@ -101,8 +101,8 @@ class TissueSegmentation extends Component {
               <FormGroup row>
                 <FormControlLabelled label="Use Priors">
                   <Switch
-                    name="anatomical.tissue_segmentation.configuration.seg_use_priors.enabled"
-                    checked={configuration.getIn("anatomical.tissue_segmentation.configuration.seg_use_priors.enabled".split("."))}
+                    name="anatomical.tissue_segmentation.configuration.priors.enabled"
+                    checked={configuration.getIn("anatomical.tissue_segmentation.configuration.priors.enabled".split("."))}
                     onChange={onChange}
                     color="primary"
                   />
@@ -118,14 +118,14 @@ class TissueSegmentation extends Component {
                     label="FSL-FAST Threshold"
                     control={
                       <Switch
-                        name="anatomical.tissue_segmentation.configuration.seg_use_fast_threshold.enabled"
-                        checked={configuration.getIn(['anatomical', 'tissue_segmentation', 'configuration', 'seg_use_fast_threshold', 'enabled'])}
+                        name="anatomical.tissue_segmentation.configuration.fast_threshold.enabled"
+                        checked={configuration.getIn(['anatomical', 'tissue_segmentation', 'configuration', 'fast_threshold', 'enabled'])}
                         onChange={this.handleValueChange}
                         color="primary"
                       />
                     }
                   />
-                  { configuration.getIn(['anatomical', 'tissue_segmentation', 'configuration', 'seg_use_fast_threshold', 'enabled']) ?
+                  { configuration.getIn(['anatomical', 'tissue_segmentation', 'configuration', 'fast_threshold', 'enabled']) ?
                     <IconButton
                       onClick={() => this.handleOpenFSL()}>
                     </IconButton>
@@ -135,42 +135,25 @@ class TissueSegmentation extends Component {
                     label="Customized Threshold"
                     control={
                       <Switch
-                      name="anatomical.tissue_segmentation.configuration.seg_use_customized_threshold.enabled"
-                      checked={configuration.getIn(['anatomical', 'tissue_segmentation', 'configuration', 'seg_use_customized_threshold', 'enabled'])}
+                      name="anatomical.tissue_segmentation.configuration.custom_threshold.enabled"
+                      checked={configuration.getIn(['anatomical', 'tissue_segmentation', 'configuration', 'custom_threshold', 'enabled'])}
                       onChange={this.handleValueChange}
                       color="primary"
                       />
                     }
                   />
-                  { configuration.getIn(['anatomical', 'tissue_segmentation', 'configuration', 'seg_use_customized_threshold', 'enabled']) ?
+                  { configuration.getIn(['anatomical', 'tissue_segmentation', 'configuration', 'custom_threshold', 'enabled']) ?
                     <IconButton
                       onClick={() => this.handleOpenCustomized()}>
                     </IconButton>
                   : null }
-                  {/* for fork */}
-                  {/* <FormControlLabelled label="FSL-FAST Threshold">
-                    <Switch
-                      name="anatomical.tissue_segmentation.configuration.seg_use_fast_threshold.enabled"
-                      checked={configuration.getIn("anatomical.tissue_segmentation.configuration.seg_use_fast_threshold.enabled".split("."))}
-                      onChange={onChange}
-                      color="primary"
-                    />
-                  </FormControlLabelled>
-                  <FormControlLabelled label="Customized Threshold">
-                    <Switch
-                      name="anatomical.tissue_segmentation.configuration.seg_use_customized_threshold.enabled"
-                      checked={configuration.getIn("anatomical.tissue_segmentation.configuration.seg_use_customized_threshold.enabled".split("."))}
-                      onChange={onChange}
-                      color="primary"
-                    />
-                  </FormControlLabelled> */}
                 </Help>
               </FormGroup>
               <FormGroup row>
                 <FormControlLabelled label="Erosion">
                   <Switch
-                    name="anatomical.tissue_segmentation.configuration.seg_use_erosion.enabled"
-                    checked={configuration.getIn("anatomical.tissue_segmentation.configuration.seg_use_erosion.enabled".split("."))}
+                    name="anatomical.tissue_segmentation.configuration.erosion.enabled"
+                    checked={configuration.getIn("anatomical.tissue_segmentation.configuration.erosion.enabled".split("."))}
                     onChange={onChange}
                     color="primary"
                   />
@@ -179,7 +162,7 @@ class TissueSegmentation extends Component {
             </Grid>
 
             <Grid item xs={8}>
-              <Collapse in={configuration.getIn("anatomical.tissue_segmentation.configuration.seg_use_priors.enabled".split("."))}>               
+              <Collapse in={configuration.getIn("anatomical.tissue_segmentation.configuration.priors.enabled".split("."))}>               
                 <FormGroup>
                   <FormLabel>
                     <Help
@@ -198,8 +181,8 @@ class TissueSegmentation extends Component {
                       >
                         <TextField
                           label="White Matter Prior Probability Map"
-                          name="anatomical.tissue_segmentation.configuration.seg_use_priors.priors.white_matter"
-                          value={configuration.getIn("anatomical.tissue_segmentation.configuration.seg_use_priors.priors.white_matter".split("."))}
+                          name="anatomical.tissue_segmentation.configuration.priors.priors.white_matter"
+                          value={configuration.getIn("anatomical.tissue_segmentation.configuration.priors.priors.white_matter".split("."))}
                           onChange={onChange}
                           fullWidth={true} margin="normal" variant="outlined"
                         />
@@ -215,8 +198,8 @@ class TissueSegmentation extends Component {
                       >
                         <TextField
                           label="Gray Matter Prior Probability Map"
-                          name="anatomical.tissue_segmentation.configuration.seg_use_priors.priors.gray_matter"
-                          value={configuration.getIn("anatomical.tissue_segmentation.configuration.seg_use_priors.priors.gray_matter".split("."))}
+                          name="anatomical.tissue_segmentation.configuration.priors.priors.gray_matter"
+                          value={configuration.getIn("anatomical.tissue_segmentation.configuration.priors.priors.gray_matter".split("."))}
                           onChange={onChange}
                           fullWidth={true} margin="normal" variant="outlined"
                         />
@@ -232,8 +215,8 @@ class TissueSegmentation extends Component {
                       >
                         <TextField
                           label="Cerebrospinal Fluid Prior Probability Map"
-                          name="anatomical.tissue_segmentation.configuration.seg_use_priors.priors.cerebrospinal_fluid"
-                          value={configuration.getIn("anatomical.tissue_segmentation.configuration.seg_use_priors.priors.cerebrospinal_fluid".split("."))}
+                          name="anatomical.tissue_segmentation.configuration.priors.priors.cerebrospinal_fluid"
+                          value={configuration.getIn("anatomical.tissue_segmentation.configuration.priors.priors.cerebrospinal_fluid".split("."))}
                           onChange={onChange}
                           fullWidth={true} margin="normal" variant="outlined"
                         />
@@ -242,7 +225,7 @@ class TissueSegmentation extends Component {
                 </FormGroup>                   
               </Collapse>
 
-              <Collapse in={configuration.getIn("anatomical.tissue_segmentation.configuration.seg_use_customized_threshold.enabled".split("."))}>
+              <Collapse in={configuration.getIn("anatomical.tissue_segmentation.configuration.custom_threshold.enabled".split("."))}>
                 <FormGroup>
                   <FormLabel>
                     <Help
@@ -259,8 +242,8 @@ class TissueSegmentation extends Component {
                       fullWidth
                     >
                       <TextField label="White Matter Threshold Value"
-                        name="anatomical.tissue_segmentation.configuration.seg_use_customized_threshold.threshold.seg_WM_threshold_value"
-                        value={configuration.getIn("anatomical.tissue_segmentation.configuration.seg_use_customized_threshold.threshold.seg_WM_threshold_value".split("."))}
+                        name="anatomical.tissue_segmentation.configuration.custom_threshold.threshold.white_matter"
+                        value={configuration.getIn("anatomical.tissue_segmentation.configuration.custom_threshold.threshold.white_matter".split("."))}
                         onChange={onChange}
                         fullWidth margin="normal" variant="outlined"
                       />
@@ -275,8 +258,8 @@ class TissueSegmentation extends Component {
                       fullWidth
                     >
                       <TextField label="Gray Matter Threshold Value"
-                        name="anatomical.tissue_segmentation.configuration.seg_use_customized_threshold.threshold.seg_GM_threshold_value"
-                        value={configuration.getIn("anatomical.tissue_segmentation.configuration.seg_use_customized_threshold.threshold.seg_GM_threshold_value".split("."))}
+                        name="anatomical.tissue_segmentation.configuration.custom_threshold.threshold.gray_matter"
+                        value={configuration.getIn("anatomical.tissue_segmentation.configuration.custom_threshold.threshold.gray_matter".split("."))}
                         onChange={onChange}
                         fullWidth margin="normal" variant="outlined"
                       />
@@ -291,8 +274,8 @@ class TissueSegmentation extends Component {
                       fullWidth
                     >
                       <TextField label="CSF Threshold Value"
-                        name="anatomical.tissue_segmentation.configuration.seg_use_customized_threshold.threshold.seg_CSF_threshold_value"
-                        value={configuration.getIn("anatomical.tissue_segmentation.configuration.seg_use_customized_threshold.threshold.seg_CSF_threshold_value".split("."))}
+                        name="anatomical.tissue_segmentation.configuration.custom_threshold.threshold.cerebrospinal_fluid"
+                        value={configuration.getIn("anatomical.tissue_segmentation.configuration.custom_threshold.threshold.cerebrospinal_fluid".split("."))}
                         onChange={onChange}
                         fullWidth margin="normal" variant="outlined"
                       />
@@ -301,7 +284,7 @@ class TissueSegmentation extends Component {
                 </FormGroup>
               </Collapse>
 
-              <Collapse in={configuration.getIn("anatomical.tissue_segmentation.configuration.seg_use_erosion.enabled".split("."))}>
+              <Collapse in={configuration.getIn("anatomical.tissue_segmentation.configuration.erosion.enabled".split("."))}>
                 <FormGroup>
                   <FormLabel>
                     <Help
@@ -318,8 +301,8 @@ class TissueSegmentation extends Component {
                         fullWidth
                       >
                         <TextField label="Erosion Proportion"
-                          name="anatomical.tissue_segmentation.configuration.seg_use_erosion.erosion.seg_erosion_prop"
-                          value={configuration.getIn("anatomical.tissue_segmentation.configuration.seg_use_erosion.erosion.seg_erosion_prop".split("."))}
+                          name="anatomical.tissue_segmentation.configuration.erosion.proportion"
+                          value={configuration.getIn("anatomical.tissue_segmentation.configuration.erosion.proportion".split("."))}
                           onChange={onChange}
                           fullWidth margin="normal" variant="outlined"
                         />
