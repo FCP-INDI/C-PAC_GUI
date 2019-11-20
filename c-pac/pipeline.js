@@ -346,9 +346,6 @@ export function parse(content) {
   if (config.seg_use_threshold.includes("FSL-FAST Thresholding")) {
     c.anatomical.tissue_segmentation.configuration.fast_threshold.enabled = true
     c.anatomical.tissue_segmentation.configuration.custom_threshold.enabled = false
-    c.anatomical.tissue_segmentation.configuration.custom_threshold.threshold.white_matter = config.seg_WM_threshold_value
-    c.anatomical.tissue_segmentation.configuration.custom_threshold.threshold.gray_matter = config.seg_GM_threshold_value
-    c.anatomical.tissue_segmentation.configuration.custom_threshold.threshold.cerebrospinal_fluid = config.seg_CSF_threshold_value
   } else if (config.seg_use_threshold.includes("Customized Thresholding")) {
     c.anatomical.tissue_segmentation.configuration.fast_threshold.enabled = false
     c.anatomical.tissue_segmentation.configuration.custom_threshold.enabled = true
@@ -770,10 +767,7 @@ export function dump(pipeline, version='0') {
   config.PRIORS_CSF = c.anatomical.tissue_segmentation.configuration.priors.priors.cerebrospinal_fluid
 
   if (c.anatomical.tissue_segmentation.configuration.fast_threshold.enabled) {
-    config.seg_use_threshold = ['FSL-FAST Thresholding']
-    config.seg_WM_threshold_value = c.anatomical.tissue_segmentation.configuration.customized_threshold.threshold.white_matter
-    config.seg_GM_threshold_value = c.anatomical.tissue_segmentation.configuration.customized_threshold.threshold.gray_matter
-    config.seg_CSF_threshold_value = c.anatomical.tissue_segmentation.configuration.customized_threshold.threshold.cerebrospinal_fluid 
+    config.seg_use_threshold = ['FSL-FAST Thresholding'] 
   } else if (c.anatomical.tissue_segmentation.configuration.customized_threshold.enabled) {
     config.seg_use_threshold = ['Customized Thresholding']
     config.seg_WM_threshold_value = c.anatomical.tissue_segmentation.configuration.customized_threshold.threshold.white_matter 
