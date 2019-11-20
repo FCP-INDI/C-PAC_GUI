@@ -769,16 +769,16 @@ export function dump(pipeline, version='0') {
   config.PRIORS_GRAY = c.anatomical.tissue_segmentation.configuration.priors.priors.gray_matter
   config.PRIORS_CSF = c.anatomical.tissue_segmentation.configuration.priors.priors.cerebrospinal_fluid
 
-  if (c.anatomical.tissue_segmentation.configuration.seg_use_fast_threshold.enabled) {
+  if (c.anatomical.tissue_segmentation.configuration.fast_threshold.enabled) {
     config.seg_use_threshold = ['FSL-FAST Thresholding']
-    config.seg_WM_threshold_value = c.anatomical.tissue_segmentation.configuration.seg_use_customized_threshold.threshold.seg_WM_threshold_value 
-    config.seg_GM_threshold_value = c.anatomical.tissue_segmentation.configuration.seg_use_customized_threshold.threshold.seg_GM_threshold_value 
-    config.seg_CSF_threshold_value = c.anatomical.tissue_segmentation.configuration.seg_use_customized_threshold.threshold.seg_CSF_threshold_value 
-  } else if (c.anatomical.tissue_segmentation.configuration.seg_use_customized_threshold.enabled) {
+    config.seg_WM_threshold_value = c.anatomical.tissue_segmentation.configuration.customized_threshold.threshold.white_matter
+    config.seg_GM_threshold_value = c.anatomical.tissue_segmentation.configuration.customized_threshold.threshold.gray_matter
+    config.seg_CSF_threshold_value = c.anatomical.tissue_segmentation.configuration.customized_threshold.threshold.cerebrospinal_fluid 
+  } else if (c.anatomical.tissue_segmentation.configuration.customized_threshold.enabled) {
     config.seg_use_threshold = ['Customized Thresholding']
-    config.seg_WM_threshold_value = c.anatomical.tissue_segmentation.configuration.seg_use_customized_threshold.threshold.seg_WM_threshold_value 
-    config.seg_GM_threshold_value = c.anatomical.tissue_segmentation.configuration.seg_use_customized_threshold.threshold.seg_GM_threshold_value 
-    config.seg_CSF_threshold_value = c.anatomical.tissue_segmentation.configuration.seg_use_customized_threshold.threshold.seg_CSF_threshold_value 
+    config.seg_WM_threshold_value = c.anatomical.tissue_segmentation.configuration.customized_threshold.threshold.white_matter 
+    config.seg_GM_threshold_value = c.anatomical.tissue_segmentation.configuration.customized_threshold.threshold.gray_matter 
+    config.seg_CSF_threshold_value = c.anatomical.tissue_segmentation.configuration.customized_threshold.threshold.cerebrospinal_fluid 
   }
   
   config.seg_use_erosion = [c.anatomical.tissue_segmentation.configuration.erosion.enabled ? 1 : 0]
@@ -902,7 +902,7 @@ export function dump(pipeline, version='0') {
     const newRegressor = {}
 
     for (const k of [
-      'GreyMatter',
+      'GrayMatter',
       'WhiteMatter',
       'CerebrospinalFluid',
       'aCompCor',
