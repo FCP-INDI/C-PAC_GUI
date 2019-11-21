@@ -118,8 +118,18 @@ already_skullstripped :  [0]
 
 
 # Choice of using AFNI-3dSkullStrip or FSL-BET or niworkflows-ants or UNet for monkey data to perform SkullStripping
-# Options: ['AFNI', 'BET', 'niworkflows-ants', 'unet'] 
+# Options: ['AFNI', 'FSL', 'niworkflows-ants', 'unet'] 
 skullstrip_option :  ['AFNI']
+
+
+# UNet model
+unet_model : s3://fcp-indi/resources/cpac/resources/Site-All-T-epoch_36.model
+
+
+# Options to be used for AFNI 3dSkullStrip only.
+
+# Output a mask volume instead of a skull-stripped volume. The mask volume containes 0 to 6, which represents voxel's postion. If set to True, C-PAC will use this output to generate anatomical brain mask for further analysis.
+skullstrip_mask_vol: False
 
 
 # Set the threshold value controlling the brain vs non-brain voxels. Default is 0.6.
@@ -205,7 +215,7 @@ bet_frac :  0.5
 
 
 # Mask created along with skull stripping
-bet_mask_boolean :  Off
+bet_mask_boolean :  On
 
 
 # Mesh created along with skull stripping

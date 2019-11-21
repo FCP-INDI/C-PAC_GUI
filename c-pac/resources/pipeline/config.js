@@ -72,6 +72,7 @@ export default {
               afni: {
                 enabled: true,
                 configuration: {
+                  mask_vol: false,
                   shrink_factor: {
                     vary: true,
                     threshold: 0.6,
@@ -126,6 +127,7 @@ export default {
               },
               unet: {
                 enabled: false,
+                unet_model: 's3://fcp-indi/resources/cpac/resources/Site-All-T-epoch_36.model',
               }
             }
           },

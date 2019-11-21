@@ -420,7 +420,7 @@ export function parse(content) {
   c.functional.anatomical_registration.functional_masking.fsl = config.functionalMasking.includes('FSL')
   c.functional.anatomical_registration.functional_masking.afni = config.functionalMasking.includes('AFNI')
   c.functional.anatomical_registration.functional_masking.fsl_afni = config.functionalMasking.includes('FSL_AFNI')
-  c.functional.anatomical_registration.functional_masking.fsl_afni = config.functionalMasking.includes('Anatomical_Refined')
+  c.functional.anatomical_registration.functional_masking.anat_refined = config.functionalMasking.includes('Anatomical_Refined')
 
   c.functional.template_registration.enabled = config.runRegisterFuncToMNI.includes(1)
   c.functional.template_registration.functional_resolution = config.resolution_for_func_preproc.replace(/mm/g, "")
@@ -664,10 +664,11 @@ export function dump(pipeline, version='0') {
   config.already_skullstripped = [c.anatomical.skull_stripping.enabled ? 0 : 1]
   config.skullstrip_option = []
     .concat(c.anatomical.skull_stripping.methods.afni.enabled ? ["AFNI"] : [])
-    .concat(c.anatomical.skull_stripping.methods.bet.enabled ? ["BET"] : [])
+    .concat(c.anatomical.skull_stripping.methods.bet.enabled ? ["FSL"] : [])
     .concat(c.anatomical.skull_stripping.methods.niworkflows_ants.enabled ? ["niworkflows-ants"] : [])
     .concat(c.anatomical.skull_stripping.methods.unet.enabled ? ["unet"] : [])
 
+  config.skullstrip_mask_vol = c.anatomical.skull_stripping.methods.afni.configuration.mask_vol
   config.skullstrip_shrink_factor = c.anatomical.skull_stripping.methods.afni.configuration.shrink_factor.threshold
   config.skullstrip_var_shrink_fac = c.anatomical.skull_stripping.methods.afni.configuration.shrink_factor.vary
   config.skullstrip_shrink_factor_bot_lim = c.anatomical.skull_stripping.methods.afni.configuration.shrink_factor.bottom_limit
@@ -717,6 +718,8 @@ export function dump(pipeline, version='0') {
   config.niworkflows_ants_mask_path = c.anatomical.skull_stripping.methods.niworkflows_ants.ants_templates.niworkflows_ants_mask_path
   config.niworkflows_ants_regmask_path = c.anatomical.skull_stripping.methods.niworkflows_ants.ants_templates.niworkflows_ants_regmask_path
 
+  config.unet_model = c.anatomical.skull_stripping.methods.unet.unet_model
+
   config.template_brain_only_for_anat = c.anatomical.registration.brain_template
   config.template_skull_for_anat = c.anatomical.registration.skull_template
   config.regOption = ['ANTS']
@@ -724,7 +727,6 @@ export function dump(pipeline, version='0') {
   config.regOption = []
     .concat(c.anatomical.registration.methods.ants.enabled ? ["ANTS"] : [])
     .concat(c.anatomical.registration.methods.fsl.enabled ? ["FSL"] : [])
-    .concat(c.anatomical.registration.methods.fsl.enabled ? ["FSL_AFNI"] : [])
 
   config.use_lesion_mask = [c.anatomical.registration.methods.ants.configuration.lesion_mask ? 1 : 0]
 
@@ -833,7 +835,7 @@ export function dump(pipeline, version='0') {
     .concat(c.functional.anatomical_registration.functional_masking.fsl ? ["FSL"] : [])
     .concat(c.functional.anatomical_registration.functional_masking.afni ? ["AFNI"] : [])
     .concat(c.functional.anatomical_registration.functional_masking.fsl_afni ? ["FSL_AFNI"] : [])
-    .concat(c.functional.anatomical_registration.functional_masking.fsl_afni ? ["Anatomical_Refined"] : [])
+    .concat(c.functional.anatomical_registration.functional_masking.anat_refined ? ["Anatomical_Refined"] : [])
   
   config.runRegisterFuncToMNI = [c.functional.template_registration.enabled ? 1 : 0]
   if (c.functional.template_registration.functional_resolution.includes("x")) {
@@ -1015,7 +1017,7 @@ export function dump(pipeline, version='0') {
   
   config.peer_gsr = c.derivatives.pypeer.gsr
   config.peer_scrub = c.derivatives.pypeer.scrub.enabled 
-  config.peer_scrub_thresh = c.derivative.pypeer.scrub.threshold 
+  config.peer_scrub_thresh = c.derivatives.pypeer.scrub.threshold 
 
   config.memoryAllocatedForDegreeCentrality = 3.0
 

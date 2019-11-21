@@ -143,14 +143,18 @@ class AnatomicalRegistration extends Component {
                 </FormControlLabelled>
               </FormGroup>
               <FormGroup row>
-                <FormControlLabelled label="Anatomical Refined: refine functional mask by registering anatomical mask to functional space">
-                  <Switch
-                    name="functional.anatomical_registration.functional_masking.anat_refined"
-                    checked={configuration.getIn(["functional", "anatomical_registration", "functional_masking", "anat_refined"])}
-                    onChange={onChange}
-                    color="primary"
-                  />
-                </FormControlLabelled>
+                <Help
+                  help={`Refine functional mask by registering anatomical mask to functional space`}
+                >
+                  <FormControlLabelled label="Anatomical Refined Functional Mask">
+                    <Switch
+                      name="functional.anatomical_registration.functional_masking.anat_refined"
+                      checked={configuration.getIn(["functional", "anatomical_registration", "functional_masking", "anat_refined"])}
+                      onChange={onChange}
+                      color="primary"
+                    />
+                  </FormControlLabelled>
+                </Help>
               </FormGroup>
             </FormControl>
           </FormGroup>

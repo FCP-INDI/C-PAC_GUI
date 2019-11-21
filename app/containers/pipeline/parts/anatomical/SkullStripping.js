@@ -545,6 +545,25 @@ class SkullStripping extends Component {
             <FormGroup row>
               <Help
                 type="pipeline"
+                regex={/^skullstrip_mask_vol/}
+                help={`Output a mask volume instead of a skull-stripped volume. The mask volume containes 0 to 6, which represents voxel's postion. If set to True, C-PAC will use this output to generate anatomical brain mask for further analysis.`}
+              >
+                <FormControlLabel
+                  label="Output a mask volume"
+                  control={
+                    <Switch
+                      name="anatomical.skull_stripping.methods.afni.configuration.mask_vol"
+                      checked={configuration.getIn(['anatomical', 'skull_stripping', 'methods', 'afni', 'configuration', 'mask_vol'])}
+                      onChange={onChange}
+                      color="primary"
+                    />
+                  }
+                />
+              </Help>
+            </FormGroup>             
+            <FormGroup row>
+              <Help
+                type="pipeline"
                 regex={/^skullstrip_var_shrink_fac/}
                 help={`Vary the shrink factor at every iteration of the algorithm. This prevents the likelihood of surface getting stuck in large pools of CSF before reaching the outer surface of the brain.`}
               >
@@ -769,6 +788,30 @@ class SkullStripping extends Component {
             </FormGroup>
           </DialogContent>
         </Dialog> 
+        <Dialog
+          open={this.state.unetOptions && configuration.getIn(['anatomical', 'skull_stripping', 'methods', 'unet', 'enabled'])}
+          onClose={this.handleCloseUnet}
+          fullWidth={true}
+        >
+          <DialogTitle>{`U-Net Model`}</DialogTitle>
+          <DialogContent>
+            <FormGroup row>
+              <Help
+                type="pipeline"
+                regex={/^unet_model/}
+                help={`U-Net is a model used for skull-stripping of the macaque. It is not necessary to change this path unless you intend to use a non-standard template.`}
+                fullWidth
+              >
+                <TextField
+                  label="U-Net Brain extraction model" fullWidth margin="normal" variant="outlined"
+                  name="anatomical.skull_stripping.methods.unet.unet_model"
+                  value={configuration.getIn(['anatomical', 'skull_stripping', 'methods', 'unet', 'unet_model'])}
+                  onChange={onChange}
+                />
+              </Help>
+            </FormGroup>
+          </DialogContent>
+        </Dialog> 
         <FormControl fullWidth>
           <FormGroup row>
             <Help
@@ -857,6 +900,12 @@ class SkullStripping extends Component {
                   />
                 }
               />
+              { configuration.getIn(['anatomical', 'skull_stripping', 'methods', 'unet', 'enabled']) ?
+                <IconButton
+                  onClick={() => this.handleOpenUnet()}>
+                  <SettingsIcon />
+                </IconButton>
+                : null}
 
             </Help>
           </FormGroup>
