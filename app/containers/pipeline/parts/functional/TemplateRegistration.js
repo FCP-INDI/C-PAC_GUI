@@ -17,8 +17,8 @@ class TemplateRegistration extends Component {
 
   render() {
     const { classes, configuration, onChange } = this.props
-    // const functional_resolution = configuration.getIn(["functional", "template_registration", "functional_resolution"])
-    // const derivative_resolution = configuration.getIn(["functional", "template_registration", "derivative_resolution"])
+    const functional_resolution = configuration.getIn(["functional", "template_registration", "functional_resolution"])
+    const derivative_resolution = configuration.getIn(["functional", "template_registration", "derivative_resolution"])
     
     return (
       <Grid container>

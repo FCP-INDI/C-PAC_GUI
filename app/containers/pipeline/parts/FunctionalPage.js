@@ -75,14 +75,6 @@ class FunctionalPage extends Component {
 
         {
           this.renderSection(
-            "Functional to EPI Registration",
-            "functional.epi_registration.enabled",
-            EPIRegistration
-          )
-        }
-
-        {
-          this.renderSection(
             "Functional to Anatomical Registration",
             "functional.anatomical_registration.enabled",
             AnatomicalRegistration
@@ -94,6 +86,14 @@ class FunctionalPage extends Component {
             "Functional to Template Registration",
             "functional.template_registration.enabled",
             TemplateRegistration
+          )
+        }
+
+        {
+          this.renderSection(
+            "Functional to EPI Template Registration",
+            "functional.epi_registration.enabled",
+            EPIRegistration
           )
         }
 
