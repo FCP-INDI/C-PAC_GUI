@@ -17,14 +17,14 @@ class TemplateRegistration extends Component {
 
   render() {
     const { classes, configuration, onChange } = this.props
-    const functional_resolution = configuration.getIn(["functional", "template_registration", "functional_resolution"])
-    const derivative_resolution = configuration.getIn(["functional", "template_registration", "derivative_resolution"])
+    // const functional_resolution = configuration.getIn(["functional", "template_registration", "functional_resolution"])
+    // const derivative_resolution = configuration.getIn(["functional", "template_registration", "derivative_resolution"])
     
     return (
       <Grid container>
         <Grid item sm={12}>
 
-          <Collapse in={configuration.getIn("anatomical.registration.methods.ants.enabled".split("."))}>
+          {/* <Collapse in={configuration.getIn("anatomical.registration.methods.ants.enabled".split("."))}>
 
             <Help
               type="pipeline"
@@ -76,7 +76,7 @@ class TemplateRegistration extends Component {
               </TextField>
             </Help>
 
-          </Collapse>
+          </Collapse> */}
 
           <Help
             type="pipeline"

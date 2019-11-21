@@ -8,6 +8,7 @@ import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import Switch from '@material-ui/core/Switch';
 
 import {
+  EPIRegistration,
   AnatomicalRegistration,
   DistortionCorrection,
   MedianAngleCorrection,
@@ -69,6 +70,14 @@ class FunctionalPage extends Component {
             "Slice Timing Correction",
             "functional.slice_timing_correction.enabled",
             SliceTimingCorrection
+          )
+        }
+
+        {
+          this.renderSection(
+            "Functional to EPI Registration",
+            "functional.epi_registration.enabled",
+            EPIRegistration
           )
         }
 
