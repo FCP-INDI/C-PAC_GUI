@@ -40,6 +40,24 @@ class InitialPreprocessing extends Component {
 
     return (
       <React.Fragment>
+
+        <FormGroup row>
+          <Help
+            type="pipeline"
+            regex={/^n4_correct_mean_EPI/}
+            help={`Run ANTs’ N4 Bias Field Correction on the input BOLD average (mean EPI).`}
+          >
+            <FormControlLabelled label="N4 Bias Field Correction">
+              <Switch
+                name="functional.preprocessing.n4_mean_epi"
+                checked={configuration.getIn("functional.preprocessing.n4_mean_epi.enabled".split("."))}
+                onChange={onChange}
+                color="primary"
+              />
+            </FormControlLabelled>
+          </Help>
+        </FormGroup>
+
         <FormControl fullWidth>
           <FormGroup row>
             <Help

@@ -157,6 +157,9 @@ export default {
         functional: {
           enabled: true,
           preprocessing: {
+            n4_mean_epi: {
+              enabled: false,
+            },
             scaling: {
               enabled: false,
               factor: 10
