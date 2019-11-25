@@ -359,7 +359,7 @@ export function parse(content) {
 
   c.functional.preprocessing.scaling.enabled = config.runScaling
   c.functional.preprocessing.scaling.factor = config.scaling_factor
-  c.functional.preprocessing.motion_stats.enabled = config.runMotionStatistics
+  c.functional.preprocessing.motion_stats.enabled = config.runMotionStatistics.includes(1)
 
   c.functional.slice_timing_correction.enabled = config.slice_timing_correction.includes(1)
   c.functional.slice_timing_correction.repetition_time = !config.TR || config.TR == "None" ? '' : config.TR
