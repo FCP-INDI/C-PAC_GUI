@@ -156,6 +156,15 @@ export default {
         },
         functional: {
           enabled: true,
+          preprocessing: {
+            scaling: {
+              enabled: false,
+              factor: 10
+            },
+            motion_stats: {
+              enabled: false,
+            }
+          },
           slice_timing_correction: {
             enabled: true,
             pattern: 'header',

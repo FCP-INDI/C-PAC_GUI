@@ -368,6 +368,18 @@ seg_erosion_prop : 0.6
 runFunctional: [1]
 
 
+# Scale functional raw data, usually used in rodent pipeline
+runScaling : False
+
+
+# Set scaling factor, if runScaling : True. Scale the size of the dataset voxels by the factor.
+scaling_factor : 10
+
+
+# run motion statistics before slice timing correction
+runMotionStatistics : [0]
+
+
 # Interpolate voxel time courses so they are sampled at the same time points.
 slice_timing_correction :  [0]
 
@@ -455,6 +467,10 @@ boundaryBasedRegistrationSchedule :  $FSLDIR/etc/flirtsch/bbr.sch
 
 # Choose whether to use the mean of the functional/EPI as the input to functional-to-anatomical registration or one of the volumes from the functional 4D timeseries that you choose.
 func_reg_input :  ['Mean Functional']
+
+
+# Run ANTs’ N4 Bias Field Correction on the input BOLD average (mean EPI)
+n4_correct_mean_EPI : False
 
 
 # Only for when 'Use as Functional-to-Anatomical Registration Input' is set to 'Selected Functional Volume'. Input the index of which volume from the functional 4D timeseries input file you wish to use as the input for functional-to-anatomical registration.

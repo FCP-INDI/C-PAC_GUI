@@ -1,3 +1,4 @@
+export InitialPreprocessing from './InitialPreprocessing'
 export AnatomicalRegistration from './AnatomicalRegistration'
 export AROMA from './AROMA'
 export DistortionCorrection from './DistortionCorrection'
