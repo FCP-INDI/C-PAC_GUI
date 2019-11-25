@@ -786,7 +786,7 @@ export function dump(pipeline, version='0') {
 
   config.runScaling = c.functional.preprocessing.scaling.enabled
   config.scaling_factor = c.functional.preprocessing.scaling.factor
-  config.runMotionStatistics = c.functional.preprocessing.motion_stats.enabled
+  config.runMotionStatistics = [c.functional.preprocessing.motion_stats.enabled ? 1 : 0]
 
   // @TODO review pattern and stop idx
   config.slice_timing_correction = [c.functional.slice_timing_correction.enabled ? 1 : 0]
