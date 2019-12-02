@@ -32,7 +32,7 @@ window.addEventListener('load', () => {
 
   if (module.hot) {
     module.hot.accept('./containers/Root', () => {
-      render(require('./containers/Root').default)
+      render(require('./containers/Root'))
     })
   }
 })
