@@ -94,6 +94,7 @@ const original = fromJS({
   aCompCor: {
     enabled: false,
     summary: {
+      filter: ' ',
       method: 'DetrendPC',
       components: 5,
     },
@@ -106,6 +107,7 @@ const original = fromJS({
   tCompCor: {
     enabled: false,
     summary: {
+      filter: ' ',
       method: 'PC',
       components: 5,
     },
@@ -241,6 +243,7 @@ class NuisanceRegression extends Component {
       if (reg == 'aCompCor') {
         if (!regressors[reg]['summary']) {
           regressors[reg]['summary'] = {
+            filter: ' ',
             method: 'DetrendPC',
             components: 5,
           }
@@ -250,6 +253,7 @@ class NuisanceRegression extends Component {
       if (reg == 'tCompCor') {
         if (!regressors[reg]['summary']) {
           regressors[reg]['summary'] = {
+            filter: ' ',
             method: 'PC',
             components: 5,
           }
@@ -284,6 +288,7 @@ class NuisanceRegression extends Component {
 
       if (regressor['summary']) {
         if (typeof(regressor['summary']) == "object") {
+          regressor_terms += ` ${regressor['summary']['filter']}`
           regressor_terms += ` ${regressor['summary']['method']}`
           if (['DetrendPC', 'PC'].indexOf(regressor['summary']['method']) > -1) {
             regressor_terms += ` ${regressor['summary']['components']}`
@@ -327,7 +332,7 @@ class NuisanceRegression extends Component {
         { this.renderRegressor(regressor, i, 'GrayMatter', 'Gray Matter', true, true, true) }
         { this.renderRegressor(regressor, i, 'WhiteMatter', 'White Matter', true, true, true) }
         { this.renderRegressor(regressor, i, 'CerebrospinalFluid', 'CerebrospinalFluid', true, true, true) }
-        { this.renderRegressor(regressor, i, 'aCompCor', 'aCompCor', true, false, false, (
+        { this.renderRegressor(regressor, i, 'aCompCor', 'aCompCor', true, true, false, (
           <FormGroup row>
             <FormControl>
               <InputLabel>Tissues</InputLabel>
@@ -354,7 +359,7 @@ class NuisanceRegression extends Component {
             </FormControl>
           </FormGroup>
         )) }
-        { this.renderRegressor(regressor, i, 'tCompCor', 'tCompCor', true, false, false, (
+        { this.renderRegressor(regressor, i, 'tCompCor', 'tCompCor', true, true, false, (
           <React.Fragment>
             <FormGroup row>
               <TextField label="Threshold"
@@ -507,14 +512,29 @@ class NuisanceRegression extends Component {
               root: classes.details,
             }}>
           <FormGroup style={{flexGrow: 1, margin: '0 0 10px 0'}}>
-            { custom }
 
             { summary ? (
               <React.Fragment>
                 <FormGroup row>
                   <TextField
                     select
-                    label="Summary"
+                    label="Filter"
+                    name={`functional.nuisance_regression.regressors.${i}.${key}.summary.filter`}
+                    value={regressor.getIn([key, 'summary', 'filter'], ' ')}
+                    onChange={onChange}
+                    fullWidth={true} margin="normal" variant="outlined"
+                    className={classes.textField}
+                    helperText='This field can be blank unless wanna apply a discrete cosine filter with 128s cut-off. Filter field must be blank, if selected method is DetrendPC'
+                  >
+                    <MenuItem value={''}>  </MenuItem>
+                    <MenuItem value={"cosine"}>Cosine</MenuItem>
+                  </TextField>
+                </FormGroup>
+
+                <FormGroup row>
+                  <TextField
+                    select
+                    label="Method"
                     name={`functional.nuisance_regression.regressors.${i}.${key}.summary.method`}
                     value={regressor.getIn([key, 'summary', 'method'], 'Mean')}
                     onChange={onChange}
@@ -545,6 +565,8 @@ class NuisanceRegression extends Component {
                 ) : null }
               </React.Fragment>
             ) : null }
+
+            {custom}
 
             { extraction ? (
               <React.Fragment>
