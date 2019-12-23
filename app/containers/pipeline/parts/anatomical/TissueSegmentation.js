@@ -340,7 +340,7 @@ class TissueSegmentation extends Component {
                     <Help
                       type="pipeline"
                       regex={/^template_based_segmenation/}
-                      help={`If use template based segmentation, please make sure to specify white matter, gray matter, CSF mask paths at below three configurations. These masks should be in the same space of your registration template, e.g. if you choose 'EPI Template based tissue segmentation' , below tissue masks should also be EPI template tissue masks.`}
+                      help={`Optimal for use with functional-only pipelines commonly used for rodent data, users can now employ a template-based tissue segmentation approach that applies inverse registration transforms to template-space tissue priors. If use template based segmentation, please make sure to specify white matter, gray matter, CSF mask paths at below three configurations. `}
                       fullWidth
                       >
                         <TextField

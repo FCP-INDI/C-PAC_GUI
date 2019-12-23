@@ -365,6 +365,7 @@ seg_erosion_prop : 0.6
 
 
 # Generate white matter, gray matter, CSF masks based on EPI template segmentation masks, T1 template segmentation masks, or not use template-based segmentation.
+# Optimal for use with functional-only pipelines commonly used for rodent data, users can now employ a template-based tissue segmentation approach that applies inverse registration transforms to template-space tissue priors.
 # If use template based segmentation, please make sure to specify white matter, gray matter, CSF mask paths at below three configurations. 
 # These masks should be in the same space of your registration template, e.g. if you choose 'EPI_template' , below tissue masks should also be EPI template tissue masks. 
 # Options: ['EPI_template', 'T1_template', 'None']
