@@ -339,7 +339,7 @@ class TissueSegmentation extends Component {
                   <FormLabel>
                     <Help
                       type="pipeline"
-                      regex={/^template_based_segmenation/}
+                      regex={/^template_based_segmentationtion/}
                       help={`Optimal for use with functional-only pipelines commonly used for rodent data, users can now employ a template-based tissue segmentation approach that applies inverse registration transforms to template-space tissue priors. If use template based segmentation, please make sure to specify white matter, gray matter, CSF mask paths at below three configurations. `}
                       fullWidth
                       >
@@ -361,7 +361,7 @@ class TissueSegmentation extends Component {
                   <FormLabel>
                     <Help
                       type="pipeline"
-                      regex={/^template_based_segmenation_WHITE/}
+                      regex={/^template_based_segmentationtion_WHITE/}
                       help={`Full path to a binarized White Matter mask. These masks should be in the same space of selected registration template. `}
                       fullWidth
                     >
@@ -378,7 +378,7 @@ class TissueSegmentation extends Component {
                   <FormLabel>
                     <Help
                       type="pipeline"
-                      regex={/^template_based_segmenation_GRAY/}
+                      regex={/^template_based_segmentationtion_GRAY/}
                       help={`Full path to a binarized Gray Matter mask. These masks should be in the same space of selected registration template. `}
                       fullWidth
                     >
@@ -395,7 +395,7 @@ class TissueSegmentation extends Component {
                   <FormLabel>
                     <Help
                       type="pipeline"
-                      regex={/^template_based_segmenation_CSF/}
+                      regex={/^template_based_segmentation_CSF/}
                       help={`Full path to a binarized CSF mask. These masks should be in the same space of selected registration template. `}
                       fullWidth
                     >
