@@ -188,6 +188,10 @@ export default {
               }
             }
           },
+          epi_registration: {
+            enabled: false,
+            template_epi: 's3://fcp-indi/resources/cpac/resources/epi_hbn.nii.gz',
+          },
           anatomical_registration: {
             enabled: true,
             bb_registration: false,

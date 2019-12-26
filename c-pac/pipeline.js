@@ -409,6 +409,9 @@ export function parse(content) {
   c.functional.distortion_correction.method.phasediff.dwell_to_assymetric_ratio = config.fmap_distcorr_dwell_asym_ratio[0]
   c.functional.distortion_correction.method.phasediff.phase_encoding_direction = config.fmap_distcorr_pedir
 
+  c.functional.epi_registration.enabled = config.runRegisterFuncToEPI.includes(1) 
+  c.functional.epi_registration.template_epi = config.template_epi
+
   c.functional.anatomical_registration.enabled = config.runRegisterFuncToAnat.includes(1)
   c.functional.anatomical_registration.bb_registration = config.runBBReg.includes(1)
   c.functional.anatomical_registration.bb_registration_scheduler =
@@ -426,31 +429,31 @@ export function parse(content) {
   c.functional.template_registration.functional_resolution = config.resolution_for_func_preproc.replace(/mm/g, "")
   c.functional.template_registration.derivative_resolution = config.resolution_for_func_derivative.replace(/mm/g, "")
 
-  if (config.regOption.includes("ANTS")) {
-    switch (config.funcRegANTSinterpolation) {
-      case 'LanczosWindowedSinc':
-        c.functional.template_registration.methods.ants.interpolation = 'sinc'
-        break;
-      case 'Linear':
-        c.functional.template_registration.methods.ants.interpolation = 'linear'
-        break;
-      case 'BSpline':
-        c.functional.template_registration.methods.ants.interpolation = 'spline'
-        break;
-    }
-  } else {
-    switch (config.funcRegFSLinterpolation) {
-      case 'sinc':
-        c.functional.template_registration.methods.fsl.interpolation = 'sinc'
-        break;
-      case 'trilinear':
-        c.functional.template_registration.methods.fsl.interpolation = 'linear'
-        break;
-      case 'spline':
-        c.functional.template_registration.methods.fsl.interpolation = 'spline'
-        break;
-    }
-  }
+  // if (config.regOption.includes("ANTS")) {
+  //   switch (config.funcRegANTSinterpolation) {
+  //     case 'LanczosWindowedSinc':
+  //       c.functional.template_registration.methods.ants.interpolation = 'sinc'
+  //       break;
+  //     case 'Linear':
+  //       c.functional.template_registration.methods.ants.interpolation = 'linear'
+  //       break;
+  //     case 'BSpline':
+  //       c.functional.template_registration.methods.ants.interpolation = 'spline'
+  //       break;
+  //   }
+  // } else {
+  //   switch (config.funcRegFSLinterpolation) {
+  //     case 'sinc':
+  //       c.functional.template_registration.methods.fsl.interpolation = 'sinc'
+  //       break;
+  //     case 'trilinear':
+  //       c.functional.template_registration.methods.fsl.interpolation = 'linear'
+  //       break;
+  //     case 'spline':
+  //       c.functional.template_registration.methods.fsl.interpolation = 'spline'
+  //       break;
+  //   }
+  // }
 
   c.functional.template_registration.brain_template =
     config.template_brain_only_for_func
@@ -826,6 +829,9 @@ export function dump(pipeline, version='0') {
   config.fmap_distcorr_dwell_time = [c.functional.distortion_correction.method.phasediff.dwell_time]
   config.fmap_distcorr_dwell_asym_ratio = [c.functional.distortion_correction.method.phasediff.dwell_to_assymetric_ratio]
   config.fmap_distcorr_pedir = c.functional.distortion_correction.method.phasediff.phase_encoding_direction
+         
+  config.runRegisterFuncToEPI = [c.functional.epi_registration.enabled ? 1 : 0]
+  config.template_epi = c.functional.epi_registration.template_epi
 
   config.runRegisterFuncToAnat = [c.functional.anatomical_registration.enabled ? 1 : 0]
   config.runBBReg = [c.functional.anatomical_registration.bb_registration ? 1 : 0]
@@ -861,33 +867,33 @@ export function dump(pipeline, version='0') {
     config.resolution_for_func_derivative = c.functional.template_registration.derivative_resolution + "mm"
   }
   
-  switch (c.functional.template_registration.methods.ants.interpolation) {
-    case 'linear':
-      config.funcRegANTSinterpolation = 'Linear'
-      break;
+  // switch (c.functional.template_registration.methods.ants.interpolation) {
+  //   case 'linear':
+  //     config.funcRegANTSinterpolation = 'Linear'
+  //     break;
   
-    case 'sinc':
-      config.funcRegANTSinterpolation = 'LanczosWindowedSinc'
-      break;
+  //   case 'sinc':
+  //     config.funcRegANTSinterpolation = 'LanczosWindowedSinc'
+  //     break;
 
-    case 'spline':
-      config.funcRegANTSinterpolation = 'BSpline'
-      break;
-  } 
+  //   case 'spline':
+  //     config.funcRegANTSinterpolation = 'BSpline'
+  //     break;
+  // } 
   
-  switch (c.functional.template_registration.methods.fsl.interpolation) {
-    case 'linear':
-      config.funcRegFSLinterpolation = 'trilinear'
-      break;
+  // switch (c.functional.template_registration.methods.fsl.interpolation) {
+  //   case 'linear':
+  //     config.funcRegFSLinterpolation = 'trilinear'
+  //     break;
   
-    case 'sinc':
-      config.funcRegFSLinterpolation = 'sinc'
-      break;
+  //   case 'sinc':
+  //     config.funcRegFSLinterpolation = 'sinc'
+  //     break;
 
-    case 'spline':
-      config.funcRegFSLinterpolation = 'spline'
-      break;
-  }
+  //   case 'spline':
+  //     config.funcRegFSLinterpolation = 'spline'
+  //     break;
+  // }
 
   config.template_brain_only_for_func = c.functional.template_registration.brain_template
   config.template_skull_for_func = c.functional.template_registration.skull_template
