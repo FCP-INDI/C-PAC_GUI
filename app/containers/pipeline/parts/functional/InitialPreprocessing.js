@@ -62,7 +62,7 @@ class InitialPreprocessing extends Component {
           <FormGroup row>
             <Help
               type="pipeline"
-              regex={/^runMotionStatistics/}
+              regex={/^runMotionStatisticsFirst/}
               help={`Turn on to motion statistics before slice timing correction`}
             >
               <FormControlLabelled label="Motion Statistics before Slice Timing Correction">

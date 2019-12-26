@@ -360,7 +360,7 @@ export function parse(content) {
   c.functional.preprocessing.n4_mean_epi.enabled = config.n4_correction_mean_EPI
   c.functional.preprocessing.scaling.enabled = config.runScaling
   c.functional.preprocessing.scaling.factor = config.scaling_factor
-  c.functional.preprocessing.motion_stats.enabled = config.runMotionStatistics.includes(1)
+  c.functional.preprocessing.motion_stats.enabled = config.runMotionStatisticsFirst.includes(1)
 
   c.functional.slice_timing_correction.enabled = config.slice_timing_correction.includes(1)
   c.functional.slice_timing_correction.repetition_time = !config.TR || config.TR == "None" ? '' : config.TR
@@ -786,7 +786,7 @@ export function dump(pipeline, version='0') {
   config.runFunctional = c.functional.enabled ? [1] : [0]
 
   config.n4_correction_mean_EPI = c.functional.preprocessing.n4_mean_epi.enabled
-  config.runMotionStatistics = [c.functional.preprocessing.motion_stats.enabled ? 1 : 0]
+  config.runMotionStatisticsFirst = [c.functional.preprocessing.motion_stats.enabled ? 1 : 0]
   config.runScaling = c.functional.preprocessing.scaling.enabled
   config.scaling_factor = c.functional.preprocessing.scaling.factor
   
