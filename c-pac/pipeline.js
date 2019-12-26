@@ -361,27 +361,27 @@ export function parse(content) {
   c.anatomical.tissue_segmentation.configuration.erosion.enabled = config.seg_use_erosion
   c.anatomical.tissue_segmentation.configuration.erosion.proportion = config.seg_erosion_prop
  
-  if (typeof config.template_based_segmenation === "string") {
-    config.template_based_segmenation = [config.template_based_segmenation]
+  if (typeof config.template_based_segmentation === "string") {
+    config.template_based_segmentation = [config.template_based_segmentation]
   }
 
-  if (config.template_based_segmenation.includes("None")) {
+  if (config.template_based_segmentation.includes("None")) {
     c.anatomical.tissue_segmentation.configuration.template_based_seg.enabled = false
   }
 
-  if (config.template_based_segmenation.includes("EPI_template")) {
+  if (config.template_based_segmentation.includes("EPI_template")) {
     c.anatomical.tissue_segmentation.configuration.template_based_seg.enabled = true
     c.anatomical.tissue_segmentation.configuration.template_based_seg.methods = 'epi_template_based'
   }
 
-  if (config.template_based_segmenation.includes("T1_template")) {
+  if (config.template_based_segmentation.includes("T1_template")) {
     c.anatomical.tissue_segmentation.configuration.template_based_seg.enabled = true
     c.anatomical.tissue_segmentation.configuration.template_based_seg.methods = 't1_templated_based'
   } 
 
-  c.anatomical.tissue_segmentation.configuration.template_based_seg.tissue_path.white_matter = config.template_based_segmenation_WHITE.replace("$FSLDIR", "${environment.paths.fsl_dir}")
-  c.anatomical.tissue_segmentation.configuration.template_based_seg.tissue_path.gray_matter = config.template_based_segmenation_GRAY.replace("$FSLDIR", "${environment.paths.fsl_dir}")
-  c.anatomical.tissue_segmentation.configuration.template_based_seg.tissue_path.cerebrospinal_fluid = config.template_based_segmenation_CSF.replace("$FSLDIR", "${environment.paths.fsl_dir}")
+  c.anatomical.tissue_segmentation.configuration.template_based_seg.tissue_path.white_matter = config.template_based_segmentation_WHITE.replace("$FSLDIR", "${environment.paths.fsl_dir}")
+  c.anatomical.tissue_segmentation.configuration.template_based_seg.tissue_path.gray_matter = config.template_based_segmentation_GRAY.replace("$FSLDIR", "${environment.paths.fsl_dir}")
+  c.anatomical.tissue_segmentation.configuration.template_based_seg.tissue_path.cerebrospinal_fluid = config.template_based_segmentation_CSF.replace("$FSLDIR", "${environment.paths.fsl_dir}")
   
   c.functional.preprocessing.n4_mean_epi.enabled = config.n4_correction_mean_EPI
   c.functional.preprocessing.scaling.enabled = config.runScaling
@@ -817,13 +817,13 @@ export function dump(pipeline, version='0') {
   config.seg_erosion_prop = c.anatomical.tissue_segmentation.configuration.seg_use_erosion.erosion.seg_erosion_prop 
 
 
-  config.template_based_segmenation = []
+  config.template_based_segmentation = []
     .concat(c.anatomical.tissue_segmentation.configuration.template_based_seg.enabled ? ["None"] : [])
     .concat(c.anatomical.tissue_segmentation.configuration.template_based_seg.methods === 'epi_template_based' ? 'EPI_template' : 'T1_template')
 
-  config.template_based_segmenation_WHITE = c.anatomical.tissue_segmentation.configuration.template_based_seg.tissue_path.white_matter
-  config.template_based_segmenation_GRAY = c.anatomical.tissue_segmentation.configuration.template_based_seg.tissue_path.gray_matter
-  config.template_based_segmenation_CSF = c.anatomical.tissue_segmentation.configuration.template_based_seg.tissue_path.cerebrospinal_fluid
+  config.template_based_segmentation_WHITE = c.anatomical.tissue_segmentation.configuration.template_based_seg.tissue_path.white_matter
+  config.template_based_segmentation_GRAY = c.anatomical.tissue_segmentation.configuration.template_based_seg.tissue_path.gray_matter
+  config.template_based_segmentation_CSF = c.anatomical.tissue_segmentation.configuration.template_based_seg.tissue_path.cerebrospinal_fluid
 
   config.runFunctional = c.functional.enabled ? [1] : [0]
 

@@ -799,11 +799,11 @@ class SkullStripping extends Component {
               <Help
                 type="pipeline"
                 regex={/^unet_model/}
-                help={`U-Net is a model used for skull-stripping of the macaque. It is not necessary to change this path unless you intend to use a non-standard template.`}
+                help={`U-Net is a model used for skull-stripping of the macaque. It is not necessary to change this path unless you intend to use a customized model.`}
                 fullWidth
               >
                 <TextField
-                  label="U-Net Brain extraction model" fullWidth margin="normal" variant="outlined"
+                  label="U-Net Brain Extraction Model" fullWidth margin="normal" variant="outlined"
                   name="anatomical.skull_stripping.methods.unet.unet_model"
                   value={configuration.getIn(['anatomical', 'skull_stripping', 'methods', 'unet', 'unet_model'])}
                   onChange={onChange}
@@ -833,7 +833,7 @@ class SkullStripping extends Component {
             <Help
               type="pipeline"
               regex={/^skullstrip_option/}
-              help={`Choice of using AFNI-3dSkullStrip or FSL-BET or NIworkflows-ANTS or UNet to perform SkullStripping.`}
+              help={`Choice of using AFNI-3dSkullStrip, FSL-BET, NIworkflows-ANTS and/or U-Net to perform SkullStripping.`}
             >              
               <FormControlLabel
                 label="AFNI 3dSkullStrip"
