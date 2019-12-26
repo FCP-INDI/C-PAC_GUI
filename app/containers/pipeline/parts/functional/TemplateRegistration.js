@@ -24,7 +24,7 @@ class TemplateRegistration extends Component {
       <Grid container>
         <Grid item sm={12}>
 
-          <Collapse in={configuration.getIn("anatomical.registration.methods.ants.enabled".split("."))}>
+          {/* <Collapse in={configuration.getIn("anatomical.registration.methods.ants.enabled".split("."))}>
 
             <Help
               type="pipeline"
@@ -76,7 +76,7 @@ class TemplateRegistration extends Component {
               </TextField>
             </Help>
 
-          </Collapse>
+          </Collapse> */}
 
           <Help
             type="pipeline"

@@ -71,6 +71,7 @@ export default {
               afni: {
                 enabled: true,
                 configuration: {
+                  mask_vol: false,
                   shrink_factor: {
                     vary: true,
                     threshold: 0.6,
@@ -122,6 +123,10 @@ export default {
                   niworkflows_ants_mask_path: '/ants_template/oasis/T_template0_BrainCerebellumProbabilityMask.nii.gz',
                   niworkflows_ants_regmask_path: '/ants_template/oasis/T_template0_BrainCerebellumRegistrationMask.nii.gz',
                 }
+              },
+              unet: {
+                enabled: false,
+                unet_model: 's3://fcp-indi/resources/cpac/resources/Site-All-T-epoch_36.model',
               }
             }
           },
@@ -183,6 +188,10 @@ export default {
               }
             }
           },
+          epi_registration: {
+            enabled: false,
+            template_epi: 's3://fcp-indi/resources/cpac/resources/epi_hbn.nii.gz',
+          },
           anatomical_registration: {
             enabled: true,
             bb_registration: false,
@@ -193,6 +202,7 @@ export default {
               fsl: false,
               afni: false,
               fsl_afni: false,
+              anat_refined: false,
             },
           },
           template_registration: {

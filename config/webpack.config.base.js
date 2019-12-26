@@ -44,6 +44,9 @@ export default {
       path.join(__dirname, '..', 'app'),
       'node_modules',
     ],
+    alias: {
+      'react-dom': '@hot-loader/react-dom'
+    }
   },
 
   plugins: [

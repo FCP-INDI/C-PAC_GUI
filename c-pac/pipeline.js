@@ -268,6 +268,10 @@ export function parse(content) {
 
   if (config.skullstrip_option.includes("niworkflows-ants")) {
     c.anatomical.skull_stripping.methods.niworkflows_ants.enabled = true
+  }
+  
+  if (config.skullstrip_option.includes("unet")) {
+    c.anatomical.skull_stripping.methods.unet.enabled = true
   } 
 
   if (config.resolution_for_anat.includes("x")) {
@@ -405,6 +409,9 @@ export function parse(content) {
   c.functional.distortion_correction.method.phasediff.dwell_to_assymetric_ratio = config.fmap_distcorr_dwell_asym_ratio[0]
   c.functional.distortion_correction.method.phasediff.phase_encoding_direction = config.fmap_distcorr_pedir
 
+  c.functional.epi_registration.enabled = config.runRegisterFuncToEPI.includes(1) 
+  c.functional.epi_registration.template_epi = config.template_epi
+
   c.functional.anatomical_registration.enabled = config.runRegisterFuncToAnat.includes(1)
   c.functional.anatomical_registration.bb_registration = config.runBBReg.includes(1)
   c.functional.anatomical_registration.bb_registration_scheduler =
@@ -416,36 +423,37 @@ export function parse(content) {
   c.functional.anatomical_registration.functional_masking.fsl = config.functionalMasking.includes('FSL')
   c.functional.anatomical_registration.functional_masking.afni = config.functionalMasking.includes('AFNI')
   c.functional.anatomical_registration.functional_masking.fsl_afni = config.functionalMasking.includes('FSL_AFNI')
+  c.functional.anatomical_registration.functional_masking.anat_refined = config.functionalMasking.includes('Anatomical_Refined')
 
   c.functional.template_registration.enabled = config.runRegisterFuncToMNI.includes(1)
   c.functional.template_registration.functional_resolution = config.resolution_for_func_preproc.replace(/mm/g, "")
   c.functional.template_registration.derivative_resolution = config.resolution_for_func_derivative.replace(/mm/g, "")
 
-  if (config.regOption.includes("ANTS")) {
-    switch (config.funcRegANTSinterpolation) {
-      case 'LanczosWindowedSinc':
-        c.functional.template_registration.methods.ants.interpolation = 'sinc'
-        break;
-      case 'Linear':
-        c.functional.template_registration.methods.ants.interpolation = 'linear'
-        break;
-      case 'BSpline':
-        c.functional.template_registration.methods.ants.interpolation = 'spline'
-        break;
-    }
-  } else {
-    switch (config.funcRegFSLinterpolation) {
-      case 'sinc':
-        c.functional.template_registration.methods.fsl.interpolation = 'sinc'
-        break;
-      case 'trilinear':
-        c.functional.template_registration.methods.fsl.interpolation = 'linear'
-        break;
-      case 'spline':
-        c.functional.template_registration.methods.fsl.interpolation = 'spline'
-        break;
-    }
-  }
+  // if (config.regOption.includes("ANTS")) {
+  //   switch (config.funcRegANTSinterpolation) {
+  //     case 'LanczosWindowedSinc':
+  //       c.functional.template_registration.methods.ants.interpolation = 'sinc'
+  //       break;
+  //     case 'Linear':
+  //       c.functional.template_registration.methods.ants.interpolation = 'linear'
+  //       break;
+  //     case 'BSpline':
+  //       c.functional.template_registration.methods.ants.interpolation = 'spline'
+  //       break;
+  //   }
+  // } else {
+  //   switch (config.funcRegFSLinterpolation) {
+  //     case 'sinc':
+  //       c.functional.template_registration.methods.fsl.interpolation = 'sinc'
+  //       break;
+  //     case 'trilinear':
+  //       c.functional.template_registration.methods.fsl.interpolation = 'linear'
+  //       break;
+  //     case 'spline':
+  //       c.functional.template_registration.methods.fsl.interpolation = 'spline'
+  //       break;
+  //   }
+  // }
 
   c.functional.template_registration.brain_template =
     config.template_brain_only_for_func
@@ -666,9 +674,11 @@ export function dump(pipeline, version='0') {
   config.already_skullstripped = [c.anatomical.skull_stripping.enabled ? 0 : 1]
   config.skullstrip_option = []
     .concat(c.anatomical.skull_stripping.methods.afni.enabled ? ["AFNI"] : [])
-    .concat(c.anatomical.skull_stripping.methods.bet.enabled ? ["BET"] : [])
+    .concat(c.anatomical.skull_stripping.methods.bet.enabled ? ["FSL"] : [])
     .concat(c.anatomical.skull_stripping.methods.niworkflows_ants.enabled ? ["niworkflows-ants"] : [])
+    .concat(c.anatomical.skull_stripping.methods.unet.enabled ? ["unet"] : [])
 
+  config.skullstrip_mask_vol = c.anatomical.skull_stripping.methods.afni.configuration.mask_vol
   config.skullstrip_shrink_factor = c.anatomical.skull_stripping.methods.afni.configuration.shrink_factor.threshold
   config.skullstrip_var_shrink_fac = c.anatomical.skull_stripping.methods.afni.configuration.shrink_factor.vary
   config.skullstrip_shrink_factor_bot_lim = c.anatomical.skull_stripping.methods.afni.configuration.shrink_factor.bottom_limit
@@ -714,6 +724,8 @@ export function dump(pipeline, version='0') {
   config.niworkflows_ants_mask_path = c.anatomical.skull_stripping.methods.niworkflows_ants.ants_templates.niworkflows_ants_mask_path
   config.niworkflows_ants_regmask_path = c.anatomical.skull_stripping.methods.niworkflows_ants.ants_templates.niworkflows_ants_regmask_path
 
+  config.unet_model = c.anatomical.skull_stripping.methods.unet.unet_model
+
   config.template_brain_only_for_anat = c.anatomical.registration.brain_template
   config.template_skull_for_anat = c.anatomical.registration.skull_template
   config.regOption = ['ANTS']
@@ -721,7 +733,6 @@ export function dump(pipeline, version='0') {
   config.regOption = []
     .concat(c.anatomical.registration.methods.ants.enabled ? ["ANTS"] : [])
     .concat(c.anatomical.registration.methods.fsl.enabled ? ["FSL"] : [])
-    .concat(c.anatomical.registration.methods.fsl.enabled ? ["FSL_AFNI"] : [])
 
   config.use_lesion_mask = [c.anatomical.registration.methods.ants.configuration.lesion_mask ? 1 : 0]
 
@@ -774,9 +785,9 @@ export function dump(pipeline, version='0') {
     config.seg_GM_threshold_value = c.anatomical.tissue_segmentation.configuration.customized_threshold.threshold.gray_matter 
     config.seg_CSF_threshold_value = c.anatomical.tissue_segmentation.configuration.customized_threshold.threshold.cerebrospinal_fluid 
   }
-  
-  config.seg_use_erosion = [c.anatomical.tissue_segmentation.configuration.erosion.enabled ? 1 : 0]
-  config.seg_erosion_prop = c.anatomical.tissue_segmentation.configuration.erosion.proportion 
+    
+  config.seg_use_erosion = [c.anatomical.tissue_segmentation.configuration.seg_use_erosion.enabled ? 1 : 0]
+  config.seg_erosion_prop = c.anatomical.tissue_segmentation.configuration.seg_use_erosion.erosion.seg_erosion_prop 
 
   config.runFunctional = c.functional.enabled ? [1] : [0]
 
@@ -818,6 +829,9 @@ export function dump(pipeline, version='0') {
   config.fmap_distcorr_dwell_time = [c.functional.distortion_correction.method.phasediff.dwell_time]
   config.fmap_distcorr_dwell_asym_ratio = [c.functional.distortion_correction.method.phasediff.dwell_to_assymetric_ratio]
   config.fmap_distcorr_pedir = c.functional.distortion_correction.method.phasediff.phase_encoding_direction
+         
+  config.runRegisterFuncToEPI = [c.functional.epi_registration.enabled ? 1 : 0]
+  config.template_epi = c.functional.epi_registration.template_epi
 
   config.runRegisterFuncToAnat = [c.functional.anatomical_registration.enabled ? 1 : 0]
   config.runBBReg = [c.functional.anatomical_registration.bb_registration ? 1 : 0]
@@ -830,6 +844,7 @@ export function dump(pipeline, version='0') {
     .concat(c.functional.anatomical_registration.functional_masking.fsl ? ["FSL"] : [])
     .concat(c.functional.anatomical_registration.functional_masking.afni ? ["AFNI"] : [])
     .concat(c.functional.anatomical_registration.functional_masking.fsl_afni ? ["FSL_AFNI"] : [])
+    .concat(c.functional.anatomical_registration.functional_masking.anat_refined ? ["Anatomical_Refined"] : [])
   
   config.runRegisterFuncToMNI = [c.functional.template_registration.enabled ? 1 : 0]
   if (c.functional.template_registration.functional_resolution.includes("x")) {
@@ -852,33 +867,33 @@ export function dump(pipeline, version='0') {
     config.resolution_for_func_derivative = c.functional.template_registration.derivative_resolution + "mm"
   }
   
-  switch (c.functional.template_registration.methods.ants.interpolation) {
-    case 'linear':
-      config.funcRegANTSinterpolation = 'Linear'
-      break;
+  // switch (c.functional.template_registration.methods.ants.interpolation) {
+  //   case 'linear':
+  //     config.funcRegANTSinterpolation = 'Linear'
+  //     break;
   
-    case 'sinc':
-      config.funcRegANTSinterpolation = 'LanczosWindowedSinc'
-      break;
+  //   case 'sinc':
+  //     config.funcRegANTSinterpolation = 'LanczosWindowedSinc'
+  //     break;
 
-    case 'spline':
-      config.funcRegANTSinterpolation = 'BSpline'
-      break;
-  } 
+  //   case 'spline':
+  //     config.funcRegANTSinterpolation = 'BSpline'
+  //     break;
+  // } 
   
-  switch (c.functional.template_registration.methods.fsl.interpolation) {
-    case 'linear':
-      config.funcRegFSLinterpolation = 'trilinear'
-      break;
+  // switch (c.functional.template_registration.methods.fsl.interpolation) {
+  //   case 'linear':
+  //     config.funcRegFSLinterpolation = 'trilinear'
+  //     break;
   
-    case 'sinc':
-      config.funcRegFSLinterpolation = 'sinc'
-      break;
+  //   case 'sinc':
+  //     config.funcRegFSLinterpolation = 'sinc'
+  //     break;
 
-    case 'spline':
-      config.funcRegFSLinterpolation = 'spline'
-      break;
-  }
+  //   case 'spline':
+  //     config.funcRegFSLinterpolation = 'spline'
+  //     break;
+  // }
 
   config.template_brain_only_for_func = c.functional.template_registration.brain_template
   config.template_skull_for_func = c.functional.template_registration.skull_template
