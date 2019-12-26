@@ -18,7 +18,7 @@ if (process.env.NODE_ENV === 'production') {
   ReactGA.set({ aip: 1 });
 }
 
-export class TemplatePage extends Component {
+export class RouterPage extends Component {
 
   componentDidUpdate(prevProps) {
     if (this.props.location !== prevProps.location) {
@@ -47,4 +47,4 @@ export class TemplatePage extends Component {
   }
 }
 
-export default withRouter(TemplatePage)
+export default withRouter(RouterPage)

@@ -45,7 +45,9 @@ import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import TableFooter from '@material-ui/core/TableFooter';
+
 import { fromJS } from 'immutable';
+import MathJax from 'react-mathjax'
 
 import FormControlLabelled from 'components/FormControlLabelled'
 import Help from 'components/Help'
@@ -58,7 +60,7 @@ import {
 } from 'components/icons';
 
 const original = fromJS({
-  GreyMatter: {
+  GrayMatter: {
     enabled: false,
     summary: {
       method: 'Mean',
@@ -211,7 +213,7 @@ class NuisanceRegression extends Component {
     const renaming = {
       'WhiteMatter': 'WM',
       'CerebrospinalFluid': 'CSF',
-      'GreyMatter': 'GM',
+      'GrayMatter': 'GM',
       'GlobalSignal': 'GR',
       'Motion': 'Mot',
       'Bandpass': 'BP',
@@ -226,7 +228,10 @@ class NuisanceRegression extends Component {
     let representation = ''
 
     const regressor_pieces = []
-    for(let reg of ['Motion', 'GlobalSignal', 'WhiteMatter', 'CerebrospinalFluid', 'GreyMatter','aCompCor', 'tCompCor', 'PolyOrt', 'Bandpass', 'Censor']) {
+    for(let reg of [
+      'Motion', 'GlobalSignal', 'WhiteMatter', 'CerebrospinalFluid',
+      'GrayMatter','aCompCor', 'tCompCor', 'PolyOrt', 'Bandpass', 'Censor'
+    ]) {
       if (regressors[reg] === undefined) {
         continue
       }
@@ -259,53 +264,53 @@ class NuisanceRegression extends Component {
         name = renaming[reg]
       }
 
-      let terms = [name]
+      let terms = [`\\textrm{${name}}`]
 
       if (regressor['include_squared']) {
-        terms.push(`${name}²`)
+        terms.push(`\\textrm{${name}}^{2}`)
       }
       if (regressor['include_delayed']) {
-        terms.push(`${name}ₜ₋₁`)
+        terms.push(`\\textrm{${name}}_{t-1}`)
       }
       if (regressor['include_delayed_squared']) {
-        terms.push(`${name}ₜ₋₁²`)
+        terms.push(`\\textrm{${name}}_{t-1}^{2}`)
       }
 
       let regressor_terms = terms.join(' + ')
 
       if (regressor['tissues']) {
-        regressor_terms += ' ('
-        regressor_terms += regressor['tissues'].map((tissue) => renaming[tissue]).reduce((t, tt) => t + " + " + tt)
+        regressor_terms += '\\;('
+        regressor_terms += regressor['tissues'].map((tissue) => `\\textrm{${renaming[tissue]}}`).reduce((t, tt) => t + " + " + tt)
         regressor_terms += ')'
       }
 
       if (regressor['summary']) {
         if (typeof(regressor['summary']) == "object") {
-          regressor_terms += ` ${regressor['summary']['method']}`
+          regressor_terms += `\\;\\textrm{${regressor['summary']['method']}}`
           if (['DetrendPC', 'PC'].indexOf(regressor['summary']['method']) > -1) {
-            regressor_terms += ` ${regressor['summary']['components']}`
+            regressor_terms += `\\;${regressor['summary']['components']}`
           }
         } else {
-          regressor_terms += ` ${regressor['summary']}`
+          regressor_terms += `\\;\\textrm{${regressor['summary']}}`
         }
       }
 
       if (reg == 'PolyOrt') {
-        regressor_terms += ` ${regressor['degree']}`
+        regressor_terms += `\\;${regressor['degree']}`
       }
 
       if (reg == 'Bandpass') {
-        regressor_terms += ` ${regressor['bottom_frequency'] || 0.00}-${regressor['top_frequency'] || 9999.00}`
+        regressor_terms += `\\;${regressor['bottom_frequency'] || 0.00}-${regressor['top_frequency'] || 9999.00}`
       }
 
       if (reg == 'Censor') {
-        regressor_terms += ` ${regressor['method']} ${censor_renaming[regressor['threshold']['type']]}: ${regressor['threshold']['value']}`
+        regressor_terms += `\\;\\textrm{${regressor['method']}}\\;\\textrm{${censor_renaming[regressor['threshold']['type']]}}:\\;${regressor['threshold']['value']}`
       }
 
       regressor_pieces.push(regressor_terms)
     }
 
-    representation += regressor_pieces.join(", ")
+    representation = regressor_pieces.map((p, i) => <MathJax.Node key={i} inline formula={p} />)
 
     if (!representation) {
       representation = 'No regressors selected'
@@ -321,7 +326,7 @@ class NuisanceRegression extends Component {
       <React.Fragment>
         { this.renderRegressor(regressor, i, 'Motion', 'Motion', true) }
         { this.renderRegressor(regressor, i, 'GlobalSignal', 'Global Signal', true, true) }
-        { this.renderRegressor(regressor, i, 'GreyMatter', 'Grey Matter', true, true, true) }
+        { this.renderRegressor(regressor, i, 'GrayMatter', 'Gray Matter', true, true, true) }
         { this.renderRegressor(regressor, i, 'WhiteMatter', 'White Matter', true, true, true) }
         { this.renderRegressor(regressor, i, 'CerebrospinalFluid', 'CerebrospinalFluid', true, true, true) }
         { this.renderRegressor(regressor, i, 'aCompCor', 'aCompCor', true, false, false, (
@@ -668,7 +673,14 @@ class NuisanceRegression extends Component {
                 regressors.map((regressor, i) => (
                   <ListItem button key={i} onClick={((regi) => () => this.handleEdit(regi))(i)}>
                     <ListItemText primary={
-                      <span>{ this.getRegressorLabel(regressor.toJS()) }</span>
+                      <span>{
+                        this.getRegressorLabel(regressor.toJS()).reduce((result, child, index, children) => {
+                          if (index < children.length - 1) {
+                            return result.concat([child, <span key={`sep-${index}`}>, </span>])
+                          }
+                          return result.concat(child)
+                        }, [])
+                      }</span>
                     } style={{ padding: '0 115px 0 0' }} />
                     <ListItemSecondaryAction>
                       <IconButton onClick={((regi) => () => this.handleEdit(regi))(i)}>

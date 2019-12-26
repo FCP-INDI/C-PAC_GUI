@@ -3,7 +3,7 @@ export default {
   name: 'Default',
   versions: {
     'default': {
-      version: '1.4.3',
+      version: '1.5.0',
       configuration: {
         general: {
           environment: {
@@ -38,7 +38,7 @@ export default {
             methods: {
               ants: {
                 enabled: true,
-                interpolation: 'sinc', 
+                interpolation: 'sinc',
                 configuration: {
                   skull_on: false,
                   lesion_mask: true,
@@ -56,13 +56,12 @@ export default {
             }
           },
           preprocessing: {
-            enabled: true,
             methods: {
               nlmf: {
-                enabled: false
+                enabled: false,
               },
               n4: {
-                enabled: false
+                enabled: false,
               }
             }
           },
@@ -134,7 +133,7 @@ export default {
           tissue_segmentation: {
             enabled: true,
             configuration: {
-              seg_use_priors: {
+              priors: {
                 enabled: true,
                 priors: {
                   white_matter: '${environment.paths.fsl_dir}/data/standard/tissuepriors/2mm/avg152T1_white_bin.nii.gz',
@@ -142,26 +141,22 @@ export default {
                   cerebrospinal_fluid: '${environment.paths.fsl_dir}/data/standard/tissuepriors/2mm/avg152T1_csf_bin.nii.gz',
                 }
               },
-              seg_use_fast_threshold:{
+              fast_threshold: {
                 enabled: true,
               },
-              seg_use_customized_threshold:{
+              custom_threshold: {
                 enabled: false,
                 threshold: {
-                  seg_WM_threshold_value: 0.95,
-                  seg_GM_threshold_value: 0.95,
-                  seg_CSF_threshold_value: 0.95,
+                  white_matter: 0.95,
+                  gray_matter: 0.95,
+                  cerebrospinal_fluid: 0.95,
                 }
               },
-              seg_use_erosion:{
+              erosion: {
                 enabled: false,
-                erosion: {
-                  seg_erosion_prop : 0.6
-                }
+                proportion: 0.6
               }
-
             }
-
           }
         },
         functional: {
@@ -190,8 +185,8 @@ export default {
               },
               blip: {
                 enabled: false
-              }            
-            }            
+              }
+            }
           },
           anatomical_registration: {
             enabled: true,
@@ -228,7 +223,7 @@ export default {
             lateral_ventricles_mask: '${environment.paths.fsl_dir}/data/atlases/HarvardOxford/HarvardOxford-lateral-ventricles-thr25-2mm.nii.gz',
             regressors: [
               {
-                GreyMatter: {
+                GrayMatter: {
                   enabled: true,
                   summary: {
                     method: 'Mean',

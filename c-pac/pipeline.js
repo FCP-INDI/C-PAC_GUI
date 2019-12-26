@@ -56,7 +56,7 @@ export function normalize(pipeline) {
 
   const newVersionKey = new Date().getTime().toString()
   const newVersion = {
-    version: '1.4.3',
+    version: '1.5.0',
   }
 
   const newConfiguration = clone(configuration)
@@ -144,8 +144,8 @@ export function normalize(pipeline) {
           newRegressors.Motion.include_delayed_squared = true
         }
 
-        newRegressors.GreyMatter = templateRegressors.GreyMatter
-        newRegressors.GreyMatter.enabled = regressors.gray_matter
+        newRegressors.GrayMatter = templateRegressors.GrayMatter
+        newRegressors.GrayMatter.enabled = regressors.gray_matter
 
         newRegressors.WhiteMatter = templateRegressors.WhiteMatter
         newRegressors.WhiteMatter.enabled = regressors.white_matter
@@ -249,6 +249,9 @@ export function parse(content) {
   c.general.environment.outputs.organized = config.runSymbolicLinks.includes(1)
   c.general.environment.outputs.remove_working = config.removeWorkingDir
 
+  c.anatomical.preprocessing.methods.nlmf.enabled = config.non_local_means_filtering
+  c.anatomical.preprocessing.methods.n4.enabled = config.n4_bias_field_correction
+
   c.anatomical.skull_stripping.enabled = config.already_skullstripped.includes(0)
 
   if (typeof config.skullstrip_option === "string") {
@@ -271,16 +274,13 @@ export function parse(content) {
     c.anatomical.skull_stripping.methods.unet.enabled = true
   } 
 
-  c.anatomical.registration.resolution = config.resolution_for_anat.replace(/mm/g,"")
-  if (c.anatomical.registration.resolution.includes("x")) {
-    temp = config.resolution_for_anat.split("x")
-    c.anatomical.registration.resolution = []
-
-    for (i = 0; i < 3; i++) {
-      c.anatomical.registration.resolution.push(parseFloat(temp[i]))
-    }
+  if (config.resolution_for_anat.includes("x")) {
+    c.anatomical.registration.resolution = 
+      config.resolution_for_anat.replace('mm', '')
+                                .split("x")
+                                .map(parseFloat)
   } else {
-    c.anatomical.registration.resolution = []
+    c.anatomical.registration.resolution = parseFloat(config.resolution_for_anat.replace('mm', ''))
   }
 
   c.anatomical.registration.brain_template = config.template_brain_only_for_anat
@@ -336,34 +336,34 @@ export function parse(content) {
   }
   
   c.anatomical.tissue_segmentation.enabled = config.runSegmentationPreprocessing.includes(1)
-  c.anatomical.tissue_segmentation.configuration.seg_use_priors.enabled = config.seg_use_priors
+  c.anatomical.tissue_segmentation.configuration.priors.enabled = !!config.seg_use_priors
 
   let priors_path = ''
   if (config.priors_path) {
     priors_path = config.priors_path.replace("$FSLDIR", "${environment.paths.fsl_dir}")
   }
 
-  c.anatomical.tissue_segmentation.configuration.seg_use_priors.priors.white_matter = config.PRIORS_WHITE.replace("$priors_path", priors_path)
-  c.anatomical.tissue_segmentation.configuration.seg_use_priors.priors.gray_matter = config.PRIORS_GRAY.replace("$priors_path", priors_path)
-  c.anatomical.tissue_segmentation.configuration.seg_use_priors.priors.cerebrospinal_fluid = config.PRIORS_CSF.replace("$priors_path", priors_path)
+  c.anatomical.tissue_segmentation.configuration.priors.priors.white_matter = config.PRIORS_WHITE.replace("$priors_path", priors_path)
+  c.anatomical.tissue_segmentation.configuration.priors.priors.gray_matter = config.PRIORS_GRAY.replace("$priors_path", priors_path)
+  c.anatomical.tissue_segmentation.configuration.priors.priors.cerebrospinal_fluid = config.PRIORS_CSF.replace("$priors_path", priors_path)
 
   if (config.seg_use_threshold.includes("FSL-FAST Thresholding")) {
-    c.anatomical.tissue_segmentation.configuration.seg_use_fast_threshold.enabled = true
-    c.anatomical.tissue_segmentation.configuration.seg_use_customized_threshold.enabled = false
+    c.anatomical.tissue_segmentation.configuration.fast_threshold.enabled = true
+    c.anatomical.tissue_segmentation.configuration.custom_threshold.enabled = false
   } else if (config.seg_use_threshold.includes("Customized Thresholding")) {
-    c.anatomical.tissue_segmentation.configuration.seg_use_fast_threshold.enabled = false
-    c.anatomical.tissue_segmentation.configuration.seg_use_customized_threshold.enabled = true
-    c.anatomical.tissue_segmentation.configuration.seg_use_customized_threshold.threshold.seg_WM_threshold_value = config.seg_WM_threshold_value
-    c.anatomical.tissue_segmentation.configuration.seg_use_customized_threshold.threshold.seg_GM_threshold_value = config.seg_GM_threshold_value
-    c.anatomical.tissue_segmentation.configuration.seg_use_customized_threshold.threshold.seg_CSF_threshold_value = config.seg_CSF_threshold_value
+    c.anatomical.tissue_segmentation.configuration.fast_threshold.enabled = false
+    c.anatomical.tissue_segmentation.configuration.custom_threshold.enabled = true
+    c.anatomical.tissue_segmentation.configuration.custom_threshold.threshold.white_matter = config.seg_WM_threshold_value
+    c.anatomical.tissue_segmentation.configuration.custom_threshold.threshold.gray_matter = config.seg_GM_threshold_value
+    c.anatomical.tissue_segmentation.configuration.custom_threshold.threshold.cerebrospinal_fluid = config.seg_CSF_threshold_value
   }
     
-  c.anatomical.tissue_segmentation.configuration.seg_use_erosion.enabled = config.seg_use_erosion
-  c.anatomical.tissue_segmentation.configuration.seg_use_erosion.erosion.seg_erosion_prop = config.seg_erosion_prop
+  c.anatomical.tissue_segmentation.configuration.erosion.enabled = config.seg_use_erosion
+  c.anatomical.tissue_segmentation.configuration.erosion.proportion = config.seg_erosion_prop
 
   c.functional.slice_timing_correction.enabled = config.slice_timing_correction.includes(1)
   c.functional.slice_timing_correction.repetition_time = !config.TR || config.TR == "None" ? '' : config.TR
-  c.functional.slice_timing_correction.pattern = config.slice_timing_pattern == "Use NIFTI Header" ? "pattern" : config.slice_timing_pattern
+  c.functional.slice_timing_correction.pattern = config.slice_timing_pattern === "Use NIFTI Header" ? "header" : config.slice_timing_pattern
 
   c.functional.slice_timing_correction.first_timepoint = config.startIdx
   c.functional.slice_timing_correction.last_timepoint = !config.stopIdx || config.stopIdx == "None" ? '' : config.stopIdx
@@ -482,8 +482,12 @@ export function parse(content) {
 
       const newRegressor = clone(templateRegressors)
 
+      if (newRegressor.GreyMatter) {
+        newRegressor.GrayMatter = newRegressor.GreyMatter
+      }
+
       for (const k of [
-        'GreyMatter',
+        'GrayMatter',
         'WhiteMatter',
         'CerebrospinalFluid',
         'aCompCor',
@@ -661,6 +665,9 @@ export function dump(pipeline, version='0') {
   config.reGenerateOutputs = c.general.environment.outputs.regenerate
   config.runSymbolicLinks = [c.general.environment.outputs.organized ? 1 : 0]
 
+  config.non_local_means_filtering = c.anatomical.preprocessing.methods.nlmf.enabled
+  config.n4_bias_field_correction = c.anatomical.preprocessing.methods.n4.enabled
+
   config.already_skullstripped = [c.anatomical.skull_stripping.enabled ? 0 : 1]
   config.skullstrip_option = []
     .concat(c.anatomical.skull_stripping.methods.afni.enabled ? ["AFNI"] : [])
@@ -681,14 +688,14 @@ export function dump(pipeline, version='0') {
   config.skullstrip_smooth_final = c.anatomical.skull_stripping.methods.afni.configuration.final_smooth
   config.skullstrip_avoid_eyes = c.anatomical.skull_stripping.methods.afni.configuration.avoid_eyes
   config.skullstrip_use_edge = c.anatomical.skull_stripping.methods.afni.configuration.use_edge
-  config.skullstrip_exp_frac = c.anatomical.skull_stripping.methods.afni.configuration.use_skull
+  config.skullstrip_exp_frac = c.anatomical.skull_stripping.methods.afni.configuration.fractional_expansion
   config.skullstrip_push_to_edge = c.anatomical.skull_stripping.methods.afni.configuration.push_to_edge
   config.skullstrip_use_skull = c.anatomical.skull_stripping.methods.afni.configuration.use_skull
   config.skullstrip_perc_int = c.anatomical.skull_stripping.methods.afni.configuration.intersections.ratio
   config.skullstrip_max_inter_iter = c.anatomical.skull_stripping.methods.afni.configuration.intersections.iterations
   config.skullstrip_fac = c.anatomical.skull_stripping.methods.afni.configuration.multiplier
   config.skullstrip_blur_fwhm = c.anatomical.skull_stripping.methods.afni.configuration.blur_fwhm
-  config.skullstrip_monkey = c. anatomical.skull_stripping.methods.afni.configuration.skullstrip_monkey
+  config.skullstrip_monkey = c.anatomical.skull_stripping.methods.afni.configuration.skullstrip_monkey
 
   config.bet_frac = c.anatomical.skull_stripping.methods.bet.configuration.threshold
   config.bet_mask_boolean = c.anatomical.skull_stripping.methods.bet.configuration.mask
@@ -704,14 +711,10 @@ export function dump(pipeline, version='0') {
   config.bet_threshold = c.anatomical.skull_stripping.methods.bet.configuration.apply_threshold
   config.bet_vertical_gradient = c.anatomical.skull_stripping.methods.bet.configuration.vertical_gradient
 
-  if (c.anatomical.registration.resolution.includes("x")) {
-    var xind = []
-    for(var i = 0; i < c.anatomical.registration.resolution.length; i++) {
-        if (c.anatomical.registration.resolution[i] === "x") xind.push(i)
-    }
-    config.resolution_for_anat = c.anatomical.registration.resolution.slice(0, xind[0]) + "mm" + c.anatomical.registration.resolution.slice(xind[0], xind[1]) + "mm" + c.anatomical.registration.resolution.slice(xind[1]) + "mm"
-  } else {
+  if (typeof c.anatomical.registration.resolution === "number") {
     config.resolution_for_anat = c.anatomical.registration.resolution + "mm"
+  } else {
+    config.resolution_for_anat = c.anatomical.registration.resolution.join('mmx') + 'mm'
   }
 
   config.niworkflows_ants_template_path = c.anatomical.skull_stripping.methods.niworkflows_ants.ants_templates.niworkflows_ants_template_path
@@ -765,19 +768,19 @@ export function dump(pipeline, version='0') {
   config.regWithSkull = [c.anatomical.registration.methods.ants.configuration.skull_on ? 1 : 0]
 
   config.runSegmentationPreprocessing = [c.anatomical.tissue_segmentation.enabled ? 1 : 0]
-  config.seg_use_priors = [c.anatomical.tissue_segmentation.configuration.seg_use_priors.enabled ? 1 : 0]
+  config.seg_use_priors = [c.anatomical.tissue_segmentation.configuration.priors.enabled ? 1 : 0]
   config.priors_path = "$FSLDIR/data/standard/tissuepriors/2mm"
-  config.PRIORS_WHITE = c.anatomical.tissue_segmentation.configuration.seg_use_priors.priors.white_matter
-  config.PRIORS_GRAY = c.anatomical.tissue_segmentation.configuration.seg_use_priors.priors.gray_matter
-  config.PRIORS_CSF = c.anatomical.tissue_segmentation.configuration.seg_use_priors.priors.cerebrospinal_fluid
+  config.PRIORS_WHITE = c.anatomical.tissue_segmentation.configuration.priors.priors.white_matter
+  config.PRIORS_GRAY = c.anatomical.tissue_segmentation.configuration.priors.priors.gray_matter
+  config.PRIORS_CSF = c.anatomical.tissue_segmentation.configuration.priors.priors.cerebrospinal_fluid
 
-  if (c.anatomical.tissue_segmentation.configuration.seg_use_fast_threshold.enabled) {
-    config.seg_use_threshold = ['FSL-FAST Thresholding']
-  } else if (c.anatomical.tissue_segmentation.configuration.seg_use_customized_threshold.enabled) {
+  if (c.anatomical.tissue_segmentation.configuration.fast_threshold.enabled) {
+    config.seg_use_threshold = ['FSL-FAST Thresholding'] 
+  } else if (c.anatomical.tissue_segmentation.configuration.customized_threshold.enabled) {
     config.seg_use_threshold = ['Customized Thresholding']
-    config.seg_WM_threshold_value = c.anatomical.tissue_segmentation.configuration.seg_use_customized_threshold.threshold.seg_WM_threshold_value 
-    config.seg_GM_threshold_value = c.anatomical.tissue_segmentation.configuration.seg_use_customized_threshold.threshold.seg_GM_threshold_value 
-    config.seg_CSF_threshold_value = c.anatomical.tissue_segmentation.configuration.seg_use_customized_threshold.threshold.seg_CSF_threshold_value 
+    config.seg_WM_threshold_value = c.anatomical.tissue_segmentation.configuration.customized_threshold.threshold.white_matter 
+    config.seg_GM_threshold_value = c.anatomical.tissue_segmentation.configuration.customized_threshold.threshold.gray_matter 
+    config.seg_CSF_threshold_value = c.anatomical.tissue_segmentation.configuration.customized_threshold.threshold.cerebrospinal_fluid 
   }
     
   config.seg_use_erosion = [c.anatomical.tissue_segmentation.configuration.seg_use_erosion.enabled ? 1 : 0]
@@ -902,7 +905,7 @@ export function dump(pipeline, version='0') {
     const newRegressor = {}
 
     for (const k of [
-      'GreyMatter',
+      'GrayMatter',
       'WhiteMatter',
       'CerebrospinalFluid',
       'aCompCor',

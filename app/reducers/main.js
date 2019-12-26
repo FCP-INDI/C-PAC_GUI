@@ -64,7 +64,7 @@ export default function main(state, action) {
       return state.setIn(
         ['config', 'pipelines', i, 'versions', '0'],
         fromJS({
-          version: '1.3.0',
+          version: '1.5.0',
           configuration
         })
       )
