@@ -155,6 +155,15 @@ export default {
               erosion: {
                 enabled: false,
                 proportion: 0.6
+              },
+              template_based_seg: {
+                enabled: false,
+                methods: 'epi_template_based', // or 't1_templated_based'
+                tissue_path: {
+                  white_matter: '${environment.paths.fsl_dir}/data/standard/tissuepriors/2mm/avg152T1_white_bin.nii.gz',
+                  gray_matter: '${environment.paths.fsl_dir}/data/standard/tissuepriors/2mm/avg152T1_gray_bin.nii.gz',
+                  cerebrospinal_fluid: '${environment.paths.fsl_dir}/data/standard/tissuepriors/2mm/avg152T1_csf_bin.nii.gz',
+                }
               }
             }
           }

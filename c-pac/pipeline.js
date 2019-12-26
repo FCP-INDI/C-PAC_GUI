@@ -361,6 +361,29 @@ export function parse(content) {
   c.anatomical.tissue_segmentation.configuration.erosion.enabled = config.seg_use_erosion
   c.anatomical.tissue_segmentation.configuration.erosion.proportion = config.seg_erosion_prop
 
+
+  if (typeof config.template_based_segmenation === "string") {
+    config.template_based_segmenation = [config.template_based_segmenation]
+  }
+
+  if (config.template_based_segmenation.includes("None")) {
+    c.anatomical.tissue_segmentation.configuration.template_based_seg.enabled = false
+  }
+
+  if (config.template_based_segmenation.includes("EPI_template")) {
+    c.anatomical.tissue_segmentation.configuration.template_based_seg.enabled = true
+    c.anatomical.tissue_segmentation.configuration.template_based_seg.methods = 'epi_template_based'
+  }
+
+  if (config.template_based_segmenation.includes("T1_template")) {
+    c.anatomical.tissue_segmentation.configuration.template_based_seg.enabled = true
+    c.anatomical.tissue_segmentation.configuration.template_based_seg.methods = 't1_templated_based'
+  } 
+
+  c.anatomical.tissue_segmentation.configuration.template_based_seg.tissue_path.white_matter = config.template_based_segmenation_WHITE.replace("$FSLDIR", "${environment.paths.fsl_dir}")
+  c.anatomical.tissue_segmentation.configuration.template_based_seg.tissue_path.gray_matter = config.template_based_segmenation_GRAY.replace("$FSLDIR", "${environment.paths.fsl_dir}")
+  c.anatomical.tissue_segmentation.configuration.template_based_seg.tissue_path.cerebrospinal_fluid = config.template_based_segmenation_CSF.replace("$FSLDIR", "${environment.paths.fsl_dir}")
+
   c.functional.slice_timing_correction.enabled = config.slice_timing_correction.includes(1)
   c.functional.slice_timing_correction.repetition_time = !config.TR || config.TR == "None" ? '' : config.TR
   c.functional.slice_timing_correction.pattern = config.slice_timing_pattern === "Use NIFTI Header" ? "header" : config.slice_timing_pattern
@@ -779,15 +802,24 @@ export function dump(pipeline, version='0') {
 
   if (c.anatomical.tissue_segmentation.configuration.fast_threshold.enabled) {
     config.seg_use_threshold = ['FSL-FAST Thresholding'] 
-  } else if (c.anatomical.tissue_segmentation.configuration.customized_threshold.enabled) {
+  } else if (c.anatomical.tissue_segmentation.configuration.custom_threshold.enabled) {
     config.seg_use_threshold = ['Customized Thresholding']
-    config.seg_WM_threshold_value = c.anatomical.tissue_segmentation.configuration.customized_threshold.threshold.white_matter 
-    config.seg_GM_threshold_value = c.anatomical.tissue_segmentation.configuration.customized_threshold.threshold.gray_matter 
-    config.seg_CSF_threshold_value = c.anatomical.tissue_segmentation.configuration.customized_threshold.threshold.cerebrospinal_fluid 
+    config.seg_WM_threshold_value = c.anatomical.tissue_segmentation.configuration.custom_threshold.threshold.white_matter 
+    config.seg_GM_threshold_value = c.anatomical.tissue_segmentation.configuration.custom_threshold.threshold.gray_matter 
+    config.seg_CSF_threshold_value = c.anatomical.tissue_segmentation.configuration.custom_threshold.threshold.cerebrospinal_fluid 
   }
     
   config.seg_use_erosion = [c.anatomical.tissue_segmentation.configuration.seg_use_erosion.enabled ? 1 : 0]
   config.seg_erosion_prop = c.anatomical.tissue_segmentation.configuration.seg_use_erosion.erosion.seg_erosion_prop 
+
+
+  config.template_based_segmenation = []
+    .concat(c.anatomical.tissue_segmentation.configuration.template_based_seg.enabled ? ["None"] : [])
+    .concat(c.anatomical.tissue_segmentation.configuration.template_based_seg.methods === 'epi_template_based' ? 'EPI_template' : 'T1_template')
+
+  config.template_based_segmenation_WHITE = c.anatomical.tissue_segmentation.configuration.template_based_seg.tissue_path.white_matter
+  config.template_based_segmenation_GRAY = c.anatomical.tissue_segmentation.configuration.template_based_seg.tissue_path.gray_matter
+  config.template_based_segmenation_CSF = c.anatomical.tissue_segmentation.configuration.template_based_seg.tissue_path.cerebrospinal_fluid
 
   config.runFunctional = c.functional.enabled ? [1] : [0]
 
