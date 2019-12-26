@@ -170,6 +170,18 @@ export default {
         },
         functional: {
           enabled: true,
+          preprocessing: {
+            n4_mean_epi: {
+              enabled: false,
+            },
+            scaling: {
+              enabled: false,
+              factor: 10
+            },
+            motion_stats: {
+              enabled: false,
+            }
+          },
           slice_timing_correction: {
             enabled: true,
             pattern: 'header',
