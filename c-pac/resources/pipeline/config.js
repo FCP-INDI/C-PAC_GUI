@@ -71,6 +71,7 @@ export default {
               afni: {
                 enabled: true,
                 configuration: {
+                  mask_vol: false,
                   shrink_factor: {
                     vary: true,
                     threshold: 0.6,
@@ -122,6 +123,10 @@ export default {
                   niworkflows_ants_mask_path: '/ants_template/oasis/T_template0_BrainCerebellumProbabilityMask.nii.gz',
                   niworkflows_ants_regmask_path: '/ants_template/oasis/T_template0_BrainCerebellumRegistrationMask.nii.gz',
                 }
+              },
+              unet: {
+                enabled: false,
+                unet_model: 's3://fcp-indi/resources/cpac/resources/Site-All-T-epoch_36.model',
               }
             }
           },
@@ -150,6 +155,15 @@ export default {
               erosion: {
                 enabled: false,
                 proportion: 0.6
+              },
+              template_based_seg: {
+                enabled: false,
+                methods: 'epi_template_based', // or 't1_templated_based'
+                tissue_path: {
+                  white_matter: '${environment.paths.fsl_dir}/data/standard/tissuepriors/2mm/avg152T1_white_bin.nii.gz',
+                  gray_matter: '${environment.paths.fsl_dir}/data/standard/tissuepriors/2mm/avg152T1_gray_bin.nii.gz',
+                  cerebrospinal_fluid: '${environment.paths.fsl_dir}/data/standard/tissuepriors/2mm/avg152T1_csf_bin.nii.gz',
+                }
               }
             }
           }
@@ -195,6 +209,10 @@ export default {
               }
             }
           },
+          epi_registration: {
+            enabled: false,
+            template_epi: 's3://fcp-indi/resources/cpac/resources/epi_hbn.nii.gz',
+          },
           anatomical_registration: {
             enabled: true,
             bb_registration: false,
@@ -205,6 +223,7 @@ export default {
               fsl: false,
               afni: false,
               fsl_afni: false,
+              anat_refined: false,
             },
           },
           template_registration: {
@@ -265,6 +284,7 @@ export default {
                 aCompCor: {
                   enabled: true,
                   summary: {
+                    filter: ' ',
                     method: 'DetrendPC',
                     components: 5,
                   },
@@ -277,6 +297,7 @@ export default {
                 tCompCor: {
                   enabled: false,
                   summary: {
+                    filter: ' ',
                     method: 'PC',
                     components: 5,
                   },

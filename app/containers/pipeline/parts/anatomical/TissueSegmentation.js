@@ -6,6 +6,7 @@ import Divider from '@material-ui/core/Divider';
 
 import TextField from '@material-ui/core/TextField';
 import Switch from '@material-ui/core/Switch';
+import MenuItem from '@material-ui/core/MenuItem';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import FormGroup from '@material-ui/core/FormGroup';
 import FormLabel from '@material-ui/core/FormLabel';
@@ -159,6 +160,21 @@ class TissueSegmentation extends Component {
                   />
                 </FormControlLabelled>
               </FormGroup>
+              <FormGroup row>
+                <Help
+                  type="pipeline"
+                  help={`If you choose template based segmentation, C-PAC does not segment anatomical images into White Matter, Gray Matter, and CSF any more. White Matter, Gray Matter, CSF masks will be generated based on template segmentation masks. `}
+                >
+                <FormControlLabelled label="Template Based Segmentation">
+                  <Switch
+                    name="anatomical.tissue_segmentation.configuration.template_based_seg.enabled"
+                    checked={configuration.getIn("anatomical.tissue_segmentation.configuration.template_based_seg.enabled".split("."))}
+                    onChange={onChange}
+                    color="primary"
+                  />
+                </FormControlLabelled>
+                </Help>
+              </FormGroup>
             </Grid>
 
             <Grid item xs={8}>
@@ -309,6 +325,90 @@ class TissueSegmentation extends Component {
                       </Help>
                     </FormLabel>
                 </FormGroup>
+              </Collapse>
+
+              <Collapse in={configuration.getIn("anatomical.tissue_segmentation.configuration.template_based_seg.enabled".split("."))}>
+                <FormGroup>
+                  <FormLabel>
+                    <Help
+                      type="pipeline"
+                      help={`Generate white matter, gray matter, CSF masks based on EPI template segmentation masks, T1 template segmentation masks, or not use template-based segmentation. If use template based segmentation, please make sure to specify white matter, gray matter, CSF mask paths. `}
+                    />
+                    Template based tissue segmentation
+                  </FormLabel>
+                  <FormLabel>
+                    <Help
+                      type="pipeline"
+                      regex={/^template_based_segmentationtion/}
+                      help={`Optimal for use with functional-only pipelines commonly used for rodent data, users can now employ a template-based tissue segmentation approach that applies inverse registration transforms to template-space tissue priors. If use template based segmentation, please make sure to specify white matter, gray matter, CSF mask paths at below three configurations. `}
+                      fullWidth
+                      >
+                        <TextField
+                          select
+                          label="Template based tissue segmentation"
+                          fullWidth margin="normal" variant="outlined"
+                          className={classes.textField} onChange={onChange}
+                          name="anatomical.tissue_segmentation.configuration.template_based_seg.methods"
+                          value={configuration.getIn("anatomical.tissue_segmentation.configuration.template_based_seg.methods".split("."))}
+                          helperText=''
+                        >
+                          <MenuItem value={"epi_template_based"}>EPI Template based </MenuItem>
+                          <MenuItem value={"t1_template_based"}>T1 Template based </MenuItem>                      
+                        </TextField>  
+                      </Help>                 
+                  </FormLabel>
+
+                  <FormLabel>
+                    <Help
+                      type="pipeline"
+                      regex={/^template_based_segmentationtion_WHITE/}
+                      help={`Full path to a binarized White Matter mask. These masks should be in the same space of selected registration template. `}
+                      fullWidth
+                    >
+                      <TextField
+                        label="White Matter Binary Mask"
+                        name="anatomical.tissue_segmentation.configuration.template_based_seg.tissue_path.white_matter"
+                        value={configuration.getIn("anatomical.tissue_segmentation.configuration.template_based_seg.tissue_path.white_matter".split("."))}
+                        onChange={onChange}
+                        fullWidth={true} margin="normal" variant="outlined"
+                      />
+                    </Help>
+                  </FormLabel>
+
+                  <FormLabel>
+                    <Help
+                      type="pipeline"
+                      regex={/^template_based_segmentationtion_GRAY/}
+                      help={`Full path to a binarized Gray Matter mask. These masks should be in the same space of selected registration template. `}
+                      fullWidth
+                    >
+                      <TextField
+                        label="Gray Matter Binary Mask"
+                        name="anatomical.tissue_segmentation.configuration.template_based_seg.tissue_path.gray_matter"
+                        value={configuration.getIn("anatomical.tissue_segmentation.configuration.template_based_seg.tissue_path.gray_matter".split("."))}
+                        onChange={onChange}
+                        fullWidth={true} margin="normal" variant="outlined"
+                      />
+                    </Help>
+                  </FormLabel>
+
+                  <FormLabel>
+                    <Help
+                      type="pipeline"
+                      regex={/^template_based_segmentation_CSF/}
+                      help={`Full path to a binarized CSF mask. These masks should be in the same space of selected registration template. `}
+                      fullWidth
+                    >
+                      <TextField
+                        label="Cerebrospinal Fluid Binary Mask"
+                        name="anatomical.tissue_segmentation.configuration.template_based_seg.tissue_path.cerebrospinal_fluid"
+                        value={configuration.getIn("anatomical.tissue_segmentation.configuration.template_based_seg.tissue_path.cerebrospinal_fluid".split("."))}
+                        onChange={onChange}
+                        fullWidth={true} margin="normal" variant="outlined"
+                      />
+                    </Help>
+                  </FormLabel>
+                </FormGroup> 
               </Collapse>
             </Grid>
           </Grid>

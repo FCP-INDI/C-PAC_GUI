@@ -117,8 +117,19 @@ n4_bias_field_correction: False
 already_skullstripped :  [0]
 
 
-# Choice of using AFNI or FSL-BET to perform SkullStripping
+# Choice of using AFNI-3dSkullStrip or FSL-BET or niworkflows-ants or UNet for monkey data to perform SkullStripping
+# Options: ['AFNI', 'FSL', 'niworkflows-ants', 'unet'] 
 skullstrip_option :  ['AFNI']
+
+
+# UNet model
+unet_model : s3://fcp-indi/resources/cpac/resources/Site-All-T-epoch_36.model
+
+
+# Options to be used for AFNI 3dSkullStrip only.
+
+# Output a mask volume instead of a skull-stripped volume. The mask volume containes 0 to 6, which represents voxel's postion. If set to True, C-PAC will use this output to generate anatomical brain mask for further analysis.
+skullstrip_mask_vol: False
 
 
 # Set the threshold value controlling the brain vs non-brain voxels. Default is 0.6.
@@ -204,7 +215,7 @@ bet_frac :  0.5
 
 
 # Mask created along with skull stripping
-bet_mask_boolean :  Off
+bet_mask_boolean :  On
 
 
 # Mesh created along with skull stripping
@@ -364,6 +375,27 @@ seg_use_erosion : False
 seg_erosion_prop : 0.6
 
 
+# Generate white matter, gray matter, CSF masks based on EPI template segmentation masks, T1 template segmentation masks, or not use template-based segmentation.
+# Optimal for use with functional-only pipelines commonly used for rodent data, users can now employ a template-based tissue segmentation approach that applies inverse registration transforms to template-space tissue priors.
+# If use template based segmentation, please make sure to specify white matter, gray matter, CSF mask paths at below three configurations. 
+# These masks should be in the same space of your registration template, e.g. if you choose 'EPI_template' , below tissue masks should also be EPI template tissue masks. 
+# Options: ['EPI_template', 'T1_template', 'None']
+template_based_segmentation : ['None']
+
+
+# These masks are included as part of the 'Image Resource Files' package available on the Install page of the User Guide.
+# Full path to a binarized White Matter mask.
+template_based_segmentation_WHITE :  $FSLDIR/data/standard/tissuepriors/2mm/avg152T1_white_bin.nii.gz
+
+
+# Full path to a binarized Gray Matter mask.
+template_based_segmentation_GRAY :  $FSLDIR/data/standard/tissuepriors/2mm/avg152T1_gray_bin.nii.gz
+
+
+# Full path to a binarized CSF mask.
+template_based_segmentation_CSF :  $FSLDIR/data/standard/tissuepriors/2mm/avg152T1_csf_bin.nii.gz
+
+
 # Run functional preproceessing
 runFunctional: [1]
 
@@ -452,6 +484,10 @@ fmap_distcorr_dwell_asym_ratio : [0.93902439]
 fmap_distcorr_pedir :  -y
 
 
+# Run Functional to EPI Template Registration
+runRegisterFuncToEPI :  [0]
+
+
 # Run Functional to Anatomical Registration
 runRegisterFuncToAnat :  [1]
 
@@ -477,7 +513,8 @@ n4_correct_mean_EPI : False
 func_reg_input_volume :  0
 
 
-# Choose which tool to be used in functional masking - AFNI (3dAutoMask), FSL (BET) or FSL_AFNI (BET+3dAutoMask).
+# Choose which tool to be used in functional masking - AFNI (3dAutoMask), FSL (BET),  FSL_AFNI (BET+3dAutoMask), or refine functional mask by registering anatomical mask to functional space. 
+# Options: ['AFNI', 'FSL', 'FSL_AFNI', 'Anatomical_Refined']
 functionalMasking :  ['AFNI']
 
 
@@ -502,6 +539,10 @@ template_brain_only_for_func :  $FSLDIR/data/standard/MNI152_T1_${resolution_for
 
 # Standard FSL Anatomical Brain Image with Skull
 template_skull_for_func :  $FSLDIR/data/standard/MNI152_T1_${resolution_for_func_preproc}.nii.gz
+
+
+# EPI template
+template_epi :  s3://fcp-indi/resources/cpac/resources/epi_hbn.nii.gz
 
 
 # Matrix containing all 1's. Used as an identity matrix during registration.
@@ -535,6 +576,7 @@ Regressors :
 
    aCompCor:
      summary:
+       filter:
        method: DetrendPC
        components: 5
      tissues:
@@ -565,6 +607,7 @@ Regressors :
  
    aCompCor:
      summary:
+       filter:
        method: DetrendPC
        components: 5
      tissues:
