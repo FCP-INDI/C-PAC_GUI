@@ -263,6 +263,7 @@ export default {
                 aCompCor: {
                   enabled: true,
                   summary: {
+                    filter: ' ',
                     method: 'DetrendPC',
                     components: 5,
                   },
@@ -275,6 +276,7 @@ export default {
                 tCompCor: {
                   enabled: false,
                   summary: {
+                    filter: ' ',
                     method: 'PC',
                     components: 5,
                   },

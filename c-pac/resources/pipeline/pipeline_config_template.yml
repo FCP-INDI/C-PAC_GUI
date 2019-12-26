@@ -539,6 +539,7 @@ Regressors :
 
    aCompCor:
      summary:
+       filter:
        method: DetrendPC
        components: 5
      tissues:
@@ -569,6 +570,7 @@ Regressors :
  
    aCompCor:
      summary:
+       filter:
        method: DetrendPC
        components: 5
      tissues:
