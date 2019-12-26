@@ -47,7 +47,7 @@ describe('load pipeline', () => {
       name: 'Default',
       versions: {
         '0': {
-          version: '1.5.0',
+          version: '1.6.0',
           configuration: {
             anatomical: {
               registration: {

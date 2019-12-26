@@ -56,7 +56,7 @@ export function normalize(pipeline) {
 
   const newVersionKey = new Date().getTime().toString()
   const newVersion = {
-    version: '1.5.0',
+    version: '1.6.0',
   }
 
   const newConfiguration = clone(configuration)
