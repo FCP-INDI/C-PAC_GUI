@@ -813,8 +813,8 @@ export function dump(pipeline, version='0') {
     config.seg_CSF_threshold_value = c.anatomical.tissue_segmentation.configuration.custom_threshold.threshold.cerebrospinal_fluid 
   }
     
-  config.seg_use_erosion = [c.anatomical.tissue_segmentation.configuration.seg_use_erosion.enabled ? 1 : 0]
-  config.seg_erosion_prop = c.anatomical.tissue_segmentation.configuration.seg_use_erosion.erosion.seg_erosion_prop 
+  config.seg_use_erosion = [c.anatomical.tissue_segmentation.configuration.erosion.enabled ? 1 : 0]
+  config.seg_erosion_prop = c.anatomical.tissue_segmentation.configuration.erosion.proportion 
 
 
   config.template_based_segmentation = []
