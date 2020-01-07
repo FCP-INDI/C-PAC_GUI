@@ -180,6 +180,9 @@ export default {
             },
             motion_stats: {
               enabled: false,
+            },
+            despike: {
+              enabled: false,
             }
           },
           slice_timing_correction: {
