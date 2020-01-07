@@ -38,7 +38,8 @@ class SkullStripping extends Component {
   state = {
     betOptions: false,
     afniOptions: false,
-    Niworkflows_antsOptions: false,
+    niworkflows_antsOptions: false,
+    unetOptions: false,
   }
 
   handleValueChange = (event) => {
@@ -48,6 +49,7 @@ class SkullStripping extends Component {
       "anatomical.skull_stripping.methods.afni.enabled",
       "anatomical.skull_stripping.methods.bet.enabled",
       "anatomical.skull_stripping.methods.niworkflows_ants.enabled",
+      "anatomical.skull_stripping.methods.unet.enabled",
       "anatomical.skull_stripping.enabled"
     ]
 
@@ -66,13 +68,15 @@ class SkullStripping extends Component {
           changes.push(["anatomical.skull_stripping.methods.afni.enabled", false])
           changes.push(["anatomical.skull_stripping.methods.bet.enabled", false])
           changes.push(["anatomical.skull_stripping.methods.niworkflows_ants.enabled", false])
+          changes.push(["anatomical.skull_stripping.methods.unet.enabled", false])
         }
       }
 
       const methods = [
         "anatomical.skull_stripping.methods.afni.enabled",
         "anatomical.skull_stripping.methods.bet.enabled",
-        "anatomical.skull_stripping.methods.niworkflows_ants.enabled"
+        "anatomical.skull_stripping.methods.niworkflows_ants.enabled",
+        "anatomical.skull_stripping.methods.unet.enabled"
       ]
       if (methods.includes(name)) {
         changes.push([name, value])
@@ -94,7 +98,11 @@ class SkullStripping extends Component {
   }
   
   handleOpenNiworkflows_ants = () => {
-    this.setState({ Niworkflows_antsOptions: true })
+    this.setState({ niworkflows_antsOptions: true })
+  }
+
+  handleOpenUnet = () => {
+    this.setState({ unetOptions: true })
   }
 
   handleCloseAfni = () => {
@@ -106,7 +114,11 @@ class SkullStripping extends Component {
   }
 
   handleCloseNiworkflows_ants = () => {
-    this.setState({ Niworkflows_antsOptions: false })
+    this.setState({ niworkflows_antsOptions: false })
+  }
+
+  handleCloseUnet = () => {
+    this.setState({ unetOptions: false })
   }
 
   render() {
@@ -533,6 +545,25 @@ class SkullStripping extends Component {
             <FormGroup row>
               <Help
                 type="pipeline"
+                regex={/^skullstrip_mask_vol/}
+                help={`Output a mask volume instead of a skull-stripped volume. The mask volume containes 0 to 6, which represents voxel's postion. If set to True, C-PAC will use this output to generate anatomical brain mask for further analysis.`}
+              >
+                <FormControlLabel
+                  label="Output a mask volume"
+                  control={
+                    <Switch
+                      name="anatomical.skull_stripping.methods.afni.configuration.mask_vol"
+                      checked={configuration.getIn(['anatomical', 'skull_stripping', 'methods', 'afni', 'configuration', 'mask_vol'])}
+                      onChange={onChange}
+                      color="primary"
+                    />
+                  }
+                />
+              </Help>
+            </FormGroup>             
+            <FormGroup row>
+              <Help
+                type="pipeline"
                 regex={/^skullstrip_var_shrink_fac/}
                 help={`Vary the shrink factor at every iteration of the algorithm. This prevents the likelihood of surface getting stuck in large pools of CSF before reaching the outer surface of the brain.`}
               >
@@ -704,7 +735,7 @@ class SkullStripping extends Component {
           </DialogContent>
         </Dialog>
         <Dialog
-          open={this.state.Niworkflows_antsOptions && configuration.getIn(['anatomical', 'skull_stripping', 'methods', 'niworkflows_ants', 'enabled'])}
+          open={this.state.niworkflows_antsOptions && configuration.getIn(['anatomical', 'skull_stripping', 'methods', 'niworkflows_ants', 'enabled'])}
           onClose={this.handleCloseNiworkflows_ants}
           fullWidth={true}
         >
@@ -757,6 +788,30 @@ class SkullStripping extends Component {
             </FormGroup>
           </DialogContent>
         </Dialog> 
+        <Dialog
+          open={this.state.unetOptions && configuration.getIn(['anatomical', 'skull_stripping', 'methods', 'unet', 'enabled'])}
+          onClose={this.handleCloseUnet}
+          fullWidth={true}
+        >
+          <DialogTitle>{`U-Net Model`}</DialogTitle>
+          <DialogContent>
+            <FormGroup row>
+              <Help
+                type="pipeline"
+                regex={/^unet_model/}
+                help={`U-Net is a model used for skull-stripping of the macaque. It is not necessary to change this path unless you intend to use a customized model.`}
+                fullWidth
+              >
+                <TextField
+                  label="U-Net Brain Extraction Model" fullWidth margin="normal" variant="outlined"
+                  name="anatomical.skull_stripping.methods.unet.unet_model"
+                  value={configuration.getIn(['anatomical', 'skull_stripping', 'methods', 'unet', 'unet_model'])}
+                  onChange={onChange}
+                />
+              </Help>
+            </FormGroup>
+          </DialogContent>
+        </Dialog> 
         <FormControl fullWidth>
           <FormGroup row>
             <Help
@@ -778,26 +833,8 @@ class SkullStripping extends Component {
             <Help
               type="pipeline"
               regex={/^skullstrip_option/}
-              help={`Choice of using AFNI or FSL-BET or NIWORKFLOWS-ANTS to perform SkullStripping.`}
-            >
-              <FormControlLabel
-                label="FSL BET"
-                control={
-                  <Switch
-                    name="anatomical.skull_stripping.methods.bet.enabled"
-                    checked={configuration.getIn(['anatomical', 'skull_stripping', 'methods', 'bet', 'enabled'])}
-                    onChange={this.handleValueChange}
-                    color="primary"
-                  />
-                }
-              />
-              { configuration.getIn(['anatomical', 'skull_stripping', 'methods', 'bet', 'enabled']) ?
-                <IconButton
-                  onClick={() => this.handleOpenBet()}>
-                  <SettingsIcon />
-                </IconButton>
-              : null }
-
+              help={`Choice of using AFNI-3dSkullStrip, FSL-BET, NIworkflows-ANTS and/or U-Net to perform SkullStripping.`}
+            >              
               <FormControlLabel
                 label="AFNI 3dSkullStrip"
                 control={
@@ -812,6 +849,24 @@ class SkullStripping extends Component {
               { configuration.getIn(['anatomical', 'skull_stripping', 'methods', 'afni', 'enabled']) ?
                 <IconButton
                   onClick={() => this.handleOpenAfni()}>
+                  <SettingsIcon />
+                </IconButton>
+              : null }
+
+              <FormControlLabel
+                label="FSL BET"
+                control={
+                  <Switch
+                    name="anatomical.skull_stripping.methods.bet.enabled"
+                    checked={configuration.getIn(['anatomical', 'skull_stripping', 'methods', 'bet', 'enabled'])}
+                    onChange={this.handleValueChange}
+                    color="primary"
+                  />
+                }
+              />
+              { configuration.getIn(['anatomical', 'skull_stripping', 'methods', 'bet', 'enabled']) ?
+                <IconButton
+                  onClick={() => this.handleOpenBet()}>
                   <SettingsIcon />
                 </IconButton>
               : null }
@@ -833,6 +888,24 @@ class SkullStripping extends Component {
                   <SettingsIcon />
                 </IconButton>
               : null }
+
+              <FormControlLabel
+                label="U-Net"
+                control={
+                  <Switch
+                    name="anatomical.skull_stripping.methods.unet.enabled"
+                    checked={configuration.getIn(['anatomical', 'skull_stripping', 'methods', 'unet', 'enabled'])}
+                    onChange={this.handleValueChange}
+                    color="primary"
+                  />
+                }
+              />
+              { configuration.getIn(['anatomical', 'skull_stripping', 'methods', 'unet', 'enabled']) ?
+                <IconButton
+                  onClick={() => this.handleOpenUnet()}>
+                  <SettingsIcon />
+                </IconButton>
+                : null}
 
             </Help>
           </FormGroup>

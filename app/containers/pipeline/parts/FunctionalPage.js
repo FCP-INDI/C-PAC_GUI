@@ -8,6 +8,7 @@ import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import Switch from '@material-ui/core/Switch';
 
 import {
+  EPIRegistration,
   AnatomicalRegistration,
   DistortionCorrection,
   MedianAngleCorrection,
@@ -17,6 +18,7 @@ import {
   Smoothing,
   AROMA,
 } from 'containers/pipeline/parts/functional'
+import InitialPreprocessing from './functional/InitialPreprocessing';
 
 class FunctionalPage extends Component {
   static styles = theme => ({
@@ -64,6 +66,21 @@ class FunctionalPage extends Component {
     return (
       <React.Fragment>
 
+        <ExpansionPanel expanded>
+          <ExpansionPanelSummary disabled>
+            <Typography variant="h6" className={classes.sectionTitle}>
+              Initial Preprocessing
+            </Typography>
+          </ExpansionPanelSummary>
+          <ExpansionPanelDetails>
+            <Grid container>
+              <Grid item xs={12}>
+                <InitialPreprocessing configuration={configuration} onChange={onChange} />
+              </Grid>
+            </Grid>
+          </ExpansionPanelDetails>
+        </ExpansionPanel>
+
         {
           this.renderSection(
             "Slice Timing Correction",
@@ -85,6 +102,14 @@ class FunctionalPage extends Component {
             "Functional to Template Registration",
             "functional.template_registration.enabled",
             TemplateRegistration
+          )
+        }
+
+        {
+          this.renderSection(
+            "Functional to EPI Template Registration",
+            "functional.epi_registration.enabled",
+            EPIRegistration
           )
         }
 
