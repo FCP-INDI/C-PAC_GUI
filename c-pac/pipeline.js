@@ -383,7 +383,7 @@ export function parse(content) {
   c.anatomical.tissue_segmentation.configuration.template_based_seg.tissue_path.gray_matter = config.template_based_segmentation_GRAY.replace("$FSLDIR", "${environment.paths.fsl_dir}")
   c.anatomical.tissue_segmentation.configuration.template_based_seg.tissue_path.cerebrospinal_fluid = config.template_based_segmentation_CSF.replace("$FSLDIR", "${environment.paths.fsl_dir}")
   
-  c.functional.preprocessing.n4_mean_epi.enabled = config.n4_correction_mean_EPI
+  c.functional.preprocessing.n4_mean_epi.enabled = config.n4_correct_mean_EPI
   c.functional.preprocessing.scaling.enabled = config.runScaling
   c.functional.preprocessing.scaling.factor = config.scaling_factor
   c.functional.preprocessing.motion_stats.enabled = config.runMotionStatisticsFirst.includes(1)
@@ -827,7 +827,7 @@ export function dump(pipeline, version='0') {
 
   config.runFunctional = c.functional.enabled ? [1] : [0]
 
-  config.n4_correction_mean_EPI = c.functional.preprocessing.n4_mean_epi.enabled
+  config.n4_correct_mean_EPI = c.functional.preprocessing.n4_mean_epi.enabled
   config.runMotionStatisticsFirst = [c.functional.preprocessing.motion_stats.enabled ? 1 : 0]
   config.runScaling = c.functional.preprocessing.scaling.enabled
   config.scaling_factor = c.functional.preprocessing.scaling.factor
