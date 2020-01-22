@@ -274,6 +274,20 @@ export function parse(content) {
     c.anatomical.skull_stripping.methods.unet.enabled = true
   } 
 
+  c.anatomical.skull_stripping.methods.bet.configuration.threshold = config.bet_frac 
+  c.anatomical.skull_stripping.methods.bet.configuration.mask = config.bet_mask_boolean
+  c.anatomical.skull_stripping.methods.bet.configuration.mesh = config.bet_mesh_boolean
+  c.anatomical.skull_stripping.methods.bet.configuration.surface_outline = config.bet_outline 
+  c.anatomical.skull_stripping.methods.bet.configuration.padding = config.bet_padding
+  c.anatomical.skull_stripping.methods.bet.configuration.radius = config.bet_radius
+  c.anatomical.skull_stripping.methods.bet.configuration.reduce_bias = config.bet_reduce_bias 
+  c.anatomical.skull_stripping.methods.bet.configuration.remove_eyes = config.bet_remove_eyes 
+  c.anatomical.skull_stripping.methods.bet.configuration.robust_brain_center = config.bet_robust
+  c.anatomical.skull_stripping.methods.bet.configuration.skull = config.bet_skull 
+  c.anatomical.skull_stripping.methods.bet.configuration.surfaces = config.bet_surfaces
+  c.anatomical.skull_stripping.methods.bet.configuration.apply_threshold = config.bet_threshold
+  c.anatomical.skull_stripping.methods.bet.configuration.vertical_gradient = config.bet_vertical_gradient
+
   if (config.resolution_for_anat.includes("x")) {
     c.anatomical.registration.resolution = 
       config.resolution_for_anat.replace('mm', '')
@@ -383,7 +397,7 @@ export function parse(content) {
   c.anatomical.tissue_segmentation.configuration.template_based_seg.tissue_path.gray_matter = config.template_based_segmentation_GRAY.replace("$FSLDIR", "${environment.paths.fsl_dir}")
   c.anatomical.tissue_segmentation.configuration.template_based_seg.tissue_path.cerebrospinal_fluid = config.template_based_segmentation_CSF.replace("$FSLDIR", "${environment.paths.fsl_dir}")
   
-  c.functional.preprocessing.n4_mean_epi.enabled = config.n4_correction_mean_EPI
+  c.functional.preprocessing.n4_mean_epi.enabled = config.n4_correct_mean_EPI
   c.functional.preprocessing.scaling.enabled = config.runScaling
   c.functional.preprocessing.scaling.factor = config.scaling_factor
   c.functional.preprocessing.motion_stats.enabled = config.runMotionStatisticsFirst.includes(1)
@@ -447,10 +461,24 @@ export function parse(content) {
   c.functional.anatomical_registration.registration_input =
   config.func_reg_input.includes('Mean Functional') ? 'mean' : 'selected'
   c.functional.anatomical_registration.functional_volume = config.func_reg_input_volume
-  c.functional.anatomical_registration.functional_masking.fsl = config.functionalMasking.includes('FSL')
+  c.functional.anatomical_registration.functional_masking.fsl.enabled = config.functionalMasking.includes('FSL')
   c.functional.anatomical_registration.functional_masking.afni = config.functionalMasking.includes('AFNI')
   c.functional.anatomical_registration.functional_masking.fsl_afni = config.functionalMasking.includes('FSL_AFNI')
   c.functional.anatomical_registration.functional_masking.anat_refined = config.functionalMasking.includes('Anatomical_Refined')
+
+  c.functional.anatomical_registration.functional_masking.fsl.configuration.functional_mean = config.bold_bet_functional_mean_boolean 
+  c.functional.anatomical_registration.functional_masking.fsl.configuration.threshold = config.bold_bet_frac
+  c.functional.anatomical_registration.functional_masking.fsl.configuration.mesh = config.bold_bet_mesh_boolean 
+  c.functional.anatomical_registration.functional_masking.fsl.configuration.surface_outline = config.bold_bet_outline
+  c.functional.anatomical_registration.functional_masking.fsl.configuration.padding = config.bold_bet_padding
+  c.functional.anatomical_registration.functional_masking.fsl.configuration.radius = config.bold_bet_radius 
+  c.functional.anatomical_registration.functional_masking.fsl.configuration.reduce_bias = config.bold_bet_reduce_bias 
+  c.functional.anatomical_registration.functional_masking.fsl.configuration.remove_eyes = config.bold_bet_remove_eyes 
+  c.functional.anatomical_registration.functional_masking.fsl.configuration.robust_brain_center = config.bold_bet_robust 
+  c.functional.anatomical_registration.functional_masking.fsl.configuration.skull = config.bold_bet_skull
+  c.functional.anatomical_registration.functional_masking.fsl.configuration.surfaces = config.bold_bet_surfaces 
+  c.functional.anatomical_registration.functional_masking.fsl.configuration.apply_threshold = config.bold_bet_threshold 
+  c.functional.anatomical_registration.functional_masking.fsl.configuration.vertical_gradient = config.bold_bet_vertical_gradient 
 
   c.functional.template_registration.enabled = config.runRegisterFuncToMNI.includes(1)
   c.functional.template_registration.functional_resolution = config.resolution_for_func_preproc.replace(/mm/g, "")
@@ -813,8 +841,8 @@ export function dump(pipeline, version='0') {
     config.seg_CSF_threshold_value = c.anatomical.tissue_segmentation.configuration.custom_threshold.threshold.cerebrospinal_fluid 
   }
     
-  config.seg_use_erosion = [c.anatomical.tissue_segmentation.configuration.seg_use_erosion.enabled ? 1 : 0]
-  config.seg_erosion_prop = c.anatomical.tissue_segmentation.configuration.seg_use_erosion.erosion.seg_erosion_prop 
+  config.seg_use_erosion = [c.anatomical.tissue_segmentation.configuration.erosion.enabled ? 1 : 0]
+  config.seg_erosion_prop = c.anatomical.tissue_segmentation.configuration.erosion.proportion 
 
 
   config.template_based_segmentation = []
@@ -827,7 +855,7 @@ export function dump(pipeline, version='0') {
 
   config.runFunctional = c.functional.enabled ? [1] : [0]
 
-  config.n4_correction_mean_EPI = c.functional.preprocessing.n4_mean_epi.enabled
+  config.n4_correct_mean_EPI = c.functional.preprocessing.n4_mean_epi.enabled
   config.runMotionStatisticsFirst = [c.functional.preprocessing.motion_stats.enabled ? 1 : 0]
   config.runScaling = c.functional.preprocessing.scaling.enabled
   config.scaling_factor = c.functional.preprocessing.scaling.factor
@@ -882,11 +910,25 @@ export function dump(pipeline, version='0') {
 
   config.func_reg_input_volume = c.functional.anatomical_registration.functional_volume
   config.functionalMasking = []
-    .concat(c.functional.anatomical_registration.functional_masking.fsl ? ["FSL"] : [])
+    .concat(c.functional.anatomical_registration.functional_masking.fsl.enabled ? ["FSL"] : [])
     .concat(c.functional.anatomical_registration.functional_masking.afni ? ["AFNI"] : [])
     .concat(c.functional.anatomical_registration.functional_masking.fsl_afni ? ["FSL_AFNI"] : [])
     .concat(c.functional.anatomical_registration.functional_masking.anat_refined ? ["Anatomical_Refined"] : [])
-  
+
+  config.bold_bet_functional_mean_boolean = c.functional.anatomical_registration.functional_masking.fsl.configuration.functional_mean
+  config.bold_bet_frac = c.functional.anatomical_registration.functional_masking.fsl.configuration.threshold
+  config.bold_bet_mesh_boolean = c.functional.anatomical_registration.functional_masking.fsl.configuration.mesh
+  config.bold_bet_outline = c.functional.anatomical_registration.functional_masking.fsl.configuration.surface_outline
+  config.bold_bet_padding = c.functional.anatomical_registration.functional_masking.fsl.configuration.padding
+  config.bold_bet_radius = c.functional.anatomical_registration.functional_masking.fsl.configuration.radius
+  config.bold_bet_reduce_bias = c.functional.anatomical_registration.functional_masking.fsl.configuration.reduce_bias
+  config.bold_bet_remove_eyes = c.functional.anatomical_registration.functional_masking.fsl.configuration.remove_eyes
+  config.bold_bet_robust = c.functional.anatomical_registration.functional_masking.fsl.configuration.robust_brain_center
+  config.bold_bet_skull = c.functional.anatomical_registration.functional_masking.fsl.configuration.skull
+  config.bold_bet_surfaces = c.functional.anatomical_registration.functional_masking.fsl.configuration.surfaces
+  config.bold_bet_threshold = c.functional.anatomical_registration.functional_masking.fsl.configuration.apply_threshold
+  config.bold_bet_vertical_gradient = c.functional.anatomical_registration.functional_masking.fsl.configuration.vertical_gradient
+
   config.runRegisterFuncToMNI = [c.functional.template_registration.enabled ? 1 : 0]
   if (c.functional.template_registration.functional_resolution.includes("x")) {
     var xind = []
