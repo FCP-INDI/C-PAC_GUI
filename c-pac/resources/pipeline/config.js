@@ -103,7 +103,7 @@ export default {
                 configuration: {
                   threshold: 0.5,
                   apply_threshold: false,
-                  mask: false,
+                  mask: true,
                   mesh: false,
                   skull: false,
                   surfaces: false,
@@ -223,7 +223,25 @@ export default {
             registration_input: 'mean',
             functional_volume: 0,
             functional_masking: {
-              fsl: false,
+              fsl: {
+                enabled: false,
+                configuration: {
+                  functional_mean: false,
+                  threshold: 0.3,
+                  apply_threshold: false,
+                  mask: true,
+                  mesh: false,
+                  skull: false,
+                  surfaces: false,
+                  surface_outline: false,
+                  padding: false,
+                  radius: 0,
+                  reduce_bias: false,
+                  remove_eyes: false,
+                  robust_brain_center: false,
+                  vertical_gradient: 0.0,
+                }
+              },              
               afni: false,
               fsl_afni: false,
               anat_refined: false,
