@@ -113,11 +113,13 @@ const original = fromJS({
       method: 'PC',
       components: 5,
     },
+    degree: 1,
     threshold: '1.5SD',
     by_slice: true,
     include_delayed: false,
     include_squared: false,
     include_delayed_squared: false,
+    erode_mask: false,
   },
   GlobalSignal: {
     enabled: false,
@@ -279,6 +281,9 @@ class NuisanceRegression extends Component {
       if (regressor['include_delayed_squared']) {
         terms.push(`\\textrm{${name}}_{t-1}^{2}`)
       }
+      if (regressor['erode_mask']) {
+        terms.push(`\\textrm{${name}}`)
+      }
 
       let regressor_terms = terms.join(' + ')
 
@@ -372,10 +377,28 @@ class NuisanceRegression extends Component {
               />
             </FormGroup>
             <FormGroup row>
+              <TextField label="Degree"
+                name={`functional.nuisance_regression.regressors.${i}.tCompCor.degree`}
+                value={regressor.getIn(['tCompCor', 'degree'])}
+                onChange={onChange}
+                fullWidth margin="normal" variant="outlined"
+              />
+            </FormGroup>
+            <FormGroup row>
               <FormControlLabelled label="By Slice">
                 <Switch
                   name={`functional.nuisance_regression.regressors.${i}.tCompCor.by_slice`}
                   checked={regressor.getIn(['tCompCor', 'by_slice'])}
+                  onChange={onChange}
+                  color="primary"
+                />
+              </FormControlLabelled>
+            </FormGroup>
+            <FormGroup row>
+              <FormControlLabelled label="Erode Mask">
+                <Switch
+                  name={`functional.nuisance_regression.regressors.${i}.tCompCor.erode_mask`}
+                  checked={regressor.getIn(['tCompCor', 'erode_mask'])}
                   onChange={onChange}
                   color="primary"
                 />
