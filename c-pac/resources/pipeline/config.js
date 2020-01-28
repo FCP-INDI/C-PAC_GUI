@@ -180,6 +180,9 @@ export default {
             },
             motion_stats: {
               enabled: false,
+            },
+            despike: {
+              enabled: false,
             }
           },
           slice_timing_correction: {
@@ -319,11 +322,14 @@ export default {
                     method: 'PC',
                     components: 5,
                   },
+                  degree: 1,
                   threshold: '1.5SD',
                   by_slice: true,
                   include_delayed: false,
                   include_squared: false,
                   include_delayed_squared: false,
+                  erode_mask: false,
+                  erode_mask_mm: false,
                 },
                 GlobalSignal: {
                   enabled: true,

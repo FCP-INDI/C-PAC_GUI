@@ -518,6 +518,10 @@ func_reg_input_volume :  0
 functionalMasking :  ['AFNI']
 
 
+# Run AFNI 3dDespike after motion correction
+runDespike : False
+
+
 # Options to be used for FSL skull-stripping of functional masking.
 
 # Apply to 4D FMRI data, if bold_bet_functional_mean_boolean : On. 
