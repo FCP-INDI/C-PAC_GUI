@@ -120,6 +120,7 @@ const original = fromJS({
     include_squared: false,
     include_delayed_squared: false,
     erode_mask: false,
+    erode_mask_mm: false,
   },
   GlobalSignal: {
     enabled: false,
@@ -284,6 +285,9 @@ class NuisanceRegression extends Component {
       if (regressor['erode_mask']) {
         terms.push(`\\textrm{${name}}`)
       }
+      if (regressor['erode_mask_mm']) {
+        terms.push(`\\textrm{${name}}`)
+      }
 
       let regressor_terms = terms.join(' + ')
 
@@ -395,10 +399,20 @@ class NuisanceRegression extends Component {
               </FormControlLabelled>
             </FormGroup>
             <FormGroup row>
-              <FormControlLabelled label="Erode Mask">
+              <FormControlLabelled label="Erode Mask (one voxel)">
                 <Switch
                   name={`functional.nuisance_regression.regressors.${i}.tCompCor.erode_mask`}
                   checked={regressor.getIn(['tCompCor', 'erode_mask'])}
+                  onChange={onChange}
+                  color="primary"
+                />
+              </FormControlLabelled>
+            </FormGroup>
+            <FormGroup row>
+              <FormControlLabelled label="Erode Mask (mm)">
+                <Switch
+                  name={`functional.nuisance_regression.regressors.${i}.tCompCor.erode_mask_mm`}
+                  checked={regressor.getIn(['tCompCor', 'erode_mask_mm'])}
                   onChange={onChange}
                   color="primary"
                 />

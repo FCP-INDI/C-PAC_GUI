@@ -329,6 +329,7 @@ export default {
                   include_squared: false,
                   include_delayed_squared: false,
                   erode_mask: false,
+                  erode_mask_mm: false,
                 },
                 GlobalSignal: {
                   enabled: true,
