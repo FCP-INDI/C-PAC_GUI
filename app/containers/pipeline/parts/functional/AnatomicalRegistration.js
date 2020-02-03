@@ -233,7 +233,7 @@ class AnatomicalRegistration extends Component {
                       help={`Mutually exclusive with functional,reduce_bias,robust,padding,remove_eyes,surfaces. It must be 'on' if select 'reduce_bias','robust','padding','remove_eyes',or 'surfaces' as 'on'.`}
                     >
                       <FormControlLabel
-                        label="functional mean"
+                        label="Functional mean"
                         control={
                           <Switch
                             name="functional.anatomical_registration.functional_masking.fsl.configuration.functional_mean"
