@@ -11,6 +11,10 @@ export default {
             cores: 1,
             participants: 1,
             ants_threads: 1,
+            grid: false,
+            resource: 'SGE',
+            SGEenvironment: 'cpac',
+            queue: 'all.q',
             paths: {
               fsl: '$FSLDIR',
               output: './cpac_runs/default/output',
@@ -19,6 +23,8 @@ export default {
               log: './cpac_runs/default/log',
             },
             outputs: {
+              aws: ' ',
+              s3: false,
               extra: false,
               debug: false,
               logging: true,

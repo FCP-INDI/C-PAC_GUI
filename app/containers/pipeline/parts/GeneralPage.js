@@ -6,7 +6,7 @@ import Paper from '@material-ui/core/Paper';
 import ExpansionPanel from '@material-ui/core/ExpansionPanel';
 import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
-
+import MenuItem from '@material-ui/core/MenuItem';
 import TextField from '@material-ui/core/TextField';
 import Switch from '@material-ui/core/Switch';
 import InputAdornment from '@material-ui/core/InputAdornment';
@@ -78,7 +78,7 @@ class GeneralPage extends Component {
                   fullWidth
                 >
                   <TextField
-                    label="Number of participants to run simultaneously" fullWidth margin="normal" variant="outlined"
+                    label="Number of Participants to Run Simultaneously" fullWidth margin="normal" variant="outlined"
                     name="general.environment.participants"
                     value={configuration.getIn(['general', 'environment', 'participants'])}
                     onChange={onChange}
@@ -110,6 +110,72 @@ class GeneralPage extends Component {
                     onChange={onChange}
                   />
                 </Help>
+                <FormGroup row>
+                  <Help
+                    type="pipeline"
+                    regex={/^runOnGrid/}
+                    help={`Select False if you intend to run CPAC on a single machine.`}
+                  >
+                    <FormControlLabelled label="Run CPAC on a Cluster/Grid">
+                      <Switch
+                        name="general.environment.grid"
+                        checked={configuration.getIn(['general', 'environment', 'grid'])}
+                        onChange={onChange}
+                        color="primary"
+                      />
+                    </FormControlLabelled>
+                  </Help>
+                </FormGroup>
+
+                <Help
+                  type="pipeline"
+                  regex={/^resourceManager/}
+                  help={`SGE, PBS, or SLURM. Only applies if you are running on a grid or compute cluster.`}
+                  fullWidth
+                >
+                  <TextField
+                    select
+                    label="Resource Manager"
+                    fullWidth margin="normal" variant="outlined"
+                    className={classes.textField} onChange={onChange}
+                    name="general.environment.resource"
+                    value={configuration.getIn(['general', 'environment', 'resource'])}
+                    helperText=''
+                  >
+                    <MenuItem value={"SGE"}>Sun Grid Engine (SGE)</MenuItem>
+                    <MenuItem value={"PBS"}>Portable Batch System (PBS)</MenuItem>
+                    <MenuItem value={"SLURM"}>SLURM</MenuItem>
+                  </TextField>
+                </Help>
+
+                <Help
+                  type="pipeline"
+                  regex={/^parallelEnvironment/}
+                  help={`Only applies when you are running on a grid or compute cluster using SGE. `}
+                  fullWidth
+                >
+                  <TextField
+                    label="SGE Parallel Environment" fullWidth margin="normal" variant="outlined"
+                    name="general.environment.SGEenvironment"
+                    value={configuration.getIn(['general', 'environment', 'SGEenvironment'])}
+                    onChange={onChange}
+                  />
+                </Help>
+
+                <Help
+                  type="pipeline"
+                  regex={/^queue/}
+                  help={`Only applies when you are running on a grid or compute cluster using SGE.`}
+                  fullWidth
+                >
+                  <TextField
+                    label="SGE Queue" fullWidth margin="normal" variant="outlined"
+                    name="general.environment.queue"
+                    value={configuration.getIn(['general', 'environment', 'queue'])}
+                    onChange={onChange}
+                  />
+                </Help>
+
               </Grid>
             </Grid>
           </ExpansionPanelDetails>
@@ -156,7 +222,7 @@ class GeneralPage extends Component {
                   fullWidth
                 >
                   <TextField
-                    label="Crash log directory" fullWidth margin="normal" variant="outlined"
+                    label="Log directory" fullWidth margin="normal" variant="outlined"
                     name="general.environment.paths.log"
                     value={configuration.getIn(['general', 'environment', 'paths', 'log'])}
                     onChange={onChange}
@@ -175,7 +241,37 @@ class GeneralPage extends Component {
                     onChange={onChange}
                   />
                 </Help>
+                <Help
+                  type="pipeline"
+                  regex={/^awsOutputBucketCredentials/}
+                  help={`If setting the 'Output Directory' to an S3 bucket, insert the path to your AWS credentials file here.`}
+                  fullWidth
+                >
+                  <TextField
+                    label="AWS Output Bucket Credentials (optional)" fullWidth margin="normal" variant="outlined"
+                    name="general.environment.outputs.aws"
+                    value={configuration.getIn(['general', 'environment', 'outputs', 'aws'])}
+                    onChange={onChange}
+                  />
+                </Help>
                 <FormControl fullWidth>
+                  <FormGroup row>
+                    <Help
+                      type="pipeline"
+                      regex={/^s3Encryption/}
+                      help={`Enable server-side 256-AES encryption on data to the S3 bucket.`}
+                    >
+                      <FormControlLabelled label="S3 Encryption">
+                        <Switch
+                          name="general.environment.outputs.s3"
+                          checked={configuration.getIn(['general', 'environment', 'outputs', 's3'])}
+                          onChange={onChange}
+                          color="primary"
+                        />
+                      </FormControlLabelled>
+                    </Help>
+                  </FormGroup>
+
                   <FormGroup row>
                     <Help
                       type="pipeline"
@@ -192,6 +288,7 @@ class GeneralPage extends Component {
                       </FormControlLabelled>
                     </Help>
                   </FormGroup>
+
                   <FormGroup row>
                     <Help
                       type="pipeline"
