@@ -41,34 +41,51 @@ class InitialPreprocessing extends Component {
     return (
       <React.Fragment>
 
-        <FormGroup row>
-          <Help
-            type="pipeline"
-            regex={/^n4_correct_mean_EPI/}
-            help={`Run ANTs’ N4 Bias Field Correction on the input BOLD average (mean EPI).`}
-          >
-            <FormControlLabelled label="N4 Bias Field Correction">
-              <Switch
-                name="functional.preprocessing.n4_mean_epi"
-                checked={configuration.getIn("functional.preprocessing.n4_mean_epi.enabled".split("."))}
-                onChange={onChange}
-                color="primary"
-              />
-            </FormControlLabelled>
-          </Help>
-        </FormGroup>
-
         <FormControl fullWidth>
           <FormGroup row>
             <Help
               type="pipeline"
+              regex={/^n4_correct_mean_EPI/}
+              help={`Run ANTs’ N4 Bias Field Correction on the input BOLD average (mean EPI).`}
+            >
+              <FormControlLabelled label="N4 Bias Field Correction">
+                <Switch
+                  name="functional.preprocessing.n4_mean_epi"
+                  checked={configuration.getIn("functional.preprocessing.n4_mean_epi.enabled".split("."))}
+                  onChange={onChange}
+                  color="primary"
+                />
+              </FormControlLabelled>
+            </Help>
+          </FormGroup>
+        
+          <FormGroup row>
+            <Help
+              type="pipeline"
               regex={/^runMotionStatisticsFirst/}
-              help={`Turn on to motion statistics before slice timing correction`}
+              help={`Turn on to calculate motion statistics before slice timing correction`}
             >
               <FormControlLabelled label="Motion Statistics before Slice Timing Correction">
                 <Switch
                   name="functional.preprocessing.motion_stats.enabled"
                   checked={configuration.getIn("functional.preprocessing.motion_stats.enabled".split("."))}
+                  onChange={onChange}
+                  color="primary"
+                />
+              </FormControlLabelled>
+            </Help>
+          </FormGroup>
+
+          <FormGroup row>
+            <Help
+              type="pipeline"
+              regex={/^runDespike/}
+              help={`Turn on to run AFNI 3dDespike after motion correction`}
+            >
+              <FormControlLabelled label="Despike">
+                <Switch
+                  name="functional.preprocessing.despike.enabled"
+                  checked={configuration.getIn("functional.preprocessing.despike.enabled".split("."))}
                   onChange={onChange}
                   color="primary"
                 />

@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 import { withStyles, Typography } from '@material-ui/core';
 import Grid from '@material-ui/core/Grid'
@@ -18,16 +19,65 @@ import Collapse from '@material-ui/core/Collapse';
 
 import Help from 'components/Help'
 import FormControlLabelled from 'components/FormControlLabelled'
+import IconButton from '@material-ui/core/IconButton'
 
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
+
+import {
+  SettingsIcon,
+} from 'components/icons';
 
 class AnatomicalRegistration extends Component {
 
   static styles = theme => ({
   });
 
-  render() {
-    const { classes, configuration, onChange } = this.props
+  state = {
+    fslOptions: false,
+  }
 
+  handleValueChange = (event) => {
+    const name = event.target.name
+
+    const checkBoxes = [
+      "functional.anatomical_registration.functional_masking.fsl.enabled",
+    ]
+
+    if (!checkBoxes.includes(name)) {
+      this.props.onChange([
+        [name, event.target.value]
+      ])
+
+    } else {
+      const changes = []
+      const value = event.target.checked
+
+      const methods = [
+        "functional.anatomical_registration.functional_masking.fsl.enabled"
+      ]
+
+      if (methods.includes(name)) {
+        changes.push([name, value])
+      }
+
+      this.props.onChange(changes)
+    }
+  };
+
+  handleOpenFSL = () => {
+    this.setState({ fslOptions: true })
+  }
+
+  handleCloseFSL = () => {
+    this.setState({ fslOptions: false })
+  }
+
+  render() {
+    const { classes, configuration, advanced, onChange } = this.props
     return (
       <Grid container>
         <Grid item sm={12}>
@@ -122,15 +172,271 @@ class AnatomicalRegistration extends Component {
                   />
                 </FormControlLabelled>
               </FormGroup>
+
+              {/* functional masking - fsl option */}
+              <Dialog
+                open={this.state.fslOptions && configuration.getIn(["functional", "anatomical_registration", "functional_masking", "fsl", "enabled"])}
+                onClose={this.handleCloseFSL}
+                fullWidth={true}
+              >
+                <DialogTitle>{`FSL BET Options`}</DialogTitle>
+                <DialogContent>
+                  <FormGroup row>
+                    <Help
+                      type="pipeline"
+                      regex={/^bold_bet_frac/}
+                      help={`Set the threshold value controling the brain vs non-brain voxels.`}
+                      fullWidth
+                    >
+                      <TextField
+                        label="Threshold" fullWidth margin="normal" variant="outlined"
+                        name="functional.anatomical_registration.functional_masking.fsl.configuration.threshold"
+                        value={configuration.getIn(['functional', 'anatomical_registration', 'functional_masking', 'fsl', 'configuration', 'threshold'])}
+                        onChange={onChange}
+                      />
+                    </Help>
+                  </FormGroup>
+                  <FormGroup row>
+                    <Help
+                      type="pipeline"
+                      regex={/^bold_bet_radius/}
+                      help={`Head radius.`}
+                      fullWidth
+                    >
+                      <TextField
+                        label="Radius" fullWidth margin="normal" variant="outlined"
+                        name="functional.anatomical_registration.functional_masking.fsl.configuration.radius"
+                        value={configuration.getIn(['functional', 'anatomical_registration', 'functional_masking', 'fsl', 'configuration', 'radius'])}
+                        onChange={onChange}
+                      />
+                    </Help>
+                  </FormGroup>
+                  <FormGroup row>
+                    <Help
+                      type="pipeline"
+                      regex={/^bold_bet_vertical_gradient/}
+                      help={`Vertical gradient in fractional intensity threshold, ranged between -1 and 1.`}
+                      fullWidth
+                    >
+                      <TextField
+                        label="Vertical Gradient" fullWidth margin="normal" variant="outlined"
+                        name="functional.anatomical_registration.functional_masking.fsl.configuration.vertical_gradient"
+                        value={configuration.getIn(['functional', 'anatomical_registration', 'functional_masking', 'fsl', 'configuration', 'vertical_gradient'])}
+                        onChange={onChange}
+                      />
+                    </Help>
+                  </FormGroup>
+                  <FormGroup row>
+                    <Help
+                      type="pipeline"
+                      regex={/^bold_bet_functional_mean_boolean/}
+                      help={`Mutually exclusive with functional,reduce_bias,robust,padding,remove_eyes,surfaces. It must be 'on' if select 'reduce_bias','robust','padding','remove_eyes',or 'surfaces' as 'on'.`}
+                    >
+                      <FormControlLabel
+                        label="functional mean"
+                        control={
+                          <Switch
+                            name="functional.anatomical_registration.functional_masking.fsl.configuration.functional_mean"
+                            checked={configuration.getIn(['functional', 'anatomical_registration', 'functional_masking', 'fsl', 'configuration', 'functional_mean'])}
+                            onChange={onChange}
+                            color="primary"
+                          />
+                        }
+                      />
+                    </Help>
+                  </FormGroup>
+                  <FormGroup row>
+                    <Help
+                      type="pipeline"
+                      regex={/^bold_bet_threshold/}
+                      help={`Apply thresholding to segmented brain image and mask.`}
+                    >
+                      <FormControlLabel
+                        label="Apply threshold"
+                        control={
+                          <Switch
+                            name="functional.anatomical_registration.functional_masking.fsl.configuration.apply_threshold"
+                            checked={configuration.getIn(['functional', 'anatomical_registration', 'functional_masking', 'fsl', 'configuration', 'apply_threshold'])}
+                            onChange={onChange}
+                            color="primary"
+                          />
+                        }
+                      />
+                    </Help>
+                  </FormGroup>
+                  <FormGroup row>
+                    <Help
+                      type="pipeline"
+                      regex={/^bold_bet_mesh_boolean/}
+                      help={`Mesh created along with skull stripping.`}
+                    >
+                      <FormControlLabel
+                        label="Mesh"
+                        control={
+                          <Switch
+                            name="functional.anatomical_registration.functional_masking.fsl.configuration.mesh"
+                            checked={configuration.getIn(['functional', 'anatomical_registration', 'functional_masking', 'fsl', 'configuration', 'mesh'])}
+                            onChange={onChange}
+                            color="primary"
+                          />
+                        }
+                      />
+                    </Help>
+                  </FormGroup>
+                  <FormGroup row>
+                    <Help
+                      type="pipeline"
+                      regex={/^bold_bet_skull/}
+                      help={`Create a skull image.`}
+                    >
+                      <FormControlLabel
+                        label="Skull"
+                        control={
+                          <Switch
+                            name="functional.anatomical_registration.functional_masking.fsl.configuration.skull"
+                            checked={configuration.getIn(['functional', 'anatomical_registration', 'functional_masking', 'fsl', 'configuration', 'skull'])}
+                            onChange={onChange}
+                            color="primary"
+                          />
+                        }
+                      />
+                    </Help>
+                  </FormGroup>
+                  <FormGroup row>
+                    <Help
+                      type="pipeline"
+                      regex={/^bold_bet_surfaces/}
+                      help={`Gets additional skull and scalp surfaces by running bet2 and betsurf.`}
+                    >
+                      <FormControlLabel
+                        label="Surfaces"
+                        control={
+                          <Switch
+                            name="functional.anatomical_registration.functional_masking.fsl.configuration.surfaces"
+                            checked={configuration.getIn(['functional', 'anatomical_registration', 'functional_masking', 'fsl', 'configuration', 'surfaces'])}
+                            onChange={onChange}
+                            color="primary"
+                          />
+                        }
+                      />
+                    </Help>
+                  </FormGroup>
+                  <FormGroup row>
+                    <Help
+                      type="pipeline"
+                      regex={/^bold_bet_outline/}
+                      help={`Create a surface outline image.`}
+                    >
+                      <FormControlLabel
+                        label="Surfaces outline"
+                        control={
+                          <Switch
+                            name="functional.anatomical_registration.functional_masking.fsl.configuration.surface_outline"
+                            checked={configuration.getIn(['functional', 'anatomical_registration', 'functional_masking', 'fsl', 'configuration', 'surface_outline'])}
+                            onChange={onChange}
+                            color="primary"
+                          />
+                        }
+                      />
+                    </Help>
+                  </FormGroup>
+                  <FormGroup row>
+                    <Help
+                      type="pipeline"
+                      regex={/^bold_bet_padding/}
+                      help={`Add padding to the end of the image, improving BET.`}
+                    >
+                      <FormControlLabel
+                        label="Padding"
+                        control={
+                          <Switch
+                            name="functional.anatomical_registration.functional_masking.fsl.configuration.padding"
+                            checked={configuration.getIn(['functional', 'anatomical_registration', 'functional_masking', 'fsl', 'configuration', 'padding'])}
+                            onChange={onChange}
+                            color="primary"
+                          />
+                        }
+                      />
+                    </Help>
+                  </FormGroup>
+                  <FormGroup row>
+                    <Help
+                      type="pipeline"
+                      regex={/^bold_bet_reduce_bias/}
+                      help={`Reduce bias and cleanup neck.`}
+                    >
+                      <FormControlLabel
+                        label="Reduce bias"
+                        control={
+                          <Switch
+                            name="functional.anatomical_registration.functional_masking.fsl.configuration.reduce_bias"
+                            checked={configuration.getIn(['functional', 'anatomical_registration', 'functional_masking', 'fsl', 'configuration', 'reduce_bias'])}
+                            onChange={onChange}
+                            color="primary"
+                          />
+                        }
+                      />
+                    </Help>
+                  </FormGroup>
+                  <FormGroup row>
+                    <Help
+                      type="pipeline"
+                      regex={/^bold_bet_remove_eyes/}
+                      help={`Eyes and optic nerve cleanup.`}
+                    >
+                      <FormControlLabel
+                        label="Remove eyes"
+                        control={
+                          <Switch
+                            name="functional.anatomical_registration.functional_masking.fsl.configuration.remove_eyes"
+                            checked={configuration.getIn(['functional', 'anatomical_registration', 'functional_masking', 'fsl', 'configuration', 'remove_eyes'])}
+                            onChange={onChange}
+                            color="primary"
+                          />
+                        }
+                      />
+                    </Help>
+                  </FormGroup>
+                  <FormGroup row>
+                    <Help
+                      type="pipeline"
+                      regex={/^bold_bet_robust/}
+                      help={`Robust brain center estimation.`}
+                    >
+                      <FormControlLabel
+                        label="Robust brain center"
+                        control={
+                          <Switch
+                            name="functional.anatomical_registration.functional_masking.fsl.configuration.robust_brain_center"
+                            checked={configuration.getIn(['functional', 'anatomical_registration', 'functional_masking', 'fsl', 'configuration', 'robust_brain_center'])}
+                            onChange={this.handleValueChange}
+                            color="primary"
+                          />
+                        }
+                      />
+                    </Help>
+                  </FormGroup>
+                </DialogContent>
+              </Dialog>
+
               <FormGroup row>
-                <FormControlLabelled label="FSL: BET">
-                  <Switch
-                    name="functional.anatomical_registration.functional_masking.fsl"
-                    checked={configuration.getIn(["functional", "anatomical_registration", "functional_masking", "fsl"])}
-                    onChange={onChange}
-                    color="primary"
-                  />
-                </FormControlLabelled>
+                <FormControlLabel
+                  label="FSL BET"
+                  control={
+                    <Switch
+                      name="functional.anatomical_registration.functional_masking.fsl.enabled"
+                      checked={configuration.getIn(["functional", "anatomical_registration", "functional_masking", "fsl", "enabled"])}
+                      onChange={this.handleValueChange}
+                      color="primary"
+                    />
+                  }
+                />
+                  {configuration.getIn(["functional", "anatomical_registration", "functional_masking", "fsl", 'enabled']) ?
+                  <IconButton
+                    onClick={() => this.handleOpenFSL()}>
+                    <SettingsIcon />
+                  </IconButton>
+                  : null}
               </FormGroup>
               <FormGroup row>
                 <FormControlLabelled label="FSL+AFNI: BET+3dAutoMask">
@@ -165,4 +471,12 @@ class AnatomicalRegistration extends Component {
   }
 }
 
-export default withStyles(AnatomicalRegistration.styles)(AnatomicalRegistration);
+const mapStateToProps = (state, props) => {
+  return {
+    advanced: state.main.getIn(['config', 'settings', 'advanced']),
+  }
+}
+
+export default connect(mapStateToProps)(withStyles(AnatomicalRegistration.styles)(AnatomicalRegistration));
+
+// export default withStyles(AnatomicalRegistration.styles)(AnatomicalRegistration);

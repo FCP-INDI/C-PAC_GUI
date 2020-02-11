@@ -11,6 +11,10 @@ export default {
             cores: 1,
             participants: 1,
             ants_threads: 1,
+            grid: false,
+            resource: 'SGE',
+            SGEenvironment: 'cpac',
+            queue: 'all.q',
             paths: {
               fsl: '$FSLDIR',
               output: './cpac_runs/default/output',
@@ -19,6 +23,8 @@ export default {
               log: './cpac_runs/default/log',
             },
             outputs: {
+              aws: ' ',
+              s3: false,
               extra: false,
               debug: false,
               logging: true,
@@ -103,7 +109,7 @@ export default {
                 configuration: {
                   threshold: 0.5,
                   apply_threshold: false,
-                  mask: false,
+                  mask: true,
                   mesh: false,
                   skull: false,
                   surfaces: false,
@@ -180,6 +186,9 @@ export default {
             },
             motion_stats: {
               enabled: false,
+            },
+            despike: {
+              enabled: false,
             }
           },
           slice_timing_correction: {
@@ -220,7 +229,25 @@ export default {
             registration_input: 'mean',
             functional_volume: 0,
             functional_masking: {
-              fsl: false,
+              fsl: {
+                enabled: false,
+                configuration: {
+                  functional_mean: false,
+                  threshold: 0.3,
+                  apply_threshold: false,
+                  mask: true,
+                  mesh: false,
+                  skull: false,
+                  surfaces: false,
+                  surface_outline: false,
+                  padding: false,
+                  radius: 0,
+                  reduce_bias: false,
+                  remove_eyes: false,
+                  robust_brain_center: false,
+                  vertical_gradient: 0.0,
+                }
+              },              
               afni: false,
               fsl_afni: false,
               anat_refined: false,
@@ -301,11 +328,14 @@ export default {
                     method: 'PC',
                     components: 5,
                   },
+                  degree: 1,
                   threshold: '1.5SD',
                   by_slice: true,
                   include_delayed: false,
                   include_squared: false,
                   include_delayed_squared: false,
+                  erode_mask: false,
+                  erode_mask_mm: false,
                 },
                 GlobalSignal: {
                   enabled: true,
