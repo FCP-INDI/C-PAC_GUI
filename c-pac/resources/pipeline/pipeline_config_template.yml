@@ -408,8 +408,20 @@ runScaling : False
 scaling_factor : 10
 
 
-# run motion statistics before slice timing correction
+# Run motion statistics before slice timing correction
 runMotionStatisticsFirst : [0]
+
+
+# Choose motion correction method. Options: AFNI volreg, FSL mcflirt
+motion_correction : ['3dvolreg']
+
+
+# Choose motion correction reference. Options: mean, median, selected volume 
+motion_correction_reference: ['mean']
+
+
+# Choose motion correction reference volume
+motion_correction_reference_volume :  0
 
 
 # Interpolate voxel time courses so they are sampled at the same time points.
