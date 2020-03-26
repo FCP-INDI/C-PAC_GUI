@@ -395,6 +395,10 @@ export default {
             enabled: true,
             masks: [
             ],
+            realignment: {
+              roi_to_func: true,
+              func_to_roi: false,
+            },
             outputs: {
               csv: true,
               numpy: true,

@@ -617,6 +617,16 @@ export function parse(content) {
     }
   }
 
+  if (config.realignment.includes("ROI_to_func")) {
+    c.derivatives.timeseries_extraction.realignment.roi_to_func = true
+    c.derivatives.timeseries_extraction.realignment.func_to_roi = false
+  }
+
+  if (config.realignment.includes("func_to_ROI")) {
+    c.derivatives.timeseries_extraction.realignment.roi_to_func = false
+    c.derivatives.timeseries_extraction.realignment.func_to_roi = true
+  }
+
   c.derivatives.timeseries_extraction.outputs.csv = config.roiTSOutputs[0]
   c.derivatives.timeseries_extraction.outputs.numpy = config.roiTSOutputs[1]
 
@@ -959,34 +969,6 @@ export function dump(pipeline, version='0') {
     config.resolution_for_func_derivative = c.functional.template_registration.derivative_resolution + "mm"
   }
   
-  // switch (c.functional.template_registration.methods.ants.interpolation) {
-  //   case 'linear':
-  //     config.funcRegANTSinterpolation = 'Linear'
-  //     break;
-  
-  //   case 'sinc':
-  //     config.funcRegANTSinterpolation = 'LanczosWindowedSinc'
-  //     break;
-
-  //   case 'spline':
-  //     config.funcRegANTSinterpolation = 'BSpline'
-  //     break;
-  // } 
-  
-  // switch (c.functional.template_registration.methods.fsl.interpolation) {
-  //   case 'linear':
-  //     config.funcRegFSLinterpolation = 'trilinear'
-  //     break;
-  
-  //   case 'sinc':
-  //     config.funcRegFSLinterpolation = 'sinc'
-  //     break;
-
-  //   case 'spline':
-  //     config.funcRegFSLinterpolation = 'spline'
-  //     break;
-  // }
-
   config.template_brain_only_for_func = c.functional.template_registration.brain_template
   config.template_skull_for_func = c.functional.template_registration.skull_template
   config.identityMatrix = c.functional.template_registration.identity_matrix
@@ -1043,7 +1025,9 @@ export function dump(pipeline, version='0') {
       config.tsa_roi_paths[0][mask.mask] = maskFeatures.join(", ")
     }
   }
-
+  
+  config.realignment = [c.derivatives.timeseries_extraction.realignment.roi_to_func ? "ROI_to_func" : "func_to_ROI"]
+  
   config.roiTSOutputs = [
     c.derivatives.timeseries_extraction.outputs.csv,
     c.derivatives.timeseries_extraction.outputs.numpy
