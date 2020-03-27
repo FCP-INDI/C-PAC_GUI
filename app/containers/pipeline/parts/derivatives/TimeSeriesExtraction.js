@@ -232,8 +232,6 @@ class TimeSeriesExtraction extends Component {
                   />
                 }
               />
-            </FormGroup>
-            <FormGroup row>
               <FormControlLabel
                 label="func to ROI"
                 control={
@@ -270,8 +268,6 @@ class TimeSeriesExtraction extends Component {
                   />
                 }
               />
-            </FormGroup>
-            <FormGroup row>
               <FormControlLabel
                 label="Numpy"
                 control={
