@@ -218,10 +218,6 @@ export default {
               }
             }
           },
-          epi_registration: {
-            enabled: false,
-            template_epi: 's3://fcp-indi/resources/cpac/resources/epi_hbn.nii.gz',
-          },
           anatomical_registration: {
             enabled: true,
             bb_registration: false,
@@ -257,6 +253,7 @@ export default {
             enabled: true,
             functional_resolution: 3,
             derivative_resolution: 3,
+            identity_matrix: '${environment.paths.fsl_dir}/etc/flirtsch/ident.mat',
             methods: {
               ants: {
                 interpolation: 'sinc',
@@ -265,10 +262,15 @@ export default {
                 interpolation: 'sinc',
               },
             },
-            brain_template: '${environment.paths.fsl_dir}/data/standard/MNI152_T1_${pipeline.functional.template_registration.functional_resolution}_brain.nii.gz',
-            skull_template: '${environment.paths.fsl_dir}/data/standard/MNI152_T1_${pipeline.functional.template_registration.functional_resolution}.nii.gz',
-            identity_matrix: '${environment.paths.fsl_dir}/etc/flirtsch/ident.mat',
-
+            epi_template: {
+              enabled: false,
+              template_epi: 's3://fcp-indi/resources/cpac/resources/epi_hbn.nii.gz',
+            },
+            t1_template: {
+              enabled: true,
+              brain_template: '${environment.paths.fsl_dir}/data/standard/MNI152_T1_${pipeline.functional.registration.functional_resolution}_brain.nii.gz',
+              skull_template: '${environment.paths.fsl_dir}/data/standard/MNI152_T1_${pipeline.functional.registration.functional_resolution}.nii.gz',
+            },
           },
           nuisance_regression: {
             enabled: true,
