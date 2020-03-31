@@ -242,7 +242,7 @@ class TemplateRegistration extends Component {
           <Grid container>
             <Grid item xs={4}>
               <FormGroup row>
-                <FormControlLabelled label="T1 template">
+                <FormControlLabelled label="T1 Template Registration">
                   <Switch
                     name="functional.template_registration.t1_template.enabled"
                     checked={configuration.getIn("functional.template_registration.t1_template.enabled".split("."))}
@@ -252,7 +252,7 @@ class TemplateRegistration extends Component {
                 </FormControlLabelled>
               </FormGroup>
               <FormGroup row>
-                <FormControlLabelled label="EPI template">
+                <FormControlLabelled label="EPI Template Registration">
                   <Switch
                     name="functional.template_registration.epi_template.enabled"
                     checked={configuration.getIn("functional.template_registration.epi_template.enabled".split("."))}
@@ -267,7 +267,7 @@ class TemplateRegistration extends Component {
               <Collapse in={configuration.getIn("functional.template_registration.t1_template.enabled".split("."))}>
                 <FormGroup>
                   <FormLabel>
-                    T1 Template Registration - Brain/Skull Templates
+                    T1 - Brain/Skull Templates
                   </FormLabel>
                   <FormGroup row>
                     <Help
@@ -304,7 +304,7 @@ class TemplateRegistration extends Component {
               <Collapse in={configuration.getIn("functional.template_registration.epi_template.enabled".split("."))}>
                 <FormGroup>
                   <FormLabel>
-                    EPI Template Registration - Brain/Skull Template
+                    EPI - Brain/Skull Template
                   </FormLabel>
                   <FormGroup row>
                     <Help
