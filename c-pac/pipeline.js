@@ -189,6 +189,23 @@ export function normalize(pipeline) {
       }
     }
   }
+/// add ants_para
+  let ANTs_para_EPI_registration = configuration.functional.functional.template_registration.epi_template.ANTs_para_EPI_registration
+  for (let ANTs_para_i in ANTs_para_EPI_registration) {
+
+    let ANTs_para = ANTs_para_EPI_registration[ANTs_para_i]
+    const templateANTs_para_EPI = clone(defaultTemplate.versions.default.configuration.functional.template_registration.epi_template.ANTs_para_EPI_registration)
+
+    const newNTs_para_EPI = {}
+    newNTs_para_EPI.collapse_output_transforms = ANTs_para.collapse_output_transforms
+    newNTs_para_EPI.dimensionality = ANTs_para.dimensionality
+    newNTs_para_EPI.initial_moving_transform.initializationFeature = ANTs_para.initial_moving_transform.initializationFeature
+
+    ANTs_para_EPI_registration.push(newNTs_para_EPI)
+  }
+
+  newConfiguration.functional.template_registration.epi_template.ANTs_para_EPI_registration = ANTs_para_EPI_registration
+///
 
   newConfiguration.functional.nuisance_regression = newNuisanceRegression
   if (newConfiguration.anatomical.registration.methods.ants.configuration.lesion_mask === undefined) {
@@ -519,32 +536,30 @@ export function parse(content) {
     .replace("${resolution_for_func_preproc}", "${pipeline.functional.template_registration.t1_template.functional_resolution}mm")
       .replace("$FSLDIR", "${environment.paths.fsl_dir}")
 
-  // if (config.regOption.includes("ANTS")) {
-  //   switch (config.funcRegANTSinterpolation) {
-  //     case 'LanczosWindowedSinc':
-  //       c.functional.template_registration.methods.ants.interpolation = 'sinc'
-  //       break;
-  //     case 'Linear':
-  //       c.functional.template_registration.methods.ants.interpolation = 'linear'
-  //       break;
-  //     case 'BSpline':
-  //       c.functional.template_registration.methods.ants.interpolation = 'spline'
-  //       break;
-  //   }
-  // } else {
-  //   switch (config.funcRegFSLinterpolation) {
-  //     case 'sinc':
-  //       c.functional.template_registration.methods.fsl.interpolation = 'sinc'
-  //       break;
-  //     case 'trilinear':
-  //       c.functional.template_registration.methods.fsl.interpolation = 'linear'
-  //       break;
-  //     case 'spline':
-  //       c.functional.template_registration.methods.fsl.interpolation = 'spline'
-  //       break;
-  //   }
-  // }
 
+// add ants_para
+  const templateANTs_para_EPI = clone(defaultTemplate.versions.default.configuration.functional.template_registration.epi_template.ANTs_para_EPI_registration)
+
+  c.functional.template_registration.epi_template.ANTs_para_EPI_registration = []
+
+  if (config.ANTs_para_EPI_registration) {
+    for (const ANTs_para_EPI of config.ANTs_para_EPI_registration) {
+
+      const newANTs_para_EPI = clone(templateANTs_para_EPI)
+
+      const overwriteMerge = (destinationArray, sourceArray, options) => sourceArray
+      newANTs_para_EPI['collapse_output_transforms'] = deepmerge(newANTs_para_EPI['collapse_output_transforms'], clone(ANTs_para_EPI['collapse-output-transforms']), { arrayMerge: overwriteMerge })
+      newANTs_para_EPI['dimensionality'] = deepmerge(newANTs_para_EPI['dimensionality'], clone(ANTs_para_EPI['dimensionality']), { arrayMerge: overwriteMerge })
+      newANTs_para_EPI['initial_moving_transform']['initializationFeature'] = deepmerge(newANTs_para_EPI['initial-moving-transform']['initializationFeature'], clone(ANTs_para_EPI['initial-moving_transform']['initializationFeature']), { arrayMerge: overwriteMerge })
+
+      // newANTs_para_EPI['collapse_output_transforms'] = clone(ANTs_para_EPI['collapse-output-transforms'])
+      // newANTs_para_EPI['dimensionality'] = clone(ANTs_para_EPI['dimensionality'])
+      // newANTs_para_EPI['initial_moving_transform']['initializationFeature'] = clone(ANTs_para_EPI['initial-moving_transform']['initializationFeature'])
+
+      c.functional.template_registration.epi_template.ANTs_para_EPI_registration.push(newANTs_para_EPI)
+    }
+  }
+///
   c.functional.nuisance_regression.enabled = config.runNuisance.includes(1)
   c.functional.nuisance_regression.lateral_ventricles_mask =
     config.lateral_ventricles_mask
@@ -980,33 +995,19 @@ export function dump(pipeline, version='0') {
   config.template_brain_only_for_func = c.functional.template_registration.t1_template.brain_template
   config.template_skull_for_func = c.functional.template_registration.t1_template.skull_template
 
-  // switch (c.functional.template_registration.methods.ants.interpolation) {
-  //   case 'linear':
-  //     config.funcRegANTSinterpolation = 'Linear'
-  //     break;
-  
-  //   case 'sinc':
-  //     config.funcRegANTSinterpolation = 'LanczosWindowedSinc'
-  //     break;
+// add ants_para
+  config.ANTs_para_EPI_registration = []
+  for (const ANTs_para_EPI of c.functional.template_registration.epi_template.ANTs_para_EPI_registration) {
 
-  //   case 'spline':
-  //     config.funcRegANTSinterpolation = 'BSpline'
-  //     break;
-  // } 
-  
-  // switch (c.functional.template_registration.methods.fsl.interpolation) {
-  //   case 'linear':
-  //     config.funcRegFSLinterpolation = 'trilinear'
-  //     break;
-  
-  //   case 'sinc':
-  //     config.funcRegFSLinterpolation = 'sinc'
-  //     break;
+    const newANTs_para_EPI = {}
 
-  //   case 'spline':
-  //     config.funcRegFSLinterpolation = 'spline'
-  //     break;
-  // }
+    newANTs_para_EPI['collapse-output-transforms'] = clone(ANTs_para_EPI['collapse_output_transforms'])
+    newANTs_para_EPI['dimensionality'] = clone(ANTs_para_EPI['dimensionality'])
+    newANTs_para_EPI['initial-moving-transform']['initializationFeature'] = clone(ANTs_para_EPI['initial_moving_transform']['initializationFeature'])
+
+    config.ANTs_para_EPI_registration.push(newANTs_para_EPI)
+  }
+// add ants_para
 
   config.runICA = [c.functional.aroma.enabled ? 1 : 0]
   config.aroma_denoise_type = c.functional.aroma.denoising_strategy === 'non-aggressive' ? "nonaggr" : "aggr"
