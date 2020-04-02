@@ -74,6 +74,40 @@ class TimeSeriesExtraction extends Component {
 
   }
 
+  handleValueChange = (event) => {
+    const name = event.target.name
+
+    const checkBoxes = [
+      "derivatives.timeseries_extraction.realignment.roi_to_func",
+      "derivatives.timeseries_extraction.realignment.func_to_roi",
+    ]
+
+    if (!checkBoxes.includes(name)) {
+      this.props.onChange([
+        [name, event.target.value]
+      ])
+
+    } else {
+      const changes = []
+      const value = event.target.checked
+
+      if (name == "derivatives.timeseries_extraction.realignment.roi_to_func") {
+        changes.push([name, value])
+        if (value) {
+          changes.push(["derivatives.timeseries_extraction.realignment.func_to_roi", false])
+        }
+      } else if (name == "derivatives.timeseries_extraction.realignment.func_to_roi") {
+        changes.push([name, value])
+        if (value) {
+          changes.push(["derivatives.timeseries_extraction.realignment.roi_to_func", false])
+        }
+      }
+
+      this.props.onChange(changes)
+    }
+  };
+
+
   render() {
     const { classes, configuration, onChange } = this.props
 
@@ -176,6 +210,42 @@ class TimeSeriesExtraction extends Component {
               </TableFooter>
             </Table>
           </Paper>
+          
+          <FormGroup>
+            <FormLabel>
+              <Help
+                type="pipeline"
+                regex={/^realignment/}
+                help={`'ROI to func' will realign the atlas/ROI to functional space (fast); 'func to ROI' will realign the functional time series to the atlas/ROI space`}
+              />
+              Realignment
+            </FormLabel>
+            <FormGroup row>
+              <FormControlLabel
+                label="ROI to func"
+                control={
+                  <Switch
+                    name="derivatives.timeseries_extraction.realignment.roi_to_func"
+                    checked={config.getIn(['realignment', 'roi_to_func'])}
+                    onChange={this.handleValueChange}
+                    color="primary"
+                  />
+                }
+              />
+              <FormControlLabel
+                label="func to ROI"
+                control={
+                  <Switch
+                    name="derivatives.timeseries_extraction.realignment.func_to_roi"
+                    checked={config.getIn(['realignment', 'func_to_roi'])}
+                    onChange={this.handleValueChange}
+                    color="primary"
+                  />
+                }
+              />
+            </FormGroup>
+          </FormGroup>
+
 
           <FormGroup>
             <FormLabel>
@@ -198,8 +268,6 @@ class TimeSeriesExtraction extends Component {
                   />
                 }
               />
-            </FormGroup>
-            <FormGroup row>
               <FormControlLabel
                 label="Numpy"
                 control={

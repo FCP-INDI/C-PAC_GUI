@@ -406,6 +406,12 @@ export function parse(content) {
   
   c.functional.preprocessing.n4_mean_epi.enabled = config.n4_correct_mean_EPI
   c.functional.preprocessing.motion_stats.enabled = config.runMotionStatisticsFirst.includes(1)
+  c.functional.preprocessing.motion_correction.method.volreg = config.motion_correction.includes('3dvolreg')
+  c.functional.preprocessing.motion_correction.method.mcflirt = config.motion_correction.includes('mcflirt')
+  c.functional.preprocessing.motion_correction.reference.mean = config.motion_correction_reference.includes('mean')
+  c.functional.preprocessing.motion_correction.reference.median = config.motion_correction_reference.includes('median')
+  c.functional.preprocessing.motion_correction.reference.selected_volume = config.motion_correction_reference.includes('selected volume')
+  c.functional.preprocessing.motion_correction.reference.reference_volume = config.motion_correction_reference_volume
   c.functional.preprocessing.despike.enabled = config.runDespike
   c.functional.preprocessing.scaling.enabled = config.runScaling
   c.functional.preprocessing.scaling.factor = config.scaling_factor
@@ -630,6 +636,16 @@ export function parse(content) {
         partial_correlation: analysis.includes("partialcorr"),
       })
     }
+  }
+
+  if (config.realignment.includes("ROI_to_func")) {
+    c.derivatives.timeseries_extraction.realignment.roi_to_func = true
+    c.derivatives.timeseries_extraction.realignment.func_to_roi = false
+  }
+
+  if (config.realignment.includes("func_to_ROI")) {
+    c.derivatives.timeseries_extraction.realignment.roi_to_func = false
+    c.derivatives.timeseries_extraction.realignment.func_to_roi = true
   }
 
   c.derivatives.timeseries_extraction.outputs.csv = config.roiTSOutputs[0]
@@ -880,6 +896,18 @@ export function dump(pipeline, version='0') {
 
   config.n4_correct_mean_EPI = c.functional.preprocessing.n4_mean_epi.enabled
   config.runMotionStatisticsFirst = [c.functional.preprocessing.motion_stats.enabled ? 1 : 0]
+
+  config.motion_correction = []
+    .concat(c.functional.preprocessing.motion_correction.method.volreg ? ["3dvolreg"] : [])
+    .concat(c.functional.preprocessing.motion_correction.method.mcflirt ? ["mcflirt"] : [])
+
+  config.motion_correction_reference = []
+    .concat(c.functional.preprocessing.motion_correction.reference.mean ? ["mean"] : [])
+    .concat(c.functional.preprocessing.motion_correction.reference.median ? ["median"] : [])
+    .concat(c.functional.preprocessing.motion_correction.reference.selected_volume ? ["selected volume"] : [])
+
+  config.motion_correction_reference_volume = c.functional.preprocessing.motion_correction.reference.reference_volume 
+
   config.runDespike = c.functional.preprocessing.despike.enabled
   config.runScaling = c.functional.preprocessing.scaling.enabled
   config.scaling_factor = c.functional.preprocessing.scaling.factor
@@ -1060,7 +1088,9 @@ export function dump(pipeline, version='0') {
       config.tsa_roi_paths[0][mask.mask] = maskFeatures.join(", ")
     }
   }
-
+  
+  config.realignment = [c.derivatives.timeseries_extraction.realignment.roi_to_func ? "ROI_to_func" : "func_to_ROI"]
+  
   config.roiTSOutputs = [
     c.derivatives.timeseries_extraction.outputs.csv,
     c.derivatives.timeseries_extraction.outputs.numpy

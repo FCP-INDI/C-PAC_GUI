@@ -187,6 +187,18 @@ export default {
             motion_stats: {
               enabled: false,
             },
+            motion_correction: {
+              method: {
+                'volreg': true,
+                'mcflirt': false,
+              },
+              reference: {
+                'mean': true,
+                'median': false,
+                'selected_volume': false,
+              },
+              reference_volume: 0
+            },
             despike: {
               enabled: false,
             }
@@ -397,6 +409,10 @@ export default {
             enabled: true,
             masks: [
             ],
+            realignment: {
+              roi_to_func: true,
+              func_to_roi: false,
+            },
             outputs: {
               csv: true,
               numpy: true,
