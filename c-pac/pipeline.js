@@ -464,9 +464,6 @@ export function parse(content) {
   c.functional.distortion_correction.method.phasediff.dwell_to_assymetric_ratio = config.fmap_distcorr_dwell_asym_ratio[0]
   c.functional.distortion_correction.method.phasediff.phase_encoding_direction = config.fmap_distcorr_pedir
 
-  c.functional.epi_registration.enabled = config.runRegisterFuncToEPI.includes(1) 
-  c.functional.epi_registration.template_epi = config.template_epi
-
   c.functional.anatomical_registration.enabled = config.runRegisterFuncToAnat.includes(1)
   c.functional.anatomical_registration.bb_registration = config.runBBReg.includes(1)
   c.functional.anatomical_registration.bb_registration_scheduler =
@@ -494,9 +491,39 @@ export function parse(content) {
   c.functional.anatomical_registration.functional_masking.fsl.configuration.apply_threshold = config.bold_bet_threshold 
   c.functional.anatomical_registration.functional_masking.fsl.configuration.vertical_gradient = config.bold_bet_vertical_gradient 
 
-  c.functional.template_registration.enabled = config.runRegisterFuncToMNI.includes(1)
+  if (typeof config.runRegisterFuncToTemplate === "string") {
+    config.skullstrip_option = [config.skullstrip_option]
+  }
+
+  if (config.distortion_correction.includes("Off")) {
+    c.functional.template_registration.enabled = false
+  }
+
+  if (config.runRegisterFuncToTemplate.includes("T1_template")) {
+    c.functional.template_registration.enabled = true
+    c.functional.template_registration.t1_template.enabled = true
+  }
+
+  if (config.runRegisterFuncToTemplate.includes("EPI_template")) {
+    c.functional.template_registration.enabled = true
+    c.functional.template_registration.epi_template.enabled = true
+  }
+
   c.functional.template_registration.functional_resolution = config.resolution_for_func_preproc.replace(/mm/g, "")
   c.functional.template_registration.derivative_resolution = config.resolution_for_func_derivative.replace(/mm/g, "")
+
+  c.functional.template_registration.identity_matrix =
+    config.identityMatrix
+      .replace("$FSLDIR", "${environment.paths.fsl_dir}")
+  c.functional.template_registration.epi_template.template_epi = config.template_epi
+  c.functional.template_registration.t1_template.brain_template =
+    config.template_brain_only_for_func
+    .replace("${resolution_for_func_preproc}", "${pipeline.functional.template_registration.t1_template.functional_resolution}mm")
+      .replace("$FSLDIR", "${environment.paths.fsl_dir}")
+  c.functional.template_registration.t1_template.skull_template =
+    config.template_skull_for_func
+    .replace("${resolution_for_func_preproc}", "${pipeline.functional.template_registration.t1_template.functional_resolution}mm")
+      .replace("$FSLDIR", "${environment.paths.fsl_dir}")
 
   // if (config.regOption.includes("ANTS")) {
   //   switch (config.funcRegANTSinterpolation) {
@@ -523,18 +550,6 @@ export function parse(content) {
   //       break;
   //   }
   // }
-
-  c.functional.template_registration.brain_template =
-    config.template_brain_only_for_func
-      .replace("${resolution_for_func_preproc}", "${pipeline.functional.template_registration.functional_resolution}mm")
-      .replace("$FSLDIR", "${environment.paths.fsl_dir}")
-  c.functional.template_registration.skull_template =
-    config.template_skull_for_func
-      .replace("${resolution_for_func_preproc}", "${pipeline.functional.template_registration.functional_resolution}mm")
-      .replace("$FSLDIR", "${environment.paths.fsl_dir}")
-  c.functional.template_registration.identity_matrix =
-    config.identityMatrix
-      .replace("$FSLDIR", "${environment.paths.fsl_dir}")
 
   c.functional.nuisance_regression.enabled = config.runNuisance.includes(1)
   c.functional.nuisance_regression.lateral_ventricles_mask =
@@ -935,9 +950,6 @@ export function dump(pipeline, version='0') {
   config.fmap_distcorr_dwell_time = [c.functional.distortion_correction.method.phasediff.dwell_time]
   config.fmap_distcorr_dwell_asym_ratio = [c.functional.distortion_correction.method.phasediff.dwell_to_assymetric_ratio]
   config.fmap_distcorr_pedir = c.functional.distortion_correction.method.phasediff.phase_encoding_direction
-         
-  config.runRegisterFuncToEPI = [c.functional.epi_registration.enabled ? 1 : 0]
-  config.template_epi = c.functional.epi_registration.template_epi
 
   config.runRegisterFuncToAnat = [c.functional.anatomical_registration.enabled ? 1 : 0]
   config.runBBReg = [c.functional.anatomical_registration.bb_registration ? 1 : 0]
@@ -966,7 +978,11 @@ export function dump(pipeline, version='0') {
   config.bold_bet_threshold = c.functional.anatomical_registration.functional_masking.fsl.configuration.apply_threshold
   config.bold_bet_vertical_gradient = c.functional.anatomical_registration.functional_masking.fsl.configuration.vertical_gradient
 
-  config.runRegisterFuncToMNI = [c.functional.template_registration.enabled ? 1 : 0]
+  config.runRegisterFuncToTemplate = []
+    .concat(c.functional.template_registration.t1_template.enabled ? ["T1_template"] : [])
+    .concat(c.functional.template_registration.epi_template.enabled ? ["EPI_template"] : [])
+    .concat(c.functional.template_registration.enabled ? ["T1_template", "EPI_template"] : [])
+
   if (c.functional.template_registration.functional_resolution.includes("x")) {
     var xind = []
     for(var i = 0; i < c.functional.template_registration.functional_resolution.length; i++) {
@@ -986,10 +1002,39 @@ export function dump(pipeline, version='0') {
   } else {
     config.resolution_for_func_derivative = c.functional.template_registration.derivative_resolution + "mm"
   }
-  
-  config.template_brain_only_for_func = c.functional.template_registration.brain_template
-  config.template_skull_for_func = c.functional.template_registration.skull_template
+
   config.identityMatrix = c.functional.template_registration.identity_matrix
+  config.template_epi = c.functional.template_registration.epi_template.template_epi
+  config.template_brain_only_for_func = c.functional.template_registration.t1_template.brain_template
+  config.template_skull_for_func = c.functional.template_registration.t1_template.skull_template
+
+  // switch (c.functional.template_registration.methods.ants.interpolation) {
+  //   case 'linear':
+  //     config.funcRegANTSinterpolation = 'Linear'
+  //     break;
+  
+  //   case 'sinc':
+  //     config.funcRegANTSinterpolation = 'LanczosWindowedSinc'
+  //     break;
+
+  //   case 'spline':
+  //     config.funcRegANTSinterpolation = 'BSpline'
+  //     break;
+  // } 
+  
+  // switch (c.functional.template_registration.methods.fsl.interpolation) {
+  //   case 'linear':
+  //     config.funcRegFSLinterpolation = 'trilinear'
+  //     break;
+  
+  //   case 'sinc':
+  //     config.funcRegFSLinterpolation = 'sinc'
+  //     break;
+
+  //   case 'spline':
+  //     config.funcRegFSLinterpolation = 'spline'
+  //     break;
+  // }
 
   config.runICA = [c.functional.aroma.enabled ? 1 : 0]
   config.aroma_denoise_type = c.functional.aroma.denoising_strategy === 'non-aggressive' ? "nonaggr" : "aggr"

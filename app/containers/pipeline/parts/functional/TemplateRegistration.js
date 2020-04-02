@@ -8,7 +8,10 @@ import InputLabel from '@material-ui/core/InputLabel';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import Collapse from '@material-ui/core/Collapse';
 import Help from 'components/Help'
-
+import FormGroup from '@material-ui/core/FormGroup';
+import FormLabel from '@material-ui/core/FormLabel';
+import FormControlLabelled from 'components/FormControlLabelled'
+import Switch from '@material-ui/core/Switch';
 
 class TemplateRegistration extends Component {
 
@@ -224,34 +227,6 @@ class TemplateRegistration extends Component {
 
           <Help
             type="pipeline"
-            regex={/^template_brain_only_for_func/}
-            help={`Standard FSL Skull Stripped Template. Used as a reference image for functional registration.`}
-            fullWidth
-          >
-            <TextField label="Standard Brain Template"
-              fullWidth margin="normal" variant="outlined"
-              name="functional.template_registration.brain_template"
-              value={configuration.getIn(["functional", "template_registration", "brain_template"])}
-              onChange={onChange}
-            />
-          </Help>
-
-          <Help
-            type="pipeline"
-            regex={/^template_skull_for_func/}
-            help={`Standard FSL Anatomical Brain Image with Skull.`}
-            fullWidth
-          >
-            <TextField label="Standard Brain + Skull Template"
-              fullWidth margin="normal" variant="outlined"
-              name="functional.template_registration.skull_template"
-              value={configuration.getIn(["functional", "template_registration", "skull_template"])}
-              onChange={onChange}
-            />
-          </Help>
-
-          <Help
-            type="pipeline"
             regex={/^identityMatrix/}
             help={`Matrix containing all 1's. Used as an identity matrix during registration. It is not necessary to change this path unless you intend to use non-standard MNI registration.`}
             fullWidth
@@ -263,6 +238,93 @@ class TemplateRegistration extends Component {
               onChange={onChange}
             />
           </Help>
+
+          <Grid container>
+            <Grid item xs={4}>
+              <FormGroup row>
+                <FormControlLabelled label="T1 Template Registration">
+                  <Switch
+                    name="functional.template_registration.t1_template.enabled"
+                    checked={configuration.getIn("functional.template_registration.t1_template.enabled".split("."))}
+                    onChange={onChange}
+                    color="primary"
+                  />
+                </FormControlLabelled>
+              </FormGroup>
+              <FormGroup row>
+                <FormControlLabelled label="EPI Template Registration">
+                  <Switch
+                    name="functional.template_registration.epi_template.enabled"
+                    checked={configuration.getIn("functional.template_registration.epi_template.enabled".split("."))}
+                    onChange={onChange}
+                    color="primary"
+                  />
+                </FormControlLabelled>
+              </FormGroup>
+            </Grid>
+
+            <Grid item xs={8}>
+              <Collapse in={configuration.getIn("functional.template_registration.t1_template.enabled".split("."))}>
+                <FormGroup>
+                  <FormLabel>
+                    T1 - Brain/Skull Templates
+                  </FormLabel>
+                  <FormGroup row>
+                    <Help
+                      type="pipeline"
+                      regex={/^template_brain_only_for_func/}
+                      help={`Standard FSL Skull Stripped Template. Used as a reference image for functional registration.`}
+                      fullWidth
+                    >
+                      <TextField label="Standard Brain Template"
+                        fullWidth margin="normal" variant="outlined"
+                        name="functional.template_registration.t1_template.brain_template"
+                        value={configuration.getIn(["functional", "template_registration", "t1_template", "brain_template"])}
+                        onChange={onChange}
+                      />
+                    </Help>
+                  </FormGroup>
+                  <FormGroup row>
+                    <Help
+                      type="pipeline"
+                      regex={/^template_skull_for_func/}
+                      help={`Standard FSL Anatomical Brain Image with Skull.`}
+                      fullWidth
+                    >
+                      <TextField label="Standard Brain + Skull Template"
+                        fullWidth margin="normal" variant="outlined"
+                        name="functional.template_registration.t1_template.skull_template"
+                        value={configuration.getIn(["functional", "template_registration", "t1_template", "skull_template"])}
+                        onChange={onChange}
+                      />
+                    </Help>
+                  </FormGroup>
+                </FormGroup>
+              </Collapse>
+              <Collapse in={configuration.getIn("functional.template_registration.epi_template.enabled".split("."))}>
+                <FormGroup>
+                  <FormLabel>
+                    EPI - Brain/Skull Template
+                  </FormLabel>
+                  <FormGroup row>
+                    <Help
+                      type="pipeline"
+                      regex={/^template_epi/}
+                      help={`EPI template. Used as a reference image for functional registration.`}
+                      fullWidth
+                    >
+                      <TextField label="EPI Template"
+                        fullWidth margin="normal" variant="outlined"
+                        name="functional.template_registration.epi_template.template_epi"
+                        value={configuration.getIn(["functional", "template_registration", "epi_template", "template_epi"])}
+                        onChange={onChange}
+                      />
+                    </Help>
+                  </FormGroup>
+                </FormGroup>
+              </Collapse>
+            </Grid>
+          </Grid>
         </Grid>
       </Grid>
     )

@@ -8,7 +8,7 @@ import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import Switch from '@material-ui/core/Switch';
 
 import {
-  EPIRegistration,
+  // EPIRegistration,
   AnatomicalRegistration,
   DistortionCorrection,
   MedianAngleCorrection,
@@ -105,13 +105,13 @@ class FunctionalPage extends Component {
           )
         }
 
-        {
+        {/* {
           this.renderSection(
             "Functional to EPI Template Registration",
             "functional.epi_registration.enabled",
             EPIRegistration
           )
-        }
+        } */}
 
         {
           this.renderSection(
