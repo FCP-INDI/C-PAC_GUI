@@ -187,6 +187,18 @@ export default {
             motion_stats: {
               enabled: false,
             },
+            motion_correction: {
+              method: {
+                'volreg': true,
+                'mcflirt': false,
+              },
+              reference: {
+                'mean': true,
+                'median': false,
+                'selected_volume': false,
+              },
+              reference_volume: 0
+            },
             despike: {
               enabled: false,
             }
@@ -268,7 +280,6 @@ export default {
             brain_template: '${environment.paths.fsl_dir}/data/standard/MNI152_T1_${pipeline.functional.template_registration.functional_resolution}_brain.nii.gz',
             skull_template: '${environment.paths.fsl_dir}/data/standard/MNI152_T1_${pipeline.functional.template_registration.functional_resolution}.nii.gz',
             identity_matrix: '${environment.paths.fsl_dir}/etc/flirtsch/ident.mat',
-
           },
           nuisance_regression: {
             enabled: true,

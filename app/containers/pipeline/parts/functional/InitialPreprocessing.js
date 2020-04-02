@@ -58,23 +58,6 @@ class InitialPreprocessing extends Component {
               </FormControlLabelled>
             </Help>
           </FormGroup>
-        
-          <FormGroup row>
-            <Help
-              type="pipeline"
-              regex={/^runMotionStatisticsFirst/}
-              help={`Turn on to calculate motion statistics before slice timing correction`}
-            >
-              <FormControlLabelled label="Motion Statistics before Slice Timing Correction">
-                <Switch
-                  name="functional.preprocessing.motion_stats.enabled"
-                  checked={configuration.getIn("functional.preprocessing.motion_stats.enabled".split("."))}
-                  onChange={onChange}
-                  color="primary"
-                />
-              </FormControlLabelled>
-            </Help>
-          </FormGroup>
 
           <FormGroup row>
             <Help
@@ -126,6 +109,109 @@ class InitialPreprocessing extends Component {
               helperText=''
             />
           </Help>
+          
+        
+          <FormGroup row>
+            <Help
+              type="pipeline"
+              regex={/^runMotionStatisticsFirst/}
+              help={`Turn on to estimate motion statistics before slice timing correction`}
+            >
+              <FormControlLabelled label="Motion Statistics Estimation before Slice Timing Correction">
+                <Switch
+                  name="functional.preprocessing.motion_stats.enabled"
+                  checked={configuration.getIn("functional.preprocessing.motion_stats.enabled".split("."))}
+                  onChange={onChange}
+                  color="primary"
+                />
+              </FormControlLabelled>
+            </Help>
+          </FormGroup>
+
+          <FormGroup>
+            <FormLabel>
+              <Help
+                type="pipeline"
+                regex={/^motion_correction/}
+                help={`Choose the tool to perform motion correction`}
+              />
+              Motion Correction Tool
+            </FormLabel>
+            <FormControl>
+              <FormGroup row>
+                <FormControlLabelled label="AFNI: 3dvolreg">
+                  <Switch
+                    name="functional.preprocessing.motion_correction.method.volreg"
+                    checked={configuration.getIn(["functional", "preprocessing", "motion_correction", "method", "volreg"])}
+                    onChange={onChange}
+                    color="primary"
+                  />
+                </FormControlLabelled>
+                <FormControlLabelled label="FSL: mcflirt">
+                  <Switch
+                    name="functional.preprocessing.motion_correction.method.mcflirt"
+                    checked={configuration.getIn(["functional", "preprocessing", "motion_correction", "method", "mcflirt"])}
+                    onChange={onChange}
+                    color="primary"
+                  />
+                </FormControlLabelled>
+              </FormGroup>
+            </FormControl>
+          </FormGroup>
+
+          <FormGroup>
+            <FormLabel>
+              <Help
+                type="pipeline"
+                regex={/^motion_correction_reference/}
+                help={`Choose the motion correction reference`}
+              />
+              Motion Correction Reference
+            </FormLabel>
+            <FormControl>
+              <FormGroup row>
+                <FormControlLabelled label="mean">
+                  <Switch
+                    name="functional.preprocessing.motion_correction.reference.mean"
+                    checked={configuration.getIn(["functional", "preprocessing", "motion_correction", "reference", "mean"])}
+                    onChange={onChange}
+                    color="primary"
+                  />
+                </FormControlLabelled>
+                <FormControlLabelled label="median">
+                  <Switch
+                    name="functional.preprocessing.motion_correction.reference.median"
+                    checked={configuration.getIn(["functional", "preprocessing", "motion_correction", "reference", "median"])}
+                    onChange={onChange}
+                    color="primary"
+                  />
+                </FormControlLabelled>
+                <FormControlLabelled label="selected volume">
+                  <Switch
+                    name="functional.preprocessing.motion_correction.reference.selected_volume"
+                    checked={configuration.getIn(["functional", "preprocessing", "motion_correction", "reference", "selected_volume"])}
+                    onChange={onChange}
+                    color="primary"
+                  />
+                </FormControlLabelled>
+              </FormGroup>
+              <Help
+                type="pipeline"
+                regex={/^motion_correction_reference_volume/}
+                help={`Motion Correction Reference Volume`}
+                fullWidth
+              >
+                <TextField
+                  label="Motion Correction Reference Volume"
+                  name="functional.preprocessing.motion_correction.reference_volume"
+                  value={configuration.getIn("functional.preprocessing.motion_correction.reference_volume".split("."))}
+                  onChange={onChange}
+                  fullWidth={true} margin="normal" variant="outlined"
+                  helperText=''
+                />
+              </Help>
+            </FormControl>
+          </FormGroup>
 
       </React.Fragment>
     )
