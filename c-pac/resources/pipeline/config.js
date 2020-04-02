@@ -269,14 +269,14 @@ export default {
                 {
                   collapse_output_transforms:0,
                   dimensionality:3,
-                  initial_moving_transform:{
+                  initial_moving_transform: {
                     initializationFeature: 0,
                   },
-                  transforms:{
-                    Rigid:{
+                  transforms: {
+                    Rigid: {
                       enabled: true,
                       gradientStep: 0.1,
-                      metric:{
+                      metric: {
                         type: {
                           MI: {
                             enabled: true,

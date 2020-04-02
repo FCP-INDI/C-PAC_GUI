@@ -190,21 +190,21 @@ export function normalize(pipeline) {
     }
   }
 /// add ants_para
-  let ANTs_para_EPI_registration = configuration.functional.functional.template_registration.epi_template.ANTs_para_EPI_registration
-  for (let ANTs_para_i in ANTs_para_EPI_registration) {
+  // let ANTs_para_EPI_registration = configuration.functional.functional.template_registration.epi_template.ANTs_para_EPI_registration
+  // for (let ANTs_para_i in ANTs_para_EPI_registration) {
 
-    let ANTs_para = ANTs_para_EPI_registration[ANTs_para_i]
-    const templateANTs_para_EPI = clone(defaultTemplate.versions.default.configuration.functional.template_registration.epi_template.ANTs_para_EPI_registration)
+  //   let ANTs_para = ANTs_para_EPI_registration[ANTs_para_i]
+  //   const templateANTs_para_EPI = clone(defaultTemplate.versions.default.configuration.functional.template_registration.epi_template.ANTs_para_EPI_registration)
 
-    const newNTs_para_EPI = {}
-    newNTs_para_EPI.collapse_output_transforms = ANTs_para.collapse_output_transforms
-    newNTs_para_EPI.dimensionality = ANTs_para.dimensionality
-    newNTs_para_EPI.initial_moving_transform.initializationFeature = ANTs_para.initial_moving_transform.initializationFeature
+  //   const newNTs_para_EPI = {}
+  //   newNTs_para_EPI.collapse_output_transforms = ANTs_para.collapse_output_transforms
+  //   newNTs_para_EPI.dimensionality = ANTs_para.dimensionality
+  //   newNTs_para_EPI.initial_moving_transform.initializationFeature = ANTs_para.initial_moving_transform.initializationFeature
 
-    ANTs_para_EPI_registration.push(newNTs_para_EPI)
-  }
+  //   ANTs_para_EPI_registration.push(newNTs_para_EPI)
+  // }
 
-  newConfiguration.functional.template_registration.epi_template.ANTs_para_EPI_registration = ANTs_para_EPI_registration
+  // newConfiguration.functional.template_registration.epi_template.ANTs_para_EPI_registration = ANTs_para_EPI_registration
 ///
 
   newConfiguration.functional.nuisance_regression = newNuisanceRegression
@@ -539,25 +539,26 @@ export function parse(content) {
 
 // add ants_para
   const templateANTs_para_EPI = clone(defaultTemplate.versions.default.configuration.functional.template_registration.epi_template.ANTs_para_EPI_registration)
-
   c.functional.template_registration.epi_template.ANTs_para_EPI_registration = []
-
   if (config.ANTs_para_EPI_registration) {
-    for (const ANTs_para_EPI of config.ANTs_para_EPI_registration) {
-
-      const newANTs_para_EPI = clone(templateANTs_para_EPI)
-
-      const overwriteMerge = (destinationArray, sourceArray, options) => sourceArray
-      newANTs_para_EPI['collapse_output_transforms'] = deepmerge(newANTs_para_EPI['collapse_output_transforms'], clone(ANTs_para_EPI['collapse-output-transforms']), { arrayMerge: overwriteMerge })
-      newANTs_para_EPI['dimensionality'] = deepmerge(newANTs_para_EPI['dimensionality'], clone(ANTs_para_EPI['dimensionality']), { arrayMerge: overwriteMerge })
-      newANTs_para_EPI['initial_moving_transform']['initializationFeature'] = deepmerge(newANTs_para_EPI['initial-moving-transform']['initializationFeature'], clone(ANTs_para_EPI['initial-moving_transform']['initializationFeature']), { arrayMerge: overwriteMerge })
-
-      // newANTs_para_EPI['collapse_output_transforms'] = clone(ANTs_para_EPI['collapse-output-transforms'])
-      // newANTs_para_EPI['dimensionality'] = clone(ANTs_para_EPI['dimensionality'])
-      // newANTs_para_EPI['initial_moving_transform']['initializationFeature'] = clone(ANTs_para_EPI['initial-moving_transform']['initializationFeature'])
-
-      c.functional.template_registration.epi_template.ANTs_para_EPI_registration.push(newANTs_para_EPI)
+    const ANTs_para_EPI = config.ANTs_para_EPI_registration
+    const newANTs_para_EPI = clone(templateANTs_para_EPI)
+    for (const k of [
+      'collapse-output-transforms',
+      'dimensionality',
+      'initial_moving_transform',
+    ]) {
+      if (k === 'collapse-output-transforms'){
+        newANTs_para_EPI.collapse_output_transforms = ANTs_para_EPI[0][k]
+      }
+      if (k === 'dimensionality') {
+        newANTs_para_EPI.dimensionality = ANTs_para_EPI[1][k]
+      }
+      if (k === 'initial_moving_transform') {
+        newANTs_para_EPI.initial_moving_transform.initializationFeature = ANTs_para_EPI[2]['initial-moving-transform']['initializationFeature']
+      }
     }
+    c.functional.template_registration.epi_template.ANTs_para_EPI_registration.push(newANTs_para_EPI)
   }
 ///
   c.functional.nuisance_regression.enabled = config.runNuisance.includes(1)
@@ -997,16 +998,16 @@ export function dump(pipeline, version='0') {
 
 // add ants_para
   config.ANTs_para_EPI_registration = []
-  for (const ANTs_para_EPI of c.functional.template_registration.epi_template.ANTs_para_EPI_registration) {
+  const ANTs_para_EPI = c.functional.template_registration.epi_template.ANTs_para_EPI_registration[0]
+  const newANTs_para_EPI = {}
 
-    const newANTs_para_EPI = {}
+  newANTs_para_EPI['collapse-output-transforms'] = ANTs_para_EPI['collapse_output_transforms']
+  newANTs_para_EPI['dimensionality'] = ANTs_para_EPI['dimensionality']
+  // newANTs_para_EPI['initial-moving-transform']['initializationFeature'] = ANTs_para_EPI['initial_moving_transform']['initializationFeature']
+  newANTs_para_EPI['initial-moving-transform'] = ANTs_para_EPI['initial_moving_transform']
 
-    newANTs_para_EPI['collapse-output-transforms'] = clone(ANTs_para_EPI['collapse_output_transforms'])
-    newANTs_para_EPI['dimensionality'] = clone(ANTs_para_EPI['dimensionality'])
-    newANTs_para_EPI['initial-moving-transform']['initializationFeature'] = clone(ANTs_para_EPI['initial_moving_transform']['initializationFeature'])
-
-    config.ANTs_para_EPI_registration.push(newANTs_para_EPI)
-  }
+  config.ANTs_para_EPI_registration.push(newANTs_para_EPI)
+  // }
 // add ants_para
 
   config.runICA = [c.functional.aroma.enabled ? 1 : 0]
