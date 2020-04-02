@@ -459,7 +459,7 @@ class TemplateRegistration extends Component {
                     >
                       <TextField label="collapse-output-transforms"
                         fullWidth margin="normal" variant="outlined"
-                        name="functional.template_registration.epi_template.ANTs_para_EPI_registration.collapse_output_transforms"
+                        name="functional.template_registration.epi_template.ANTs_para_EPI_registration[0].collapse_output_transforms"
                         value={configuration.getIn("functional.template_registration.epi_template.ANTs_para_EPI_registration.collapse_output_transforms".split("."))}
                         onChange={onChange}
                       />
@@ -476,7 +476,7 @@ class TemplateRegistration extends Component {
                     >
                       <TextField label="dimensionality"
                         fullWidth margin="normal" variant="outlined"
-                        name="functional.template_registration.epi_template.ANTs_para_EPI_registration.dimensionality"
+                        name="functional.template_registration.epi_template.ANTs_para_EPI_registration[0].dimensionality"
                         value={configuration.getIn("functional.template_registration.epi_template.ANTs_para_EPI_registration.dimensionality".split("."))}
                         onChange={onChange}
                       />
@@ -498,7 +498,7 @@ class TemplateRegistration extends Component {
                     >
                         <TextField label="initial-moving-transform  initializationFeature"
                         fullWidth margin="normal" variant="outlined"
-                        name="functional.template_registration.epi_template.ANTs_para_EPI_registration.initial_moving_transform.initializationFeature"
+                        name="functional.template_registration.epi_template.ANTs_para_EPI_registration[0].initial_moving_transform.initializationFeature"
                         value={configuration.getIn("functional.template_registration.epi_template.ANTs_para_EPI_registration.initial_moving_transform.initializationFeature".split("."))}
                         onChange={onChange}
                       />
