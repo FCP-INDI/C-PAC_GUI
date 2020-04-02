@@ -267,8 +267,8 @@ export default {
               template_epi: 's3://fcp-indi/resources/cpac/resources/epi_hbn.nii.gz',
               ANTs_para_EPI_registration: 
                 {
-                  collapse_output_transforms:0,
-                  dimensionality:3,
+                  collapse_output_transforms: 0,
+                  dimensionality: 3,
                   initial_moving_transform: {
                     initializationFeature: 0,
                   },
@@ -341,17 +341,19 @@ export default {
                       updateFieldVarianceInVoxelSpace: 3.0,
                       totalFieldVarianceInVoxelSpace: 0.0,
                       metric: {
-                        MI: {
-                          enabled: false,
-                          metricWeight: 1,
-                          numberOfBins: 32,
-                          samplingStrategy: 'Regular',
-                          samplingPercentage: 0.25,
-                        },
-                        CC: {
-                          enabled: true,
-                          metricWeight: 1,
-                          radius: 4,
+                        type: {
+                          MI: {
+                            enabled: false,
+                            metricWeight: 1,
+                            numberOfBins: 32,
+                            samplingStrategy: 'Regular',
+                            samplingPercentage: 0.25,
+                          },
+                          CC: {
+                            enabled: true,
+                            metricWeight: 1,
+                            radius: 4,
+                          },
                         },
                       },
                       convergence: {
