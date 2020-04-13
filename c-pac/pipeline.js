@@ -538,29 +538,88 @@ export function parse(content) {
 
 
 // add ants_para
-  const templateANTs_para_EPI = clone(defaultTemplate.versions.default.configuration.functional.template_registration.epi_template.ANTs_para_EPI_registration)
-  c.functional.template_registration.epi_template.ANTs_para_EPI_registration = []
-  if (config.ANTs_para_EPI_registration) {
+  c.functional.template_registration.epi_template.ANTs_para_EPI_registration = {}
+  if (config.ANTs_para_EPI_registration && config.ANTs_para_EPI_registration.length > 0) {
     const ANTs_para_EPI = config.ANTs_para_EPI_registration
-    const newANTs_para_EPI = clone(templateANTs_para_EPI)
     for (const k of [
-      'collapse-output-transforms',
-      'dimensionality',
-      'initial_moving_transform',
+      ['transforms', 'transforms'],
+      ['collapse_output_transforms', 'collapse-output-transforms'],
+      ['dimensionality', 'dimensionality'],
+      ['initial_moving_transform', 'initial-moving-transform'],
+
     ]) {
-      if (k === 'collapse-output-transforms'){
-        newANTs_para_EPI.collapse_output_transforms = ANTs_para_EPI[0][k]
-      }
-      if (k === 'dimensionality') {
-        newANTs_para_EPI.dimensionality = ANTs_para_EPI[1][k]
-      }
-      if (k === 'initial_moving_transform') {
-        newANTs_para_EPI.initial_moving_transform.initializationFeature = ANTs_para_EPI[2]['initial-moving-transform']['initializationFeature']
+      let listItem = ANTs_para_EPI.filter((item) => k[1] in item)  // find a config in the list of config
+      if (listItem.length > 0 &&  k[1] != 'transforms') {  // check if it found anything
+        c.functional.template_registration.epi_template.ANTs_para_EPI_registration[k[0]] = listItem[0][k[1]]
+      } 
+
+      else if (listItem.length > 0 && k[1] == 'transforms') {
+        c.functional.template_registration.epi_template.ANTs_para_EPI_registration['transforms'] = {}  // add {} to push next layer values
+        c.functional.template_registration.epi_template.ANTs_para_EPI_registration['transforms']['Rigid'] = {}
+        c.functional.template_registration.epi_template.ANTs_para_EPI_registration['transforms']['Affine'] = {}
+        c.functional.template_registration.epi_template.ANTs_para_EPI_registration['transforms']['SyN'] = {}
+        for (const t of [
+          ['Rigid'],
+          ['Affine'],
+          ['SyN'],
+        ]) {
+          let listItem_transform = listItem[0]["transforms"].filter((item) => t in item)
+          if (listItem_transform.length = 0){
+            c.functional.template_registration.epi_template.ANTs_para_EPI_registration[k[0]][t]['enabled'] = false
+          }
+          else if (listItem_transform.length > 0 ) { 
+            c.functional.template_registration.epi_template.ANTs_para_EPI_registration[k[0]][t]['enabled'] = true
+            if (t != 'SyN'){
+              for (const j of [
+                ['gradientStep', 'gradientStep'],
+                ['convergence', 'convergence'],
+                ['smoothing_sigmas', 'smoothing-sigmas'],
+                ['shrink_factors', 'shrink-factors'],
+              ])
+                c.functional.template_registration.epi_template.ANTs_para_EPI_registration[k[0]][t][j[0]] = listItem_transform[0][t][j[1]]
+            } 
+            else if (t == 'SyN'){
+              for (const j of [
+                ['gradientStep', 'gradientStep'],
+                ['updateFieldVarianceInVoxelSpace','updateFieldVarianceInVoxelSpace'],
+                ['totalFieldVarianceInVoxelSpace','totalFieldVarianceInVoxelSpace'],
+                ['convergence','convergence'],
+                ['smoothing_sigmas','smoothing-sigmas'],
+                ['shrink_factors','shrink-factors'],
+                ['winsoriz_image_intensities', 'winsoriz-image-intensities'],
+              ])
+                c.functional.template_registration.epi_template.ANTs_para_EPI_registration[k[0]][t][j[0]] = listItem_transform[0][t][j[1]]
+            }
+
+            if (listItem_transform[0][t]['metric']['type'] == 'MI') {
+              // c.functional.template_registration.epi_template.ANTs_para_EPI_registration[k[0]][t]['metric'] = {}
+              c.functional.template_registration.epi_template.ANTs_para_EPI_registration[k[0]][t]['metric']['type'] = {}
+              c.functional.template_registration.epi_template.ANTs_para_EPI_registration[k[0]][t]['metric']['type']['MI'] = {}
+              c.functional.template_registration.epi_template.ANTs_para_EPI_registration[k[0]][t]['metric']['type']['MI']['enabled'] = true
+              c.functional.template_registration.epi_template.ANTs_para_EPI_registration[k[0]][t]['metric']['type']['CC']['enabled'] = false
+              delete listItem_transform[0][t]['metric']['type']
+              c.functional.template_registration.epi_template.ANTs_para_EPI_registration[k[0]][t]['metric']['type']['MI'] = listItem_transform[0][t]['metric']
+            }
+            else if (listItem_transform[0][t]['metric']['type'] == 'CC') {
+              // c.functional.template_registration.epi_template.ANTs_para_EPI_registration[k[0]][t]['metric'] = {}
+              c.functional.template_registration.epi_template.ANTs_para_EPI_registration[k[0]][t]['metric']['type'] = {}
+              c.functional.template_registration.epi_template.ANTs_para_EPI_registration[k[0]][t]['metric']['type']['CC'] = {}
+              c.functional.template_registration.epi_template.ANTs_para_EPI_registration[k[0]][t]['metric']['type']['CC']['enabled'] = true
+              c.functional.template_registration.epi_template.ANTs_para_EPI_registration[k[0]][t]['metric']['type']['MI']['enabled'] = false
+              delete listItem_transform[0][t]['metric']['type']
+              c.functional.template_registration.epi_template.ANTs_para_EPI_registration[k[0]][t]['metric']['type']['CC'] = listItem_transform[0][t]['metric']
+            }
+
+            if (listItem_transform[0][t][0]['use-histogram-matching']){
+              c.functional.template_registration.epi_template.ANTs_para_EPI_registration[k[0]][t]['use_histogram_matching'] = {}
+              c.functional.template_registration.epi_template.ANTs_para_EPI_registration[k[0]][t]['use_histogram_matching']['enabled'] = true
+            }
+           }
+        }
       }
     }
-    c.functional.template_registration.epi_template.ANTs_para_EPI_registration.push(newANTs_para_EPI)
   }
-///
+// add ants-para
   c.functional.nuisance_regression.enabled = config.runNuisance.includes(1)
   c.functional.nuisance_regression.lateral_ventricles_mask =
     config.lateral_ventricles_mask
@@ -997,17 +1056,40 @@ export function dump(pipeline, version='0') {
   config.template_skull_for_func = c.functional.template_registration.t1_template.skull_template
 
 // add ants_para
-  config.ANTs_para_EPI_registration = []
-  const ANTs_para_EPI = c.functional.template_registration.epi_template.ANTs_para_EPI_registration[0]
-  const newANTs_para_EPI = {}
 
-  newANTs_para_EPI['collapse-output-transforms'] = ANTs_para_EPI['collapse_output_transforms']
-  newANTs_para_EPI['dimensionality'] = ANTs_para_EPI['dimensionality']
-  // newANTs_para_EPI['initial-moving-transform']['initializationFeature'] = ANTs_para_EPI['initial_moving_transform']['initializationFeature']
-  newANTs_para_EPI['initial-moving-transform'] = ANTs_para_EPI['initial_moving_transform']
+  const ANTs_para_EPI = c.functional.template_registration.epi_template.ANTs_para_EPI_registration
 
-  config.ANTs_para_EPI_registration.push(newANTs_para_EPI)
-  // }
+  config.ANTs_para_EPI_registration = [
+    { 'collapse-output-transforms': parseInt(ANTs_para_EPI['collapse_output_transforms']) },
+    { dimensionality: parseInt(ANTs_para_EPI['dimensionality']) },
+    { 'initial-moving-transform': { initializationFeature: parseInt(ANTs_para_EPI['initial_moving_transform']['initializationFeature'])}},
+  ]
+
+  config.ANTs_para_EPI_registration.transforms = []
+  // c.functional.template_registration.epi_template.ANTs_para_EPI_registration.transforms is not iterable
+  for (const transform of c.functional.template_registration.epi_template.ANTs_para_EPI_registration.transforms) {
+
+    const newTransform = {}
+
+    for (const k of [
+      'Rigid',
+      'Affine',
+      'SyN',
+    ]) {
+      if (!transform[k].enabled) {
+        continue
+      }
+      if (!transform[k]['metric']['type']['MI']['enabled']) {
+        continue
+      }
+      if (!transform[k]['metric']['type']['CC']['enabled']) {
+        continue
+      }
+      newTransform[k] = clone(transform[k])
+      delete newTransform[k].enabled
+    }
+    config.ANTs_para_EPI_registration.transforms.push(newTransform)
+  }
 // add ants_para
 
   config.runICA = [c.functional.aroma.enabled ? 1 : 0]
