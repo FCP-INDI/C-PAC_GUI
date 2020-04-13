@@ -1067,29 +1067,29 @@ export function dump(pipeline, version='0') {
 
   config.ANTs_para_EPI_registration.transforms = []
   // c.functional.template_registration.epi_template.ANTs_para_EPI_registration.transforms is not iterable
-  for (const transform of c.functional.template_registration.epi_template.ANTs_para_EPI_registration.transforms) {
+  const transform = c.functional.template_registration.epi_template.ANTs_para_EPI_registration.transforms
 
-    const newTransform = {}
+  const newTransform = {}
 
-    for (const k of [
-      'Rigid',
-      'Affine',
-      'SyN',
-    ]) {
-      if (!transform[k].enabled) {
-        continue
-      }
-      if (!transform[k]['metric']['type']['MI']['enabled']) {
-        continue
-      }
-      if (!transform[k]['metric']['type']['CC']['enabled']) {
-        continue
-      }
-      newTransform[k] = clone(transform[k])
-      delete newTransform[k].enabled
+  for (const k of [
+    'Rigid',
+    'Affine',
+    'SyN',
+  ]) {
+
+    if (!transform[k].enabled) {
+      continue
     }
-    config.ANTs_para_EPI_registration.transforms.push(newTransform)
+    if (!transform[k]['metric']['type']['MI']['enabled']) {
+      continue
+    }
+    if (!transform[k]['metric']['type']['CC']['enabled']) {
+      continue
+    }
+    newTransform[k] = clone(transform[k])
+    delete newTransform[k].enabled
   }
+  config.ANTs_para_EPI_registration.transforms.push(newTransform)
 // add ants_para
 
   config.runICA = [c.functional.aroma.enabled ? 1 : 0]
