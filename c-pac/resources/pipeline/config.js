@@ -299,9 +299,7 @@ export default {
                       },
                       smoothing_sigmas : '3.0x2.0x1.0x0.0',
                       shrink_factors : '8x4x2x1',
-                      use_histogram_matching:{
-                        enabled:true,
-                      },
+                      use_histogram_matching:true,
                     },
 
                     Affine:{
@@ -330,9 +328,7 @@ export default {
                       },
                       smoothing_sigmas: '3.0x2.0x1.0x0.0',
                       shrink_factors: '8x4x2x1',
-                      use_histogram_matching: {
-                        enabled: true,
-                      },
+                      use_histogram_matching: true,
                     },
 
                     SyN: {
@@ -363,9 +359,7 @@ export default {
                       },
                       smoothing_sigmas: '3.0x2.0x1.0x0.0',
                       shrink_factors: '6x4x2x1',
-                      use_histogram_matching: {
-                        enabled: true,
-                      },
+                      use_histogram_matching: true,
                       winsoriz_image_intensities:{
                         lowerQuantile: 0.01,
                         upperQuantile: 0.99,
