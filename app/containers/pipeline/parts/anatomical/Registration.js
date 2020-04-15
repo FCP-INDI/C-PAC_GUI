@@ -25,9 +25,11 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
-import IconButton from '@material-ui/core/IconButton'
-import SettingsIcon from 'components/icons';
-import EditIcon from 'components/icons';
+import IconButton from '@material-ui/core/IconButton';
+import {
+  SettingsIcon,
+} from 'components/icons';
+
 
 class Registration extends Component {
 
@@ -259,26 +261,22 @@ class Registration extends Component {
                       </Help>
                     </Grid>
 
-
                   <FormLabel>
                     ANTs Registration Parameters
-                    <Help
-                      type="pipeline"
-                      regex={/^ANTs_para_T1_registration/}
-                      help={`Please specify ANTs parameters,if run anatomical to T1 Template Registration with ANTs. `}
-                      fullWidth
-                    ></Help>
+                    {/* add icon button to set ants parameters */}
+                    {configuration.getIn(['anatomical', 'registration', 'methods', 'ants', 'enabled']) ?
+                      <IconButton
+                        onClick={() => this.handleOpen()}>
+                        <SettingsIcon />
+                      </IconButton>
+                      : null}
+                      <Help
+                        type="pipeline"
+                        regex={/^ANTs_para_T1_registration/}
+                        help={`Please specify ANTs parameters,if run anatomical to T1 Template Registration with ANTs. `}
+                        fullWidth
+                      ></Help>
                   </FormLabel>
-                  
-                  
-                  {/* add icon button!!! */}
-                  {/* {configuration.getIn(['anatomical', 'registration', 'methods', 'ants', 'enabled']) ?
-                    <IconButton
-                      onClick={() => this.handleOpen()}>
-                      <SettingsIcon />
-                    </IconButton>
-                    : null} */}
-
 
                   {/* ants_para expanding */}
                   <Dialog
@@ -286,19 +284,8 @@ class Registration extends Component {
                     onClose={this.handleClose}
                     fullWidth={true}
                   >
-                    <DialogTitle>{`ANTs Registration Parameters`}</DialogTitle>
+                    <DialogTitle>{`ANTs Registration Parameters Options`}</DialogTitle>
                     <DialogContent>
-
-                  {/* <FormGroup> */}
-                    <FormLabel>
-                      ANTs Registration Parameters
-                    <Help
-                        type="pipeline"
-                        regex={/^ANTs_para_T1_registration/}
-                        help={`Please specify ANTs parameters,if run anatomical to T1 Template Registration with ANTs. `}
-                        fullWidth
-                      ></Help>
-                    </FormLabel>
 
                     {/* collapse-output-transforms */}
                     <FormGroup row>
@@ -1052,7 +1039,6 @@ class Registration extends Component {
                       </Collapse>
                     </FormGroup>
 
-
                     {/* expand transform SyN. TODO: make transforms(Rigid,Affine,SyN) for loop */}
                     <FormGroup>
                       <FormGroup row>
@@ -1465,15 +1451,9 @@ class Registration extends Component {
                         </FormGroup>
                       </Collapse>
                     </FormGroup>
-                  
-                  
-                  
-                  
-                  {/* </FormGroup> */}
+   
                     </DialogContent>
                   </Dialog>
-
-
 
                   {/* end ants param expand */}
                 </FormGroup>
