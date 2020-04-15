@@ -14,113 +14,14 @@ import FormControlLabelled from 'components/FormControlLabelled'
 import Switch from '@material-ui/core/Switch';
 import { fromJS } from 'immutable';
 
-
-// const original = fromJS({
-//   collapse_output_transforms: 0,
-//   dimensionality: 3,
-//   initial_moving_transform: {
-//     initializationFeature: 0,
-//   },
-//   transforms: {
-//     Rigid: {
-//       enabled: true,
-//       gradientStep: 0.1,
-//       metric: {
-//         type: {
-//           MI: {
-//             enabled: true,
-//             metricWeight: 1,
-//             numberOfBins: 32,
-//             samplingStrategy: 'Regular',
-//             samplingPercentage: 0.25,
-//           },
-//           CC: {
-//             enabled: false,
-//             metricWeight: 1,
-//             radius: 4,
-//           },
-//         },
-//       },
-//       convergence: {
-//         iteration: '1000x500x250x100',
-//         convergenceThreshold: 1e-08,
-//         convergenceWindowSize: 10,
-//       },
-//       smoothing_sigmas: '3.0x2.0x1.0x0.0',
-//       shrink_factors: '8x4x2x1',
-//       use_histogram_matching: {
-//         enabled: true,
-//       },
-//     },
-
-//     Affine: {
-//       enabled: true,
-//       gradientStep: 0.1,
-//       metric: {
-//         type: {
-//           MI: {
-//             enabled: true,
-//             metricWeight: 1,
-//             numberOfBins: 32,
-//             samplingStrategy: 'Regular',
-//             samplingPercentage: 0.25,
-//           },
-//           CC: {
-//             enabled: false,
-//             metricWeight: 1,
-//             radius: 4,
-//           },
-//         },
-//         convergence: {
-//           iteration: '1000x500x250x100',
-//           convergenceThreshold: 1e-08,
-//           convergenceWindowSize: 10,
-//         },
-//         smoothing_sigmas: '3.0x2.0x1.0x0.0',
-//         shrink_factors: '8x4x2x1',
-//         use_histogram_matching: {
-//           enabled: true,
-//         },
-//       },
-
-//       SyN: {
-//         enabled: true,
-//         gradientStep: 0.1,
-//         updateFieldVarianceInVoxelSpace: 3.0,
-//         totalFieldVarianceInVoxelSpace: 0.0,
-//         metric: {
-//           MI: {
-//             enabled: false,
-//             metricWeight: 1,
-//             numberOfBins: 32,
-//             samplingStrategy: 'Regular',
-//             samplingPercentage: 0.25,
-//           },
-//           CC: {
-//             enabled: true,
-//             metricWeight: 1,
-//             radius: 4,
-//           },
-//         },
-//         convergence: {
-//           iteration: '100x100x70x20',
-//           convergenceThreshold: 1e-09,
-//           convergenceWindowSize: 15,
-//         },
-//         smoothing_sigmas: '3.0x2.0x1.0x0.0',
-//         shrink_factors: '6x4x2x1',
-//         use_histogram_matching: {
-//           enabled: true,
-//         },
-//         winsoriz_image_intensities: {
-//           lowerQuantile: 0.01,
-//           upperQuantile: 0.99,
-//         },
-//       },
-//     },
-//   },
-// })
-
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import IconButton from '@material-ui/core/IconButton'
+import SettingsIcon from 'components/icons';
+import EditIcon from 'components/icons';
 
 class TemplateRegistration extends Component {
 
@@ -128,7 +29,8 @@ class TemplateRegistration extends Component {
   });
 
   render() {
-    const { classes, configuration, onChange } = this.props
+    const { classes, configuration, advanced, onChange } = this.props
+    // const { classes, configuration, onChange } = this.props
     const functional_resolution = configuration.getIn(["functional", "template_registration", "functional_resolution"])
     const derivative_resolution = configuration.getIn(["functional", "template_registration", "derivative_resolution"])
     
@@ -430,9 +332,9 @@ class TemplateRegistration extends Component {
                       />
                     </Help>
                   </FormGroup>
+                </FormGroup>
 
                 {/* ants_para */}
-                </FormGroup>
                 <FormGroup>
                   <FormLabel>
                     ANTs Registration Parameters
@@ -443,7 +345,9 @@ class TemplateRegistration extends Component {
                       fullWidth
                     ></Help>
                   </FormLabel>
+                </FormGroup>
 
+                <FormGroup>
                   <FormGroup row>
                     <Help
                       type="pipeline"
@@ -504,11 +408,1110 @@ class TemplateRegistration extends Component {
                       />
                     </Help>
                   </FormGroup>
-{/* ants_para */}
+
+                  {/* expand transform Rigid. TODO: make transforms(Rigid,Affine,SyN) for loop */} 
+                  <FormGroup>
+                    <FormGroup row>
+                      <FormControlLabelled label="Transform Rigid">
+                        <Switch
+                          name="functional.template_registration.epi_template.ANTs_para_EPI_registration.transforms.Rigid.enabled"
+                          checked={configuration.getIn("functional.template_registration.epi_template.ANTs_para_EPI_registration.transforms.Rigid.enabled".split("."))}
+                          onChange={onChange}
+                          color="primary"
+                        />
+                      </FormControlLabelled>
+                    </FormGroup>
+ 
+                    <Collapse in={configuration.getIn("functional.template_registration.epi_template.ANTs_para_EPI_registration.transforms.Rigid.enabled".split("."))}>
+                      {/* gradientStep */}
+                      <FormGroup>
+                        <FormLabel>
+                          <Help
+                            type="pipeline"
+                            help={` --transform Rigid[gradientStep]
+                                Several transform options are available. The gradientStep or learningRate 
+                                characterizes the gradient descent optimization and is scaled appropriately for 
+                                each transform using the shift scales estimator. Subsequent parameters are 
+                                transform-specific and can be determined from the usage. `}
+                            fullWidth
+                          />
+                          Rigid gradientStep
+                        </FormLabel>
+                        <FormGroup row>
+                          <Help
+                            type="pipeline"
+                            help={`CPAC sets 0.1 as Rigid gradientStep default value.`}
+                            fullWidth
+                          >
+                            <TextField label="gradientStep"
+                              fullWidth margin="normal" variant="outlined"
+                              name="functional.template_registration.epi_template.ANTs_para_EPI_registration.transforms.Rigid.gradientStep"
+                              value={configuration.getIn("functional.template_registration.epi_template.ANTs_para_EPI_registration.transforms.Rigid.gradientStep".split("."))}
+                              onChange={onChange}
+                            />
+                          </Help>
+                        </FormGroup>
+                      </FormGroup>
+                      
+                      {/* metric */}
+                      <FormGroup>
+                        <FormLabel>
+                          <Help
+                            type="pipeline"
+                            help={` Available image metrics provided by CPAC are CC (ANTS neighborhood cross correlation) and MI (Mutual information).`}
+                            fullWidth
+                          />
+                        Metric
+                        </FormLabel>
+                        <FormGroup row>
+                          <Help
+                            type="pipeline"
+                            help={` --metric MI: Mutual information
+                                  MI[fixedImage,movingImage,metricWeight,numberOfBins,<samplingStrategy={None,Regular,Random}>,<samplingPercentage=[0,1]>]`}
+                          >
+                            <FormControlLabelled label="Metric MI">
+                              <Switch
+                                name="functional.template_registration.epi_template.ANTs_para_EPI_registration.transforms.Rigid.metric.type.MI.enabled"
+                                checked={configuration.getIn("functional.template_registration.epi_template.ANTs_para_EPI_registration.transforms.Rigid.metric.type.MI.enabled".split("."))}
+                                onChange={onChange}
+                                color="primary"
+                              />
+                            </FormControlLabelled>
+                          </Help>
+                        </FormGroup>
+
+                        {/* metric MI parameters. TODO: make it short - for loop */}
+                        <Collapse in={configuration.getIn("functional.template_registration.epi_template.ANTs_para_EPI_registration.transforms.Rigid.metric.type.MI.enabled".split("."))}>
+                          <FormGroup row>
+                            <Help
+                              type="pipeline"
+                              help={` The "metricWeight" variable is used to modulate the per stage weighting of the metrics.`}
+                              fullWidth
+                            >
+                              <TextField label="MI metricWeight"
+                                fullWidth margin="normal" variant="outlined"
+                                name="functional.template_registration.epi_template.ANTs_para_EPI_registration.transforms.Rigid.metric.type.MI.metricWeight"
+                                value={configuration.getIn("functional.template_registration.epi_template.ANTs_para_EPI_registration.transforms.Rigid.metric.type.MI.metricWeight".split("."))}
+                                onChange={onChange}
+                              />
+                            </Help>
+                          </FormGroup>
+
+                          <FormGroup row>
+                            <Help
+                              type="pipeline"
+                              help={`Set 32 as numberOfBins default value.`}
+                              fullWidth
+                            >
+                              <TextField label="MI numberOfBins"
+                                fullWidth margin="normal" variant="outlined"
+                                name="functional.template_registration.epi_template.ANTs_para_EPI_registration.transforms.Rigid.metric.type.MI.numberOfBins"
+                                value={configuration.getIn("functional.template_registration.epi_template.ANTs_para_EPI_registration.transforms.Rigid.metric.type.MI.numberOfBins".split("."))}
+                                onChange={onChange}
+                              />
+                            </Help>
+                          </FormGroup>
+
+                        
+                          <FormGroup row>
+                            <Help
+                              type="pipeline"
+                              help={`CPAC provides a choice of samplingStrategy (None,Regular, or Random), set Regular as the default.`}
+                              fullWidth
+                            >
+                              <TextField
+                                select
+                                label="MI samplingStrategy"
+                                fullWidth margin="normal" variant="outlined"
+                                className={classes.textField} onChange={onChange}
+                                name="functional.template_registration.epi_template.ANTs_para_EPI_registration.transforms.Rigid.metric.type.MI.samplingStrategy"
+                                value={configuration.getIn("functional.template_registration.epi_template.ANTs_para_EPI_registration.transforms.Rigid.metric.type.MI.samplingStrategy".split("."))}
+                                helperText=''
+                              >
+                                <MenuItem value={"None"}>None</MenuItem>
+                                <MenuItem value={"Regular"}>Regular</MenuItem>
+                                <MenuItem value={"Random"}>Random</MenuItem>
+                              </TextField>
+                            </Help>
+                          </FormGroup>
+
+                          <FormGroup row>
+                            <Help
+                              type="pipeline"
+                              help={`samplingPercentage defines the fraction of points to select from the domain.`}
+                              fullWidth
+                            >
+                              <TextField label="MI samplingPercentage"
+                                fullWidth margin="normal" variant="outlined"
+                                name="functional.template_registration.epi_template.ANTs_para_EPI_registration.transforms.Rigid.metric.type.MI.samplingPercentage"
+                                value={configuration.getIn("functional.template_registration.epi_template.ANTs_para_EPI_registration.transforms.Rigid.metric.type.MI.samplingPercentage".split("."))}
+                                onChange={onChange}
+                              />
+                            </Help>
+                          </FormGroup>
+                        </Collapse>
+                        
+                        <FormGroup row>
+                          <Help
+                            type="pipeline"
+                            help={` --metric CC: ANTS neighborhood cross correlation
+                                    CC[fixedImage,movingImage,metricWeight,radius,<samplingStrategy={None,Regular,Random}>,<samplingPercentage=[0,1]>]`}
+                          >
+                            <FormControlLabelled label="Metric CC">
+                              <Switch
+                                name="functional.template_registration.epi_template.ANTs_para_EPI_registration.transforms.Rigid.metric.type.CC.enabled"
+                                checked={configuration.getIn("functional.template_registration.epi_template.ANTs_para_EPI_registration.Rigid.metric.type.CC.enabled".split("."))}
+                                onChange={onChange}
+                                color="primary"
+                              />
+                            </FormControlLabelled>
+                          </Help>
+                        </FormGroup>
+
+                        {/* metric CC parameters.*/}
+                        <Collapse in={configuration.getIn("functional.template_registration.epi_template.ANTs_para_EPI_registration.transforms.Rigid.metric.type.CC.enabled".split("."))}>
+                          <FormGroup row>
+                            <Help
+                              type="pipeline"
+                              help={` The "metricWeight" variable is used to modulate the per stage weighting of the metrics.`}
+                              fullWidth
+                            >
+                              <TextField label="CC metricWeight"
+                                fullWidth margin="normal" variant="outlined"
+                                name="functional.template_registration.epi_template.ANTs_para_EPI_registration.transforms.Rigid.metric.type.CC.metricWeight"
+                                value={configuration.getIn("functional.template_registration.epi_template.ANTs_para_EPI_registration.transforms.Rigid.metric.type.CC.metricWeight".split("."))}
+                                onChange={onChange}
+                              />
+                            </Help>
+                          </FormGroup>
+
+                          <FormGroup row>
+                            <Help
+                              type="pipeline"
+                              help={`Set '4' as CC radius default value.`}
+                              fullWidth
+                            >
+                              <TextField label="CC radius"
+                                fullWidth margin="normal" variant="outlined"
+                                name="functional.template_registration.epi_template.ANTs_para_EPI_registration.transforms.Rigid.metric.type.CC.radius"
+                                value={configuration.getIn("functional.template_registration.epi_template.ANTs_para_EPI_registration.transforms.Rigid.metric.type.CC.radius".split("."))}
+                                onChange={onChange}
+                              />
+                            </Help>
+                          </FormGroup>
+                        </Collapse>
+                      </FormGroup>
+
+                      {/* convergence */}
+                      <FormGroup>
+                        <FormLabel>
+                          <Help
+                            type="pipeline"
+                            help={` --convergence MxNxO
+                                    [MxNxO,<convergenceThreshold=1e-6>,<convergenceWindowSize=10>]
+                                    Convergence is determined from the number of iterations per level and is 
+                                    determined by fitting a line to the normalized energy profile of the last N 
+                                    iterations (where N is specified by the window size) and determining the slope 
+                                    which is then compared with the convergence threshold.`}
+                            fullWidth
+                          />
+                          Convergence
+                        </FormLabel>
+                        <FormGroup row>
+                          <Help
+                            type="pipeline"
+                            help={`CPAC sets '1000x500x250x100' as convergence iteration default value.`}
+                            fullWidth
+                          >
+                            <TextField label="convergence iteration"
+                              fullWidth margin="normal" variant="outlined"
+                              name="functional.template_registration.epi_template.ANTs_para_EPI_registration.transforms.Rigid.convergence.iteration"
+                              value={configuration.getIn("functional.template_registration.epi_template.ANTs_para_EPI_registration.transforms.Rigid.convergence.iteration".split("."))}
+                              onChange={onChange}
+                            />
+                          </Help>
+                        </FormGroup>
+                        <FormGroup row>
+                          <Help
+                            type="pipeline"
+                            help={`CPAC sets '1e-08' as convergence Threshold default value.`}
+                            fullWidth
+                          >
+                            <TextField label="convergence Threshold"
+                              fullWidth margin="normal" variant="outlined"
+                              name="functional.template_registration.epi_template.ANTs_para_EPI_registration.transforms.Rigid.convergence.convergenceThreshold"
+                              value={configuration.getIn("functional.template_registration.epi_template.ANTs_para_EPI_registration.transforms.Rigid.convergence.convergenceThreshold".split("."))}
+                              onChange={onChange}
+                            />
+                          </Help>
+                        </FormGroup>
+                        <FormGroup row>
+                          <Help
+                            type="pipeline"
+                            help={`CPAC sets '10' as convergence WindowSize default value.`}
+                            fullWidth
+                          >
+                            <TextField label="convergence WindowSize"
+                              fullWidth margin="normal" variant="outlined"
+                              name="functional.template_registration.epi_template.ANTs_para_EPI_registration.transforms.Rigid.convergence.convergenceWindowSize"
+                              value={configuration.getIn("functional.template_registration.epi_template.ANTs_para_EPI_registration.transforms.Rigid.convergence.convergenceWindowSize".split("."))}
+                              onChange={onChange}
+                            />
+                          </Help>
+                        </FormGroup>
+                      </FormGroup>
+                      
+                      {/* smoothing-sigmas */}
+                      <FormGroup>
+                        <FormLabel>
+                          <Help
+                            type="pipeline"
+                            help={` --smoothing-sigmas MxNxO...
+                                    Specify the sigma of gaussian smoothing at each level. Units are given in terms 
+                                    of voxels ('vox') or physical spacing ('mm'). Example usage is '4x2x1mm' and 
+                                    '4x2x1vox' where no units implies voxel spacing. `}
+                            fullWidth
+                          />
+                          Smoothing sigmas
+                        </FormLabel>
+                        <FormGroup row>
+                          <Help
+                            type="pipeline"
+                            help={`CPAC sets '3.0x2.0x1.0x0.0' as smoothing sigmas default value.`}
+                            fullWidth
+                          >
+                            <TextField label="smoothing sigmas"
+                              fullWidth margin="normal" variant="outlined"
+                              name="functional.template_registration.epi_template.ANTs_para_EPI_registration.transforms.Rigid.smoothing_sigmas"
+                              value={configuration.getIn("functional.template_registration.epi_template.ANTs_para_EPI_registration.transforms.Rigid.smoothing_sigmas".split("."))}
+                              onChange={onChange}
+                            />
+                          </Help>
+                        </FormGroup>
+                      </FormGroup>
+                      
+                      {/* shrink_factors */}
+                      <FormGroup>
+                        <FormLabel>
+                          <Help
+                            type="pipeline"
+                            help={` --shrink-factors MxNxO...
+                                    Specify the shrink factor for the virtual domain (typically the fixed image) at 
+                                    each level. `}
+                            fullWidth
+                          />
+                          Shrink factors
+                        </FormLabel>
+                        <FormGroup row>
+                          <Help
+                            type="pipeline"
+                            help={`CPAC sets '8x4x2x1' as shrink factors default value.`}
+                            fullWidth
+                          >
+                            <TextField label="shrink factors"
+                              fullWidth margin="normal" variant="outlined"
+                              name="functional.template_registration.epi_template.ANTs_para_EPI_registration.transforms.Rigid.shrink_factors"
+                              value={configuration.getIn("functional.template_registration.epi_template.ANTs_para_EPI_registration.transforms.Rigid.shrink_factors".split("."))}
+                              onChange={onChange}
+                            />
+                          </Help>
+                        </FormGroup>
+                      </FormGroup>
+                      
+                      {/* use_histogram_matching */}
+                      <FormGroup>
+                        <FormLabel>
+                          <Help
+                            type="pipeline"
+                            help={` --use-histogram-matching 
+                                    Histogram match the images before registration. `}
+                            fullWidth
+                          />
+                          Use histogram matching
+                        </FormLabel>
+                        <FormGroup row>
+                          <Help
+                            type="pipeline"
+                            help={`CPAC default is True.`}
+                            fullWidth
+                          >
+                            <TextField
+                              select
+                              label="use histogram matching"
+                              fullWidth margin="normal" variant="outlined"
+                              className={classes.textField} onChange={onChange}
+                              name="functional.template_registration.epi_template.ANTs_para_EPI_registration.transforms.Rigid.use_histogram_matching"
+                              value={configuration.getIn("functional.template_registration.epi_template.ANTs_para_EPI_registration.transforms.Rigid.use_histogram_matching".split("."))}
+                              helperText=''
+                            >
+                              <MenuItem value={"true"}>True</MenuItem>
+                              <MenuItem value={"false"}>False</MenuItem>
+                            </TextField>
+                          </Help>
+                        </FormGroup>
+                      </FormGroup>
+                    </Collapse>
+                  </FormGroup>
+                  
+                  {/* expand transform Affine. TODO: make transforms(Rigid,Affine,SyN) for loop */}
+                  <FormGroup>
+                    <FormGroup row>
+                      <FormControlLabelled label="Transform Affine">
+                        <Switch
+                          name="functional.template_registration.epi_template.ANTs_para_EPI_registration.transforms.Affine.enabled"
+                          checked={configuration.getIn("functional.template_registration.epi_template.ANTs_para_EPI_registration.transforms.Affine.enabled".split("."))}
+                          onChange={onChange}
+                          color="primary"
+                        />
+                      </FormControlLabelled>
+                    </FormGroup>
+
+                    <Collapse in={configuration.getIn("functional.template_registration.epi_template.ANTs_para_EPI_registration.transforms.Affine.enabled".split("."))}>
+                      {/* gradientStep */}
+                      <FormGroup>
+                        <FormLabel>
+                          <Help
+                            type="pipeline"
+                            help={` --transform Affine[gradientStep]
+                                Several transform options are available. The gradientStep or learningRate 
+                                characterizes the gradient descent optimization and is scaled appropriately for 
+                                each transform using the shift scales estimator. Subsequent parameters are 
+                                transform-specific and can be determined from the usage. `}
+                            fullWidth
+                          />
+                          Affine gradientStep
+                        </FormLabel>
+                        <FormGroup row>
+                          <Help
+                            type="pipeline"
+                            help={`CPAC sets 0.1 as Affine gradientStep default value.`}
+                            fullWidth
+                          >
+                            <TextField label="gradientStep"
+                              fullWidth margin="normal" variant="outlined"
+                              name="functional.template_registration.epi_template.ANTs_para_EPI_registration.transforms.Affine.gradientStep"
+                              value={configuration.getIn("functional.template_registration.epi_template.ANTs_para_EPI_registration.transforms.Affine.gradientStep".split("."))}
+                              onChange={onChange}
+                            />
+                          </Help>
+                        </FormGroup>
+                      </FormGroup>
+
+                      {/* metric */}
+                      <FormGroup>
+                        <FormLabel>
+                          <Help
+                            type="pipeline"
+                            help={` Available image metrics provided by CPAC are CC (ANTS neighborhood cross correlation) and MI (Mutual information).`}
+                            fullWidth
+                          />
+                        Metric
+                        </FormLabel>
+                        <FormGroup row>
+                          <Help
+                            type="pipeline"
+                            help={` --metric MI: Mutual information
+                                  MI[fixedImage,movingImage,metricWeight,numberOfBins,<samplingStrategy={None,Regular,Random}>,<samplingPercentage=[0,1]>]`}
+                          >
+                            <FormControlLabelled label="Metric MI">
+                              <Switch
+                                name="functional.template_registration.epi_template.ANTs_para_EPI_registration.transforms.Affine.metric.type.MI.enabled"
+                                checked={configuration.getIn("functional.template_registration.epi_template.ANTs_para_EPI_registration.transforms.Affine.metric.type.MI.enabled".split("."))}
+                                onChange={onChange}
+                                color="primary"
+                              />
+                            </FormControlLabelled>
+                          </Help>
+                        </FormGroup>
+
+                        {/* metric MI parameters. TODO: make it short - for loop */}
+                        <Collapse in={configuration.getIn("functional.template_registration.epi_template.ANTs_para_EPI_registration.transforms.Affine.metric.type.MI.enabled".split("."))}>
+                          <FormGroup row>
+                            <Help
+                              type="pipeline"
+                              help={` The "metricWeight" variable is used to modulate the per stage weighting of the metrics.`}
+                              fullWidth
+                            >
+                              <TextField label="MI metricWeight"
+                                fullWidth margin="normal" variant="outlined"
+                                name="functional.template_registration.epi_template.ANTs_para_EPI_registration.transforms.Affine.metric.type.MI.metricWeight"
+                                value={configuration.getIn("functional.template_registration.epi_template.ANTs_para_EPI_registration.transforms.Affine.metric.type.MI.metricWeight".split("."))}
+                                onChange={onChange}
+                              />
+                            </Help>
+                          </FormGroup>
+
+                          <FormGroup row>
+                            <Help
+                              type="pipeline"
+                              help={`Set 32 as numberOfBins default value.`}
+                              fullWidth
+                            >
+                              <TextField label="MI numberOfBins"
+                                fullWidth margin="normal" variant="outlined"
+                                name="functional.template_registration.epi_template.ANTs_para_EPI_registration.transforms.Affine.metric.type.MI.numberOfBins"
+                                value={configuration.getIn("functional.template_registration.epi_template.ANTs_para_EPI_registration.transforms.Affine.metric.type.MI.numberOfBins".split("."))}
+                                onChange={onChange}
+                              />
+                            </Help>
+                          </FormGroup>
 
 
+                          <FormGroup row>
+                            <Help
+                              type="pipeline"
+                              help={`CPAC provides a choice of samplingStrategy (None,Regular, or Random), set Regular as the default.`}
+                              fullWidth
+                            >
+                              <TextField
+                                select
+                                label="MI samplingStrategy"
+                                fullWidth margin="normal" variant="outlined"
+                                className={classes.textField} onChange={onChange}
+                                name="functional.template_registration.epi_template.ANTs_para_EPI_registration.transforms.Affine.metric.type.MI.samplingStrategy"
+                                value={configuration.getIn("functional.template_registration.epi_template.ANTs_para_EPI_registration.transforms.Affine.metric.type.MI.samplingStrategy".split("."))}
+                                helperText=''
+                              >
+                                <MenuItem value={"None"}>None</MenuItem>
+                                <MenuItem value={"Regular"}>Regular</MenuItem>
+                                <MenuItem value={"Random"}>Random</MenuItem>
+                              </TextField>
+                            </Help>
+                          </FormGroup>
 
+                          <FormGroup row>
+                            <Help
+                              type="pipeline"
+                              help={`samplingPercentage defines the fraction of points to select from the domain.`}
+                              fullWidth
+                            >
+                              <TextField label="MI samplingPercentage"
+                                fullWidth margin="normal" variant="outlined"
+                                name="functional.template_registration.epi_template.ANTs_para_EPI_registration.transforms.Affine.metric.type.MI.samplingPercentage"
+                                value={configuration.getIn("functional.template_registration.epi_template.ANTs_para_EPI_registration.transforms.Affine.metric.type.MI.samplingPercentage".split("."))}
+                                onChange={onChange}
+                              />
+                            </Help>
+                          </FormGroup>
+                        </Collapse>
+
+                        <FormGroup row>
+                          <Help
+                            type="pipeline"
+                            help={` --metric CC: ANTS neighborhood cross correlation
+                                    CC[fixedImage,movingImage,metricWeight,radius,<samplingStrategy={None,Regular,Random}>,<samplingPercentage=[0,1]>]`}
+                          >
+                            <FormControlLabelled label="Metric CC">
+                              <Switch
+                                name="functional.template_registration.epi_template.ANTs_para_EPI_registration.transforms.Affine.metric.type.CC.enabled"
+                                checked={configuration.getIn("functional.template_registration.epi_template.ANTs_para_EPI_registration.Affine.metric.type.CC.enabled".split("."))}
+                                onChange={onChange}
+                                color="primary"
+                              />
+                            </FormControlLabelled>
+                          </Help>
+                        </FormGroup>
+
+                        {/* metric CC parameters.*/}
+                        <Collapse in={configuration.getIn("functional.template_registration.epi_template.ANTs_para_EPI_registration.transforms.Affine.metric.type.CC.enabled".split("."))}>
+                          <FormGroup row>
+                            <Help
+                              type="pipeline"
+                              help={` The "metricWeight" variable is used to modulate the per stage weighting of the metrics.`}
+                              fullWidth
+                            >
+                              <TextField label="CC metricWeight"
+                                fullWidth margin="normal" variant="outlined"
+                                name="functional.template_registration.epi_template.ANTs_para_EPI_registration.transforms.Affine.metric.type.CC.metricWeight"
+                                value={configuration.getIn("functional.template_registration.epi_template.ANTs_para_EPI_registration.transforms.Affine.metric.type.CC.metricWeight".split("."))}
+                                onChange={onChange}
+                              />
+                            </Help>
+                          </FormGroup>
+
+                          <FormGroup row>
+                            <Help
+                              type="pipeline"
+                              help={`Set '4' as CC radius default value.`}
+                              fullWidth
+                            >
+                              <TextField label="CC radius"
+                                fullWidth margin="normal" variant="outlined"
+                                name="functional.template_registration.epi_template.ANTs_para_EPI_registration.transforms.Affine.metric.type.CC.radius"
+                                value={configuration.getIn("functional.template_registration.epi_template.ANTs_para_EPI_registration.transforms.Affine.metric.type.CC.radius".split("."))}
+                                onChange={onChange}
+                              />
+                            </Help>
+                          </FormGroup>
+                        </Collapse>
+                      </FormGroup>
+
+                      {/* convergence */}
+                      <FormGroup>
+                        <FormLabel>
+                          <Help
+                            type="pipeline"
+                            help={` --convergence MxNxO
+                                    [MxNxO,<convergenceThreshold=1e-6>,<convergenceWindowSize=10>]
+                                    Convergence is determined from the number of iterations per level and is 
+                                    determined by fitting a line to the normalized energy profile of the last N 
+                                    iterations (where N is specified by the window size) and determining the slope 
+                                    which is then compared with the convergence threshold.`}
+                            fullWidth
+                          />
+                          Convergence
+                        </FormLabel>
+                        <FormGroup row>
+                          <Help
+                            type="pipeline"
+                            help={`CPAC sets '1000x500x250x100' as convergence iteration default value.`}
+                            fullWidth
+                          >
+                            <TextField label="convergence iteration"
+                              fullWidth margin="normal" variant="outlined"
+                              name="functional.template_registration.epi_template.ANTs_para_EPI_registration.transforms.Affine.convergence.iteration"
+                              value={configuration.getIn("functional.template_registration.epi_template.ANTs_para_EPI_registration.transforms.Affine.convergence.iteration".split("."))}
+                              onChange={onChange}
+                            />
+                          </Help>
+                        </FormGroup>
+                        <FormGroup row>
+                          <Help
+                            type="pipeline"
+                            help={`CPAC sets '1e-08' as convergence Threshold default value.`}
+                            fullWidth
+                          >
+                            <TextField label="convergence Threshold"
+                              fullWidth margin="normal" variant="outlined"
+                              name="functional.template_registration.epi_template.ANTs_para_EPI_registration.transforms.Affine.convergence.convergenceThreshold"
+                              value={configuration.getIn("functional.template_registration.epi_template.ANTs_para_EPI_registration.transforms.Affine.convergence.convergenceThreshold".split("."))}
+                              onChange={onChange}
+                            />
+                          </Help>
+                        </FormGroup>
+                        <FormGroup row>
+                          <Help
+                            type="pipeline"
+                            help={`CPAC sets '10' as convergence WindowSize default value.`}
+                            fullWidth
+                          >
+                            <TextField label="convergence WindowSize"
+                              fullWidth margin="normal" variant="outlined"
+                              name="functional.template_registration.epi_template.ANTs_para_EPI_registration.transforms.Affine.convergence.convergenceWindowSize"
+                              value={configuration.getIn("functional.template_registration.epi_template.ANTs_para_EPI_registration.transforms.Affine.convergence.convergenceWindowSize".split("."))}
+                              onChange={onChange}
+                            />
+                          </Help>
+                        </FormGroup>
+                      </FormGroup>
+
+                      {/* smoothing-sigmas */}
+                      <FormGroup>
+                        <FormLabel>
+                          <Help
+                            type="pipeline"
+                            help={` --smoothing-sigmas MxNxO...
+                                    Specify the sigma of gaussian smoothing at each level. Units are given in terms 
+                                    of voxels ('vox') or physical spacing ('mm'). Example usage is '4x2x1mm' and 
+                                    '4x2x1vox' where no units implies voxel spacing. `}
+                            fullWidth
+                          />
+                          Smoothing sigmas
+                        </FormLabel>
+                        <FormGroup row>
+                          <Help
+                            type="pipeline"
+                            help={`CPAC sets '3.0x2.0x1.0x0.0' as smoothing sigmas default value.`}
+                            fullWidth
+                          >
+                            <TextField label="smoothing sigmas"
+                              fullWidth margin="normal" variant="outlined"
+                              name="functional.template_registration.epi_template.ANTs_para_EPI_registration.transforms.Affine.smoothing_sigmas"
+                              value={configuration.getIn("functional.template_registration.epi_template.ANTs_para_EPI_registration.transforms.Affine.smoothing_sigmas".split("."))}
+                              onChange={onChange}
+                            />
+                          </Help>
+                        </FormGroup>
+                      </FormGroup>
+
+                      {/* shrink_factors */}
+                      <FormGroup>
+                        <FormLabel>
+                          <Help
+                            type="pipeline"
+                            help={` --shrink-factors MxNxO...
+                                    Specify the shrink factor for the virtual domain (typically the fixed image) at 
+                                    each level. `}
+                            fullWidth
+                          />
+                          Shrink factors
+                        </FormLabel>
+                        <FormGroup row>
+                          <Help
+                            type="pipeline"
+                            help={`CPAC sets '8x4x2x1' as shrink factors default value.`}
+                            fullWidth
+                          >
+                            <TextField label="shrink factors"
+                              fullWidth margin="normal" variant="outlined"
+                              name="functional.template_registration.epi_template.ANTs_para_EPI_registration.transforms.Affine.shrink_factors"
+                              value={configuration.getIn("functional.template_registration.epi_template.ANTs_para_EPI_registration.transforms.Affine.shrink_factors".split("."))}
+                              onChange={onChange}
+                            />
+                          </Help>
+                        </FormGroup>
+                      </FormGroup>
+
+                      {/* use_histogram_matching */}
+                      <FormGroup>
+                        <FormLabel>
+                          <Help
+                            type="pipeline"
+                            help={` --use-histogram-matching 
+                                    Histogram match the images before registration. `}
+                            fullWidth
+                          />
+                          Use histogram matching
+                        </FormLabel>
+                        <FormGroup row>
+                          <Help
+                            type="pipeline"
+                            help={`CPAC default is True.`}
+                            fullWidth
+                          >
+                            <TextField
+                              select
+                              label="use histogram matching"
+                              fullWidth margin="normal" variant="outlined"
+                              className={classes.textField} onChange={onChange}
+                              name="functional.template_registration.epi_template.ANTs_para_EPI_registration.transforms.Affine.use_histogram_matching"
+                              value={configuration.getIn("functional.template_registration.epi_template.ANTs_para_EPI_registration.transforms.Affine.use_histogram_matching".split("."))}
+                              helperText=''
+                            >
+                              <MenuItem value={"true"}>True</MenuItem>
+                              <MenuItem value={"false"}>False</MenuItem>
+                            </TextField>
+                          </Help>
+                        </FormGroup>
+                      </FormGroup>
+                    </Collapse>
+                  </FormGroup>
+
+
+                  {/* expand transform SyN. TODO: make transforms(Rigid,Affine,SyN) for loop */}
+                  <FormGroup>
+                    <FormGroup row>
+                      <FormControlLabelled label="Transform SyN">
+                        <Switch
+                          name="functional.template_registration.epi_template.ANTs_para_EPI_registration.transforms.SyN.enabled"
+                          checked={configuration.getIn("functional.template_registration.epi_template.ANTs_para_EPI_registration.transforms.SyN.enabled".split("."))}
+                          onChange={onChange}
+                          color="primary"
+                        />
+                      </FormControlLabelled>
+                    </FormGroup>
+
+                    <Collapse in={configuration.getIn("functional.template_registration.epi_template.ANTs_para_EPI_registration.transforms.SyN.enabled".split("."))}>
+                      {/* gradientStep */}
+                      <FormGroup>
+                        <FormLabel>
+                          <Help
+                            type="pipeline"
+                            help={` --transform SyN[gradientStep,<updateFieldVarianceInVoxelSpace=3>,<totalFieldVarianceInVoxelSpace=0>]
+                                Several transform options are available. The gradientStep or learningRate 
+                                characterizes the gradient descent optimization and is scaled appropriately for 
+                                each transform using the shift scales estimator. Subsequent parameters are 
+                                transform-specific and can be determined from the usage.`}
+                            fullWidth
+                          />
+                          SyN parameters
+                        </FormLabel>
+                        <FormGroup row>
+                          <Help
+                            type="pipeline"
+                            help={`CPAC sets 0.1 as SyN gradientStep default value.`}
+                            fullWidth
+                          >
+                            <TextField label="gradientStep"
+                              fullWidth margin="normal" variant="outlined"
+                              name="functional.template_registration.epi_template.ANTs_para_EPI_registration.transforms.SyN.gradientStep"
+                              value={configuration.getIn("functional.template_registration.epi_template.ANTs_para_EPI_registration.transforms.SyN.gradientStep".split("."))}
+                              onChange={onChange}
+                            />
+                          </Help>
+                        </FormGroup>
+                        <FormGroup row>
+                          <Help
+                            type="pipeline"
+                            help={`CPAC sets 3.0 as SyN updateFieldVarianceInVoxelSpace default value.`}
+                            fullWidth
+                          >
+                            <TextField label="updateFieldVarianceInVoxelSpace"
+                              fullWidth margin="normal" variant="outlined"
+                              name="functional.template_registration.epi_template.ANTs_para_EPI_registration.transforms.SyN.updateFieldVarianceInVoxelSpace"
+                              value={configuration.getIn("functional.template_registration.epi_template.ANTs_para_EPI_registration.transforms.SyN.updateFieldVarianceInVoxelSpace".split("."))}
+                              onChange={onChange}
+                            />
+                          </Help>
+                        </FormGroup>
+                        <FormGroup row>
+                          <Help
+                            type="pipeline"
+                            help={`CPAC sets 0.0 as SyN totalFieldVarianceInVoxelSpace default value.`}
+                            fullWidth
+                          >
+                            <TextField label="totalFieldVarianceInVoxelSpace"
+                              fullWidth margin="normal" variant="outlined"
+                              name="functional.template_registration.epi_template.ANTs_para_EPI_registration.transforms.SyN.totalFieldVarianceInVoxelSpace"
+                              value={configuration.getIn("functional.template_registration.epi_template.ANTs_para_EPI_registration.transforms.SyN.totalFieldVarianceInVoxelSpace".split("."))}
+                              onChange={onChange}
+                            />
+                          </Help>
+                        </FormGroup>
+                      </FormGroup>
+
+                      {/* metric */}
+                      <FormGroup>
+                        <FormLabel>
+                          <Help
+                            type="pipeline"
+                            help={` Available image metrics provided by CPAC are CC (ANTS neighborhood cross correlation) and MI (Mutual information).`}
+                            fullWidth
+                          />
+                        Metric
+                        </FormLabel>
+                        <FormGroup row>
+                          <Help
+                            type="pipeline"
+                            help={` --metric MI: Mutual information
+                                  MI[fixedImage,movingImage,metricWeight,numberOfBins,<samplingStrategy={None,Regular,Random}>,<samplingPercentage=[0,1]>]`}
+                          >
+                            <FormControlLabelled label="Metric MI">
+                              <Switch
+                                name="functional.template_registration.epi_template.ANTs_para_EPI_registration.transforms.SyN.metric.type.MI.enabled"
+                                checked={configuration.getIn("functional.template_registration.epi_template.ANTs_para_EPI_registration.transforms.SyN.metric.type.MI.enabled".split("."))}
+                                onChange={onChange}
+                                color="primary"
+                              />
+                            </FormControlLabelled>
+                          </Help>
+                        </FormGroup>
+
+                        {/* metric MI parameters. TODO: make it short - for loop */}
+                        <Collapse in={configuration.getIn("functional.template_registration.epi_template.ANTs_para_EPI_registration.transforms.SyN.metric.type.MI.enabled".split("."))}>
+                          <FormGroup row>
+                            <Help
+                              type="pipeline"
+                              help={` The "metricWeight" variable is used to modulate the per stage weighting of the metrics.`}
+                              fullWidth
+                            >
+                              <TextField label="MI metricWeight"
+                                fullWidth margin="normal" variant="outlined"
+                                name="functional.template_registration.epi_template.ANTs_para_EPI_registration.transforms.SyN.metric.type.MI.metricWeight"
+                                value={configuration.getIn("functional.template_registration.epi_template.ANTs_para_EPI_registration.transforms.SyN.metric.type.MI.metricWeight".split("."))}
+                                onChange={onChange}
+                              />
+                            </Help>
+                          </FormGroup>
+
+                          <FormGroup row>
+                            <Help
+                              type="pipeline"
+                              help={`Set 32 as numberOfBins default value.`}
+                              fullWidth
+                            >
+                              <TextField label="MI numberOfBins"
+                                fullWidth margin="normal" variant="outlined"
+                                name="functional.template_registration.epi_template.ANTs_para_EPI_registration.transforms.SyN.metric.type.MI.numberOfBins"
+                                value={configuration.getIn("functional.template_registration.epi_template.ANTs_para_EPI_registration.transforms.SyN.metric.type.MI.numberOfBins".split("."))}
+                                onChange={onChange}
+                              />
+                            </Help>
+                          </FormGroup>
+
+
+                          <FormGroup row>
+                            <Help
+                              type="pipeline"
+                              help={`CPAC provides a choice of samplingStrategy (None,Regular, or Random), set Regular as the default.`}
+                              fullWidth
+                            >
+                              <TextField
+                                select
+                                label="MI samplingStrategy"
+                                fullWidth margin="normal" variant="outlined"
+                                className={classes.textField} onChange={onChange}
+                                name="functional.template_registration.epi_template.ANTs_para_EPI_registration.transforms.SyN.metric.type.MI.samplingStrategy"
+                                value={configuration.getIn("functional.template_registration.epi_template.ANTs_para_EPI_registration.transforms.SyN.metric.type.MI.samplingStrategy".split("."))}
+                                helperText=''
+                              >
+                                <MenuItem value={"None"}>None</MenuItem>
+                                <MenuItem value={"Regular"}>Regular</MenuItem>
+                                <MenuItem value={"Random"}>Random</MenuItem>
+                              </TextField>
+                            </Help>
+                          </FormGroup>
+
+                          <FormGroup row>
+                            <Help
+                              type="pipeline"
+                              help={`samplingPercentage defines the fraction of points to select from the domain.`}
+                              fullWidth
+                            >
+                              <TextField label="MI samplingPercentage"
+                                fullWidth margin="normal" variant="outlined"
+                                name="functional.template_registration.epi_template.ANTs_para_EPI_registration.transforms.SyN.metric.type.MI.samplingPercentage"
+                                value={configuration.getIn("functional.template_registration.epi_template.ANTs_para_EPI_registration.transforms.SyN.metric.type.MI.samplingPercentage".split("."))}
+                                onChange={onChange}
+                              />
+                            </Help>
+                          </FormGroup>
+                        </Collapse>
+
+                        <FormGroup row>
+                          <Help
+                            type="pipeline"
+                            help={` --metric CC: ANTS neighborhood cross correlation
+                                    CC[fixedImage,movingImage,metricWeight,radius,<samplingStrategy={None,Regular,Random}>,<samplingPercentage=[0,1]>]`}
+                          >
+                            <FormControlLabelled label="Metric CC">
+                              <Switch
+                                name="functional.template_registration.epi_template.ANTs_para_EPI_registration.transforms.SyN.metric.type.CC.enabled"
+                                checked={configuration.getIn("functional.template_registration.epi_template.ANTs_para_EPI_registration.SyN.metric.type.CC.enabled".split("."))}
+                                onChange={onChange}
+                                color="primary"
+                              />
+                            </FormControlLabelled>
+                          </Help>
+                        </FormGroup>
+
+                        {/* metric CC parameters.*/}
+                        <Collapse in={configuration.getIn("functional.template_registration.epi_template.ANTs_para_EPI_registration.transforms.SyN.metric.type.CC.enabled".split("."))}>
+                          <FormGroup row>
+                            <Help
+                              type="pipeline"
+                              help={` The "metricWeight" variable is used to modulate the per stage weighting of the metrics.`}
+                              fullWidth
+                            >
+                              <TextField label="CC metricWeight"
+                                fullWidth margin="normal" variant="outlined"
+                                name="functional.template_registration.epi_template.ANTs_para_EPI_registration.transforms.SyN.metric.type.CC.metricWeight"
+                                value={configuration.getIn("functional.template_registration.epi_template.ANTs_para_EPI_registration.transforms.SyN.metric.type.CC.metricWeight".split("."))}
+                                onChange={onChange}
+                              />
+                            </Help>
+                          </FormGroup>
+
+                          <FormGroup row>
+                            <Help
+                              type="pipeline"
+                              help={`Set '4' as CC radius default value.`}
+                              fullWidth
+                            >
+                              <TextField label="CC radius"
+                                fullWidth margin="normal" variant="outlined"
+                                name="functional.template_registration.epi_template.ANTs_para_EPI_registration.transforms.SyN.metric.type.CC.radius"
+                                value={configuration.getIn("functional.template_registration.epi_template.ANTs_para_EPI_registration.transforms.SyN.metric.type.CC.radius".split("."))}
+                                onChange={onChange}
+                              />
+                            </Help>
+                          </FormGroup>
+                        </Collapse>
+                      </FormGroup>
+
+                      {/* convergence */}
+                      <FormGroup>
+                        <FormLabel>
+                          <Help
+                            type="pipeline"
+                            help={` --convergence MxNxO
+                                    [MxNxO,<convergenceThreshold=1e-6>,<convergenceWindowSize=10>]
+                                    Convergence is determined from the number of iterations per level and is 
+                                    determined by fitting a line to the normalized energy profile of the last N 
+                                    iterations (where N is specified by the window size) and determining the slope 
+                                    which is then compared with the convergence threshold.`}
+                            fullWidth
+                          />
+                          Convergence
+                        </FormLabel>
+                        <FormGroup row>
+                          <Help
+                            type="pipeline"
+                            help={`CPAC sets '100x100x70x20' as convergence iteration default value.`}
+                            fullWidth
+                          >
+                            <TextField label="convergence iteration"
+                              fullWidth margin="normal" variant="outlined"
+                              name="functional.template_registration.epi_template.ANTs_para_EPI_registration.transforms.SyN.convergence.iteration"
+                              value={configuration.getIn("functional.template_registration.epi_template.ANTs_para_EPI_registration.transforms.SyN.convergence.iteration".split("."))}
+                              onChange={onChange}
+                            />
+                          </Help>
+                        </FormGroup>
+                        <FormGroup row>
+                          <Help
+                            type="pipeline"
+                            help={`CPAC sets '1e-09' as convergence Threshold default value.`}
+                            fullWidth
+                          >
+                            <TextField label="convergence Threshold"
+                              fullWidth margin="normal" variant="outlined"
+                              name="functional.template_registration.epi_template.ANTs_para_EPI_registration.transforms.SyN.convergence.convergenceThreshold"
+                              value={configuration.getIn("functional.template_registration.epi_template.ANTs_para_EPI_registration.transforms.SyN.convergence.convergenceThreshold".split("."))}
+                              onChange={onChange}
+                            />
+                          </Help>
+                        </FormGroup>
+                        <FormGroup row>
+                          <Help
+                            type="pipeline"
+                            help={`CPAC sets '15' as convergence WindowSize default value.`}
+                            fullWidth
+                          >
+                            <TextField label="convergence WindowSize"
+                              fullWidth margin="normal" variant="outlined"
+                              name="functional.template_registration.epi_template.ANTs_para_EPI_registration.transforms.SyN.convergence.convergenceWindowSize"
+                              value={configuration.getIn("functional.template_registration.epi_template.ANTs_para_EPI_registration.transforms.SyN.convergence.convergenceWindowSize".split("."))}
+                              onChange={onChange}
+                            />
+                          </Help>
+                        </FormGroup>
+                      </FormGroup>
+
+                      {/* smoothing-sigmas */}
+                      <FormGroup>
+                        <FormLabel>
+                          <Help
+                            type="pipeline"
+                            help={` --smoothing-sigmas MxNxO...
+                                    Specify the sigma of gaussian smoothing at each level. Units are given in terms 
+                                    of voxels ('vox') or physical spacing ('mm'). Example usage is '4x2x1mm' and 
+                                    '4x2x1vox' where no units implies voxel spacing. `}
+                            fullWidth
+                          />
+                          Smoothing sigmas
+                        </FormLabel>
+                        <FormGroup row>
+                          <Help
+                            type="pipeline"
+                            help={`CPAC sets '3.0x2.0x1.0x0.0' as smoothing sigmas default value.`}
+                            fullWidth
+                          >
+                            <TextField label="smoothing sigmas"
+                              fullWidth margin="normal" variant="outlined"
+                              name="functional.template_registration.epi_template.ANTs_para_EPI_registration.transforms.SyN.smoothing_sigmas"
+                              value={configuration.getIn("functional.template_registration.epi_template.ANTs_para_EPI_registration.transforms.SyN.smoothing_sigmas".split("."))}
+                              onChange={onChange}
+                            />
+                          </Help>
+                        </FormGroup>
+                      </FormGroup>
+
+                      {/* shrink_factors */}
+                      <FormGroup>
+                        <FormLabel>
+                          <Help
+                            type="pipeline"
+                            help={` --shrink-factors MxNxO...
+                                    Specify the shrink factor for the virtual domain (typically the fixed image) at 
+                                    each level. `}
+                            fullWidth
+                          />
+                          Shrink factors
+                        </FormLabel>
+                        <FormGroup row>
+                          <Help
+                            type="pipeline"
+                            help={`CPAC sets '6x4x2x1' as shrink factors default value.`}
+                            fullWidth
+                          >
+                            <TextField label="shrink factors"
+                              fullWidth margin="normal" variant="outlined"
+                              name="functional.template_registration.epi_template.ANTs_para_EPI_registration.transforms.SyN.shrink_factors"
+                              value={configuration.getIn("functional.template_registration.epi_template.ANTs_para_EPI_registration.transforms.SyN.shrink_factors".split("."))}
+                              onChange={onChange}
+                            />
+                          </Help>
+                        </FormGroup>
+                      </FormGroup>
+
+                      {/* use_histogram_matching */}
+                      <FormGroup>
+                        <FormLabel>
+                          <Help
+                            type="pipeline"
+                            help={` --use-histogram-matching 
+                                    Histogram match the images before registration. `}
+                            fullWidth
+                          />
+                          Use histogram matching
+                        </FormLabel>
+                        <FormGroup row>
+                          <Help
+                            type="pipeline"
+                            help={`CPAC default is True.`}
+                            fullWidth
+                          >
+                            <TextField
+                              select
+                              label="use histogram matching"
+                              fullWidth margin="normal" variant="outlined"
+                              className={classes.textField} onChange={onChange}
+                              name="functional.template_registration.epi_template.ANTs_para_EPI_registration.transforms.SyN.use_histogram_matching"
+                              value={configuration.getIn("functional.template_registration.epi_template.ANTs_para_EPI_registration.transforms.SyN.use_histogram_matching".split("."))}
+                              helperText=''
+                            >
+                              <MenuItem value={"true"}>True</MenuItem>
+                              <MenuItem value={"false"}>False</MenuItem>
+                            </TextField>
+                          </Help>
+                        </FormGroup>
+                      </FormGroup>
+
+                      {/* winsoriz_image_intensities */}
+                      <FormGroup>
+                        <FormLabel>
+                          <Help
+                            type="pipeline"
+                            help={`--winsorize-image-intensities [lowerQuantile,upperQuantile]
+                                  Winsorize data based on specified quantiles.`}
+                            fullWidth
+                          />
+                          Winsorize image intensities
+                        </FormLabel>
+                        <FormGroup row>
+                          <Help
+                            type="pipeline"
+                            help={`CPAC sets '0.01' as winsorize image intensities lowerQuantile default value.`}
+                            fullWidth
+                          >
+                            <TextField label="lowerQuantile"
+                              fullWidth margin="normal" variant="outlined"
+                              name="functional.template_registration.epi_template.ANTs_para_EPI_registration.transforms.SyN.winsorize_image_intensities.lowerQuantile"
+                              value={configuration.getIn("functional.template_registration.epi_template.ANTs_para_EPI_registration.transforms.SyN.winsorize_image_intensities.lowerQuantile".split("."))}
+                              onChange={onChange}
+                            />
+                          </Help>
+                        </FormGroup>                        
+                        <FormGroup row>
+                          <Help
+                            type="pipeline"
+                            help={`CPAC sets '0.99' as winsorize image intensities upperQuantile default value.`}
+                            fullWidth
+                          >
+                            <TextField label="upperQuantile"
+                              fullWidth margin="normal" variant="outlined"
+                              name="functional.template_registration.epi_template.ANTs_para_EPI_registration.transforms.SyN.winsorize_image_intensities.upperQuantile"
+                              value={configuration.getIn("functional.template_registration.epi_template.ANTs_para_EPI_registration.transforms.SyN.winsorize_image_intensities.upperQuantile".split("."))}
+                              onChange={onChange}
+                            />
+                          </Help>
+                        </FormGroup>
+                      </FormGroup>
+                    </Collapse>
+                  </FormGroup>
                 </FormGroup>
+                {/* end ants param expand */}
               </Collapse>
             </Grid>
           </Grid>

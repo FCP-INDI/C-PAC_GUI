@@ -189,23 +189,6 @@ export function normalize(pipeline) {
       }
     }
   }
-/// add ants_para
-  // let ANTs_para_EPI_registration = configuration.functional.functional.template_registration.epi_template.ANTs_para_EPI_registration
-  // for (let ANTs_para_i in ANTs_para_EPI_registration) {
-
-  //   let ANTs_para = ANTs_para_EPI_registration[ANTs_para_i]
-  //   const templateANTs_para_EPI = clone(defaultTemplate.versions.default.configuration.functional.template_registration.epi_template.ANTs_para_EPI_registration)
-
-  //   const newNTs_para_EPI = {}
-  //   newNTs_para_EPI.collapse_output_transforms = ANTs_para.collapse_output_transforms
-  //   newNTs_para_EPI.dimensionality = ANTs_para.dimensionality
-  //   newNTs_para_EPI.initial_moving_transform.initializationFeature = ANTs_para.initial_moving_transform.initializationFeature
-
-  //   ANTs_para_EPI_registration.push(newNTs_para_EPI)
-  // }
-
-  // newConfiguration.functional.template_registration.epi_template.ANTs_para_EPI_registration = ANTs_para_EPI_registration
-///
 
   newConfiguration.functional.nuisance_regression = newNuisanceRegression
   if (newConfiguration.anatomical.registration.methods.ants.configuration.lesion_mask === undefined) {
@@ -588,7 +571,7 @@ export function parse(content) {
                 ['smoothing_sigmas','smoothing-sigmas'],
                 ['shrink_factors','shrink-factors'],
                 ['use_histogram_matching', 'use-histogram-matching'],
-                ['winsoriz_image_intensities', 'winsoriz-image-intensities'],
+                ['winsorize_image_intensities', 'winsorize-image-intensities'],
               ])
                 c.functional.template_registration.epi_template.ANTs_para_EPI_registration[k[0]][t][j[0]] = listItem_transform[0][t][j[1]]
             }
@@ -1062,13 +1045,14 @@ export function dump(pipeline, version='0') {
   ]
 
   const transform = c.functional.template_registration.epi_template.ANTs_para_EPI_registration.transforms
-  const newTransform = {}
 
   for (const k of [
     'Rigid',
     'Affine',
     'SyN',
   ]) {
+
+    const newTransform = {}
 
     if (!transform[k].enabled) {
       continue
@@ -1093,9 +1077,8 @@ export function dump(pipeline, version='0') {
         radius: parseInt(transform[k]['metric']['type']['CC']['radius']),
       }
     }
+    config.ANTs_para_EPI_registration[3].transforms.push(newTransform)
   }
-
-  config.ANTs_para_EPI_registration[3].transforms.push(newTransform)
 
 // add ants_para
 
