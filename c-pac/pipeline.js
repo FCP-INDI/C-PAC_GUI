@@ -1131,7 +1131,7 @@ export function dump(pipeline, version='0') {
   config.runRegisterFuncToTemplate = []
     .concat(c.functional.template_registration.t1_template.enabled ? ["T1_template"] : [])
     .concat(c.functional.template_registration.epi_template.enabled ? ["EPI_template"] : [])
-    .concat(c.functional.template_registration.enabled ? ["T1_template", "EPI_template"] : [])
+    .concat(c.functional.template_registration.enabled ? ["Off"] : [])
 
   if (c.functional.template_registration.functional_resolution.includes("x")) {
     var xind = []
