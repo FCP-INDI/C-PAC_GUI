@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 import { withStyles, Typography } from '@material-ui/core';
 
@@ -19,14 +20,35 @@ import Collapse from '@material-ui/core/Collapse';
 import Help from 'components/Help'
 import FormControlLabelled from 'components/FormControlLabelled'
 
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import IconButton from '@material-ui/core/IconButton'
+import SettingsIcon from 'components/icons';
+import EditIcon from 'components/icons';
 
 class Registration extends Component {
 
   static styles = theme => ({
   });
 
+  state = {
+    antsParaOptions: false,
+  }
+
+  handleOpen = () => {
+    this.setState({ antsParaOptions: true })
+  }
+
+  handleClose = () => {
+    this.setState({ antsParaOptions: false })
+  }
+
   render() {
-    const { classes, configuration, onChange } = this.props
+    // const { classes, configuration, onChange } = this.props
+    const { classes, configuration, advanced, onChange } = this.props
 
     const resolution = configuration.getIn("anatomical.registration.resolution".split("."))
 
@@ -237,8 +259,37 @@ class Registration extends Component {
                       </Help>
                     </Grid>
 
+
+                  <FormLabel>
+                    ANTs Registration Parameters
+                    <Help
+                      type="pipeline"
+                      regex={/^ANTs_para_T1_registration/}
+                      help={`Please specify ANTs parameters,if run anatomical to T1 Template Registration with ANTs. `}
+                      fullWidth
+                    ></Help>
+                  </FormLabel>
+                  
+                  
+                  {/* add icon button!!! */}
+                  {/* {configuration.getIn(['anatomical', 'registration', 'methods', 'ants', 'enabled']) ?
+                    <IconButton
+                      onClick={() => this.handleOpen()}>
+                      <SettingsIcon />
+                    </IconButton>
+                    : null} */}
+
+
                   {/* ants_para expanding */}
-                  <FormGroup>
+                  <Dialog
+                    open={this.state.antsParaOptions && configuration.getIn(['anatomical', 'registration', 'methods', 'ants', 'enabled'])}
+                    onClose={this.handleClose}
+                    fullWidth={true}
+                  >
+                    <DialogTitle>{`ANTs Registration Parameters`}</DialogTitle>
+                    <DialogContent>
+
+                  {/* <FormGroup> */}
                     <FormLabel>
                       ANTs Registration Parameters
                     <Help
@@ -1414,7 +1465,16 @@ class Registration extends Component {
                         </FormGroup>
                       </Collapse>
                     </FormGroup>
-                  </FormGroup>
+                  
+                  
+                  
+                  
+                  {/* </FormGroup> */}
+                    </DialogContent>
+                  </Dialog>
+
+
+
                   {/* end ants param expand */}
                 </FormGroup>
               </Collapse>
@@ -1502,4 +1562,12 @@ class Registration extends Component {
   }
 }
 
-export default withStyles(Registration.styles)(Registration);
+const mapStateToProps = (state, props) => {
+  return {
+    advanced: state.main.getIn(['config', 'settings', 'advanced']),
+  }
+}
+
+export default connect(mapStateToProps)(withStyles(Registration.styles)(Registration));
+
+// export default withStyles(Registration.styles)(Registration);
