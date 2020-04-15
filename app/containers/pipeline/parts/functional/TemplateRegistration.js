@@ -345,9 +345,8 @@ class TemplateRegistration extends Component {
                       fullWidth
                     ></Help>
                   </FormLabel>
-                </FormGroup>
-
-                <FormGroup>
+                  
+                  {/* collapse-output-transforms */}
                   <FormGroup row>
                     <Help
                       type="pipeline"
@@ -370,6 +369,7 @@ class TemplateRegistration extends Component {
                     </Help>
                   </FormGroup>
 
+                  {/* dimensionality */}
                   <FormGroup row>
                     <Help
                       type="pipeline"
@@ -386,7 +386,8 @@ class TemplateRegistration extends Component {
                       />
                     </Help>
                   </FormGroup>
-
+                  
+                  {/* initial-fixed-transform */}
                   <FormGroup row>
                     <Help
                       type="pipeline"

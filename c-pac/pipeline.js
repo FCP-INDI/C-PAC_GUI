@@ -356,6 +356,84 @@ export function parse(content) {
       break;
   }
   
+  // add ants_para T1
+  c.anatomical.registration.methods.ants.ANTs_para_T1_registration = {}
+  if (config.ANTs_para_T1_registration && config.ANTs_para_T1_registration.length > 0) {
+    const ANTs_para_T1 = config.ANTs_para_T1_registration
+    for (const k of [
+      ['collapse_output_transforms', 'collapse-output-transforms'],
+      ['dimensionality', 'dimensionality'],
+      ['initial_moving_transform', 'initial-moving-transform'],
+      ['transforms', 'transforms'],
+    ]) {
+      let listItem = ANTs_para_T1.filter((item) => k[1] in item)  // find a config in the list of config
+      if (listItem.length > 0 && k[1] != 'transforms') {  // check if it found anything
+        c.anatomical.registration.methods.ants.ANTs_para_T1_registration[k[0]] = listItem[0][k[1]]
+      }
+
+      else if (listItem.length > 0 && k[1] == 'transforms') {
+        c.anatomical.registration.methods.ants.ANTs_para_T1_registration['transforms'] = {}  // add {} to push next layer values
+        c.anatomical.registration.methods.ants.ANTs_para_T1_registration['transforms']['Rigid'] = {}
+        c.anatomical.registration.methods.ants.ANTs_para_T1_registration['transforms']['Affine'] = {}
+        c.anatomical.registration.methods.ants.ANTs_para_T1_registration['transforms']['SyN'] = {}
+        for (const t of [
+          'Rigid',
+          'Affine',
+          'SyN',
+        ]) {
+          let listItem_transform = listItem[0]["transforms"].filter((item) => t in item)
+          if (listItem_transform.length == 0) {
+            c.anatomical.registration.methods.ants.ANTs_para_T1_registration[k[0]][t]['enabled'] = false
+          }
+          else if (listItem_transform.length > 0) {
+            c.anatomical.registration.methods.ants.ANTs_para_T1_registration[k[0]][t]['enabled'] = true
+            if (t != 'SyN') {
+              for (const j of [
+                ['gradientStep', 'gradientStep'],
+                ['convergence', 'convergence'],
+                ['smoothing_sigmas', 'smoothing-sigmas'],
+                ['shrink_factors', 'shrink-factors'],
+                ['use_histogram_matching', 'use-histogram-matching'],
+              ])
+                c.anatomical.registration.methods.ants.ANTs_para_T1_registration[k[0]][t][j[0]] = listItem_transform[0][t][j[1]]
+            }
+            else if (t == 'SyN') {
+              for (const j of [
+                ['gradientStep', 'gradientStep'],
+                ['updateFieldVarianceInVoxelSpace', 'updateFieldVarianceInVoxelSpace'],
+                ['totalFieldVarianceInVoxelSpace', 'totalFieldVarianceInVoxelSpace'],
+                ['convergence', 'convergence'],
+                ['smoothing_sigmas', 'smoothing-sigmas'],
+                ['shrink_factors', 'shrink-factors'],
+                ['use_histogram_matching', 'use-histogram-matching'],
+                ['winsorize_image_intensities', 'winsorize-image-intensities'],
+              ])
+                c.anatomical.registration.methods.ants.ANTs_para_T1_registration[k[0]][t][j[0]] = listItem_transform[0][t][j[1]]
+            }
+
+            if (listItem_transform[0][t]['metric']['type'] == 'MI') {
+              c.anatomical.registration.methods.ants.ANTs_para_T1_registration[k[0]][t]['metric'] = {}
+              c.anatomical.registration.methods.ants.ANTs_para_T1_registration[k[0]][t]['metric']['type'] = {}
+              c.anatomical.registration.methods.ants.ANTs_para_T1_registration[k[0]][t]['metric']['type']['MI'] = {}
+              delete listItem_transform[0][t]['metric']['type']
+              c.anatomical.registration.methods.ants.ANTs_para_T1_registration[k[0]][t]['metric']['type']['MI'] = listItem_transform[0][t]['metric']
+              c.anatomical.registration.methods.ants.ANTs_para_T1_registration[k[0]][t]['metric']['type']['MI']['enabled'] = true
+            }
+            else if (listItem_transform[0][t]['metric']['type'] == 'CC') {
+              c.anatomical.registration.methods.ants.ANTs_para_T1_registration[k[0]][t]['metric'] = {}
+              c.anatomical.registration.methods.ants.ANTs_para_T1_registration[k[0]][t]['metric']['type'] = {}
+              c.anatomical.registration.methods.ants.ANTs_para_T1_registration[k[0]][t]['metric']['type']['CC'] = {}
+              delete listItem_transform[0][t]['metric']['type']
+              c.anatomical.registration.methods.ants.ANTs_para_T1_registration[k[0]][t]['metric']['type']['CC'] = listItem_transform[0][t]['metric']
+              c.anatomical.registration.methods.ants.ANTs_para_T1_registration[k[0]][t]['metric']['type']['CC']['enabled'] = true
+            }
+          }
+        }
+      }
+    }
+  }
+// add ants-para
+
   c.anatomical.tissue_segmentation.enabled = config.runSegmentationPreprocessing.includes(1)
   c.anatomical.tissue_segmentation.configuration.priors.enabled = !!config.seg_use_priors
 
@@ -901,6 +979,53 @@ export function dump(pipeline, version='0') {
   } 
   config.regWithSkull = [c.anatomical.registration.methods.ants.configuration.skull_on ? 1 : 0]
 
+  // add ants_para T1
+  const ANTs_para_T1 = c.anatomical.registration.methods.ants.ANTs_para_T1_registration
+
+  config.ANTs_para_T1_registration = [
+    { 'collapse-output-transforms': parseInt(ANTs_para_T1['collapse_output_transforms']) },
+    { dimensionality: parseInt(ANTs_para_T1['dimensionality']) },
+    { 'initial-moving-transform': { initializationFeature: parseInt(ANTs_para_T1['initial_moving_transform']['initializationFeature']) } },
+    { 'transforms': [] },
+  ]
+
+  const transform_t1 = c.anatomical.registration.methods.ants.ANTs_para_T1_registration.transforms
+
+  for (const k of [
+    'Rigid',
+    'Affine',
+    'SyN',
+  ]) {
+
+    const newTransform_t1 = {}
+
+    if (!transform_t1[k].enabled) {
+      continue
+    }
+
+    newTransform_t1[k] = clone(transform_t1[k])
+    delete newTransform_t1[k].enabled
+
+    if (transform_t1[k]['metric']['type']['MI'] != undefined) {
+      newTransform_t1[k]['metric'] = {
+        type: 'MI',
+        metricWeight: parseInt(transform_t1[k]['metric']['type']['MI']['metricWeight']),
+        numberOfBins: parseInt(transform_t1[k]['metric']['type']['MI']['numberOfBins']),
+        samplingStrategy: transform_t1[k]['metric']['type']['MI']['samplingStrategy'],
+        samplingPercentage: parseInt(transform_t1[k]['metric']['type']['MI']['samplingPercentage']),
+      }
+    }
+    if (transform_t1[k]['metric']['type']['CC'] != undefined) {
+      newTransform_t1[k]['metric'] = {
+        type: 'CC',
+        metricWeight: parseInt(transform_t1[k]['metric']['type']['CC']['metricWeight']),
+        radius: parseInt(transform_t1[k]['metric']['type']['CC']['radius']),
+      }
+    }
+    config.ANTs_para_T1_registration[3].transforms.push(newTransform_t1)
+  }
+// add ants_para T1
+
   config.runSegmentationPreprocessing = [c.anatomical.tissue_segmentation.enabled ? 1 : 0]
   config.seg_use_priors = [c.anatomical.tissue_segmentation.configuration.priors.enabled ? 1 : 0]
   config.priors_path = "$FSLDIR/data/standard/tissuepriors/2mm"
@@ -1034,7 +1159,6 @@ export function dump(pipeline, version='0') {
   config.template_skull_for_func = c.functional.template_registration.t1_template.skull_template
 
 // add ants_para
-
   const ANTs_para_EPI = c.functional.template_registration.epi_template.ANTs_para_EPI_registration
 
   config.ANTs_para_EPI_registration = [
@@ -1079,7 +1203,6 @@ export function dump(pipeline, version='0') {
     }
     config.ANTs_para_EPI_registration[3].transforms.push(newTransform)
   }
-
 // add ants_para
 
   config.runICA = [c.functional.aroma.enabled ? 1 : 0]

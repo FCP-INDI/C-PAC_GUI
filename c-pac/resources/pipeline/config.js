@@ -257,6 +257,108 @@ export default {
             methods: {
               ants: {
                 interpolation: 'sinc',
+                ANTs_para_T1_registration:
+                {
+                  collapse_output_transforms: 0,
+                  dimensionality: 3,
+                  initial_moving_transform: {
+                    initializationFeature: 0,
+                  },
+                  transforms: {
+                    Rigid: {
+                      enabled: true,
+                      gradientStep: 0.1,
+                      metric: {
+                        type: {
+                          MI: {
+                            enabled: true,
+                            metricWeight: 1,
+                            numberOfBins: 32,
+                            samplingStrategy: 'Regular',
+                            samplingPercentage: 0.25,
+                          },
+                          CC: {
+                            enabled: false,
+                            metricWeight: 1,
+                            radius: 4,
+                          },
+                        },
+                      },
+                      convergence: {
+                        iteration: '1000x500x250x100',
+                        convergenceThreshold: 1e-08,
+                        convergenceWindowSize: 10,
+                      },
+                      smoothing_sigmas: '3.0x2.0x1.0x0.0',
+                      shrink_factors: '8x4x2x1',
+                      use_histogram_matching: true,
+                    },
+
+                    Affine: {
+                      enabled: true,
+                      gradientStep: 0.1,
+                      metric: {
+                        type: {
+                          MI: {
+                            enabled: true,
+                            metricWeight: 1,
+                            numberOfBins: 32,
+                            samplingStrategy: 'Regular',
+                            samplingPercentage: 0.25,
+                          },
+                          CC: {
+                            enabled: false,
+                            metricWeight: 1,
+                            radius: 4,
+                          },
+                        },
+                      },
+                      convergence: {
+                        iteration: '1000x500x250x100',
+                        convergenceThreshold: 1e-08,
+                        convergenceWindowSize: 10,
+                      },
+                      smoothing_sigmas: '3.0x2.0x1.0x0.0',
+                      shrink_factors: '8x4x2x1',
+                      use_histogram_matching: true,
+                    },
+
+                    SyN: {
+                      enabled: true,
+                      gradientStep: 0.1,
+                      updateFieldVarianceInVoxelSpace: 3.0,
+                      totalFieldVarianceInVoxelSpace: 0.0,
+                      metric: {
+                        type: {
+                          MI: {
+                            enabled: false,
+                            metricWeight: 1,
+                            numberOfBins: 32,
+                            samplingStrategy: 'Regular',
+                            samplingPercentage: 0.25,
+                          },
+                          CC: {
+                            enabled: true,
+                            metricWeight: 1,
+                            radius: 4,
+                          },
+                        },
+                      },
+                      convergence: {
+                        iteration: '100x100x70x20',
+                        convergenceThreshold: 1e-09,
+                        convergenceWindowSize: 15,
+                      },
+                      smoothing_sigmas: '3.0x2.0x1.0x0.0',
+                      shrink_factors: '6x4x2x1',
+                      use_histogram_matching: true,
+                      winsorize_image_intensities: {
+                        lowerQuantile: 0.01,
+                        upperQuantile: 0.99,
+                      },
+                    },
+                  },
+                },
               },
               fsl: {
                 interpolation: 'sinc',
