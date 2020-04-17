@@ -356,6 +356,84 @@ export function parse(content) {
       break;
   }
   
+  // add ants_para T1
+  c.anatomical.registration.methods.ants.ANTs_para_T1_registration = {}
+  if (config.ANTs_para_T1_registration && config.ANTs_para_T1_registration.length > 0) {
+    const ANTs_para_T1 = config.ANTs_para_T1_registration
+    for (const k of [
+      ['collapse_output_transforms', 'collapse-output-transforms'],
+      ['dimensionality', 'dimensionality'],
+      ['initial_moving_transform', 'initial-moving-transform'],
+      ['transforms', 'transforms'],
+    ]) {
+      let listItem = ANTs_para_T1.filter((item) => k[1] in item)  // find a config in the list of config
+      if (listItem.length > 0 && k[1] != 'transforms') {  // check if it found anything
+        c.anatomical.registration.methods.ants.ANTs_para_T1_registration[k[0]] = listItem[0][k[1]]
+      }
+
+      else if (listItem.length > 0 && k[1] == 'transforms') {
+        c.anatomical.registration.methods.ants.ANTs_para_T1_registration['transforms'] = {}  // add {} to push next layer values
+        c.anatomical.registration.methods.ants.ANTs_para_T1_registration['transforms']['Rigid'] = {}
+        c.anatomical.registration.methods.ants.ANTs_para_T1_registration['transforms']['Affine'] = {}
+        c.anatomical.registration.methods.ants.ANTs_para_T1_registration['transforms']['SyN'] = {}
+        for (const t of [
+          'Rigid',
+          'Affine',
+          'SyN',
+        ]) {
+          let listItem_transform = listItem[0]["transforms"].filter((item) => t in item)
+          if (listItem_transform.length == 0) {
+            c.anatomical.registration.methods.ants.ANTs_para_T1_registration[k[0]][t]['enabled'] = false
+          }
+          else if (listItem_transform.length > 0) {
+            c.anatomical.registration.methods.ants.ANTs_para_T1_registration[k[0]][t]['enabled'] = true
+            if (t != 'SyN') {
+              for (const j of [
+                ['gradientStep', 'gradientStep'],
+                ['convergence', 'convergence'],
+                ['smoothing_sigmas', 'smoothing-sigmas'],
+                ['shrink_factors', 'shrink-factors'],
+                ['use_histogram_matching', 'use-histogram-matching'],
+              ])
+                c.anatomical.registration.methods.ants.ANTs_para_T1_registration[k[0]][t][j[0]] = listItem_transform[0][t][j[1]]
+            }
+            else if (t == 'SyN') {
+              for (const j of [
+                ['gradientStep', 'gradientStep'],
+                ['updateFieldVarianceInVoxelSpace', 'updateFieldVarianceInVoxelSpace'],
+                ['totalFieldVarianceInVoxelSpace', 'totalFieldVarianceInVoxelSpace'],
+                ['convergence', 'convergence'],
+                ['smoothing_sigmas', 'smoothing-sigmas'],
+                ['shrink_factors', 'shrink-factors'],
+                ['use_histogram_matching', 'use-histogram-matching'],
+                ['winsorize_image_intensities', 'winsorize-image-intensities'],
+              ])
+                c.anatomical.registration.methods.ants.ANTs_para_T1_registration[k[0]][t][j[0]] = listItem_transform[0][t][j[1]]
+            }
+
+            if (listItem_transform[0][t]['metric']['type'] == 'MI') {
+              c.anatomical.registration.methods.ants.ANTs_para_T1_registration[k[0]][t]['metric'] = {}
+              c.anatomical.registration.methods.ants.ANTs_para_T1_registration[k[0]][t]['metric']['type'] = {}
+              c.anatomical.registration.methods.ants.ANTs_para_T1_registration[k[0]][t]['metric']['type']['MI'] = {}
+              delete listItem_transform[0][t]['metric']['type']
+              c.anatomical.registration.methods.ants.ANTs_para_T1_registration[k[0]][t]['metric']['type']['MI'] = listItem_transform[0][t]['metric']
+              c.anatomical.registration.methods.ants.ANTs_para_T1_registration[k[0]][t]['metric']['type']['MI']['enabled'] = true
+            }
+            else if (listItem_transform[0][t]['metric']['type'] == 'CC') {
+              c.anatomical.registration.methods.ants.ANTs_para_T1_registration[k[0]][t]['metric'] = {}
+              c.anatomical.registration.methods.ants.ANTs_para_T1_registration[k[0]][t]['metric']['type'] = {}
+              c.anatomical.registration.methods.ants.ANTs_para_T1_registration[k[0]][t]['metric']['type']['CC'] = {}
+              delete listItem_transform[0][t]['metric']['type']
+              c.anatomical.registration.methods.ants.ANTs_para_T1_registration[k[0]][t]['metric']['type']['CC'] = listItem_transform[0][t]['metric']
+              c.anatomical.registration.methods.ants.ANTs_para_T1_registration[k[0]][t]['metric']['type']['CC']['enabled'] = true
+            }
+          }
+        }
+      }
+    }
+  }
+// add ants-para
+
   c.anatomical.tissue_segmentation.enabled = config.runSegmentationPreprocessing.includes(1)
   c.anatomical.tissue_segmentation.configuration.priors.enabled = !!config.seg_use_priors
 
@@ -406,6 +484,12 @@ export function parse(content) {
   
   c.functional.preprocessing.n4_mean_epi.enabled = config.n4_correct_mean_EPI
   c.functional.preprocessing.motion_stats.enabled = config.runMotionStatisticsFirst.includes(1)
+  c.functional.preprocessing.motion_correction.method.volreg = config.motion_correction.includes('3dvolreg')
+  c.functional.preprocessing.motion_correction.method.mcflirt = config.motion_correction.includes('mcflirt')
+  c.functional.preprocessing.motion_correction.reference.mean = config.motion_correction_reference.includes('mean')
+  c.functional.preprocessing.motion_correction.reference.median = config.motion_correction_reference.includes('median')
+  c.functional.preprocessing.motion_correction.reference.selected_volume = config.motion_correction_reference.includes('selected volume')
+  c.functional.preprocessing.motion_correction.reference.reference_volume = config.motion_correction_reference_volume
   c.functional.preprocessing.despike.enabled = config.runDespike
   c.functional.preprocessing.scaling.enabled = config.runScaling
   c.functional.preprocessing.scaling.factor = config.scaling_factor
@@ -458,9 +542,6 @@ export function parse(content) {
   c.functional.distortion_correction.method.phasediff.dwell_to_assymetric_ratio = config.fmap_distcorr_dwell_asym_ratio[0]
   c.functional.distortion_correction.method.phasediff.phase_encoding_direction = config.fmap_distcorr_pedir
 
-  c.functional.epi_registration.enabled = config.runRegisterFuncToEPI.includes(1) 
-  c.functional.epi_registration.template_epi = config.template_epi
-
   c.functional.anatomical_registration.enabled = config.runRegisterFuncToAnat.includes(1)
   c.functional.anatomical_registration.bb_registration = config.runBBReg.includes(1)
   c.functional.anatomical_registration.bb_registration_scheduler =
@@ -488,48 +569,119 @@ export function parse(content) {
   c.functional.anatomical_registration.functional_masking.fsl.configuration.apply_threshold = config.bold_bet_threshold 
   c.functional.anatomical_registration.functional_masking.fsl.configuration.vertical_gradient = config.bold_bet_vertical_gradient 
 
-  c.functional.template_registration.enabled = config.runRegisterFuncToMNI.includes(1)
+  if (typeof config.runRegisterFuncToTemplate === "string") {
+    config.skullstrip_option = [config.skullstrip_option]
+  }
+
+  if (config.distortion_correction.includes("Off")) {
+    c.functional.template_registration.enabled = false
+  }
+
+  if (config.runRegisterFuncToTemplate.includes("T1_template")) {
+    c.functional.template_registration.enabled = true
+    c.functional.template_registration.t1_template.enabled = true
+  }
+
+  if (config.runRegisterFuncToTemplate.includes("EPI_template")) {
+    c.functional.template_registration.enabled = true
+    c.functional.template_registration.epi_template.enabled = true
+  }
+
   c.functional.template_registration.functional_resolution = config.resolution_for_func_preproc.replace(/mm/g, "")
   c.functional.template_registration.derivative_resolution = config.resolution_for_func_derivative.replace(/mm/g, "")
 
-  // if (config.regOption.includes("ANTS")) {
-  //   switch (config.funcRegANTSinterpolation) {
-  //     case 'LanczosWindowedSinc':
-  //       c.functional.template_registration.methods.ants.interpolation = 'sinc'
-  //       break;
-  //     case 'Linear':
-  //       c.functional.template_registration.methods.ants.interpolation = 'linear'
-  //       break;
-  //     case 'BSpline':
-  //       c.functional.template_registration.methods.ants.interpolation = 'spline'
-  //       break;
-  //   }
-  // } else {
-  //   switch (config.funcRegFSLinterpolation) {
-  //     case 'sinc':
-  //       c.functional.template_registration.methods.fsl.interpolation = 'sinc'
-  //       break;
-  //     case 'trilinear':
-  //       c.functional.template_registration.methods.fsl.interpolation = 'linear'
-  //       break;
-  //     case 'spline':
-  //       c.functional.template_registration.methods.fsl.interpolation = 'spline'
-  //       break;
-  //   }
-  // }
-
-  c.functional.template_registration.brain_template =
-    config.template_brain_only_for_func
-      .replace("${resolution_for_func_preproc}", "${pipeline.functional.template_registration.functional_resolution}mm")
-      .replace("$FSLDIR", "${environment.paths.fsl_dir}")
-  c.functional.template_registration.skull_template =
-    config.template_skull_for_func
-      .replace("${resolution_for_func_preproc}", "${pipeline.functional.template_registration.functional_resolution}mm")
-      .replace("$FSLDIR", "${environment.paths.fsl_dir}")
   c.functional.template_registration.identity_matrix =
     config.identityMatrix
       .replace("$FSLDIR", "${environment.paths.fsl_dir}")
+  c.functional.template_registration.epi_template.template_epi = config.template_epi
+  c.functional.template_registration.t1_template.brain_template =
+    config.template_brain_only_for_func
+    .replace("${resolution_for_func_preproc}", "${pipeline.functional.template_registration.t1_template.functional_resolution}mm")
+      .replace("$FSLDIR", "${environment.paths.fsl_dir}")
+  c.functional.template_registration.t1_template.skull_template =
+    config.template_skull_for_func
+    .replace("${resolution_for_func_preproc}", "${pipeline.functional.template_registration.t1_template.functional_resolution}mm")
+      .replace("$FSLDIR", "${environment.paths.fsl_dir}")
 
+
+// add ants_para
+
+  c.functional.template_registration.epi_template.ANTs_para_EPI_registration = {}
+  if (config.ANTs_para_EPI_registration && config.ANTs_para_EPI_registration.length > 0) {
+    const ANTs_para_EPI = config.ANTs_para_EPI_registration
+    for (const k of [
+      ['collapse_output_transforms', 'collapse-output-transforms'],
+      ['dimensionality', 'dimensionality'],
+      ['initial_moving_transform', 'initial-moving-transform'],
+      ['transforms', 'transforms'],
+    ]) {
+      let listItem = ANTs_para_EPI.filter((item) => k[1] in item)  // find a config in the list of config
+      if (listItem.length > 0 &&  k[1] != 'transforms') {  // check if it found anything
+        c.functional.template_registration.epi_template.ANTs_para_EPI_registration[k[0]] = listItem[0][k[1]]
+      } 
+
+      else if (listItem.length > 0 && k[1] == 'transforms') {
+        c.functional.template_registration.epi_template.ANTs_para_EPI_registration['transforms'] = {}  // add {} to push next layer values
+        c.functional.template_registration.epi_template.ANTs_para_EPI_registration['transforms']['Rigid'] = {}
+        c.functional.template_registration.epi_template.ANTs_para_EPI_registration['transforms']['Affine'] = {}
+        c.functional.template_registration.epi_template.ANTs_para_EPI_registration['transforms']['SyN'] = {}
+        for (const t of [
+          'Rigid',
+          'Affine',
+          'SyN',
+        ]) {
+          let listItem_transform = listItem[0]["transforms"].filter((item) => t in item)
+          if (listItem_transform.length == 0){
+            c.functional.template_registration.epi_template.ANTs_para_EPI_registration[k[0]][t]['enabled'] = false
+          }
+          else if (listItem_transform.length > 0 ) { 
+            c.functional.template_registration.epi_template.ANTs_para_EPI_registration[k[0]][t]['enabled'] = true
+            if (t != 'SyN'){
+              for (const j of [
+                ['gradientStep', 'gradientStep'],
+                ['convergence', 'convergence'],
+                ['smoothing_sigmas', 'smoothing-sigmas'],
+                ['shrink_factors', 'shrink-factors'],
+                ['use_histogram_matching', 'use-histogram-matching'],
+              ])
+                c.functional.template_registration.epi_template.ANTs_para_EPI_registration[k[0]][t][j[0]] = listItem_transform[0][t][j[1]]
+            } 
+            else if (t == 'SyN'){
+              for (const j of [
+                ['gradientStep', 'gradientStep'],
+                ['updateFieldVarianceInVoxelSpace','updateFieldVarianceInVoxelSpace'],
+                ['totalFieldVarianceInVoxelSpace','totalFieldVarianceInVoxelSpace'],
+                ['convergence','convergence'],
+                ['smoothing_sigmas','smoothing-sigmas'],
+                ['shrink_factors','shrink-factors'],
+                ['use_histogram_matching', 'use-histogram-matching'],
+                ['winsorize_image_intensities', 'winsorize-image-intensities'],
+              ])
+                c.functional.template_registration.epi_template.ANTs_para_EPI_registration[k[0]][t][j[0]] = listItem_transform[0][t][j[1]]
+            }
+
+            if (listItem_transform[0][t]['metric']['type'] == 'MI') {
+              c.functional.template_registration.epi_template.ANTs_para_EPI_registration[k[0]][t]['metric'] = {}
+              c.functional.template_registration.epi_template.ANTs_para_EPI_registration[k[0]][t]['metric']['type'] = {}
+              c.functional.template_registration.epi_template.ANTs_para_EPI_registration[k[0]][t]['metric']['type']['MI'] = {}
+              delete listItem_transform[0][t]['metric']['type']
+              c.functional.template_registration.epi_template.ANTs_para_EPI_registration[k[0]][t]['metric']['type']['MI'] = listItem_transform[0][t]['metric']
+              c.functional.template_registration.epi_template.ANTs_para_EPI_registration[k[0]][t]['metric']['type']['MI']['enabled'] = true
+            }
+            else if (listItem_transform[0][t]['metric']['type'] == 'CC') {
+              c.functional.template_registration.epi_template.ANTs_para_EPI_registration[k[0]][t]['metric'] = {}
+              c.functional.template_registration.epi_template.ANTs_para_EPI_registration[k[0]][t]['metric']['type'] = {}
+              c.functional.template_registration.epi_template.ANTs_para_EPI_registration[k[0]][t]['metric']['type']['CC'] = {}
+              delete listItem_transform[0][t]['metric']['type']
+              c.functional.template_registration.epi_template.ANTs_para_EPI_registration[k[0]][t]['metric']['type']['CC'] = listItem_transform[0][t]['metric']
+              c.functional.template_registration.epi_template.ANTs_para_EPI_registration[k[0]][t]['metric']['type']['CC']['enabled'] = true
+            }
+           }
+        }
+      }
+    }
+  }
+// add ants-para
   c.functional.nuisance_regression.enabled = config.runNuisance.includes(1)
   c.functional.nuisance_regression.lateral_ventricles_mask =
     config.lateral_ventricles_mask
@@ -615,6 +767,16 @@ export function parse(content) {
         partial_correlation: analysis.includes("partialcorr"),
       })
     }
+  }
+
+  if (config.realignment.includes("ROI_to_func")) {
+    c.derivatives.timeseries_extraction.realignment.roi_to_func = true
+    c.derivatives.timeseries_extraction.realignment.func_to_roi = false
+  }
+
+  if (config.realignment.includes("func_to_ROI")) {
+    c.derivatives.timeseries_extraction.realignment.roi_to_func = false
+    c.derivatives.timeseries_extraction.realignment.func_to_roi = true
   }
 
   c.derivatives.timeseries_extraction.outputs.csv = config.roiTSOutputs[0]
@@ -833,6 +995,53 @@ export function dump(pipeline, version='0') {
   } 
   config.regWithSkull = [c.anatomical.registration.methods.ants.configuration.skull_on ? 1 : 0]
 
+  // add ants_para T1
+  const ANTs_para_T1 = c.anatomical.registration.methods.ants.ANTs_para_T1_registration
+
+  config.ANTs_para_T1_registration = [
+    { 'collapse-output-transforms': parseInt(ANTs_para_T1['collapse_output_transforms']) },
+    { dimensionality: parseInt(ANTs_para_T1['dimensionality']) },
+    { 'initial-moving-transform': { initializationFeature: parseInt(ANTs_para_T1['initial_moving_transform']['initializationFeature']) } },
+    { 'transforms': [] },
+  ]
+
+  const transform_t1 = c.anatomical.registration.methods.ants.ANTs_para_T1_registration.transforms
+
+  for (const k of [
+    'Rigid',
+    'Affine',
+    'SyN',
+  ]) {
+
+    const newTransform_t1 = {}
+
+    if (!transform_t1[k].enabled) {
+      continue
+    }
+
+    newTransform_t1[k] = clone(transform_t1[k])
+    delete newTransform_t1[k].enabled
+
+    if (transform_t1[k]['metric']['type']['MI'] != undefined) {
+      newTransform_t1[k]['metric'] = {
+        type: 'MI',
+        metricWeight: parseInt(transform_t1[k]['metric']['type']['MI']['metricWeight']),
+        numberOfBins: parseInt(transform_t1[k]['metric']['type']['MI']['numberOfBins']),
+        samplingStrategy: transform_t1[k]['metric']['type']['MI']['samplingStrategy'],
+        samplingPercentage: parseInt(transform_t1[k]['metric']['type']['MI']['samplingPercentage']),
+      }
+    }
+    if (transform_t1[k]['metric']['type']['CC'] != undefined) {
+      newTransform_t1[k]['metric'] = {
+        type: 'CC',
+        metricWeight: parseInt(transform_t1[k]['metric']['type']['CC']['metricWeight']),
+        radius: parseInt(transform_t1[k]['metric']['type']['CC']['radius']),
+      }
+    }
+    config.ANTs_para_T1_registration[3].transforms.push(newTransform_t1)
+  }
+// add ants_para T1
+
   config.runSegmentationPreprocessing = [c.anatomical.tissue_segmentation.enabled ? 1 : 0]
   config.seg_use_priors = [c.anatomical.tissue_segmentation.configuration.priors.enabled ? 1 : 0]
   config.priors_path = "$FSLDIR/data/standard/tissuepriors/2mm"
@@ -865,6 +1074,18 @@ export function dump(pipeline, version='0') {
 
   config.n4_correct_mean_EPI = c.functional.preprocessing.n4_mean_epi.enabled
   config.runMotionStatisticsFirst = [c.functional.preprocessing.motion_stats.enabled ? 1 : 0]
+
+  config.motion_correction = []
+    .concat(c.functional.preprocessing.motion_correction.method.volreg ? ["3dvolreg"] : [])
+    .concat(c.functional.preprocessing.motion_correction.method.mcflirt ? ["mcflirt"] : [])
+
+  config.motion_correction_reference = []
+    .concat(c.functional.preprocessing.motion_correction.reference.mean ? ["mean"] : [])
+    .concat(c.functional.preprocessing.motion_correction.reference.median ? ["median"] : [])
+    .concat(c.functional.preprocessing.motion_correction.reference.selected_volume ? ["selected volume"] : [])
+
+  config.motion_correction_reference_volume = c.functional.preprocessing.motion_correction.reference.reference_volume 
+
   config.runDespike = c.functional.preprocessing.despike.enabled
   config.runScaling = c.functional.preprocessing.scaling.enabled
   config.scaling_factor = c.functional.preprocessing.scaling.factor
@@ -907,9 +1128,6 @@ export function dump(pipeline, version='0') {
   config.fmap_distcorr_dwell_time = [c.functional.distortion_correction.method.phasediff.dwell_time]
   config.fmap_distcorr_dwell_asym_ratio = [c.functional.distortion_correction.method.phasediff.dwell_to_assymetric_ratio]
   config.fmap_distcorr_pedir = c.functional.distortion_correction.method.phasediff.phase_encoding_direction
-         
-  config.runRegisterFuncToEPI = [c.functional.epi_registration.enabled ? 1 : 0]
-  config.template_epi = c.functional.epi_registration.template_epi
 
   config.runRegisterFuncToAnat = [c.functional.anatomical_registration.enabled ? 1 : 0]
   config.runBBReg = [c.functional.anatomical_registration.bb_registration ? 1 : 0]
@@ -938,7 +1156,11 @@ export function dump(pipeline, version='0') {
   config.bold_bet_threshold = c.functional.anatomical_registration.functional_masking.fsl.configuration.apply_threshold
   config.bold_bet_vertical_gradient = c.functional.anatomical_registration.functional_masking.fsl.configuration.vertical_gradient
 
-  config.runRegisterFuncToMNI = [c.functional.template_registration.enabled ? 1 : 0]
+  config.runRegisterFuncToTemplate = []
+    .concat(c.functional.template_registration.t1_template.enabled ? ["T1_template"] : [])
+    .concat(c.functional.template_registration.epi_template.enabled ? ["EPI_template"] : [])
+    .concat(c.functional.template_registration.enabled ? ["Off"] : [])
+
   if (c.functional.template_registration.functional_resolution.includes("x")) {
     var xind = []
     for(var i = 0; i < c.functional.template_registration.functional_resolution.length; i++) {
@@ -958,38 +1180,58 @@ export function dump(pipeline, version='0') {
   } else {
     config.resolution_for_func_derivative = c.functional.template_registration.derivative_resolution + "mm"
   }
-  
-  // switch (c.functional.template_registration.methods.ants.interpolation) {
-  //   case 'linear':
-  //     config.funcRegANTSinterpolation = 'Linear'
-  //     break;
-  
-  //   case 'sinc':
-  //     config.funcRegANTSinterpolation = 'LanczosWindowedSinc'
-  //     break;
 
-  //   case 'spline':
-  //     config.funcRegANTSinterpolation = 'BSpline'
-  //     break;
-  // } 
-  
-  // switch (c.functional.template_registration.methods.fsl.interpolation) {
-  //   case 'linear':
-  //     config.funcRegFSLinterpolation = 'trilinear'
-  //     break;
-  
-  //   case 'sinc':
-  //     config.funcRegFSLinterpolation = 'sinc'
-  //     break;
-
-  //   case 'spline':
-  //     config.funcRegFSLinterpolation = 'spline'
-  //     break;
-  // }
-
-  config.template_brain_only_for_func = c.functional.template_registration.brain_template
-  config.template_skull_for_func = c.functional.template_registration.skull_template
   config.identityMatrix = c.functional.template_registration.identity_matrix
+  config.template_epi = c.functional.template_registration.epi_template.template_epi
+  config.template_brain_only_for_func = c.functional.template_registration.t1_template.brain_template
+  config.template_skull_for_func = c.functional.template_registration.t1_template.skull_template
+
+// add ants_para
+  const ANTs_para_EPI = c.functional.template_registration.epi_template.ANTs_para_EPI_registration
+
+  config.ANTs_para_EPI_registration = [
+    { 'collapse-output-transforms': parseInt(ANTs_para_EPI['collapse_output_transforms']) },
+    { dimensionality: parseInt(ANTs_para_EPI['dimensionality']) },
+    { 'initial-moving-transform': { initializationFeature: parseInt(ANTs_para_EPI['initial_moving_transform']['initializationFeature'])}},
+    { 'transforms': []},
+  ]
+
+  const transform = c.functional.template_registration.epi_template.ANTs_para_EPI_registration.transforms
+
+  for (const k of [
+    'Rigid',
+    'Affine',
+    'SyN',
+  ]) {
+
+    const newTransform = {}
+
+    if (!transform[k].enabled) {
+      continue
+    }
+
+    newTransform[k] = clone(transform[k])
+    delete newTransform[k].enabled
+
+    if (transform[k]['metric']['type']['MI'] != undefined) {
+      newTransform[k]['metric'] = {
+        type: 'MI',
+        metricWeight: parseInt(transform[k]['metric']['type']['MI']['metricWeight']),
+        numberOfBins: parseInt(transform[k]['metric']['type']['MI']['numberOfBins']),
+        samplingStrategy: transform[k]['metric']['type']['MI']['samplingStrategy'],
+        samplingPercentage: parseInt(transform[k]['metric']['type']['MI']['samplingPercentage']),
+      }
+    }
+    if (transform[k]['metric']['type']['CC'] != undefined) {
+      newTransform[k]['metric'] = {
+        type: 'CC',
+        metricWeight: parseInt(transform[k]['metric']['type']['CC']['metricWeight']),
+        radius: parseInt(transform[k]['metric']['type']['CC']['radius']),
+      }
+    }
+    config.ANTs_para_EPI_registration[3].transforms.push(newTransform)
+  }
+// add ants_para
 
   config.runICA = [c.functional.aroma.enabled ? 1 : 0]
   config.aroma_denoise_type = c.functional.aroma.denoising_strategy === 'non-aggressive' ? "nonaggr" : "aggr"
@@ -1043,7 +1285,9 @@ export function dump(pipeline, version='0') {
       config.tsa_roi_paths[0][mask.mask] = maskFeatures.join(", ")
     }
   }
-
+  
+  config.realignment = [c.derivatives.timeseries_extraction.realignment.roi_to_func ? "ROI_to_func" : "func_to_ROI"]
+  
   config.roiTSOutputs = [
     c.derivatives.timeseries_extraction.outputs.csv,
     c.derivatives.timeseries_extraction.outputs.numpy

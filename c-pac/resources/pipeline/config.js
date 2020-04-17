@@ -187,6 +187,18 @@ export default {
             motion_stats: {
               enabled: false,
             },
+            motion_correction: {
+              method: {
+                'volreg': true,
+                'mcflirt': false,
+              },
+              reference: {
+                'mean': true,
+                'median': false,
+                'selected_volume': false,
+              },
+              reference_volume: 0
+            },
             despike: {
               enabled: false,
             }
@@ -217,10 +229,6 @@ export default {
                 enabled: false
               }
             }
-          },
-          epi_registration: {
-            enabled: false,
-            template_epi: 's3://fcp-indi/resources/cpac/resources/epi_hbn.nii.gz',
           },
           anatomical_registration: {
             enabled: true,
@@ -257,18 +265,229 @@ export default {
             enabled: true,
             functional_resolution: 3,
             derivative_resolution: 3,
+            identity_matrix: '${environment.paths.fsl_dir}/etc/flirtsch/ident.mat',
             methods: {
               ants: {
                 interpolation: 'sinc',
+                ANTs_para_T1_registration:
+                {
+                  collapse_output_transforms: 0,
+                  dimensionality: 3,
+                  initial_moving_transform: {
+                    initializationFeature: 0,
+                  },
+                  transforms: {
+                    Rigid: {
+                      enabled: true,
+                      gradientStep: 0.1,
+                      metric: {
+                        type: {
+                          MI: {
+                            enabled: true,
+                            metricWeight: 1,
+                            numberOfBins: 32,
+                            samplingStrategy: 'Regular',
+                            samplingPercentage: 0.25,
+                          },
+                          CC: {
+                            enabled: false,
+                            metricWeight: 1,
+                            radius: 4,
+                          },
+                        },
+                      },
+                      convergence: {
+                        iteration: '1000x500x250x100',
+                        convergenceThreshold: 1e-08,
+                        convergenceWindowSize: 10,
+                      },
+                      smoothing_sigmas: '3.0x2.0x1.0x0.0',
+                      shrink_factors: '8x4x2x1',
+                      use_histogram_matching: true,
+                    },
+
+                    Affine: {
+                      enabled: true,
+                      gradientStep: 0.1,
+                      metric: {
+                        type: {
+                          MI: {
+                            enabled: true,
+                            metricWeight: 1,
+                            numberOfBins: 32,
+                            samplingStrategy: 'Regular',
+                            samplingPercentage: 0.25,
+                          },
+                          CC: {
+                            enabled: false,
+                            metricWeight: 1,
+                            radius: 4,
+                          },
+                        },
+                      },
+                      convergence: {
+                        iteration: '1000x500x250x100',
+                        convergenceThreshold: 1e-08,
+                        convergenceWindowSize: 10,
+                      },
+                      smoothing_sigmas: '3.0x2.0x1.0x0.0',
+                      shrink_factors: '8x4x2x1',
+                      use_histogram_matching: true,
+                    },
+
+                    SyN: {
+                      enabled: true,
+                      gradientStep: 0.1,
+                      updateFieldVarianceInVoxelSpace: 3.0,
+                      totalFieldVarianceInVoxelSpace: 0.0,
+                      metric: {
+                        type: {
+                          MI: {
+                            enabled: false,
+                            metricWeight: 1,
+                            numberOfBins: 32,
+                            samplingStrategy: 'Regular',
+                            samplingPercentage: 0.25,
+                          },
+                          CC: {
+                            enabled: true,
+                            metricWeight: 1,
+                            radius: 4,
+                          },
+                        },
+                      },
+                      convergence: {
+                        iteration: '100x100x70x20',
+                        convergenceThreshold: 1e-09,
+                        convergenceWindowSize: 15,
+                      },
+                      smoothing_sigmas: '3.0x2.0x1.0x0.0',
+                      shrink_factors: '6x4x2x1',
+                      use_histogram_matching: true,
+                      winsorize_image_intensities: {
+                        lowerQuantile: 0.01,
+                        upperQuantile: 0.99,
+                      },
+                    },
+                  },
+                },
               },
               fsl: {
                 interpolation: 'sinc',
               },
             },
-            brain_template: '${environment.paths.fsl_dir}/data/standard/MNI152_T1_${pipeline.functional.template_registration.functional_resolution}_brain.nii.gz',
-            skull_template: '${environment.paths.fsl_dir}/data/standard/MNI152_T1_${pipeline.functional.template_registration.functional_resolution}.nii.gz',
-            identity_matrix: '${environment.paths.fsl_dir}/etc/flirtsch/ident.mat',
+            epi_template: {
+              enabled: false,
+              template_epi: 's3://fcp-indi/resources/cpac/resources/epi_hbn.nii.gz',
+              ANTs_para_EPI_registration: 
+                {
+                  collapse_output_transforms: 0,
+                  dimensionality: 3,
+                  initial_moving_transform: {
+                    initializationFeature: 0,
+                  },
+                  transforms: {
+                    Rigid: {
+                      enabled: true,
+                      gradientStep: 0.1,
+                      metric: {
+                        type: {
+                          MI: {
+                            enabled: true,
+                            metricWeight: 1,
+                            numberOfBins: 32,
+                            samplingStrategy: 'Regular',
+                            samplingPercentage: 0.25,
+                          },
+                          CC: {
+                            enabled: false,
+                            metricWeight: 1,
+                            radius: 4,
+                          },
+                        },
+                      },
+                      convergence:{
+                        iteration: '1000x500x250x100',
+                        convergenceThreshold: 1e-08,
+                        convergenceWindowSize: 10,
+                      },
+                      smoothing_sigmas : '3.0x2.0x1.0x0.0',
+                      shrink_factors : '8x4x2x1',
+                      use_histogram_matching:true,
+                    },
 
+                    Affine:{
+                      enabled: true,
+                      gradientStep: 0.1,
+                      metric: {
+                        type: {
+                          MI: {
+                            enabled: true,
+                            metricWeight: 1,
+                            numberOfBins: 32,
+                            samplingStrategy: 'Regular',
+                            samplingPercentage: 0.25,
+                          },
+                          CC: {
+                            enabled: false,
+                            metricWeight: 1,
+                            radius: 4,
+                          },
+                        },
+                      },
+                      convergence: {
+                        iteration: '1000x500x250x100',
+                        convergenceThreshold: 1e-08,
+                        convergenceWindowSize: 10,
+                      },
+                      smoothing_sigmas: '3.0x2.0x1.0x0.0',
+                      shrink_factors: '8x4x2x1',
+                      use_histogram_matching: true,
+                    },
+
+                    SyN: {
+                      enabled: true,
+                      gradientStep: 0.1,
+                      updateFieldVarianceInVoxelSpace: 3.0,
+                      totalFieldVarianceInVoxelSpace: 0.0,
+                      metric: {
+                        type: {
+                          MI: {
+                            enabled: false,
+                            metricWeight: 1,
+                            numberOfBins: 32,
+                            samplingStrategy: 'Regular',
+                            samplingPercentage: 0.25,
+                          },
+                          CC: {
+                            enabled: true,
+                            metricWeight: 1,
+                            radius: 4,
+                          },
+                        },
+                      },
+                      convergence: {
+                        iteration: '100x100x70x20',
+                        convergenceThreshold: 1e-09,
+                        convergenceWindowSize: 15,
+                      },
+                      smoothing_sigmas: '3.0x2.0x1.0x0.0',
+                      shrink_factors: '6x4x2x1',
+                      use_histogram_matching: true,
+                      winsorize_image_intensities:{
+                        lowerQuantile: 0.01,
+                        upperQuantile: 0.99,
+                      },  
+                    },
+                  },
+                },
+              
+            },
+            t1_template: {
+              enabled: true,
+              brain_template: '${environment.paths.fsl_dir}/data/standard/MNI152_T1_${pipeline.functional.registration.functional_resolution}_brain.nii.gz',
+              skull_template: '${environment.paths.fsl_dir}/data/standard/MNI152_T1_${pipeline.functional.registration.functional_resolution}.nii.gz',
+            },
           },
           nuisance_regression: {
             enabled: true,
@@ -395,6 +614,10 @@ export default {
             enabled: true,
             masks: [
             ],
+            realignment: {
+              roi_to_func: true,
+              func_to_roi: false,
+            },
             outputs: {
               csv: true,
               numpy: true,
