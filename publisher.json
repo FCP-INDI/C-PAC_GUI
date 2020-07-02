@@ -1,8 +1,0 @@
-{
-  "transport": {
-    "module": "s3",
-    "bucket": "anibalsolon-research",
-    "pathPrefix": "cmi/c-pac/"
-  },
-  "updatesJsonUrl": "https://s3.amazonaws.com/anibalsolon-research/cmi/c-pac/updates.json"
-}

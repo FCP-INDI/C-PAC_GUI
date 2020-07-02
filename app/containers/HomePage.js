@@ -9,7 +9,6 @@ import Paper from '@material-ui/core/Paper'
 import Modal from '@material-ui/core/Modal'
 
 // import GroupAnalysisList from 'containers/GroupAnalysisList'
-// import ExecutionListTools from 'containers/ExecutionListTools.platform'
 
 import PipelineList from 'containers/PipelineList'
 import PipelineListTools from 'containers/PipelineListTools.platform'
@@ -61,14 +60,6 @@ class HomePage extends Component {
             <PipelineList />
           </Box>
         </Grid>
-        {/* <Grid item md={8} sm={12} className={classes.cell}>
-          <Box title="Executions"
-              avatar={<RunIcon />}
-              tools={<ExecutionListTools />}
-              className={classes.expand}>
-            <PipelineList />
-          </Box>
-        </Grid> */}
         <Grid item md={4} sm={12} className={classes.cell}>
           <Box title="About C-PAC"
                avatar={<HelpIcon />}
