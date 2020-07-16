@@ -745,6 +745,22 @@ export function parse(content) {
   c.functional.smoothing.before_zscore = config.smoothing_order[0] == 'Before'
   c.functional.smoothing.zscore_derivatives = config.runZScoring.includes(1)
 
+  // longitudinal
+  if (config.run_longitudinal.includes("anat")) {
+    c.longitudinal.run_anatomical = true
+  }
+
+  if (config.run_longitudinal.includes("func")) {
+    c.longitudinal.run_functional = true
+  }
+
+  c.longitudinal.average_method = config.longitudinal_template_average_method
+  c.longitudinal.dof = config.longitudinal_template_dof
+  c.longitudinal.interpolation = config.longitudinal_template_interp
+  c.longitudinal.cost_function = config.longitudinal_template_cost
+  c.longitudinal.thread_pool = config.longitudinal_template_thread_pool
+  c.longitudinal.convergence_threshold = config.longitudinal_template_convergence_threshold
+
   c.derivatives.timeseries_extraction.enabled = config.runROITimeseries.includes(1)
 
   if (config.tsa_roi_paths instanceof Array && config.tsa_roi_paths.length > 0) {
@@ -1268,6 +1284,18 @@ export function dump(pipeline, version='0') {
 
   config.runMedianAngleCorrection = [c.functional.median_angle_correction.enabled ? 1 : 0]
   config.targetAngleDeg = [c.functional.median_angle_correction.target_angle]
+  
+  // longitudinal
+  config.run_longitudinal = []
+    .concat(c.longitudinal.run_anatomical ? ["anat"] : [])
+    .concat(c.longitudinal.run_functional ? ["func"] : [])
+
+  config.longitudinal_template_average_method = c.longitudinal.average_method
+  config.longitudinal_template_dof = c.longitudinal.dof
+  config.longitudinal_template_interp = c.longitudinal.interpolation
+  config.longitudinal_template_cost = c.longitudinal.cost_function
+  config.longitudinal_template_thread_pool = c.longitudinal.thread_pool
+  config.longitudinal_template_convergence_threshold = c.longitudinal.convergence_threshold
 
   config.runROITimeseries = [c.derivatives.timeseries_extraction.enabled ? 1 : 0]
 

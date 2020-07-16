@@ -608,6 +608,17 @@ export default {
             zscore_derivatives: false,
           }
         },
+        longitudinal: {
+          enabled: true,
+          run_anatomical: false,
+          run_functional: false,
+          average_method: 'median',
+          dof: 12,
+          interpolation: 'trilinear',
+          cost_function: 'corratio',
+          thread_pool: 2,
+          convergence_threshold: -1,
+        },
         derivatives: {
           enabled: true,
           timeseries_extraction: {
