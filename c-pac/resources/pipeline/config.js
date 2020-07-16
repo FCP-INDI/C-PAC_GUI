@@ -170,6 +170,18 @@ export default {
                   gray_matter: '${environment.paths.fsl_dir}/data/standard/tissuepriors/2mm/avg152T1_gray_bin.nii.gz',
                   cerebrospinal_fluid: '${environment.paths.fsl_dir}/data/standard/tissuepriors/2mm/avg152T1_csf_bin.nii.gz',
                 }
+              },
+              ANTs_prior_based_seg: {
+                enabled: false,
+                template_brain_list: [
+                ], 
+                template_segmentation_list: [
+                ], 
+                CSF_label: 24,
+                left_GM_label: 3,
+                right_GM_label: 42,
+                left_WM_label: 2,         
+                right_WM_label: 41,
               }
             }
           }
