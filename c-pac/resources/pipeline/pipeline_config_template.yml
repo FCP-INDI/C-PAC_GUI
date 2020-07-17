@@ -562,7 +562,7 @@ functionalMasking :  ['AFNI']
 
 
 # Run AFNI 3dDespike after motion correction
-runDespike : False
+runDespike : [0]
 
 
 # Options to be used for FSL skull-stripping of functional masking.
