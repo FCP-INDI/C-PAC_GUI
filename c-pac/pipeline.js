@@ -1121,11 +1121,13 @@ export function dump(pipeline, version='0') {
 
   config.functional_volreg_twopass = c.functional.slice_timing_correction.two_pass
 
-  config.distortion_correction = []
-    .concat(c.functional.distortion_correction.enabled ? ["PhaseDiff"] : [])
-    .concat(c.functional.distortion_correction.method.phasediff.enabled ? ["PhaseDiff"] : [])
-    .concat(c.functional.distortion_correction.enabled ? ["Blip"] : [])
-    .concat(c.functional.distortion_correction.method.blip.enabled ? ["Blip"] : [])
+  if (c.functional.distortion_correction.enabled) {
+    config.distortion_correction = []
+      .concat(c.functional.distortion_correction.method.phasediff.enabled ? ["PhaseDiff"] : [])
+      .concat(c.functional.distortion_correction.method.blip.enabled ? ["Blip"] : [])
+  } else {
+    config.distortion_correction = ["None"]
+  }
 
   [c.functional.distortion_correction.enabled ? 1 : 0]
   config.fmap_distcorr_skullstrip = [c.functional.distortion_correction.method.phasediff.skull_stripping === 'bet' ? 'BET' : 'AFNI']
