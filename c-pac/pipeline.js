@@ -490,7 +490,7 @@ export function parse(content) {
   c.functional.preprocessing.motion_correction.reference.median = config.motion_correction_reference.includes('median')
   c.functional.preprocessing.motion_correction.reference.selected_volume = config.motion_correction_reference.includes('selected volume')
   c.functional.preprocessing.motion_correction.reference.reference_volume = config.motion_correction_reference_volume
-  c.functional.preprocessing.despike.enabled = config.runDespike
+  c.functional.preprocessing.despike.enabled = config.runDespike.includes(1)
   c.functional.preprocessing.scaling.enabled = config.runScaling
   c.functional.preprocessing.scaling.factor = config.scaling_factor
 
@@ -1086,7 +1086,7 @@ export function dump(pipeline, version='0') {
 
   config.motion_correction_reference_volume = c.functional.preprocessing.motion_correction.reference.reference_volume 
 
-  config.runDespike = c.functional.preprocessing.despike.enabled
+  config.runDespike = [c.functional.preprocessing.despike.enabled ? 1 : 0]
   config.runScaling = c.functional.preprocessing.scaling.enabled
   config.scaling_factor = c.functional.preprocessing.scaling.factor
   
