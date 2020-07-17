@@ -52,7 +52,7 @@ class LongitudinalPage extends Component {
               help={`Included as part of the 'Image Resource Files' package available on the Install page of the User Guide.`}
             />
             <Typography variant="h6" className={classes.sectionTitle}>
-              Longitudinal Template Creation Setting
+              Longitudinal Template Creation Settings
             </Typography>
           </ExpansionPanelSummary>
           <ExpansionPanelDetails>

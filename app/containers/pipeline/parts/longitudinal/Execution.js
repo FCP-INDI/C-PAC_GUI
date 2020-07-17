@@ -68,7 +68,8 @@ class Execution extends Component {
                 <Switch
                   name="longitudinal.run_functional"
                   checked={configuration.getIn("longitudinal.run_functional".split("."))}
-                //   onChange={onChange}
+                  disabled={true}
+                  onChange={onChange}
                   color="primary"
                 />
               </FormControlLabelled>
