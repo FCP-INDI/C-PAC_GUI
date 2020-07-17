@@ -38,9 +38,6 @@ import {
 import { fromJS } from 'immutable';
 class TissueSegmentation extends Component {
 
-  // static styles = theme => ({
-  // });
-
   static styles = theme => ({
     paper: { flexGrow: 1, padding: theme.spacing(), marginBottom: theme.spacing(2) },
     footer: { textAlign: 'right', padding: theme.spacing(2) }
@@ -497,7 +494,7 @@ class TissueSegmentation extends Component {
                   <FormLabel>
                     <Help
                       type="pipeline"
-                      help={`Optimal for non-human primate segmentations. Generate white matter, gray matter, CSF masks based on antsJointLabelFusion. If use ANTs prior based segmentation, please make sure to specify template brain list and template segmentation list properly. `}
+                      help={`Optimal for non-human primate segmentations. Generate white matter, gray matter, CSF masks based on antsJointLabelFusion. If using ANTs prior based segmentation, please make sure to specify template brain list and template segmentation list properly. `}
                     />
                     ANTs Prior Based Tissue Segmentation
                   </FormLabel>
