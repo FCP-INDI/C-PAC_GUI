@@ -276,6 +276,41 @@ niworkflows_ants_mask_path : /ants_template/oasis/T_template0_BrainCerebellumPro
 niworkflows_ants_regmask_path : /ants_template/oasis/T_template0_BrainCerebellumRegistrationMask.nii.gz
 
 
+# Run anatomical and/or functional longitudinal pipeline
+# Options: 'anat' and/or 'func'
+# Note: 'func' is still under development and not available yet
+run_longitudinal : []
+
+
+# Freesurfer longitudinal template algorithm using FSL FLIRT
+# Method to average the dataset at each iteration of the template creation
+# Options: median, mean or std
+longitudinal_template_average_method : median
+
+
+# FLIRT degree of freedom in the template creation
+longitudinal_template_dof : 12
+
+
+# FLIRT interpolation option in the template creation
+# Options: trilinear, nearestneighbour, sinc or spline
+longitudinal_template_interp : trilinear
+
+
+# FLIRT cost function in the template creation
+# Options: corratio, mutualinfo, normmi, normcorr, leastsq, bbr or labeldiff
+longitudinal_template_cost : corratio
+
+
+# Number of threads used for one run of the template generation algorithm
+longitudinal_template_thread_pool : 2
+
+
+# Threshold of transformation distance to consider that the loop converged 
+# (-1 means numpy.finfo(np.float64).eps and is the default)
+longitudinal_template_convergence_threshold : -1
+
+
 # The resolution to which anatomical images should be transformed during registration. This is the resolution at which processed anatomical files will be output.
 # If three dimensions are identical, enter only one number (integer or floating point number), eg. 2mm or 1.5mm; if three dimensions are different, enter num1xnum2xnum3, eg. 2mmx2mmx1.5mm
 resolution_for_anat :  2mm
