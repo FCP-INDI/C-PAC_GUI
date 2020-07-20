@@ -613,7 +613,9 @@ export function parse(content) {
 
   c.functional.template_registration.functional_resolution = config.resolution_for_func_preproc.replace(/mm/g, "")
   c.functional.template_registration.derivative_resolution = config.resolution_for_func_derivative.replace(/mm/g, "")
-
+  c.functional.template_registration.template_for_resample = 
+    config.template_for_resample
+      .replace("$FSLDIR", "${environment.paths.fsl_dir}")
   c.functional.template_registration.identity_matrix =
     config.identityMatrix
       .replace("$FSLDIR", "${environment.paths.fsl_dir}")
@@ -1246,7 +1248,7 @@ export function dump(pipeline, version='0') {
   } else {
     config.resolution_for_func_derivative = c.functional.template_registration.derivative_resolution + "mm"
   }
-
+  config.template_for_resample = c.functional.template_registration.template_for_resample
   config.identityMatrix = c.functional.template_registration.identity_matrix
   config.template_epi = c.functional.template_registration.epi_template.template_epi
   config.template_brain_only_for_func = c.functional.template_registration.t1_template.brain_template

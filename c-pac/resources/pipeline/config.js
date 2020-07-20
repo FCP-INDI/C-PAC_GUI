@@ -277,6 +277,7 @@ export default {
             enabled: true,
             functional_resolution: 3,
             derivative_resolution: 3,
+            template_for_resample: '${environment.paths.fsl_dir}/data/standard/MNI152_T1_1mm_brain.nii.gz',
             identity_matrix: '${environment.paths.fsl_dir}/etc/flirtsch/ident.mat',
             methods: {
               ants: {
