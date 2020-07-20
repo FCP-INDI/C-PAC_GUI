@@ -530,10 +530,12 @@ export function parse(content) {
   switch (c.functional.distortion_correction.method.phasediff.skull_stripping) {
     case 'bet':
       c.functional.distortion_correction.method.phasediff.threshold_bet = config.fmap_distcorr_frac[0]
+      c.functional.distortion_correction.method.phasediff.threshold_afni = config.fmap_distcorr_threshold[0]
       c.functional.distortion_correction.method.phasediff.threshold = c.functional.distortion_correction.method.phasediff.threshold_bet
       break;
     case 'afni':
       c.functional.distortion_correction.method.phasediff.threshold_afni = config.fmap_distcorr_threshold[0]
+      c.functional.distortion_correction.method.phasediff.threshold_bet = config.fmap_distcorr_frac[0]
       c.functional.distortion_correction.method.phasediff.threshold = c.functional.distortion_correction.method.phasediff.threshold_afni
       break;
   }
@@ -1134,10 +1136,12 @@ export function dump(pipeline, version='0') {
     case 'bet':
       c.functional.distortion_correction.method.phasediff.threshold = c.functional.distortion_correction.method.phasediff.threshold_bet
       config.fmap_distcorr_frac = [c.functional.distortion_correction.method.phasediff.threshold]
+      config.fmap_distcorr_threshold = [c.functional.distortion_correction.method.phasediff.threshold_afni]
       break;
     case 'afni':
       c.functional.distortion_correction.method.phasediff.threshold = c.functional.distortion_correction.method.phasediff.threshold_afni
       config.fmap_distcorr_threshold = [c.functional.distortion_correction.method.phasediff.threshold]
+      config.fmap_distcorr_frac = [c.functional.distortion_correction.method.phasediff.threshold_bet]
       break;
   } 
   config.fmap_distcorr_deltaTE = [c.functional.distortion_correction.method.phasediff.delta_te]
