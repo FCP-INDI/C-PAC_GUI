@@ -482,6 +482,28 @@ export function parse(content) {
   c.anatomical.tissue_segmentation.configuration.template_based_seg.tissue_path.gray_matter = config.template_based_segmentation_GRAY.replace("$FSLDIR", "${environment.paths.fsl_dir}")
   c.anatomical.tissue_segmentation.configuration.template_based_seg.tissue_path.cerebrospinal_fluid = config.template_based_segmentation_CSF.replace("$FSLDIR", "${environment.paths.fsl_dir}")
   
+  // ANTs priors based segmentation
+  c.anatomical.tissue_segmentation.configuration.ANTs_prior_based_seg.enabled = config.ANTs_prior_based_segmentation.includes(1)
+  c.anatomical.tissue_segmentation.configuration.ANTs_prior_based_seg.CSF_label = config.ANTs_prior_seg_CSF_label
+  c.anatomical.tissue_segmentation.configuration.ANTs_prior_based_seg.left_GM_label = config.ANTs_prior_seg_left_GM_label 
+  c.anatomical.tissue_segmentation.configuration.ANTs_prior_based_seg.right_GM_label = config.ANTs_prior_seg_right_GM_label 
+  c.anatomical.tissue_segmentation.configuration.ANTs_prior_based_seg.left_WM_label = config.ANTs_prior_seg_left_WM_label 
+  c.anatomical.tissue_segmentation.configuration.ANTs_prior_based_seg.right_WM_label = config.ANTs_prior_seg_right_WM_label
+  if (typeof config.ANTs_prior_seg_template_brain_list == 'object') {
+    for (let mask of config.ANTs_prior_seg_template_brain_list) {
+      c.anatomical.tissue_segmentation.configuration.ANTs_prior_based_seg.template_brain_list.push({
+        mask,
+      })
+    }
+  }
+  if (typeof config.ANTs_prior_seg_template_segmentation_list == 'object') {
+    for (let mask of config.ANTs_prior_seg_template_segmentation_list) {
+      c.anatomical.tissue_segmentation.configuration.ANTs_prior_based_seg.template_segmentation_list.push({
+        mask,
+      })
+    }
+  }
+  
   c.functional.preprocessing.n4_mean_epi.enabled = config.n4_correct_mean_EPI
   c.functional.preprocessing.motion_stats.enabled = config.runMotionStatisticsFirst.includes(1)
   c.functional.preprocessing.motion_correction.method.volreg = config.motion_correction.includes('3dvolreg')
@@ -1088,6 +1110,28 @@ export function dump(pipeline, version='0') {
   config.template_based_segmentation_GRAY = c.anatomical.tissue_segmentation.configuration.template_based_seg.tissue_path.gray_matter
   config.template_based_segmentation_CSF = c.anatomical.tissue_segmentation.configuration.template_based_seg.tissue_path.cerebrospinal_fluid
 
+  // ants priors based segmentation
+  config.ANTs_prior_based_segmentation = [c.anatomical.tissue_segmentation.configuration.ANTs_prior_based_seg.enabled ? 1 : 0]
+  config.ANTs_prior_seg_CSF_label = c.anatomical.tissue_segmentation.configuration.ANTs_prior_based_seg.CSF_label
+  config.ANTs_prior_seg_left_GM_label = c.anatomical.tissue_segmentation.configuration.ANTs_prior_based_seg.left_GM_label
+  config.ANTs_prior_seg_right_GM_label = c.anatomical.tissue_segmentation.configuration.ANTs_prior_based_seg.right_GM_label
+  config.ANTs_prior_seg_left_WM_label = c.anatomical.tissue_segmentation.configuration.ANTs_prior_based_seg.left_WM_label
+  config.ANTs_prior_seg_right_WM_label = c.anatomical.tissue_segmentation.configuration.ANTs_prior_based_seg.right_WM_label
+
+  for (const mask of c.anatomical.tissue_segmentation.configuration.ANTs_prior_based_seg.template_brain_list) {
+    let maskFeatures = []
+    if (maskFeatures.length > 0) {
+      config.ANTs_prior_seg_template_brain_list[mask.mask] = maskFeatures.join(", ")
+    }
+  }
+
+  for (const mask of c.anatomical.tissue_segmentation.configuration.ANTs_prior_based_seg.template_segmentation_list) {
+    let maskFeatures = []
+    if (maskFeatures.length > 0) {
+      config.ANTs_prior_seg_template_segmentation_list[mask.mask] = maskFeatures.join(", ")
+    }
+  }
+
   config.runFunctional = c.functional.enabled ? [1] : [0]
 
   config.n4_correct_mean_EPI = c.functional.preprocessing.n4_mean_epi.enabled
@@ -1123,11 +1167,13 @@ export function dump(pipeline, version='0') {
 
   config.functional_volreg_twopass = c.functional.slice_timing_correction.two_pass
 
-  config.distortion_correction = []
-    .concat(c.functional.distortion_correction.enabled ? ["PhaseDiff"] : [])
-    .concat(c.functional.distortion_correction.method.phasediff.enabled ? ["PhaseDiff"] : [])
-    .concat(c.functional.distortion_correction.enabled ? ["Blip"] : [])
-    .concat(c.functional.distortion_correction.method.blip.enabled ? ["Blip"] : [])
+  if (c.functional.distortion_correction.enabled) {
+    config.distortion_correction = []
+      .concat(c.functional.distortion_correction.method.phasediff.enabled ? ["PhaseDiff"] : [])
+      .concat(c.functional.distortion_correction.method.blip.enabled ? ["Blip"] : [])
+  } else {
+    config.distortion_correction = ["None"]
+  }
 
   [c.functional.distortion_correction.enabled ? 1 : 0]
   config.fmap_distcorr_skullstrip = [c.functional.distortion_correction.method.phasediff.skull_stripping === 'bet' ? 'BET' : 'AFNI']
