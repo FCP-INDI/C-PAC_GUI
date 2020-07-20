@@ -452,11 +452,13 @@ export function parse(content) {
   } else if (config.seg_use_threshold.includes("Customized Thresholding")) {
     c.anatomical.tissue_segmentation.configuration.fast_threshold.enabled = false
     c.anatomical.tissue_segmentation.configuration.custom_threshold.enabled = true
-    c.anatomical.tissue_segmentation.configuration.custom_threshold.threshold.white_matter = config.seg_WM_threshold_value
-    c.anatomical.tissue_segmentation.configuration.custom_threshold.threshold.gray_matter = config.seg_GM_threshold_value
-    c.anatomical.tissue_segmentation.configuration.custom_threshold.threshold.cerebrospinal_fluid = config.seg_CSF_threshold_value
   }
-    
+
+  // seg_{tissue}_threshold_value not strict to custom_threshold.enabled, avoid undefined fields in yml file
+  c.anatomical.tissue_segmentation.configuration.custom_threshold.threshold.white_matter = config.seg_WM_threshold_value
+  c.anatomical.tissue_segmentation.configuration.custom_threshold.threshold.gray_matter = config.seg_GM_threshold_value
+  c.anatomical.tissue_segmentation.configuration.custom_threshold.threshold.cerebrospinal_fluid = config.seg_CSF_threshold_value
+
   c.anatomical.tissue_segmentation.configuration.erosion.enabled = config.seg_use_erosion
   c.anatomical.tissue_segmentation.configuration.erosion.proportion = config.seg_erosion_prop
  
@@ -1094,12 +1096,13 @@ export function dump(pipeline, version='0') {
   if (c.anatomical.tissue_segmentation.configuration.fast_threshold.enabled) {
     config.seg_use_threshold = ['FSL-FAST Thresholding'] 
   } else if (c.anatomical.tissue_segmentation.configuration.custom_threshold.enabled) {
-    config.seg_use_threshold = ['Customized Thresholding']
-    config.seg_WM_threshold_value = c.anatomical.tissue_segmentation.configuration.custom_threshold.threshold.white_matter 
-    config.seg_GM_threshold_value = c.anatomical.tissue_segmentation.configuration.custom_threshold.threshold.gray_matter 
-    config.seg_CSF_threshold_value = c.anatomical.tissue_segmentation.configuration.custom_threshold.threshold.cerebrospinal_fluid 
-  }
-    
+    config.seg_use_threshold = ['Customized Thresholding']  }
+  
+  // seg_{tissue}_threshold_value not strict to custom_threshold.enabled, avoid undefined fields in yml
+  config.seg_WM_threshold_value = c.anatomical.tissue_segmentation.configuration.custom_threshold.threshold.white_matter
+  config.seg_GM_threshold_value = c.anatomical.tissue_segmentation.configuration.custom_threshold.threshold.gray_matter
+  config.seg_CSF_threshold_value = c.anatomical.tissue_segmentation.configuration.custom_threshold.threshold.cerebrospinal_fluid 
+  
   config.seg_use_erosion = [c.anatomical.tissue_segmentation.configuration.erosion.enabled ? 1 : 0]
   config.seg_erosion_prop = c.anatomical.tissue_segmentation.configuration.erosion.proportion 
 
