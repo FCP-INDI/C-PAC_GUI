@@ -435,7 +435,7 @@ export function parse(content) {
 // add ants-para
 
   c.anatomical.tissue_segmentation.enabled = config.runSegmentationPreprocessing.includes(1)
-  c.anatomical.tissue_segmentation.configuration.priors.enabled = !!config.seg_use_priors
+  c.anatomical.tissue_segmentation.configuration.priors.enabled = config.seg_use_priors
 
   let priors_path = ''
   if (config.priors_path) {
@@ -1085,7 +1085,7 @@ export function dump(pipeline, version='0') {
 // add ants_para T1
 
   config.runSegmentationPreprocessing = [c.anatomical.tissue_segmentation.enabled ? 1 : 0]
-  config.seg_use_priors = [c.anatomical.tissue_segmentation.configuration.priors.enabled ? 1 : 0]
+  config.seg_use_priors = c.anatomical.tissue_segmentation.configuration.priors.enabled
   config.priors_path = "$FSLDIR/data/standard/tissuepriors/2mm"
   config.PRIORS_WHITE = c.anatomical.tissue_segmentation.configuration.priors.priors.white_matter
   config.PRIORS_GRAY = c.anatomical.tissue_segmentation.configuration.priors.priors.gray_matter
