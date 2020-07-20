@@ -491,6 +491,7 @@ export function parse(content) {
   c.anatomical.tissue_segmentation.configuration.ANTs_prior_based_seg.right_GM_label = config.ANTs_prior_seg_right_GM_label 
   c.anatomical.tissue_segmentation.configuration.ANTs_prior_based_seg.left_WM_label = config.ANTs_prior_seg_left_WM_label 
   c.anatomical.tissue_segmentation.configuration.ANTs_prior_based_seg.right_WM_label = config.ANTs_prior_seg_right_WM_label
+
   if (typeof config.ANTs_prior_seg_template_brain_list == 'object') {
     for (let mask of config.ANTs_prior_seg_template_brain_list) {
       c.anatomical.tissue_segmentation.configuration.ANTs_prior_based_seg.template_brain_list.push({
@@ -505,7 +506,7 @@ export function parse(content) {
       })
     }
   }
-  
+
   c.functional.preprocessing.n4_mean_epi.enabled = config.n4_correct_mean_EPI
   c.functional.preprocessing.motion_stats.enabled = config.runMotionStatisticsFirst.includes(1)
   c.functional.preprocessing.motion_correction.method.volreg = config.motion_correction.includes('3dvolreg')
@@ -1122,19 +1123,14 @@ export function dump(pipeline, version='0') {
   config.ANTs_prior_seg_right_GM_label = c.anatomical.tissue_segmentation.configuration.ANTs_prior_based_seg.right_GM_label
   config.ANTs_prior_seg_left_WM_label = c.anatomical.tissue_segmentation.configuration.ANTs_prior_based_seg.left_WM_label
   config.ANTs_prior_seg_right_WM_label = c.anatomical.tissue_segmentation.configuration.ANTs_prior_based_seg.right_WM_label
-
+  
+  config.ANTs_prior_seg_template_brain_list = []
   for (const mask of c.anatomical.tissue_segmentation.configuration.ANTs_prior_based_seg.template_brain_list) {
-    let maskFeatures = []
-    if (maskFeatures.length > 0) {
-      config.ANTs_prior_seg_template_brain_list[mask.mask] = maskFeatures.join(", ")
-    }
+    config.ANTs_prior_seg_template_brain_list.push(mask.mask)
   }
-
+  config.ANTs_prior_seg_template_segmentation_list = []
   for (const mask of c.anatomical.tissue_segmentation.configuration.ANTs_prior_based_seg.template_segmentation_list) {
-    let maskFeatures = []
-    if (maskFeatures.length > 0) {
-      config.ANTs_prior_seg_template_segmentation_list[mask.mask] = maskFeatures.join(", ")
-    }
+    config.ANTs_prior_seg_template_segmentation_list.push(mask.mask)
   }
 
   config.runFunctional = c.functional.enabled ? [1] : [0]
