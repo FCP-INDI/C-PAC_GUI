@@ -622,11 +622,11 @@ export function parse(content) {
   c.functional.template_registration.epi_template.template_epi = config.template_epi
   c.functional.template_registration.t1_template.brain_template =
     config.template_brain_only_for_func
-    .replace("${resolution_for_func_preproc}", "${pipeline.functional.template_registration.t1_template.functional_resolution}mm")
+    .replace("${resolution_for_func_preproc}", "${pipeline.functional.template_registration.functional_resolution}mm")
       .replace("$FSLDIR", "${environment.paths.fsl_dir}")
   c.functional.template_registration.t1_template.skull_template =
     config.template_skull_for_func
-    .replace("${resolution_for_func_preproc}", "${pipeline.functional.template_registration.t1_template.functional_resolution}mm")
+    .replace("${resolution_for_func_preproc}", "${pipeline.functional.template_registration.functional_resolution}mm")
       .replace("$FSLDIR", "${environment.paths.fsl_dir}")
 
 

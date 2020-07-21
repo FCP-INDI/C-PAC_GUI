@@ -498,8 +498,8 @@ export default {
             },
             t1_template: {
               enabled: true,
-              brain_template: '${environment.paths.fsl_dir}/data/standard/MNI152_T1_${pipeline.functional.registration.functional_resolution}_brain.nii.gz',
-              skull_template: '${environment.paths.fsl_dir}/data/standard/MNI152_T1_${pipeline.functional.registration.functional_resolution}.nii.gz',
+              brain_template: '${environment.paths.fsl_dir}/data/standard/MNI152_T1_${pipeline.functional.template_registration.functional_resolution}_brain.nii.gz',
+              skull_template: '${environment.paths.fsl_dir}/data/standard/MNI152_T1_${pipeline.functional.template_registration.functional_resolution}.nii.gz',
             },
           },
           nuisance_regression: {
