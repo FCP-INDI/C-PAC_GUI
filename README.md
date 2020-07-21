@@ -5,9 +5,10 @@ A suite to manage, run and track your preprocessing pipelines.
 ## How to run
 
 ```bash
+yarn run clean:all
 yarn
 yarn run link
-yarn run dev
+yarn run dev:browser
 ```
  or, using Docker,
 
