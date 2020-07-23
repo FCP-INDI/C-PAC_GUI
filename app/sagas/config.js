@@ -35,8 +35,8 @@ import {
 } from '../actions/pipeline'
 
 import {
-  init as theodoreInit
-} from '../actions/theodore'
+  init as cpacpyInit
+} from '../actions/cpacpy'
 
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -312,8 +312,12 @@ function* loadConfig(action) {
   yield put({ type: DATASET_CONFIG_LOAD })
   yield put(configLoaded(localState))
 
+<<<<<<< HEAD
   yield put(theodoreInit())
 >>>>>>> f2a1340 (theo data-config generation! and some other stuff)
+=======
+  yield put(cpacpyInit())
+>>>>>>> ab98471 (rename theodore to cpacpy)
 }
 
 function* saveConfig() {

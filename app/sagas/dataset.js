@@ -15,9 +15,9 @@ import {
 } from '../actions/dataset'
 
 import {
-  THEODORE_SCHEDULER_CALL,
-  THEODORE_SCHEDULER_CONNECT_SEND,
-} from '../actions/theodore'
+  CPACPY_SCHEDULER_CALL,
+  CPACPY_SCHEDULER_CONNECT_SEND,
+} from '../actions/cpacpy'
 
 import {
   datasets
@@ -59,7 +59,7 @@ function* clearLocalState(config) {
 
 function* generateDataConfig({ dataset, dataSettings, version }) {
   yield put({
-    type: THEODORE_SCHEDULER_CALL,
+    type: CPACPY_SCHEDULER_CALL,
     scheduler: 'localhost:3333',
     method: 'POST',
     endpoint: '/schedule',
@@ -82,7 +82,7 @@ function* generateDataConfig({ dataset, dataSettings, version }) {
 
 function* generateDataConfigWatch({ dataset, data: { schedule } }) {
   yield put({
-    type: THEODORE_SCHEDULER_CONNECT_SEND,
+    type: CPACPY_SCHEDULER_CONNECT_SEND,
     scheduler: 'localhost:3333',
     action: (scheduler, data) => ({
       type: DATASET_GENERATE_DATA_CONFIG_GENERATED,
@@ -101,7 +101,7 @@ function* generateDataConfigWatch({ dataset, data: { schedule } }) {
 
 function* generateDataConfigFetchResult({ dataset, data: { id, statuses, available_results } }) {
   yield put({
-    type: THEODORE_SCHEDULER_CALL,
+    type: CPACPY_SCHEDULER_CALL,
     scheduler: 'localhost:3333',
     method: 'GET',
     endpoint: `/schedule/${id}/result/data_config`,

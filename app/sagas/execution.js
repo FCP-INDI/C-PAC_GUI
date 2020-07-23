@@ -12,9 +12,9 @@ import {
 } from '../actions/execution'
 
 import {
-  THEODORE_SCHEDULER_CALL,
-  THEODORE_SCHEDULER_CONNECT_SEND,
-} from '../actions/theodore'
+  CPACPY_SCHEDULER_CALL,
+  CPACPY_SCHEDULER_CONNECT_SEND,
+} from '../actions/cpacpy'
 
 import cpac from '@internal/c-pac'
 
@@ -31,7 +31,7 @@ function* preprocess({ dataset, view=null, pipeline }) {
   })
 
   yield put({
-    type: THEODORE_SCHEDULER_CALL,
+    type: CPACPY_SCHEDULER_CALL,
     scheduler: 'localhost:3333',
     method: 'POST',
     endpoint: '/schedule/pipeline',
@@ -55,7 +55,7 @@ function* preprocess({ dataset, view=null, pipeline }) {
 
 function* preprocessWatch({ execution, data: { schedule } }) {
   yield put({
-    type: THEODORE_SCHEDULER_CONNECT_SEND,
+    type: CPACPY_SCHEDULER_CONNECT_SEND,
     scheduler: 'localhost:3333',
     action: (scheduler, data) => ({
       type: EXECUTION_PREPROCESS_SUBJECT_SCHEDULED,
@@ -74,7 +74,7 @@ function* preprocessWatch({ execution, data: { schedule } }) {
 
 function* preprocessSubjectWatch({ execution, data: { schedule } }) {
   yield put({
-    type: THEODORE_SCHEDULER_CONNECT_SEND,
+    type: CPACPY_SCHEDULER_CONNECT_SEND,
     scheduler: 'localhost:3333',
     action: (scheduler, data) => ({
       type: EXECUTION_PREPROCESS_SUBJECT_SCHEDULED,

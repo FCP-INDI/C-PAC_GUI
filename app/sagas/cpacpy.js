@@ -7,33 +7,33 @@ import { scheduler } from 'consts'
 import { fetch, websocketChannel, scheduler as sched } from './utils'
 
 import {
-  THEODORE_INIT,
-  THEODORE_SCHEDULER_DETECT,
-  THEODORE_SCHEDULER_OFFLINE,
-  THEODORE_SCHEDULER_POLLING,
-  THEODORE_SCHEDULER_POLLING_CANCEL,
-  THEODORE_SCHEDULER_CONNECT,
-  THEODORE_SCHEDULER_CONNECT_CANCEL,
-  THEODORE_SCHEDULER_CONNECT_MESSAGE,
-  THEODORE_SCHEDULER_CONNECT_SEND,
-  THEODORE_SCHEDULER_CONNECT_SEND_CALLBACK,
-  THEODORE_SCHEDULER_CALL,
+  CPACPY_INIT,
+  CPACPY_SCHEDULER_DETECT,
+  CPACPY_SCHEDULER_OFFLINE,
+  CPACPY_SCHEDULER_POLLING,
+  CPACPY_SCHEDULER_POLLING_CANCEL,
+  CPACPY_SCHEDULER_CONNECT,
+  CPACPY_SCHEDULER_CONNECT_CANCEL,
+  CPACPY_SCHEDULER_CONNECT_MESSAGE,
+  CPACPY_SCHEDULER_CONNECT_SEND,
+  CPACPY_SCHEDULER_CONNECT_SEND_CALLBACK,
+  CPACPY_SCHEDULER_CALL,
 
-  init as theodoreInit,
-  detect as theodoreDetect,
-  polling as theodorePolling,
-  watch as theodoreWatch,
-  online as theodoreSchedulerOnline,
-  offline as theodoreSchedulerOffline,
-} from '../actions/theodore'
+  init as cpacpyInit,
+  detect as cpacpyDetect,
+  polling as cpacpyPolling,
+  watch as cpacpyWatch,
+  online as cpacpySchedulerOnline,
+  offline as cpacpySchedulerOffline,
+} from '../actions/cpacpy'
 
 import cpac from '@internal/c-pac'
 
 function* init() {
-  const schedulers = yield select((state) => state.theodore.get('schedulers'))
+  const schedulers = yield select((state) => state.cpacpy.get('schedulers'))
   const [ ...scheduler ] = schedulers.keys()
   for (let s of scheduler) {
-    yield put(theodoreDetect(s))
+    yield put(cpacpyDetect(s))
   }
 }
 
@@ -45,41 +45,41 @@ function* detect({ scheduler }) {
       { method: 'GET' }
     )
 
-    if (response.api === 'theodore') {
-      yield put(theodoreSchedulerOnline(scheduler))
-      yield put(theodoreWatch(scheduler))
+    if (response.api === 'cpacpy') {
+      yield put(cpacpySchedulerOnline(scheduler))
+      yield put(cpacpyWatch(scheduler))
       return
     }
   } catch (error) {
   }
-  yield put(theodoreSchedulerOffline(scheduler))
+  yield put(cpacpySchedulerOffline(scheduler))
 }
 
 function* pollingBackground(scheduler) {
   yield delay(4000)
-  yield put(theodoreDetect(scheduler))
+  yield put(cpacpyDetect(scheduler))
 }
 
 function* polling({ scheduler }) {
   yield race({
     task: call(pollingBackground, scheduler),
-    cancel: take(THEODORE_SCHEDULER_POLLING_CANCEL)
+    cancel: take(CPACPY_SCHEDULER_POLLING_CANCEL)
   })
 }
 
 function* senderListener(scheduler, socket) {
   while (true) {
     const { message, action } = yield take(
-      sched(THEODORE_SCHEDULER_CONNECT_SEND, scheduler)
+      sched(CPACPY_SCHEDULER_CONNECT_SEND, scheduler)
     )
 
     const id = uuid()
 
-    socket.send(JSON.stringify({ ...message, __theo_message_id: id }))
+    socket.send(JSON.stringify({ ...message, __cpacpy_message_id: id }))
 
     if (action) {
       yield put({
-        type: THEODORE_SCHEDULER_CONNECT_SEND_CALLBACK,
+        type: CPACPY_SCHEDULER_CONNECT_SEND_CALLBACK,
         scheduler,
         id,
         action
@@ -94,17 +94,17 @@ function* receiverListener(scheduler, channel) {
     const action = yield take(channel)
     const { message } = action
 
-    if (message && message.__theo_message_id) {
+    if (message && message.__cpacpy_message_id) {
       const { data } = message
 
       let callbacks = yield select(
         (state) => 
-          state.theodore.getIn([
+          state.cpacpy.getIn([
             'schedulers',
             scheduler,
             'connect',
             'callbacks',
-            message.__theo_message_id
+            message.__cpacpy_message_id
           ]))
 
       if (callbacks) {
@@ -132,15 +132,15 @@ function* connect({ scheduler }) {
     websocketChannel,
     scheduler,
     ws,
-    THEODORE_SCHEDULER_CONNECT_MESSAGE,
-    THEODORE_SCHEDULER_CONNECT_CANCEL,
+    CPACPY_SCHEDULER_CONNECT_MESSAGE,
+    CPACPY_SCHEDULER_CONNECT_CANCEL,
   )
 
   while (true) {
     const { cancel } = yield race({
       receiver: call(receiverListener, scheduler, channel),
       sender: call(senderListener, scheduler, ws),
-      cancel: take(sched(THEODORE_SCHEDULER_CONNECT_CANCEL, scheduler)),
+      cancel: take(sched(CPACPY_SCHEDULER_CONNECT_CANCEL, scheduler)),
     })
     if (cancel) {
       channel.close()
@@ -190,11 +190,11 @@ function* callScheduler({
 
 export default function* configSaga() {
   yield all([
-    takeEvery(THEODORE_INIT, init),
-    takeEvery(THEODORE_SCHEDULER_DETECT, detect),
-    takeEvery(THEODORE_SCHEDULER_OFFLINE, polling),
-    takeEvery(THEODORE_SCHEDULER_CONNECT, connect),
-    takeEvery(THEODORE_SCHEDULER_CONNECT_CANCEL, detect),
-    takeEvery(THEODORE_SCHEDULER_CALL, callScheduler),
+    takeEvery(CPACPY_INIT, init),
+    takeEvery(CPACPY_SCHEDULER_DETECT, detect),
+    takeEvery(CPACPY_SCHEDULER_OFFLINE, polling),
+    takeEvery(CPACPY_SCHEDULER_CONNECT, connect),
+    takeEvery(CPACPY_SCHEDULER_CONNECT_CANCEL, detect),
+    takeEvery(CPACPY_SCHEDULER_CALL, callScheduler),
   ])
 }

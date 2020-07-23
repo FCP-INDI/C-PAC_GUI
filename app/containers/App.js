@@ -27,9 +27,15 @@ import IconButton from '@material-ui/core/IconButton';
 import Slide from '@material-ui/core/Slide';
 import Switch from '@material-ui/core/Switch';
 
+<<<<<<< HEAD
 import Help from 'components/Help';
 import ItWentWrong from 'containers/ItWentWrong';
 // import TheodoreList from 'containers/TheodoreList'
+=======
+import Help from 'components/Help'
+import ItWentWrong from 'containers/ItWentWrong'
+import CpacpySchedulersWidget from 'containers/CpacpySchedulersWidget'
+>>>>>>> ab98471 (rename theodore to cpacpy)
 
 import theme from '../theme';
 import '../app.global.css';
@@ -180,7 +186,20 @@ class App extends React.Component {
           {crumbs}
           <div className={classes.crumbs}>
           </div>
+<<<<<<< HEAD
           {/* <TheodoreList /> */}
+=======
+          <CpacpySchedulersWidget />
+          {/*
+          <AdvancedConfigIcon color={ config.getIn(['settings', 'advanced']) ? "secondary": "disabled" } />
+          <Switch
+            checked={config.getIn(['settings', 'advanced'])}
+            onChange={this.handleSettingsAdvanced}
+            color="primary"
+          />
+          <Help help={`Enable advanced options.`} style={{ padding: 0 }} />
+          */}
+>>>>>>> ab98471 (rename theodore to cpacpy)
         </Toolbar>
       </AppBar>
     )
