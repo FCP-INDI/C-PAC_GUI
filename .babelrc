@@ -33,6 +33,9 @@
         ".yaml",
         ".yml",
       ]
-    }]
+    }],
+
+    "@babel/plugin-transform-react-jsx-source",
+    "react-hot-loader/babel"
   ]
 }

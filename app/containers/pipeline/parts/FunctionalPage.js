@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { withStyles, Typography } from '@material-ui/core';
+import Grid from '@material-ui/core/Grid'
 
 import ExpansionPanel from '@material-ui/core/ExpansionPanel';
 import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
@@ -7,6 +8,7 @@ import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import Switch from '@material-ui/core/Switch';
 
 import {
+  // EPIRegistration,
   AnatomicalRegistration,
   DistortionCorrection,
   MedianAngleCorrection,
@@ -16,6 +18,7 @@ import {
   Smoothing,
   AROMA,
 } from 'containers/pipeline/parts/functional'
+import InitialPreprocessing from './functional/InitialPreprocessing';
 
 class FunctionalPage extends Component {
   static styles = theme => ({
@@ -42,12 +45,16 @@ class FunctionalPage extends Component {
           </Typography>
         </ExpansionPanelSummary>
         <ExpansionPanelDetails>
-          {
-            React.createElement(component, {
-              configuration,
-              onChange,
-            })
-          }
+          <Grid container>
+              <Grid item xs={12}>
+                {
+                  React.createElement(component, {
+                  configuration,
+                  onChange,
+                  })
+                }
+              </Grid>
+            </Grid>
         </ExpansionPanelDetails>
       </ExpansionPanel>
     )
@@ -58,6 +65,21 @@ class FunctionalPage extends Component {
 
     return (
       <React.Fragment>
+
+        <ExpansionPanel expanded>
+          <ExpansionPanelSummary disabled>
+            <Typography variant="h6" className={classes.sectionTitle}>
+              Initial Preprocessing
+            </Typography>
+          </ExpansionPanelSummary>
+          <ExpansionPanelDetails>
+            <Grid container>
+              <Grid item xs={12}>
+                <InitialPreprocessing configuration={configuration} onChange={onChange} />
+              </Grid>
+            </Grid>
+          </ExpansionPanelDetails>
+        </ExpansionPanel>
 
         {
           this.renderSection(
@@ -82,6 +104,14 @@ class FunctionalPage extends Component {
             TemplateRegistration
           )
         }
+
+        {/* {
+          this.renderSection(
+            "Functional to EPI Template Registration",
+            "functional.epi_registration.enabled",
+            EPIRegistration
+          )
+        } */}
 
         {
           this.renderSection(

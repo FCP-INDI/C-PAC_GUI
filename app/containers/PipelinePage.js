@@ -26,7 +26,7 @@ import IconButton from '@material-ui/core/IconButton'
 import Tooltip from '@material-ui/core/Tooltip'
 import Drawer from '@material-ui/core/Drawer';
 
-import { fromJS } from 'immutable';
+import { fromJS, isImmutable } from 'immutable';
 
 import {
   PipelineIcon,
@@ -45,6 +45,12 @@ import cpac from '@internal/c-pac'
 class PipelinePage extends Component {
 
   static styles = theme => ({
+    warning: {
+      background: theme.palette.secondary.main,
+      color: theme.palette.secondary.contrastText,
+      padding: theme.spacing(2),
+      marginBottom: theme.spacing(2),
+    }
   });
 
   constructor(props) {
@@ -121,7 +127,7 @@ class PipelinePage extends Component {
       if (typeof key == "string") {
         key = key.split('.')
       }
-      configuration = configuration.setIn(key, value)
+      configuration = configuration.setIn(key, isImmutable(value) ? value : fromJS(value))
     }
 
     this.props.pipelineVersionDirtyUpdate(
@@ -265,7 +271,12 @@ class PipelinePage extends Component {
           this.state.configuration ?
           (
             <React.Fragment>
-              <PipelineEditor configuration={this.state.configuration} onChange={this.handleChange} onSave={this.handleSave} />
+            { this.state.default ?
+              <div className={classes.warning}>
+                You cannot change the default template! Please, duplicate it to create your own pipeline.
+              </div>
+              : null }
+              <PipelineEditor default={this.state.default} configuration={this.state.configuration} onChange={this.handleChange} onSave={this.handleSave} />
             </React.Fragment>
           )
           :
