@@ -25,8 +25,8 @@ import {
 } from '../actions/pipeline'
 
 import {
-  init as theodoreInit
-} from '../actions/theodore'
+  init as cpacpyInit
+} from '../actions/cpacpy'
 
 import cpac from '@internal/c-pac'
 
@@ -126,7 +126,7 @@ function* loadConfig () {
   yield put({ type: DATASET_CONFIG_LOAD })
   yield put(configLoaded(localState))
 
-  yield put(theodoreInit())
+  yield put(cpacpyInit())
 }
 
 function* saveConfig() {

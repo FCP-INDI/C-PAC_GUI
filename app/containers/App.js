@@ -29,7 +29,7 @@ import Switch from '@material-ui/core/Switch';
 
 import Help from 'components/Help'
 import ItWentWrong from 'containers/ItWentWrong'
-import TheodoreSchedulersWidget from 'containers/TheodoreSchedulersWidget'
+import CpacpySchedulersWidget from 'containers/CpacpySchedulersWidget'
 
 import theme from '../theme'
 import '../app.global.css';
@@ -180,7 +180,7 @@ class App extends React.Component {
           { crumbs }
           <div className={classes.crumbs}>
           </div>
-          <TheodoreSchedulersWidget />
+          <CpacpySchedulersWidget />
           {/*
           <AdvancedConfigIcon color={ config.getIn(['settings', 'advanced']) ? "secondary": "disabled" } />
           <Switch
