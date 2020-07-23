@@ -152,6 +152,7 @@ const config = merge.smart(baseConfig, {
     host: '0.0.0.0',
     port,
     publicPath,
+    disableHostCheck: true,
     compress: true,
     inline: true,
     lazy: false,
@@ -172,4 +173,3 @@ const config = merge.smart(baseConfig, {
 });
 
 export default config;
-// export default smp.wrap(config);

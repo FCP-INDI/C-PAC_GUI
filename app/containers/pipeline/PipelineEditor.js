@@ -27,6 +27,7 @@ import {
   GeneralPage,
   AnatomicalPage,
   FunctionalPage,
+  LongitudinalPage,
   DerivativesPage,
 } from 'containers/pipeline/parts'
 
@@ -108,6 +109,9 @@ class PipelineEditor extends Component {
             wrapper: classes.tabWrap
           }} />
           : null }
+          { configuration.getIn(["longitudinal", "enabled"]) ?
+          <Tab label="Longitudinal" />
+          : null }
           { configuration.getIn(["derivatives", "enabled"]) ?
           <Tab label="Derivatives" />
           : null }
@@ -116,7 +120,8 @@ class PipelineEditor extends Component {
         <Collapse in={tab === 0}><GeneralPage configuration={configuration} onChange={onChange} /></Collapse>
         <Collapse in={tab === 1}><AnatomicalPage configuration={configuration} onChange={onChange} /></Collapse>
         <Collapse in={tab === 2}><FunctionalPage configuration={configuration} onChange={onChange} /></Collapse>
-        <Collapse in={tab === 3}><DerivativesPage configuration={configuration} onChange={onChange} /></Collapse>
+        <Collapse in={tab === 3}><LongitudinalPage configuration={configuration} onChange={onChange} /></Collapse>
+        <Collapse in={tab === 4}><DerivativesPage configuration={configuration} onChange={onChange} /></Collapse>
       </React.Fragment>
     );
   }

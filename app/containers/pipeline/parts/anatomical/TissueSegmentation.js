@@ -15,23 +15,84 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormControlLabelled from 'components/FormControlLabelled';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import IconButton from '@material-ui/core/IconButton';
+import Icon from '@material-ui/core/Icon';
+import Button from '@material-ui/core/Button';
+import Fab from '@material-ui/core/Fab';
 import InputLabel from '@material-ui/core/InputLabel';
 import Collapse from '@material-ui/core/Collapse';
 import Help from 'components/Help'
 import {
   SettingsIcon,
 } from 'components/icons';
-
+import Paper from '@material-ui/core/Paper';
+import Table from '@material-ui/core/Table';
+import TableBody from '@material-ui/core/TableBody';
+import TableCell from '@material-ui/core/TableCell';
+import TableHead from '@material-ui/core/TableHead';
+import TableRow from '@material-ui/core/TableRow';
+import TableFooter from '@material-ui/core/TableFooter';
+import {
+  AddIcon,
+  DeleteIcon
+} from 'components/icons';
+import { fromJS } from 'immutable';
 class TissueSegmentation extends Component {
 
   static styles = theme => ({
+    paper: { flexGrow: 1, padding: theme.spacing(), marginBottom: theme.spacing(2) },
+    footer: { textAlign: 'right', padding: theme.spacing(2) }
   });
 
-  state = {
-    fsl: false,
-    customized: false,
+  addMask_brain = (event) => {
+    const { configuration, onChange } = this.props
+    const next = configuration.getIn(['anatomical', 'tissue_segmentation', 'configuration', 'ANTs_prior_based_seg','template_brain_list']).size
+
+    onChange([
+      [
+        `anatomical.tissue_segmentation.configuration.ANTs_prior_based_seg.template_brain_list.${next}`,
+        fromJS({
+          mask: '',
+        })
+      ]
+    ])
   }
 
+  removeMask_brain = (i) => {
+    const { classes, configuration, onChange } = this.props
+
+    const template_brain_list = configuration.getIn(['anatomical', 'tissue_segmentation', 'configuration', 'ANTs_prior_based_seg', 'template_brain_list']).delete(i)
+
+    onChange([
+      [['anatomical', 'tissue_segmentation', 'configuration', 'ANTs_prior_based_seg', 'template_brain_list'], template_brain_list]
+    ])
+
+  }
+
+  addMask_seg = (event) => {
+    const { configuration, onChange } = this.props
+    const next = configuration.getIn(['anatomical', 'tissue_segmentation', 'configuration', 'ANTs_prior_based_seg', 'template_segmentation_list']).size
+
+    onChange([
+      [
+        `anatomical.tissue_segmentation.configuration.ANTs_prior_based_seg.template_segmentation_list.${next}`,
+        fromJS({
+          mask: '',
+        })
+      ]
+    ])
+  }
+
+  removeMask_seg = (i) => {
+    const { classes, configuration, onChange } = this.props
+
+    const template_brain_list = configuration.getIn(['anatomical', 'tissue_segmentation', 'configuration', 'ANTs_prior_based_seg', 'template_segmentation_list']).delete(i)
+
+    onChange([
+      [['anatomical', 'tissue_segmentation', 'configuration', 'ANTs_prior_based_seg', 'template_segmentation_list'], template_segmentation_list]
+    ])
+
+  }
+  
   handleValueChange = (event) => {
     const name = event.target.name
 
@@ -83,6 +144,8 @@ class TissueSegmentation extends Component {
 
   render() {
     const { classes, configuration, onChange } = this.props
+
+    const config = configuration.getIn(['anatomical','tissue_segmentation','configuration','ANTs_prior_based_seg'])
 
     return (
       <React.Fragment>
@@ -173,6 +236,21 @@ class TissueSegmentation extends Component {
                     color="primary"
                   />
                 </FormControlLabelled>
+                </Help>
+              </FormGroup>
+              <FormGroup row>
+                <Help
+                  type="pipeline"
+                  help={`ANTs Prior-based Segmentation workflow that has shown optimal results for non-human primate data. Generate white matter, gray matter, CSF masks based on antsJointLabelFusion. `}
+                >
+                  <FormControlLabelled label="ANTs Prior-Based Segmentation">
+                    <Switch
+                      name="anatomical.tissue_segmentation.configuration.ANTs_prior_based_seg.enabled"
+                      checked={configuration.getIn("anatomical.tissue_segmentation.configuration.ANTs_prior_based_seg.enabled".split("."))}
+                      onChange={onChange}
+                      color="primary"
+                    />
+                  </FormControlLabelled>
                 </Help>
               </FormGroup>
             </Grid>
@@ -410,6 +488,206 @@ class TissueSegmentation extends Component {
                   </FormLabel>
                 </FormGroup> 
               </Collapse>
+
+              <Collapse in={configuration.getIn("anatomical.tissue_segmentation.configuration.ANTs_prior_based_seg.enabled".split("."))}>
+                <FormGroup>
+                  <FormLabel>
+                    <Help
+                      type="pipeline"
+                      help={`Optimal for non-human primate segmentations. Generate white matter, gray matter, CSF masks based on antsJointLabelFusion. If using ANTs prior based segmentation, please make sure to specify template brain list and template segmentation list properly. `}
+                    />
+                    ANTs Prior Based Tissue Segmentation
+                  </FormLabel>
+                  <Paper className={classes.paper}>
+                    <Table className={classes.table}>
+                      <TableHead>
+                        <TableRow>
+                          <TableCell padding="checkbox">
+                            <Help
+                              type="pipeline"
+                              regex={/^ANTs_prior_seg_template_brain_list/}
+                              help={`Paths to the atlas image assumed to be used in ANTs Prior-based Segmentation.`}
+                            />
+                          </TableCell>
+                          <TableCell>The atlas images</TableCell>
+                        </TableRow>
+                      </TableHead>
+                      <TableBody>
+                        {
+                          config.get('template_brain_list').size == 0 ? (
+                            <TableRow>
+                              <TableCell colSpan={7} style={{ textAlign: "center" }}>
+                                Add new rows with the "+" below.
+                              </TableCell>
+                            </TableRow>
+                          ) : (
+                              config.get('template_brain_list').map((mask, i) => (
+                                <TableRow key={i}>
+                                  <TableCell padding="checkbox">
+                                    <IconButton className={classes.button} onClick={() => this.removeMask_brain(i)}>
+                                      <DeleteIcon />
+                                    </IconButton>
+                                  </TableCell>
+                                  <TableCell>
+                                    <TextField
+                                      fullWidth={true}
+                                      name={`anatomical.tissue_segmentation.configuration.ANTs_prior_based_seg.template_brain_list.${i}.mask`}
+                                      onChange={onChange}
+                                      value={mask.get('mask')}
+                                      helperText=''
+                                    />
+                                  </TableCell>
+                                </TableRow>
+                              )))}
+                      </TableBody>
+                      <TableFooter>
+                        <TableRow >
+                          <TableCell padding="checkbox" colSpan={7} className={classes.footer}>
+                            <Fab aria-label="Add new brain template" onClick={this.addMask_brain}>
+                              <AddIcon />
+                            </Fab>
+                          </TableCell>
+                        </TableRow>
+                      </TableFooter>
+                    </Table>
+                  </Paper>
+
+                  <Paper className={classes.paper}>
+                    <Table className={classes.table}>
+                      <TableHead>
+                        <TableRow>
+                          <TableCell padding="checkbox">
+                            <Help
+                              type="pipeline"
+                              regex={/^ANTs_prior_seg_template_segmentation_list/}
+                              help={`Paths to the atlas segmentation images. For performing ANTs Prior-based segmentation method, the number of specified segmentations should be identical to the number of atlas brain image sets. `}
+                            />
+                          </TableCell>
+                          <TableCell>The atlas segmentation images</TableCell>
+                        </TableRow>
+                      </TableHead>
+                      <TableBody>
+                        {
+                          config.get('template_segmentation_list').size == 0 ? (
+                            <TableRow>
+                              <TableCell colSpan={7} style={{ textAlign: "center" }}>
+                                Add new rows with the "+" below.
+                              </TableCell>
+                            </TableRow>
+                          ) : (
+                              config.get('template_segmentation_list').map((mask, i) => (
+                                <TableRow key={i}>
+                                  <TableCell padding="checkbox">
+                                    <IconButton className={classes.button} onClick={() => this.removeMask_seg(i)}>
+                                      <DeleteIcon />
+                                    </IconButton>
+                                  </TableCell>
+                                  <TableCell>
+                                    <TextField
+                                      fullWidth={true}
+                                      name={`anatomical.tissue_segmentation.configuration.ANTs_prior_based_seg.template_segmentation_list.${i}.mask`}
+                                      onChange={onChange}
+                                      value={mask.get('mask')}
+                                      helperText=''
+                                    />
+                                  </TableCell>
+                                </TableRow>
+                              )))}
+                      </TableBody>
+                      <TableFooter>
+                        <TableRow >
+                          <TableCell padding="checkbox" colSpan={7} className={classes.footer}>
+                            <Fab aria-label="Add new segmentation template" onClick={this.addMask_seg}>
+                              <AddIcon />
+                            </Fab>
+                          </TableCell>
+                        </TableRow>
+                      </TableFooter>
+                    </Table>
+                  </Paper>
+
+                  <FormLabel>
+                    <Help
+                      type="pipeline"
+                      regex={/^ANTs_prior_seg_CSF_label/}
+                      help={`Label value corresponding to CSF in multiatlas file. It is not necessary to change this values unless your CSF/GM/WM label values are different from Freesurfer Color Lookup Table.`}
+                      fullWidth
+                    >
+                      <TextField label="CSF Label Value"
+                        name="anatomical.tissue_segmentation.configuration.ANTs_prior_based_seg.CSF_label"
+                        value={configuration.getIn("anatomical.tissue_segmentation.configuration.ANTs_prior_based_seg.CSF_label".split("."))}
+                        onChange={onChange}
+                        fullWidth margin="normal" variant="outlined"
+                      />
+                    </Help>
+                  </FormLabel>
+
+                  <FormLabel>
+                    <Help
+                      type="pipeline"
+                      regex={/^ANTs_prior_seg_left_GM_label/}
+                      help={`Label value corresponding to Left Gray Matter in multiatlas file. It is not necessary to change this values unless your CSF/GM/WM label values are different from Freesurfer Color Lookup Table.`}
+                      fullWidth
+                    >
+                      <TextField label="Left Gray Matter Label Value"
+                        name="anatomical.tissue_segmentation.configuration.ANTs_prior_based_seg.left_GM_label"
+                        value={configuration.getIn("anatomical.tissue_segmentation.configuration.ANTs_prior_based_seg.left_GM_label".split("."))}
+                        onChange={onChange}
+                        fullWidth margin="normal" variant="outlined"
+                      />
+                    </Help>
+                  </FormLabel>
+
+                  <FormLabel>
+                    <Help
+                      type="pipeline"
+                      regex={/^ANTs_prior_seg_right_GM_label/}
+                      help={`Label value corresponding to Right Gray Matter in multiatlas file. It is not necessary to change this values unless your CSF/GM/WM label values are different from Freesurfer Color Lookup Table..`}
+                      fullWidth
+                    >
+                      <TextField label="Right Gray Matter Label Value"
+                        name="anatomical.tissue_segmentation.configuration.ANTs_prior_based_seg.right_GM_label"
+                        value={configuration.getIn("anatomical.tissue_segmentation.configuration.ANTs_prior_based_seg.right_GM_label".split("."))}
+                        onChange={onChange}
+                        fullWidth margin="normal" variant="outlined"
+                      />
+                    </Help>
+                  </FormLabel>
+
+                  <FormLabel>
+                    <Help
+                      type="pipeline"
+                      regex={/^ANTs_prior_seg_left_WM_label/}
+                      help={`Label value corresponding to Left White Matter in multiatlas file. It is not necessary to change this values unless your CSF/GM/WM label values are different from Freesurfer Color Lookup Table..`}
+                      fullWidth
+                    >
+                      <TextField label="Left White Matter Label Value"
+                        name="anatomical.tissue_segmentation.configuration.ANTs_prior_based_seg.left_WM_label"
+                        value={configuration.getIn("anatomical.tissue_segmentation.configuration.ANTs_prior_based_seg.left_WM_label".split("."))}
+                        onChange={onChange}
+                        fullWidth margin="normal" variant="outlined"
+                      />
+                    </Help>
+                  </FormLabel>
+
+                  <FormLabel>
+                    <Help
+                      type="pipeline"
+                      regex={/^ANTs_prior_seg_right_WM_label/}
+                      help={`Label value corresponding to Right White Matter in multiatlas file. It is not necessary to change this values unless your CSF/GM/WM label values are different from Freesurfer Color Lookup Table..`}
+                      fullWidth
+                    >
+                      <TextField label="Right White Matter Label Value"
+                        name="anatomical.tissue_segmentation.configuration.ANTs_prior_based_seg.right_WM_label"
+                        value={configuration.getIn("anatomical.tissue_segmentation.configuration.ANTs_prior_based_seg.right_WM_label".split("."))}
+                        onChange={onChange}
+                        fullWidth margin="normal" variant="outlined"
+                      />
+                    </Help>
+                  </FormLabel>
+                </FormGroup>
+              </Collapse>
+
             </Grid>
           </Grid>
         </FormGroup>
