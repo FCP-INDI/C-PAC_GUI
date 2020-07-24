@@ -46,6 +46,9 @@ export { default as FeedbackIcon } from '@material-ui/icons/Feedback'
 export { default as GroupIcon } from '@material-ui/icons/Group'
 export { default as BulletIcon } from '@material-ui/icons/Lens'
 
+export { default as CheckIcon } from '@material-ui/icons/CheckCircle'
+export { default as UncheckIcon } from '@material-ui/icons/RemoveCircle'
+
 import SvgIcon from '@material-ui/core/SvgIcon';
 
 export const LoadingIcon = (props) => 
