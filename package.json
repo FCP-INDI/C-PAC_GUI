@@ -146,8 +146,14 @@
     "@bugsnag/browser": "*",
     "@bugsnag/js": "^5.1.0",
     "@bugsnag/plugin-react": "^5.1.0",
+<<<<<<< HEAD
     "@material-ui/core": "^4.11.0",
     "@material-ui/icons": "^4.11.0",
+=======
+    "@hot-loader/react-dom": "^16.11.0",
+    "@material-ui/core": "^4.11.0",
+    "@material-ui/icons": "^4.9.1",
+>>>>>>> 885b723 (upgrade material-ui and update w new components)
     "@material-ui/lab": "^4.0.0-alpha.21",
     "clsx": "^1.0.4",
     "connected-react-router": "^6.5.2",

@@ -86,7 +86,33 @@ class PipelinePage extends Component {
     }
   }
 
+<<<<<<< HEAD
   componentDidUpdate(nextProps) {
+=======
+  /*
+  @TODO
+
+  react-dom.development.js?7f13:12339 Warning: componentWillReceiveProps
+  has been renamed, and is not recommended for use.
+  See https://fb.me/react-unsafe-component-lifecycles for details.
+
+  * Move data fetching code or side effects to componentDidUpdate.
+  * If you're updating state whenever props change, refactor your code to
+  use memoization techniques or move it to static getDerivedStateFromProps.
+
+  Learn more at: https://fb.me/react-derived-state
+
+  * Rename componentWillReceiveProps to UNSAFE_componentWillReceiveProps
+  to suppress this warning in non-strict mode. In React 17.x, only the
+  UNSAFE_ name will work. To rename all deprecated lifecycles to their
+  new names, you can run `npx react-codemod rename-unsafe-lifecycles`
+  in your project source folder.
+
+  Please update the following components: PipelinePage
+  */
+
+  componentWillReceiveProps(nextProps) {
+>>>>>>> 885b723 (upgrade material-ui and update w new components)
     if (!nextProps.pipeline.get('versions').keySeq().equals(this.props.pipeline.get('versions').keySeq())) {
       const pipeline = nextProps.pipeline
       const versions = pipeline.get('versions')
