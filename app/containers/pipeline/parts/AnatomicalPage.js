@@ -3,9 +3,9 @@ import { withStyles, Typography } from '@material-ui/core';
 import Grid from '@material-ui/core/Grid'
 
 import Paper from '@material-ui/core/Paper';
-import ExpansionPanel from '@material-ui/core/ExpansionPanel';
-import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
-import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
+import Accordion from '@material-ui/core/Accordion';
+import AccordionDetails from '@material-ui/core/AccordionDetails';
+import AccordionSummary from '@material-ui/core/AccordionSummary';
 import Switch from '@material-ui/core/Switch';
 import {
   SkullStripping,
@@ -31,62 +31,62 @@ class AnatomicalPage extends Component {
 
     return (
       <React.Fragment>
-        <ExpansionPanel expanded>
-          <ExpansionPanelSummary disabled>
+        <Accordion expanded>
+          <AccordionSummary disabled>
             <Help
               help={`Included as part of the 'Image Resource Files' package available on the Install page of the User Guide.`}
             />
             <Typography variant="h6" className={classes.sectionTitle}>
               Initial Preprocessing
             </Typography>
-          </ExpansionPanelSummary>
-          <ExpansionPanelDetails>
+          </AccordionSummary>
+          <AccordionDetails>
             <Grid container>
               <Grid item xs={12}>
                 <InitialPreprocessing configuration={configuration} onChange={onChange} />
               </Grid>
             </Grid>
-          </ExpansionPanelDetails>
-        </ExpansionPanel>
+          </AccordionDetails>
+        </Accordion>
 
-        <ExpansionPanel expanded>
-          <ExpansionPanelSummary disabled>
+        <Accordion expanded>
+          <AccordionSummary disabled>
             <Help
               help={`Included as part of the 'Image Resource Files' package available on the Install page of the User Guide.`}
             />
             <Typography variant="h6" className={classes.sectionTitle}>
               Skull stripping
             </Typography>
-          </ExpansionPanelSummary>
-          <ExpansionPanelDetails>
+          </AccordionSummary>
+          <AccordionDetails>
             <Grid container>
               <Grid item xs={12}>
                 <SkullStripping configuration={configuration} onChange={onChange} />
               </Grid>
             </Grid>
-          </ExpansionPanelDetails>
-        </ExpansionPanel>
+          </AccordionDetails>
+        </Accordion>
 
-        <ExpansionPanel expanded>
-          <ExpansionPanelSummary disabled>
+        <Accordion expanded>
+          <AccordionSummary disabled>
             <Help
               help={`Included as part of the 'Image Resource Files' package available on the Install page of the User Guide.`}
             />
             <Typography variant="h6" className={classes.sectionTitle}>
               Registration
             </Typography>
-          </ExpansionPanelSummary>
-          <ExpansionPanelDetails>
+          </AccordionSummary>
+          <AccordionDetails>
             <Grid container>
               <Grid item xs={12}>
                 <Registration configuration={configuration} onChange={onChange} />
               </Grid>
             </Grid>
-          </ExpansionPanelDetails>
-        </ExpansionPanel>
+          </AccordionDetails>
+        </Accordion>
 
-        <ExpansionPanel expanded={configuration.getIn("anatomical.tissue_segmentation.enabled".split('.'))}>
-          <ExpansionPanelSummary>
+        <Accordion expanded={configuration.getIn("anatomical.tissue_segmentation.enabled".split('.'))}>
+          <AccordionSummary>
             <Switch
               name="anatomical.tissue_segmentation.enabled"
               checked={configuration.getIn("anatomical.tissue_segmentation.enabled".split("."))}
@@ -96,15 +96,15 @@ class AnatomicalPage extends Component {
             <Typography variant="h6" className={classes.sectionTitle}>
               Tissue Segmentation
             </Typography>
-          </ExpansionPanelSummary>
-          <ExpansionPanelDetails>
+          </AccordionSummary>
+          <AccordionDetails>
             <Grid container>
               <Grid item xs={12}>
                 <TissueSegmentation configuration={configuration} onChange={onChange} />
               </Grid>
             </Grid>
-          </ExpansionPanelDetails>
-        </ExpansionPanel>
+          </AccordionDetails>
+        </Accordion>
       </React.Fragment>
     )
   }

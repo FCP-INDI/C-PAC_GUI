@@ -17,9 +17,9 @@ import Input from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
 import Select from '@material-ui/core/Select';
 
-import ExpansionPanel from '@material-ui/core/ExpansionPanel';
-import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
-import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
+import Accordion from '@material-ui/core/Accordion';
+import AccordionDetails from '@material-ui/core/AccordionDetails';
+import AccordionSummary from '@material-ui/core/AccordionSummary';
 
 import FormGroup from '@material-ui/core/FormGroup';
 import FormLabel from '@material-ui/core/FormLabel';
@@ -532,8 +532,8 @@ class NuisanceRegression extends Component {
     const { classes, configuration, onChange } = this.props
 
     return (
-      <ExpansionPanel key={`${i}-${key}`} expanded={regressor.getIn([key, 'enabled'], false)}>
-        <ExpansionPanelSummary
+      <Accordion key={`${i}-${key}`} expanded={regressor.getIn([key, 'enabled'], false)}>
+        <AccordionSummary
             classes={{
               root: classes.header,
               content: classes.content,
@@ -545,8 +545,8 @@ class NuisanceRegression extends Component {
             color="primary"
           />
           <Typography variant="h6" style={{paddingTop: 13}}>{ name }</Typography>
-        </ExpansionPanelSummary>
-        <ExpansionPanelDetails
+        </AccordionSummary>
+        <AccordionDetails
             classes={{
               root: classes.details,
             }}>
@@ -668,8 +668,8 @@ class NuisanceRegression extends Component {
               </React.Fragment>
             ) : null }
           </FormGroup>
-        </ExpansionPanelDetails>
-      </ExpansionPanel>
+        </AccordionDetails>
+      </Accordion>
     )
   }
 

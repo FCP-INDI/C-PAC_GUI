@@ -3,9 +3,9 @@ import { withStyles, Typography } from '@material-ui/core';
 
 import Divider from '@material-ui/core/Divider';
 
-import ExpansionPanel from '@material-ui/core/ExpansionPanel';
-import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
-import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
+import Accordion from '@material-ui/core/Accordion';
+import AccordionDetails from '@material-ui/core/AccordionDetails';
+import AccordionSummary from '@material-ui/core/AccordionSummary';
 import Switch from '@material-ui/core/Switch';
 
 import {
@@ -35,8 +35,8 @@ class DerivativesPage extends Component {
     const value = configuration.getIn(name.split("."))
 
     return (
-      <ExpansionPanel expanded={value}>
-        <ExpansionPanelSummary>
+      <Accordion expanded={value}>
+        <AccordionSummary>
           <Switch
             name={name}
             checked={value}
@@ -46,16 +46,16 @@ class DerivativesPage extends Component {
           <Typography variant="h6" className={classes.sectionTitle}>
             { title }
           </Typography>
-        </ExpansionPanelSummary>
-        <ExpansionPanelDetails>
+        </AccordionSummary>
+        <AccordionDetails>
           {
             React.createElement(component, {
               configuration,
               onChange,
             })
           }
-        </ExpansionPanelDetails>
-      </ExpansionPanel>
+        </AccordionDetails>
+      </Accordion>
     )
   }
 

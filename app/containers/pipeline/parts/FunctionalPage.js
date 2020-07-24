@@ -2,9 +2,9 @@ import React, { Component } from 'react';
 import { withStyles, Typography } from '@material-ui/core';
 import Grid from '@material-ui/core/Grid'
 
-import ExpansionPanel from '@material-ui/core/ExpansionPanel';
-import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
-import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
+import Accordion from '@material-ui/core/Accordion';
+import AccordionDetails from '@material-ui/core/AccordionDetails';
+import AccordionSummary from '@material-ui/core/AccordionSummary';
 import Switch from '@material-ui/core/Switch';
 
 import {
@@ -32,8 +32,8 @@ class FunctionalPage extends Component {
     const value = configuration.getIn(name.split('.'))
 
     return (
-      <ExpansionPanel expanded={value}>
-        <ExpansionPanelSummary>
+      <Accordion expanded={value}>
+        <AccordionSummary>
           <Switch
             name={name}
             checked={value}
@@ -43,8 +43,8 @@ class FunctionalPage extends Component {
           <Typography variant="h6" className={classes.sectionTitle}>
             { title }
           </Typography>
-        </ExpansionPanelSummary>
-        <ExpansionPanelDetails>
+        </AccordionSummary>
+        <AccordionDetails>
           <Grid container>
               <Grid item xs={12}>
                 {
@@ -55,8 +55,8 @@ class FunctionalPage extends Component {
                 }
               </Grid>
             </Grid>
-        </ExpansionPanelDetails>
-      </ExpansionPanel>
+        </AccordionDetails>
+      </Accordion>
     )
   }
 
@@ -66,20 +66,20 @@ class FunctionalPage extends Component {
     return (
       <React.Fragment>
 
-        <ExpansionPanel expanded>
-          <ExpansionPanelSummary disabled>
+        <Accordion expanded>
+          <AccordionSummary disabled>
             <Typography variant="h6" className={classes.sectionTitle}>
               Initial Preprocessing
             </Typography>
-          </ExpansionPanelSummary>
-          <ExpansionPanelDetails>
+          </AccordionSummary>
+          <AccordionDetails>
             <Grid container>
               <Grid item xs={12}>
                 <InitialPreprocessing configuration={configuration} onChange={onChange} />
               </Grid>
             </Grid>
-          </ExpansionPanelDetails>
-        </ExpansionPanel>
+          </AccordionDetails>
+        </Accordion>
 
         {
           this.renderSection(
