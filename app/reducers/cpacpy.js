@@ -13,7 +13,7 @@ import {
 
 const initialState = fromJS({
   schedulers: {
-    [scheduler.local]: { name: 'Local', online: false, connect: { callbacks: {} } },
+    [scheduler.local]: { name: 'Local', address: scheduler.local, online: false, connect: { callbacks: {} } },
   },
   scheduler: scheduler.local,
 })
