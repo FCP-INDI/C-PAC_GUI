@@ -33,7 +33,7 @@ class CpacpySchedulersWidget extends Component {
     const { classes, schedulers, scheduler, watch, stop } = this.props;
 
     return (
-      <Button onClick={() => stop() }>
+      <Button onClick={() => stop(scheduler.get('address')) }>
         <BulletIcon className={clsx(
           classes.bullet,
           scheduler.get('online') ? classes.online : classes.offline
