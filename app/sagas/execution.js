@@ -66,7 +66,7 @@ function* preprocessWatch({ execution, data: { schedule } }) {
       execution, exception
     }),
     message: {
-      type: 'SCHEDULE_WATCH',
+      type: 'watch',
       schedule, children: true,
     }
   })
@@ -85,7 +85,7 @@ function* preprocessSubjectWatch({ execution, data: { schedule } }) {
       execution, exception
     }),
     message: {
-      type: 'SCHEDULE_WATCH',
+      type: 'watch',
       schedule, children: true,
     }
   })

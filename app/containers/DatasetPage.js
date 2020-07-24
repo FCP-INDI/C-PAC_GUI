@@ -46,7 +46,8 @@ import {
   DownloadIcon,
   SaveIcon,
   RevertIcon,
-  EditIcon
+  EditIcon,
+  LoadingIcon,
 } from '../components/icons'
 
 import Header, { HeaderText, HeaderAvatar, HeaderTools } from '../components/Header'
@@ -67,7 +68,8 @@ class DatasetPage extends Component {
     content: {
       padding: 20,
       marginTop: 20,
-    }
+    },
+    loading: { height: 60, width: 60 }
   })
 
   handleGenerateDataConfig = () => {
@@ -98,6 +100,8 @@ class DatasetPage extends Component {
         </Button>
       </React.Fragment>
     )
+
+    const loading = dataset.get('loading')
 
     const headerRenderer = ({ label, columnIndex }) => {
       const { headerHeight, columns, classes } = this.props
@@ -204,20 +208,39 @@ class DatasetPage extends Component {
 
     }
 
+    // TODO review styling, create an element to center-center on Grids
+    const paperStyle = loading ? { alignItems: 'center', alignContent: 'center', display: 'flex', justifyContent: 'center' } : {}
+
     return (
       <Box title={dataset.get('name')}
            avatar={<DatasetIcon />}
            tools={tools}>
-        <Button onClick={this.handleGenerateDataConfig}>Generate</Button>
-        { rows ? <Button onClick={this.handleGenerateDataConfig}>Execute</Button> : null }
-        <p>{ dataset.get('data') ? `${dataset.getIn(['data', 'subject_ids']).size} subjects` : null }</p>
-        { rows ?
-          <React.Fragment>
-            <Paper style={{ height: 400 }}>
-              <VirtualTable
-                rows={rows}
-                columns={columns}
+        <Grid container alignItems="center">
+          <Grid item md={10} sm={9} xs={12}>
+            <TextField
+                label="BIDS Directory"
+                name="derivatives.network_centrality.mask"
+                value={"s3://fcp-indi/data/Projects/ABIDE/RawDataBIDS/"}
+                fullWidth={true} margin="normal" variant="outlined"
               />
+          </Grid>
+          <Grid item md={2} sm={3} xs={12} style={{ textAlign: 'center' }}>
+            <Button variant="contained" color="secondary" onClick={this.handleGenerateDataConfig}>Generate</Button>
+          </Grid>
+        </Grid>
+        {/* <p>{ dataset.get('data') ? `${dataset.getIn(['data', 'subject_ids']).size} subjects` : null }</p> */}
+        
+        { rows || loading ?
+          <React.Fragment>
+            <Paper style={{ height: 400, ...paperStyle }}>
+              {
+                !loading ?
+                <VirtualTable
+                  rows={rows}
+                  columns={columns}
+                /> :
+                <LoadingIcon />
+              }
             </Paper>
           </React.Fragment>
         : null }

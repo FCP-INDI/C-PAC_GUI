@@ -34,9 +34,29 @@ export default function (state = initialState, action) {
 
       return state.setIn([
         'datasets', i, 'data'
+      ], fromJS(config)).setIn([
+        'datasets', i, 'loading'
+      ], false)
+    }
+
+    case DATASET_GENERATE_DATA_CONFIG_SCHEDULED: {
+      const { dataset: id, config } = action
+      const i = state.get('datasets').findIndex((d) => d.get('id') === id)
+
+      return state.setIn([
+        'datasets', i, 'data'
       ], fromJS(config))
     }
-      
+
+    case DATASET_GENERATE_DATA_CONFIG: {
+      const { dataset: id } = action
+      const i = state.get('datasets').findIndex((d) => d.get('id') === id)
+
+      return state.setIn([
+        'datasets', i, 'loading'
+      ], true)
+    }
+    
     default:
       return state
   }
