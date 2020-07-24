@@ -234,7 +234,7 @@ export function parse(content) {
   c.general.environment.paths.crash = config.crashLogDirectory
   c.general.environment.paths.log = config.logDirectory
 
-  c.general.environment.outputs.aws = config.awsOutputBucketCredentials
+  c.general.environment.outputs.aws = config.awsOutputBucketCredentials || ''
   c.general.environment.outputs.s3 = config.s3Encryption.includes(1)
   c.general.environment.outputs.extra = config.write_func_outputs.includes(1)
   c.general.environment.outputs.debug = config.write_debugging_outputs.includes(1)
@@ -871,7 +871,7 @@ export function dump(pipeline, version='0') {
   config.crashLogDirectory = c.general.environment.paths.crash
   config.logDirectory = c.general.environment.paths.log
   config.outputDirectory = c.general.environment.paths.output
-  config.awsOutputBucketCredentials = ""
+  config.awsOutputBucketCredentials = c.general.environment.outputs.aws
   config.s3Encryption = [c.general.environment.outputs.s3 ? 1 : 0]
   config.write_func_outputs = [c.general.environment.outputs.extra ? 1 : 0]
   config.write_debugging_outputs = [c.general.environment.outputs.debug ? 1 : 0]
