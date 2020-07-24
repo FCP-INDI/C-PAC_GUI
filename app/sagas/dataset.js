@@ -64,7 +64,7 @@ function* generateDataConfig({ dataset, dataSettings, version }) {
     method: 'POST',
     endpoint: '/schedule',
     data: {
-      type: 'DATA_CONFIG',
+      type: 'data_settings',
       data_settings: cpac.data_settings.dump(dataSettings.toJS(), version),
     },
     response: {
@@ -84,16 +84,21 @@ function* generateDataConfigWatch({ dataset, data: { schedule } }) {
   yield put({
     type: CPACPY_SCHEDULER_CONNECT_SEND,
     scheduler: 'localhost:3333',
-    action: (scheduler, data) => ({
-      type: DATASET_GENERATE_DATA_CONFIG_GENERATED,
-      dataset, data
-    }),
+    action: (scheduler, data) => {
+      if (data.type !== "End") {
+        return
+      }
+      return {
+        type: DATASET_GENERATE_DATA_CONFIG_GENERATED,
+        dataset, data
+      }
+    },
     error: (exception) => ({
       type: DATASET_GENERATE_DATA_CONFIG_ERROR,
       dataset, exception
     }),
     message: {
-      type: 'SCHEDULE_WATCH',
+      type: 'watch',
       schedule,
     }
   })
@@ -108,7 +113,7 @@ function* generateDataConfigFetchResult({ dataset, data: { id, statuses, availab
     response: {
       success: (data) => ({
         type: DATASET_GENERATE_DATA_CONFIG_FETCHED,
-        dataset, data
+        dataset, data: data.result.data_config,
       }),
       error: (exception) => ({
         type: DATASET_GENERATE_DATA_CONFIG_ERROR,
@@ -122,7 +127,7 @@ function* generateDataConfigResult({ dataset, data }) {
   yield put({
     type: DATASET_GENERATE_DATA_CONFIG_SUCCESS,
     dataset,
-    config: cpac.data_config.parse(data)
+    config: cpac.data_config.parse(data),
   })
 }
 

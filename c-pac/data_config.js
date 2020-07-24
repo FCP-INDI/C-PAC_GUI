@@ -5,7 +5,10 @@ import deepmerge from 'deepmerge'
 import { slugify, clone } from './utils'
 
 export function parse(content) {
-  const subjectSets = yaml.safeLoad(content)
+  let subjectSets = content
+  if (typeof subjectSets === "string") {
+    subjectSets = yaml.safeLoad(content)
+  }
 
   const hasUniqueId = subjectSets.every((t) => !!t.unique_id)
   const hasSiteId = subjectSets.every((t) => !!t.site)
