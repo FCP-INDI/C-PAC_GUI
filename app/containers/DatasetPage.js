@@ -37,6 +37,7 @@ import IconButton from '@material-ui/core/IconButton'
 import FormControl from '@material-ui/core/FormControl'
 import Select from '@material-ui/core/Select'
 import MenuItem from '@material-ui/core/MenuItem'
+import { default  as FlexBox } from '@material-ui/core/Box'
 
 import {
   DatasetIcon,
@@ -48,11 +49,14 @@ import {
   RevertIcon,
   EditIcon,
   LoadingIcon,
+  CheckIcon,
+  UncheckIcon,
 } from '../components/icons'
 
 import Header, { HeaderText, HeaderAvatar, HeaderTools } from '../components/Header'
 import Content from '../components/Content'
 import Box from '../components/Box'
+import Table from '../components/Table'
 import VirtualTable from '../components/VirtualTable'
 
 import {
@@ -80,6 +84,28 @@ class DatasetPage extends Component {
     })
   }
 
+  renderTable(columns, rows) {
+    return (
+      <Table
+        title="Datasets"
+        data={rows}
+        columns={columns}
+        options={{
+          selection: true
+        }}
+        actions={[
+          {
+            tooltip: 'Remove All Selected Users',
+            icon: DownloadIcon,
+            onClick: (evt, data) => console.log(data)
+          }
+        ]}
+        parentChildData={(row, rows) => rows.find(a => a.id === row.parentId)}
+      />
+    )
+
+  }
+
   render() {
     const { classes, dataset, pipelines } = this.props
 
@@ -92,88 +118,68 @@ class DatasetPage extends Component {
         <Button size="small">
           <DownloadIcon />
         </Button>
-        <Button size="small">
+        {/* <Button size="small">
           <SaveIcon />
-        </Button>
-        <Button size="small">
+        </Button> */}
+        {/* <Button size="small">
           <RevertIcon />
-        </Button>
+        </Button> */}
       </React.Fragment>
     )
 
     const loading = dataset.get('loading')
 
-    const headerRenderer = ({ label, columnIndex }) => {
-      const { headerHeight, columns, classes } = this.props
-
-      return (
-        <TableCell
-          component="div"
-          className={clsx(classes.tableCell, classes.flexContainer, classes.noClick)}
-          variant="head"
-          style={{ height: headerHeight }}
-          align={columns[columnIndex].numeric || false ? 'right' : 'left'}
-        >
-          <span>{label}</span>
-        </TableCell>
-      )
-    }
-
     let rows, columns
     if (dataset.get('data')) {
+      console.log(dataset.get('data').toJS())
       columns = [
         {
-          dataKey: "subject",
-          label: "Subject",
-          filter: {
-            values: dataset.getIn(['data', 'subject_ids']).toJS()
+          field: "subject",
+          title: "Subject",
+          headerStyle: { textAlign: 'center' },
+          cellStyle: { textAlign: 'center' },
+        },
+        {
+          field: "unique",
+          title: "Unique",
+          headerStyle: { textAlign: 'center' },
+          cellStyle: { textAlign: 'center' },
+        },
+        {
+          field: "site",
+          title: "Site",
+          headerStyle: { textAlign: 'center' },
+          cellStyle: { textAlign: 'center' },
+        },
+        {
+          field: "anatomical",
+          title: "Anatomical",
+          headerStyle: { textAlign: 'center' },
+          cellStyle: { textAlign: 'center' },
+          render: rowData => {
+            if (rowData.anatomical === true) {
+              return <CheckIcon />
+            } else if (rowData.anatomical === false) {
+              return <UncheckIcon />
+            }
+            return (rowData.anatomical)
           }
         },
         {
-          dataKey: "unique",
-          label: "Unique",
-          filter: {
-            values: dataset.getIn(['data', 'unique_ids']).toJS(),
+          field: "functionals",
+          title: "Functional",
+          headerStyle: { textAlign: 'center' },
+          cellStyle: { textAlign: 'center' },
+          render: rowData => {
+            if (rowData.functionals === true) {
+              return <CheckIcon />
+            } else if (rowData.functionals === false) {
+              return <UncheckIcon />
+            }
+            return (rowData.functionals)
           }
-        },
-        {
-          dataKey: "site",
-          label: "Site",
-          filter: {
-            values: dataset.getIn(['data', 'sites']).toJS(),
-            renderer: ({ column, values, onFilter }) => (
-              <React.Fragment>
-                {/* <FormControl>
-                  <Select multiple fullWidth value={values}>
-                    {column.filter.values.map(name => (
-                      <MenuItem key={name} value={name}>
-                        {name}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl> */}
-                <Button onClick={() => onFilter(['MaxMun_b'])}>
-                  { column.label }
-                </Button>
-              </React.Fragment>
-            )
-          }
-
-        },
-        {
-          dataKey: "anatomical",
-          label: "Anatomical",
-          renderer: (content) => content ? 'Y' : 'N',
         },
       ]
-
-      dataset.getIn(['data', 'series']).map((s) => {
-        columns.push({
-          dataKey: s,
-          label: s,
-          renderer: (content) => content ? 'Y' : 'N',
-        })
-      })
 
       rows = []
       dataset.getIn(['data', 'sets']).entrySeq().map(([subject, uniques]) => {
@@ -184,61 +190,59 @@ class DatasetPage extends Component {
             }
           }))
 
-          const row = {
+          const site = def.get('site')
+
+          const uniqueName = subject + unique + site
+
+          rows.push({
+            id: uniqueName,
             subject,
             unique,
-            site: def.get('site'),
+            site,
             anatomical: !!def.get('anatomical'),
-            ...func
-          }
+            functionals: !!def.get('functionals'),
+          })
 
-          rows.push(row)
+          def.get('functionals').keySeq().forEach(functional => {
+            rows.push({
+              id: subject + unique + site + functional,
+              parentId: uniqueName,
+              functionals: functional,
+            })
+          });
+
         }).cacheResult()
       }).cacheResult()
-
-      rows.sort(
-        (a, b) => {
-          return (
-            a.site === b.site ?
-            (a.subject > b.subject ? 1 : -1) :
-            (a.site > b.site ? 1 : -1)
-          )
-        }
-      )
-
     }
 
-    // TODO review styling, create an element to center-center on Grids
+    // @TODO review styling, create an element to center-center on Grids
     const paperStyle = loading ? { alignItems: 'center', alignContent: 'center', display: 'flex', justifyContent: 'center' } : {}
 
     return (
       <Box title={dataset.get('name')}
            avatar={<DatasetIcon />}
            tools={tools}>
-        <Grid container alignItems="center">
-          <Grid item md={10} sm={9} xs={12}>
+
+        <FlexBox display="flex" alignItems="center" p={1}>
+          <FlexBox p={1} flexGrow={1}>
             <TextField
                 label="BIDS Directory"
                 name="derivatives.network_centrality.mask"
                 value={"s3://fcp-indi/data/Projects/ABIDE/RawDataBIDS/"}
                 fullWidth={true} margin="normal" variant="outlined"
               />
-          </Grid>
-          <Grid item md={2} sm={3} xs={12} style={{ textAlign: 'center' }}>
+          </FlexBox>
+          <FlexBox p={1}>
             <Button variant="contained" color="secondary" onClick={this.handleGenerateDataConfig}>Generate</Button>
-          </Grid>
-        </Grid>
-        {/* <p>{ dataset.get('data') ? `${dataset.getIn(['data', 'subject_ids']).size} subjects` : null }</p> */}
-        
+          </FlexBox>
+        </FlexBox>
+
         { rows || loading ?
           <React.Fragment>
-            <Paper style={{ height: 400, ...paperStyle }}>
+            <Paper style={{ ...paperStyle }}>
               {
                 !loading ?
-                <VirtualTable
-                  rows={rows}
-                  columns={columns}
-                /> :
+                this.renderTable(columns, rows) :
                 <LoadingIcon />
               }
             </Paper>
@@ -260,7 +264,6 @@ const mapStateToProps = (state, props) => {
 
   const dataset = state.dataset.getIn(['datasets']).find((p) => p.get('id') == id)
   const version = dataset.get('versions').keySeq().max()
-
   const pipelines = state.main.getIn(['config', 'pipelines'])
 
   return {

@@ -97,6 +97,9 @@ export { default as GroupIcon } from '@material-ui/icons/Group'
 export { default as BulletIcon } from '@material-ui/icons/Lens'
 >>>>>>> f2a1340 (theo data-config generation! and some other stuff)
 
+export { default as CheckIcon } from '@material-ui/icons/CheckCircle'
+export { default as UncheckIcon } from '@material-ui/icons/RemoveCircle'
+
 import SvgIcon from '@material-ui/core/SvgIcon';
 
 export const LoadingIcon = (props) => 
