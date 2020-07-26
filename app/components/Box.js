@@ -12,11 +12,12 @@ class Box extends Component {
   static styles = theme => ({
     root: {
       display: 'flex',
-      flexDirection: 'column'
+      flexDirection: 'column',
+      flexGrow: 1,
     },
     header: {
-      height: 88,
-      padding: 20,
+      height: ({ inner }) => inner ? null : 88,
+      padding: ({ inner }) => inner ? 10 : 20,
       display: 'flex',
       justifyContent: 'flex-start',
       alignItems: 'center',
@@ -25,7 +26,7 @@ class Box extends Component {
       width: '100%',
       boxSizing: 'border-box',
       textAlign: 'left',
-      background: theme.palette.primary.main,
+      background: ({ inner }) => inner ? theme.palette.primary.light : theme.palette.primary.main,
     },
     headerText: {
       color: "#444",
@@ -46,7 +47,12 @@ class Box extends Component {
   })
 
   render() {
-    const { classes, className, avatar, title, tools, headerVariant = 'h5' } = this.props
+    const { classes, className, avatar, title, tools, inner } = this.props
+    let { headerVariant } = this.props
+
+    if (!headerVariant) {
+      headerVariant = inner ? 'h6' : 'h5'
+    }
 
     return (
       <div className={clsx(classes.root, className)}>
