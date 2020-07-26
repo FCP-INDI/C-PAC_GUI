@@ -7,10 +7,12 @@ import { slugify, clone } from './utils'
 import { default as defaultTemplate } from './resources/pipeline/config'
 import yamlTemplate, { raw } from './resources/pipeline/yaml'
 
+const supportedCpacVersion = defaultTemplate.versions.default.version
+
 const template = parse(raw)
 template.name = 'Default'
 
-export { yamlTemplate, template, raw as rawTemplate }
+export { yamlTemplate, template, raw as rawTemplate, supportedCpacVersion as version }
 
 export function normalize(pipeline) {
 
@@ -45,7 +47,7 @@ export function normalize(pipeline) {
 
   const newVersionKey = new Date().getTime().toString()
   const newVersion = {
-    version: '1.6.0',
+    version: supportedCpacVersion,
   }
 
   const newConfiguration = clone(configuration)

@@ -1,11 +1,6 @@
 import {
   CONFIG_LOADED,
-
   SETTINGS_UPDATE,
-
-  ENVIRONMENT_CHECKED,
-  ENVIRONMENT_SELECT,
-
 } from '../actions/main'
 
 import {
@@ -64,7 +59,7 @@ export default function main(state, action) {
       return state.setIn(
         ['config', 'pipelines', i, 'versions', '0'],
         fromJS({
-          version: '1.6.0',
+          version: cpac.pipeline.version,
           configuration
         })
       )
@@ -82,9 +77,10 @@ export default function main(state, action) {
 
       return state
         .setIn([
-          'config', 'pipelines', i, 'versions', new Date().getTime().toString()
+          'config', 'pipelines', i, 'versions', "" + state.getIn(['config', 'pipelines', i, 'versions']).size
         ], fromJS({
-          version: '1.3.0',
+          version: cpac.pipeline.version,
+          date: new Date().getTime(),
           configuration: state.getIn(['config', 'pipelines', i, 'versions', '0', 'configuration'])
         }))
         .deleteIn(['config', 'pipelines', i, 'versions', '0'])
