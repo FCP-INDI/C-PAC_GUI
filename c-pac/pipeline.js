@@ -11,6 +11,7 @@ import { default as defaultTemplate } from './resources/pipeline/config'
 import yamlTemplate, { raw } from './resources/pipeline/yaml'
 >>>>>>> f2a1340 (theo data-config generation! and some other stuff)
 
+<<<<<<< HEAD
 function setVersion(rawTemplate) {
   let version = versionRe.exec(rawTemplate);
   version = (version && version.length) ? version[0] : 'unspecified';
@@ -35,6 +36,14 @@ async function getDefaultPipeline(url) {
   });
   return defaultPipeline;
 }
+=======
+const supportedCpacVersion = defaultTemplate.versions.default.version
+
+const template = parse(raw)
+template.name = 'Default'
+
+export { yamlTemplate, template, raw as rawTemplate, supportedCpacVersion as version }
+>>>>>>> cd4c830 (add TODOs, use integer as versions, use C-PAC version from template)
 
 /**
  * Takes a configuration object, pipeline name string, and version string and returns a YAML string
@@ -107,7 +116,11 @@ export function normalize(pipeline) {
 
   const newVersionKey = new Date().getTime().toString()
   const newVersion = {
+<<<<<<< HEAD
     version: '1.4.3',
+=======
+    version: supportedCpacVersion,
+>>>>>>> cd4c830 (add TODOs, use integer as versions, use C-PAC version from template)
   }
 
   const newConfiguration = clone(configuration)

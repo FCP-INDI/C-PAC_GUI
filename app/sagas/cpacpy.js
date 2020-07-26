@@ -27,8 +27,6 @@ import {
   offline as cpacpySchedulerOffline,
 } from '../actions/cpacpy'
 
-import cpac from '@internal/c-pac'
-
 function* init() {
   const schedulers = yield select((state) => state.cpacpy.get('schedulers'))
   const [ ...scheduler ] = schedulers.keys()
@@ -55,6 +53,7 @@ function* detect({ scheduler }) {
   yield put(cpacpySchedulerOffline(scheduler))
 }
 
+// @TODO make sure pooling is happening just once for each scheduler
 function* pollingBackground(scheduler) {
   yield delay(4000)
   yield put(cpacpyDetect(scheduler))

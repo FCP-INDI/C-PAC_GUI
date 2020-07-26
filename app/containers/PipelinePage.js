@@ -43,6 +43,8 @@ import {
 
 import cpac from '@internal/c-pac';
 
+// @TODO add Snackbar on pipeline duplicate/save successfully
+
 
 class PipelinePage extends Component {
 
