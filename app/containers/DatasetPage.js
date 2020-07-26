@@ -12,6 +12,9 @@ import IconButton from '@material-ui/core/IconButton'
 import FormControl from '@material-ui/core/FormControl'
 import Select from '@material-ui/core/Select'
 import MenuItem from '@material-ui/core/MenuItem'
+import Tooltip from '@material-ui/core/Tooltip'
+import CircularProgress from '@material-ui/core/CircularProgress'
+import Skeleton from '@material-ui/lab/Skeleton';
 import { default  as FlexBox } from '@material-ui/core/Box'
 
 import {
@@ -26,13 +29,16 @@ import {
   LoadingIcon,
   CheckIcon,
   UncheckIcon,
+  ViewIcon,
+  AddIcon,
 } from '../components/icons'
 
 import Header, { HeaderText, HeaderAvatar, HeaderTools } from '../components/Header'
 import Content from '../components/Content'
 import Box from '../components/Box'
 import Table from '../components/Table'
-import VirtualTable from '../components/VirtualTable'
+
+import DatasetViewsList from './dataset/DatasetViewsList'
 
 import {
   generateDataConfig,
@@ -41,15 +47,19 @@ import {
 
 class DatasetPage extends Component {
 
-  state = { filters: {} }
-
   static styles = theme => ({
     content: {
       padding: 20,
       marginTop: 20,
     },
-    loading: { height: 60, width: 60 }
+    loading: {
+      width: 36, height: 36,
+    },
   })
+
+  handleCreateView = () => {
+    
+  }
 
   handleGenerateDataConfig = () => {
     this.props.generateDataConfig({
@@ -59,10 +69,105 @@ class DatasetPage extends Component {
     })
   }
 
+  handleFilter(view) {
+    console.log(view.toJS())
+  }
+
+  prepareData(dataset) {
+
+    if (!dataset || !dataset.get('data')) {
+      return { rows: null, columns: null }
+    }
+
+    const columns = [
+      {
+        field: "subject",
+        title: "Subject",
+        headerStyle: { textAlign: 'center' },
+        cellStyle: { textAlign: 'center' },
+      },
+      {
+        field: "unique",
+        title: "Unique",
+        headerStyle: { textAlign: 'center' },
+        cellStyle: { textAlign: 'center' },
+      },
+      {
+        field: "site",
+        title: "Site",
+        headerStyle: { textAlign: 'center' },
+        cellStyle: { textAlign: 'center' },
+      },
+      {
+        field: "anatomical",
+        title: "Anatomical",
+        headerStyle: { textAlign: 'center' },
+        cellStyle: { textAlign: 'center' },
+        render: rowData => {
+          if (rowData.anatomical === true) {
+            return <CheckIcon />
+          } else if (rowData.anatomical === false) {
+            return <UncheckIcon />
+          }
+          return (rowData.anatomical)
+        }
+      },
+      {
+        field: "functionals",
+        title: "Functional",
+        headerStyle: { textAlign: 'center' },
+        cellStyle: { textAlign: 'center' },
+        render: rowData => {
+          if (rowData.functionals === true) {
+            return <CheckIcon />
+          } else if (rowData.functionals === false) {
+            return <UncheckIcon />
+          }
+          return (rowData.functionals)
+        }
+      },
+    ]
+
+    const rows = []
+    dataset.getIn(['data', 'sets']).entrySeq().map(([subject, uniques]) => {
+      uniques.entrySeq().map(([unique, def]) => {
+        const func = Object.assign(...dataset.getIn(['data', 'series']).map(s => {
+          return {
+            [s]: !!def.getIn(['functionals', s])
+          }
+        }))
+
+        const site = def.get('site')
+
+        const uniqueName = subject + unique + site
+
+        rows.push({
+          id: uniqueName,
+          subject,
+          unique,
+          site,
+          anatomical: !!def.get('anatomical'),
+          functionals: !!def.get('functionals'),
+        })
+
+        def.get('functionals').keySeq().forEach(functional => {
+          rows.push({
+            id: subject + unique + site + functional,
+            parentId: uniqueName,
+            functionals: functional,
+          })
+        });
+
+      }).cacheResult()
+    }).cacheResult()
+
+    return { rows, columns }
+  }
+
   renderTable(columns, rows) {
     return (
       <Table
-        title="Datasets"
+        title={null}
         data={rows}
         columns={columns}
         options={{
@@ -70,7 +175,7 @@ class DatasetPage extends Component {
         }}
         actions={[
           {
-            tooltip: 'Remove All Selected Users',
+            tooltip: 'Create view of the selected users',
             icon: DownloadIcon,
             onClick: (evt, data) => console.log(data)
           }
@@ -78,16 +183,18 @@ class DatasetPage extends Component {
         parentChildData={(row, rows) => rows.find(a => a.id === row.parentId)}
       />
     )
-
   }
 
   render() {
-    const { classes, dataset, pipelines } = this.props
+    const { classes, dataset, configuration } = this.props
 
     if (!dataset) {
       // @TODO ASH create a 404 page/component
       return "404"
     }
+
+    const loading = dataset.get('loading')
+    const { rows, columns } = this.prepareData(loading ? null : dataset)
 
     const tools = (
       <React.Fragment>
@@ -103,96 +210,15 @@ class DatasetPage extends Component {
       </React.Fragment>
     )
 
-    const loading = dataset.get('loading')
-
-    let rows, columns
-    if (dataset.get('data')) {
-      console.log(dataset.get('data').toJS())
-      columns = [
-        {
-          field: "subject",
-          title: "Subject",
-          headerStyle: { textAlign: 'center' },
-          cellStyle: { textAlign: 'center' },
-        },
-        {
-          field: "unique",
-          title: "Unique",
-          headerStyle: { textAlign: 'center' },
-          cellStyle: { textAlign: 'center' },
-        },
-        {
-          field: "site",
-          title: "Site",
-          headerStyle: { textAlign: 'center' },
-          cellStyle: { textAlign: 'center' },
-        },
-        {
-          field: "anatomical",
-          title: "Anatomical",
-          headerStyle: { textAlign: 'center' },
-          cellStyle: { textAlign: 'center' },
-          render: rowData => {
-            if (rowData.anatomical === true) {
-              return <CheckIcon />
-            } else if (rowData.anatomical === false) {
-              return <UncheckIcon />
-            }
-            return (rowData.anatomical)
-          }
-        },
-        {
-          field: "functionals",
-          title: "Functional",
-          headerStyle: { textAlign: 'center' },
-          cellStyle: { textAlign: 'center' },
-          render: rowData => {
-            if (rowData.functionals === true) {
-              return <CheckIcon />
-            } else if (rowData.functionals === false) {
-              return <UncheckIcon />
-            }
-            return (rowData.functionals)
-          }
-        },
-      ]
-
-      rows = []
-      dataset.getIn(['data', 'sets']).entrySeq().map(([subject, uniques]) => {
-        uniques.entrySeq().map(([unique, def]) => {
-          const func = Object.assign(...dataset.getIn(['data', 'series']).map(s => {
-            return {
-              [s]: !!def.getIn(['functionals', s])
-            }
-          }))
-
-          const site = def.get('site')
-
-          const uniqueName = subject + unique + site
-
-          rows.push({
-            id: uniqueName,
-            subject,
-            unique,
-            site,
-            anatomical: !!def.get('anatomical'),
-            functionals: !!def.get('functionals'),
-          })
-
-          def.get('functionals').keySeq().forEach(functional => {
-            rows.push({
-              id: subject + unique + site + functional,
-              parentId: uniqueName,
-              functionals: functional,
-            })
-          });
-
-        }).cacheResult()
-      }).cacheResult()
-    }
-
-    // @TODO review styling, create an element to center-center on Grids
-    const paperStyle = loading ? { alignItems: 'center', alignContent: 'center', display: 'flex', justifyContent: 'center' } : {}
+    const viewTools = (
+      <React.Fragment>
+        <Tooltip title="Create View">
+          <IconButton onClick={() => this.handleCreateView()}>
+            <AddIcon />
+          </IconButton>
+        </Tooltip>
+      </React.Fragment>
+    )
 
     return (
       <Box title={dataset.get('name')}
@@ -204,7 +230,7 @@ class DatasetPage extends Component {
             <TextField
                 label="BIDS Directory"
                 name="derivatives.network_centrality.mask"
-                value={"s3://fcp-indi/data/Projects/ABIDE/RawDataBIDS/"}
+                value={configuration.getIn(['options', 'base'])}
                 fullWidth={true} margin="normal" variant="outlined"
               />
           </FlexBox>
@@ -213,17 +239,22 @@ class DatasetPage extends Component {
           </FlexBox>
         </FlexBox>
 
-        { rows || loading ?
-          <React.Fragment>
-            <Paper style={{ ...paperStyle }}>
+        <Grid container alignItems="stretch">
+          <Grid item xs={12} lg={8} alignItems="stretch" style={{display: 'flex'}}>
+            <Paper style={{flexGrow: 1, display: 'flex', flexDirection: 'column'}}> 
               {
-                !loading ?
-                this.renderTable(columns, rows) :
-                <LoadingIcon />
+                loading ?
+                <Skeleton animation="wave" variant="rect" style={{flexGrow: 1}} /> :
+                (columns ? this.renderTable(columns, rows): null)
               }
             </Paper>
-          </React.Fragment>
-        : null }
+          </Grid>
+          <Grid item xs={12} lg={4}>
+            <Box title={'Views'} avatar={<ViewIcon />} tools={viewTools} inner>
+              <DatasetViewsList disabled={!columns} views={dataset.get('views')} onView={(view) => this.handleFilter(view)} />
+            </Box>
+          </Grid>
+        </Grid>
       </Box>
     )
   }
@@ -240,13 +271,11 @@ const mapStateToProps = (state, props) => {
 
   const dataset = state.dataset.getIn(['datasets']).find((p) => p.get('id') == id)
   const version = dataset.get('versions').keySeq().max()
-  const pipelines = state.main.getIn(['config', 'pipelines'])
 
   return {
     dataset,
     version,
     configuration: dataset.getIn(['versions', version, 'configuration']),
-    pipelines,
   }
 }
 

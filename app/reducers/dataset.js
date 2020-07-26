@@ -11,6 +11,7 @@ import {
 
 const initialState = fromJS({
   datasets: [],
+  views: []
 })
 
 export default function (state = initialState, action) {
