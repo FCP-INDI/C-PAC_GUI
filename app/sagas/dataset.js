@@ -9,9 +9,8 @@ import {
   DATASET_GENERATE_DATA_CONFIG_SUCCESS,
   DATASET_GENERATE_DATA_CONFIG_ERROR,
   DATASET_GENERATE_DATA_CONFIG_SCHEDULED,
-  DATASET_GENERATE_DATA_CONFIG_GENERATED,
-  DATASET_GENERATE_DATA_CONFIG_FETCHED,
   DATASET_GENERATE_DATA_CONFIG_FINISHED,
+  DATASET_GENERATE_DATA_CONFIG_FETCHED,
 } from '../actions/dataset'
 
 import {
@@ -20,7 +19,7 @@ import {
 } from '../actions/cpacpy'
 
 import {
-  datasets
+  datasets,
 } from './dataset.default'
 
 import cpac from '@internal/c-pac'
@@ -39,7 +38,7 @@ function* loadLocalState () {
 
   if (!localState) {
     localState = initialState
-    localStorage.setItem('dataset', JSON.stringify(initialState))
+    localStorage.setItem('dataset', JSON.stringify(localState))
   }
 
   yield put({
@@ -89,7 +88,7 @@ function* generateDataConfigWatch({ dataset, data: { schedule } }) {
         return
       }
       return {
-        type: DATASET_GENERATE_DATA_CONFIG_GENERATED,
+        type: DATASET_GENERATE_DATA_CONFIG_FINISHED,
         dataset, data
       }
     },
@@ -134,13 +133,10 @@ function* generateDataConfigResult({ dataset, data }) {
 export default function* configSaga() {
   yield all([
     takeEvery(DATASET_CONFIG_LOAD, loadLocalState),
-    // TODO review ways of listening for state changes, instead of 
-    // listing all reducers that change states
     takeEvery(DATASET_GENERATE_DATA_CONFIG_SUCCESS, saveLocalState),
-
     takeEvery(DATASET_GENERATE_DATA_CONFIG, generateDataConfig),
     takeEvery(DATASET_GENERATE_DATA_CONFIG_SCHEDULED, generateDataConfigWatch),
-    takeEvery(DATASET_GENERATE_DATA_CONFIG_GENERATED, generateDataConfigFetchResult),
+    takeEvery(DATASET_GENERATE_DATA_CONFIG_FINISHED, generateDataConfigFetchResult),
     takeEvery(DATASET_GENERATE_DATA_CONFIG_FETCHED, generateDataConfigResult),
   ])
 }
