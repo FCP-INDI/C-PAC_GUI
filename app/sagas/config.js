@@ -40,56 +40,9 @@ function* loadConfig () {
       advanced: false,
     },
 
+    // @TODO separate a pipeline saga for itself (config & main)
     pipelines: [
       cpac.pipeline.template
-    ],
-
-    group_analyses: [
-      {
-        id: '0000-0000-0000-0001',
-        steps: [
-          {
-            type: 'MDMR',
-            parameters: {
-              factors: [],
-              covariates: [],
-              permutations: 1000,
-            }
-          },
-          {
-            type: 'ISC',
-            parameters: {
-              std_filter: 0.0,
-              permutations: 1000,
-            }
-          },
-          {
-            type: 'ISFC',
-            parameters: {
-              std_filter: 0.0,
-              permutations: 1000,
-            }
-          },
-          {
-            type: 'QPP',
-            parameters: {
-              permutations: 1000,
-              iterations: 15,
-              window: 30,
-              initial_threshold: 0.2,
-              final_threshold: 0.3,
-              initial_threshold_iterations: 20,
-            }
-          },
-          {
-            type: 'FEAT',
-            parameters: {
-              formula: 'Sex + Diagnosis + Age + MeanFD_Jenkinson + Custom_ROI_Mean',
-              
-            }
-          },
-        ]
-      }
     ],
 
   }

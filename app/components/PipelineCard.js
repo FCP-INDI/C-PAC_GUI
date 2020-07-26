@@ -31,7 +31,7 @@ import {
   PipelineStepIcon,
   PipelineExecutionTimeIcon,
   SubjectIcon,
-  RunIcon,
+  ExecutionIcon,
   LaunchIcon,
   SettingsIcon,
   NavigateNextIcon,

@@ -9,6 +9,7 @@ import HomePage from './containers/HomePage'
 // import EnvironmentsPage from './containers/EnvironmentsPage'
 import PipelinePage from './containers/PipelinePage'
 import DatasetPage from './containers/DatasetPage'
+import ExecutionPage from './containers/ExecutionPage'
 
 if (process.env.NODE_ENV === 'production') {
   const GACode = 'UA-19224662-10'
@@ -39,6 +40,7 @@ export class RouterPage extends Component {
           <Route exact={true} path="/environments" component={EnvironmentsPage} /> */}
           <Route exact={true} path="/pipelines/:pipeline" component={PipelinePage} />
           <Route exact={true} path="/datasets/:dataset" component={DatasetPage} />
+          <Route exact={true} path="/executions/" component={ExecutionPage} />
           {/* <Route exact={true} path="/pipelines" component={PipelinesPage} /> */}
           <Route exact={true} path="/" component={HomePage} />
         </Switch>
