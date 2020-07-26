@@ -3,9 +3,9 @@ import { withStyles, Typography } from '@material-ui/core';
 import Grid from '@material-ui/core/Grid'
 
 import Paper from '@material-ui/core/Paper';
-import ExpansionPanel from '@material-ui/core/ExpansionPanel';
-import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
-import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
+import Accordion from '@material-ui/core/Accordion';
+import AccordionDetails from '@material-ui/core/AccordionDetails';
+import AccordionSummary from '@material-ui/core/AccordionSummary';
 import MenuItem from '@material-ui/core/MenuItem';
 import TextField from '@material-ui/core/TextField';
 import Switch from '@material-ui/core/Switch';
@@ -36,13 +36,13 @@ class GeneralPage extends Component {
 
     return (
       <React.Fragment>
-        <ExpansionPanel expanded>
-          <ExpansionPanelSummary disabled>
+        <Accordion expanded>
+          <AccordionSummary disabled>
             <Typography variant="h6" className={classes.sectionTitle}>
               Execution
             </Typography>
-          </ExpansionPanelSummary>
-          <ExpansionPanelDetails>
+          </AccordionSummary>
+          <AccordionDetails>
             <Grid container>
               <Grid item xs={12}>
                 <Help
@@ -178,15 +178,15 @@ class GeneralPage extends Component {
 
               </Grid>
             </Grid>
-          </ExpansionPanelDetails>
-        </ExpansionPanel>
-        <ExpansionPanel expanded>
-          <ExpansionPanelSummary disabled>
+          </AccordionDetails>
+        </Accordion>
+        <Accordion expanded>
+          <AccordionSummary disabled>
             <Typography variant="h6" className={classes.sectionTitle}>
               Outputs
             </Typography>
-          </ExpansionPanelSummary>
-          <ExpansionPanelDetails>
+          </AccordionSummary>
+          <AccordionDetails>
             <Grid container>
               <Grid item xs={12}>
                 <Help
@@ -388,8 +388,8 @@ class GeneralPage extends Component {
                 </FormControl>
               </Grid>
             </Grid>
-          </ExpansionPanelDetails>
-        </ExpansionPanel>
+          </AccordionDetails>
+        </Accordion>
       </React.Fragment>
     )
   }
