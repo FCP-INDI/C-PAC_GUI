@@ -73,6 +73,7 @@ function* loadConfig(action) {
 
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
   let initialState = null;
 
   yield getPipelineDefault().then((template) => {
@@ -231,11 +232,15 @@ function* loadConfig(action) {
     } catch (e) {
     }
 =======
+=======
+    // @TODO separate a pipeline saga for itself (config & main)
+>>>>>>> 6b4078d (clean up old environments, add execution stuff)
     pipelines: [
       cpac.pipeline.template
     ],
 >>>>>>> 31b5f4b (data config viewer)
 
+<<<<<<< HEAD
     if (!initialState) {
       initialState = config;
       localStorage.setItem('state', JSON.stringify(config));
@@ -278,6 +283,8 @@ function* loadConfig(action) {
 
   yield put(configLoaded(initialState));
 =======
+=======
+>>>>>>> 6b4078d (clean up old environments, add execution stuff)
   }
 
   let localState = null

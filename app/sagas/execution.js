@@ -1,14 +1,16 @@
 import { eventChannel } from 'redux-saga'
 import { all, delay, select, call, cancelled, put, race, take, takeEvery } from 'redux-saga/effects'
-import uuid from 'uuid/v4'
 
 import {
-  EXECUTION_PREPROCESS,
-  EXECUTION_PREPROCESS_SAVE,
-  EXECUTION_PREPROCESS_SCHEDULED,
-  EXECUTION_PREPROCESS_SUBJECT_SCHEDULED,
-  EXECUTION_PREPROCESS_SUCCESS,
-  EXECUTION_PREPROCESS_ERROR,
+  EXECUTION_CONFIG_LOAD,
+  EXECUTION_CONFIG_LOAD_SUCCESS,
+  EXECUTION_CONFIG_LOAD_ERROR,
+  EXECUTION_PREPROCESS_DATASET,
+  EXECUTION_PREPROCESS_DATASET_SUCCESS,
+  EXECUTION_PREPROCESS_DATASET_ERROR,
+  EXECUTION_PREPROCESS_DATASET_SCHEDULED,
+  EXECUTION_PREPROCESS_DATASET_FINISHED,
+  EXECUTION_PREPROCESS_DATASET_FETCHED,
 } from '../actions/execution'
 
 import {
@@ -16,85 +18,125 @@ import {
   CPACPY_SCHEDULER_CONNECT_SEND,
 } from '../actions/cpacpy'
 
+import {
+  executions,
+} from './execution.default'
+
 import cpac from '@internal/c-pac'
 
-function* preprocess({ dataset, view=null, pipeline }) {
+function* loadLocalState () {
+  const initialState = {
+    version: VERSION,
+    executions,
+  }
 
-  const execution = uuid()
+  let localState = null
+  try {
+    localState = JSON.parse(localStorage.getItem('execution'))
+  } catch (e) {
+  }
+
+  if (!localState) {
+    localState = initialState
+    localStorage.setItem('execution', JSON.stringify(localState))
+  }
 
   yield put({
-    type: EXECUTION_PREPROCESS_SAVE,
-    execution,
-    dataset,
-    view,
-    pipeline
+    type: EXECUTION_CONFIG_LOAD_SUCCESS,
+    config: localState
   })
+}
 
+function* saveLocalState() {
+  const config = yield select((state) => state.execution);
+  localStorage.setItem('execution', JSON.stringify(config.toJS()))
+}
+
+function* clearLocalState(config) {
+  localStorage.removeItem('execution')
+}
+
+function* preprocessDataset({ dataset, dataSettings, version }) {
   yield put({
     type: CPACPY_SCHEDULER_CALL,
     scheduler: 'localhost:3333',
     method: 'POST',
-    endpoint: '/schedule/pipeline',
+    endpoint: '/schedule',
     data: {
-      execution,
-      data_config: cpac.data_config.dump(dataset.toJS())
-      pipeline: pipeline ? cpac.data_settings.dump(pipeline.toJS()) : null
+      type: 'data_settings',
+      data_settings: cpac.data_settings.dump(dataSettings.toJS(), version),
     },
     response: {
       success: (data) => ({
-        type: EXECUTION_PREPROCESS_SCHEDULED,
-        execution, data
+        type: EXECUTION_PREPROCESS_DATASET_SCHEDULED,
+        dataset, data
       }),
       error: (exception) => ({
-        type: EXECUTION_PREPROCESS_ERROR,
-        execution, exception
+        type: EXECUTION_PREPROCESS_DATASET_ERROR,
+        dataset, exception
       }),
     }
   })
 }
 
-function* preprocessWatch({ execution, data: { schedule } }) {
+function* preprocessDatasetWatch({ dataset, data: { schedule } }) {
   yield put({
     type: CPACPY_SCHEDULER_CONNECT_SEND,
     scheduler: 'localhost:3333',
-    action: (scheduler, data) => ({
-      type: EXECUTION_PREPROCESS_SUBJECT_SCHEDULED,
-      execution, data
-    }),
+    action: (scheduler, data) => {
+      if (data.type !== "End") {
+        return
+      }
+      return {
+        type: EXECUTION_PREPROCESS_DATASET_FINISHED,
+        dataset, data
+      }
+    },
     error: (exception) => ({
-      type: EXECUTION_PREPROCESS_ERROR,
-      execution, exception
+      type: EXECUTION_PREPROCESS_DATASET_ERROR,
+      dataset, exception
     }),
     message: {
       type: 'watch',
-      schedule, children: true,
+      schedule,
     }
   })
 }
 
-function* preprocessSubjectWatch({ execution, data: { schedule } }) {
+function* preprocessDatasetFetchResult({ dataset, data: { id, statuses, available_results } }) {
   yield put({
-    type: CPACPY_SCHEDULER_CONNECT_SEND,
+    type: CPACPY_SCHEDULER_CALL,
     scheduler: 'localhost:3333',
-    action: (scheduler, data) => ({
-      type: EXECUTION_PREPROCESS_SUBJECT_SCHEDULED,
-      execution, data
-    }),
-    error: (exception) => ({
-      type: EXECUTION_PREPROCESS_ERROR,
-      execution, exception
-    }),
-    message: {
-      type: 'watch',
-      schedule, children: true,
+    method: 'GET',
+    endpoint: `/schedule/${id}/result/data_config`,
+    response: {
+      success: (data) => ({
+        type: EXECUTION_PREPROCESS_DATASET_FETCHED,
+        dataset, data: data.result.data_config,
+      }),
+      error: (exception) => ({
+        type: EXECUTION_PREPROCESS_DATASET_ERROR,
+        dataset, exception
+      }),
     }
+  })
+}
+
+function* preprocessDatasetResult({ dataset, data }) {
+  yield put({
+    type: EXECUTION_PREPROCESS_DATASET_SUCCESS,
+    dataset,
+    config: cpac.data_config.parse(data),
   })
 }
 
 export default function* configSaga() {
   yield all([
-    takeEvery(EXECUTION_PREPROCESS, preprocess),
-    takeEvery(EXECUTION_PREPROCESS_SCHEDULED, preprocessWatch),
-    takeEvery(EXECUTION_PREPROCESS_SUBJECT_SCHEDULED, preprocessSubjectWatch),
+    takeEvery(EXECUTION_CONFIG_LOAD, loadLocalState),
+    takeEvery(EXECUTION_PREPROCESS_DATASET_SUCCESS, saveLocalState),
+    takeEvery(EXECUTION_PREPROCESS_DATASET, preprocessDataset),
+    takeEvery(EXECUTION_PREPROCESS_DATASET_SCHEDULED, preprocessDatasetWatch),
+    takeEvery(EXECUTION_PREPROCESS_DATASET_FINISHED, preprocessDatasetFetchResult),
+    takeEvery(EXECUTION_PREPROCESS_DATASET_FETCHED, preprocessDatasetResult),
   ])
 }

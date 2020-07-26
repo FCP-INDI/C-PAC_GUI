@@ -5,6 +5,8 @@ import Avatar from '@material-ui/core/Avatar';
 import Typography from '@material-ui/core/Typography';
 
 
+// @TODO check if it is really used
+
 class Header extends Component {
 
   static styles = theme => {

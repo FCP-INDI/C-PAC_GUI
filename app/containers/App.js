@@ -49,7 +49,7 @@ import {
   NextIcon,
   PipelineIcon,
   SubjectIcon,
-  RunIcon,
+  ExecutionIcon,
   EnvironmentIcon,
   ProjectIcon,
   ProjectOpenIcon,
@@ -94,6 +94,7 @@ class App extends React.Component {
 
     bread: {
       flexShrink: 0,
+      flexGrow: 0,
     },
     crumbs: {
       flexGrow: 1,

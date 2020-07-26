@@ -27,7 +27,7 @@ import {
   PipelineIcon,
   DatasetIcon,
   GroupIcon,
-  RunIcon,
+  ExecutionIcon,
   HelpIcon,
 } from 'components/icons'
 
@@ -52,6 +52,10 @@ class HomePage extends Component {
     }
   })
 
+  handleOpen = () => {
+    this.props.history.push(`/executions/`)
+  }
+
   render() {
     const { classes, pipelines } = this.props
 
@@ -72,6 +76,15 @@ class HomePage extends Component {
                   avatar={<DatasetIcon />}
                   className={classes.expand}>
                 <DatasetList />
+              </Box>
+            </Grid>
+            <Grid item xs={12} className={classes.cell}>
+              <Box title="Executions"
+                  avatar={<ExecutionIcon />}
+                  className={classes.expand}>
+
+                <a onClick={this.handleOpen}>Executions</a>
+
               </Box>
             </Grid>
           </Grid>
