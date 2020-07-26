@@ -12,7 +12,10 @@ export default createMuiTheme({
   props: {
     MuiGrid: {
       spacing: 2
-    }
+    },
+    MuiPaper: {
+      square: true
+    },
   },
   overrides: {
     MuiOutlinedInput: {
