@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { withRouter, Link } from 'react-router-dom'
-import { withStyles } from '@material-ui/core'
+import { withStyles } from '@material-ui/core/styles'
 
 import Typography from '@material-ui/core/Typography'
 import Grid from '@material-ui/core/Grid'
@@ -39,7 +39,7 @@ class DatasetList extends Component {
     const { classes, datasets } = this.props
 
     return (
-      <React.Fragment>
+      <>
         <Grid container>
           {
             datasets && datasets.map((dataset) => (
@@ -49,7 +49,7 @@ class DatasetList extends Component {
             ))
           }
         </Grid>
-      </React.Fragment>
+      </>
     )
   }
 }
@@ -61,4 +61,7 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = {
 }
 
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(withStyles(DatasetList.styles)(DatasetList)))
+export default
+  withRouter(connect(mapStateToProps, mapDispatchToProps)
+    (withStyles(DatasetList.styles)
+      (DatasetList)))

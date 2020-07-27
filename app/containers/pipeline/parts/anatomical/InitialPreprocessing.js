@@ -39,7 +39,7 @@ class InitialPreprocessing extends Component {
     const { classes, configuration, advanced, onChange } = this.props
 
     return (
-      <React.Fragment>
+      <>
         <FormControl fullWidth>
           <FormGroup row>
             <Help
@@ -75,7 +75,7 @@ class InitialPreprocessing extends Component {
             </Help>
           </FormGroup>
         </FormControl>
-      </React.Fragment>
+      </>
     )
   }
 }

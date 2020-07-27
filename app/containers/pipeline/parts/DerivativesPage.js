@@ -63,7 +63,7 @@ class DerivativesPage extends Component {
     const { classes, configuration, onChange, onValueChange } = this.props
 
     return (
-      <React.Fragment>
+      <>
 
         {
           this.renderSection(
@@ -121,7 +121,7 @@ class DerivativesPage extends Component {
           )
         }
 
-      </React.Fragment>
+      </>
     )
   }
 }

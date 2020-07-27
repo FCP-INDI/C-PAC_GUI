@@ -125,7 +125,7 @@ class SkullStripping extends Component {
     const { classes, configuration, advanced, onChange } = this.props
 
     return (
-      <React.Fragment>
+      <>
         <Dialog
           open={this.state.betOptions && configuration.getIn(['anatomical', 'skull_stripping', 'methods', 'bet', 'enabled'])}
           onClose={this.handleCloseBet}
@@ -910,7 +910,7 @@ class SkullStripping extends Component {
             </Help>
           </FormGroup>
         </FormControl>
-      </React.Fragment>
+      </>
     )
   }
 }

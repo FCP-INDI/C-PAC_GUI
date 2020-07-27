@@ -55,7 +55,7 @@ class Registration extends Component {
     const resolution = configuration.getIn("anatomical.registration.resolution".split("."))
 
     return (
-      <React.Fragment>
+      <>
         <Help
           type="pipeline"
           regex={/^resolution_for_anat/}
@@ -1537,7 +1537,7 @@ class Registration extends Component {
             </Grid>
           </Grid>
         </FormGroup>
-      </React.Fragment>
+      </>
     )
   }
 }

@@ -26,7 +26,7 @@ class DistortionCorrection extends Component {
     const { classes, configuration, onChange } = this.props
 
     return(
-      <React.Fragment>
+      <>
         <FormGroup>
           <FormLabel>
             <Help
@@ -221,7 +221,7 @@ class DistortionCorrection extends Component {
             </Grid>
            </Grid> 
         </FormGroup>
-      </React.Fragment>
+      </>
     )
   }
 }

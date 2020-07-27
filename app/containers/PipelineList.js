@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { withRouter, Link } from 'react-router-dom'
-import { withStyles } from '@material-ui/core'
+import { withStyles } from '@material-ui/core/styles'
 
 import Typography from '@material-ui/core/Typography'
 import Grid from '@material-ui/core/Grid'
@@ -65,7 +65,7 @@ class PipelineList extends Component {
     const { classes, pipelines } = this.props
 
     return (
-      <React.Fragment>
+      <>
         <Dialog
           open={this.state.openDeleteConfirm}
           onClose={this.handleClose}
@@ -94,7 +94,7 @@ class PipelineList extends Component {
             ))
           }
         </Grid>
-      </React.Fragment>
+      </>
     )
   }
 }

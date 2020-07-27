@@ -9,7 +9,7 @@ import {
   pipelineDownload,
 } from 'actions/pipeline'
 
-import { withStyles } from '@material-ui/core';
+import { withStyles } from '@material-ui/core/styles';
 
 import Grid from '@material-ui/core/Grid';
 import PipelineEditor from 'containers/pipeline/PipelineEditor';
@@ -224,7 +224,7 @@ class PipelinePage extends Component {
 
   renderTitle(pipeline) {
     return this.state.isTitleEditing ? (
-      <React.Fragment>
+      <>
         <TextField
           label="Pipeline Name"
           defaultValue={pipeline.get('name')}
@@ -240,7 +240,7 @@ class PipelinePage extends Component {
         <IconButton onClick={this.handleTitleSaveClick}>
           <SaveIcon />
         </IconButton>
-      </React.Fragment>
+      </>
     ) : (
       <div
         onMouseEnter={this.handleTitleHover}
@@ -262,7 +262,7 @@ class PipelinePage extends Component {
     }
 
     const tools = (
-      <React.Fragment>
+      <>
         <Tooltip title="Download config file">
           <IconButton onClick={this.handleDownload}>
             <DownloadIcon />
@@ -284,7 +284,7 @@ class PipelinePage extends Component {
             </IconButton>
           </span>
         </Tooltip>
-      </React.Fragment>
+      </>
     )
 
     return (
@@ -294,14 +294,14 @@ class PipelinePage extends Component {
         {
           this.state.configuration ?
           (
-            <React.Fragment>
+            <>
             { this.state.default ?
               <div className={classes.warning}>
                 You cannot change the default template! Please, duplicate it to create your own pipeline.
               </div>
               : null }
               <PipelineEditor default={this.state.default} configuration={this.state.configuration} onChange={this.handleChange} onSave={this.handleSave} />
-            </React.Fragment>
+            </>
           )
           :
           null

@@ -64,7 +64,7 @@ class FunctionalPage extends Component {
     const { classes, configuration, onChange } = this.props
 
     return (
-      <React.Fragment>
+      <>
 
         <Accordion expanded>
           <AccordionSummary disabled>
@@ -153,7 +153,7 @@ class FunctionalPage extends Component {
           )
         }
 
-      </React.Fragment>
+      </>
     )
   }
 }

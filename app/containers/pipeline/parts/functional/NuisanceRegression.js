@@ -337,7 +337,7 @@ class NuisanceRegression extends Component {
     const { classes, configuration, onChange } = this.props
 
     return (
-      <React.Fragment>
+      <>
         { this.renderRegressor(regressor, i, 'Motion', 'Motion', true) }
         { this.renderRegressor(regressor, i, 'GlobalSignal', 'Global Signal', true, true) }
         { this.renderRegressor(regressor, i, 'GrayMatter', 'Gray Matter', true, true, true) }
@@ -371,7 +371,7 @@ class NuisanceRegression extends Component {
           </FormGroup>
         )) }
         { this.renderRegressor(regressor, i, 'tCompCor', 'tCompCor', true, true, false, (
-          <React.Fragment>
+          <>
             <FormGroup row>
               <TextField label="Threshold"
                 name={`functional.nuisance_regression.regressors.${i}.tCompCor.threshold`}
@@ -418,10 +418,10 @@ class NuisanceRegression extends Component {
                 />
               </FormControlLabelled>
             </FormGroup>
-          </React.Fragment>
+          </>
         )) }
         { this.renderRegressor(regressor, i, 'PolyOrt', 'PolyOrt', false, false, false, (
-          <React.Fragment>
+          <>
             <FormGroup row>
               <TextField label="Degree"
                 name={`functional.nuisance_regression.regressors.${i}.PolyOrt.degree`}
@@ -430,10 +430,10 @@ class NuisanceRegression extends Component {
                 fullWidth margin="normal" variant="outlined"
               />
             </FormGroup>
-          </React.Fragment>
+          </>
         )) }
         { this.renderRegressor(regressor, i, 'Bandpass', 'Bandpass', false, false, false, (
-          <React.Fragment>
+          <>
             <FormGroup row>
               <TextField label="Bottom Frequency"
                 name={`functional.nuisance_regression.regressors.${i}.Bandpass.bottom_frequency`}
@@ -456,10 +456,10 @@ class NuisanceRegression extends Component {
                 }}
               />
             </FormGroup>
-          </React.Fragment>
+          </>
         )) }
         { this.renderRegressor(regressor, i, 'Censor', 'Censor', false, false, false, (
-          <React.Fragment>
+          <>
             <FormGroup row>
               <TextField
                 select
@@ -517,9 +517,9 @@ class NuisanceRegression extends Component {
                 fullWidth margin="normal" variant="outlined"
               />
             </FormGroup>
-          </React.Fragment>
+          </>
         )) }
-      </React.Fragment>
+      </>
     )
   }
 
@@ -553,7 +553,7 @@ class NuisanceRegression extends Component {
           <FormGroup style={{flexGrow: 1, margin: '0 0 10px 0'}}>
 
             { summary ? (
-              <React.Fragment>
+              <>
                 <FormGroup row>
                   <TextField
                     select
@@ -602,13 +602,13 @@ class NuisanceRegression extends Component {
                   />
                 </FormGroup>
                 ) : null }
-              </React.Fragment>
+              </>
             ) : null }
 
             {custom}
 
             { extraction ? (
-              <React.Fragment>
+              <>
                 <FormGroup row>
                   <TextField label="Resolution"
                     name={`functional.nuisance_regression.regressors.${i}.${key}.extraction_resolution`}
@@ -630,11 +630,11 @@ class NuisanceRegression extends Component {
                     />
                   </FormControlLabelled>
                 </FormGroup>
-              </React.Fragment>
+              </>
             ) : null }
 
             { derivatives ? (
-              <React.Fragment>
+              <>
                 <FormGroup row>
                   <FormControlLabelled label="Delayed">
                     <Switch
@@ -665,7 +665,7 @@ class NuisanceRegression extends Component {
                     />
                   </FormControlLabelled>
                 </FormGroup>
-              </React.Fragment>
+              </>
             ) : null }
           </FormGroup>
         </AccordionDetails>

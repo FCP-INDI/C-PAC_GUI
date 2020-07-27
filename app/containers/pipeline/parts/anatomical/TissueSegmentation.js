@@ -85,7 +85,7 @@ class TissueSegmentation extends Component {
     const { classes, configuration, onChange } = this.props
 
     return (
-      <React.Fragment>
+      <>
 
         <FormGroup>
           <FormLabel>
@@ -413,7 +413,7 @@ class TissueSegmentation extends Component {
             </Grid>
           </Grid>
         </FormGroup>
-      </React.Fragment>
+      </>
     )
   }
 }

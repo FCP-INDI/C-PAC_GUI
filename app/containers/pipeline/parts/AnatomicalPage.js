@@ -30,7 +30,7 @@ class AnatomicalPage extends Component {
     const { classes, configuration, onChange } = this.props
 
     return (
-      <React.Fragment>
+      <>
         <Accordion expanded>
           <AccordionSummary disabled>
             <Help
@@ -105,7 +105,7 @@ class AnatomicalPage extends Component {
             </Grid>
           </AccordionDetails>
         </Accordion>
-      </React.Fragment>
+      </>
     )
   }
 }
