@@ -35,9 +35,6 @@ import {
   LaunchIcon,
   SettingsIcon,
   NavigateNextIcon,
-  TimerIcon,
-  LogIcon,
-  BrainIcon,
   DeleteIcon,
   DuplicateIcon,
 } from './icons'

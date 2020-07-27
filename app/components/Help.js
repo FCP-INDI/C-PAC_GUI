@@ -110,15 +110,15 @@ class Help extends PureComponent {
     )
 
     return (
-      <React.Fragment>
+      <>
 
         {
           this.props.children ? (
             mini ?
-              <React.Fragment>
+              <>
                 { this.props.children }
                 { button }
-              </React.Fragment>
+              </>
             :
             <Grid container spacing={0} wrap={`nowrap`} alignItems={`center`} style={style}>
               <Grid item style={subStyle}>
@@ -164,7 +164,7 @@ class Help extends PureComponent {
                   style: {
                     display: 'block', ...(
                       lineNumber == matchedRelLine ?
-                      { backgroundColor: '#FFFFFF12' } :
+                      { backgroundColor: '#FFFFFF12' } : // @TODO convert to theme.palette.common.white
                       {}
                     )
                   },
@@ -173,7 +173,7 @@ class Help extends PureComponent {
             : null }
           </Grid>
         </Popover>
-      </React.Fragment>
+      </>
     )
   }
 }

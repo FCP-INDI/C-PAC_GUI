@@ -10,7 +10,7 @@ import {
   pipelineDownload,
 } from 'actions/pipeline'
 
-import { withStyles } from '@material-ui/core';
+import { withStyles } from '@material-ui/core/styles';
 
 import Grid from '@material-ui/core/Grid';
 import PipelineEditor from 'containers/pipeline/PipelineEditor';
@@ -254,7 +254,7 @@ class PipelinePage extends Component {
 
   renderTitle(pipeline) {
     return this.state.isTitleEditing ? (
-      <React.Fragment>
+      <>
         <TextField
           label="Pipeline Name"
           defaultValue={pipeline.get('name')}
@@ -270,7 +270,7 @@ class PipelinePage extends Component {
         <IconButton onClick={this.handleTitleSaveClick}>
           <SaveIcon />
         </IconButton>
-      </React.Fragment>
+      </>
     ) : (
       <div
         onMouseEnter={this.handleTitleHover}
@@ -295,7 +295,7 @@ class PipelinePage extends Component {
     }
 
     const tools = (
-      <React.Fragment>
+      <>
         <Tooltip title="Download config file">
           <IconButton onClick={this.handleDownload}>
             <DownloadIcon />
@@ -316,8 +316,13 @@ class PipelinePage extends Component {
               <RevertIcon />
             </IconButton>
           </span>
+<<<<<<< HEAD
         </Tooltip> */}
       </React.Fragment>
+=======
+        </Tooltip>
+      </>
+>>>>>>> dcb2f54 (cleaning and code styling)
     )
 
     return (
@@ -327,14 +332,24 @@ class PipelinePage extends Component {
         {
           this.state.configuration ?
           (
+<<<<<<< HEAD
             <React.Fragment>
             { this.state.isDefault ?
+=======
+            <>
+            { this.state.default ?
+>>>>>>> dcb2f54 (cleaning and code styling)
               <div className={classes.warning}>
                 You cannot change the default template! Please, duplicate it to create your own pipeline.
               </div>
               : null }
+<<<<<<< HEAD
               <PipelineEditor { ...{schema} } isDefault={this.state.isDefault} configuration={this.state.configuration} onChange={this.handleChange} onSave={this.handleSave} />
             </React.Fragment>
+=======
+              <PipelineEditor default={this.state.default} configuration={this.state.configuration} onChange={this.handleChange} onSave={this.handleSave} />
+            </>
+>>>>>>> dcb2f54 (cleaning and code styling)
           )
           :
           null

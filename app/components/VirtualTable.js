@@ -133,7 +133,7 @@ class VirtualTable extends React.PureComponent {
     const { headerHeight, classes } = this.props
 
     return (
-      <React.Fragment>
+      <>
         { column.filter && column.filter.renderer ? 
           <Popover
             open={!!this.state.columns[column.dataKey].open}
@@ -178,7 +178,7 @@ class VirtualTable extends React.PureComponent {
         >
           { label }
         </TableCell>
-      </React.Fragment>
+      </>
     )
   }
 

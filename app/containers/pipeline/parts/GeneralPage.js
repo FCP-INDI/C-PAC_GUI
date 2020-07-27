@@ -35,7 +35,7 @@ class GeneralPage extends Component {
     const { classes, configuration, onChange } = this.props
 
     return (
-      <React.Fragment>
+      <>
         <Accordion expanded>
           <AccordionSummary disabled>
             <Typography variant="h6" className={classes.sectionTitle}>
@@ -390,7 +390,7 @@ class GeneralPage extends Component {
             </Grid>
           </AccordionDetails>
         </Accordion>
-      </React.Fragment>
+      </>
     )
   }
 }

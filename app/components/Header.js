@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { withStyles } from '@material-ui/core';
+import { withStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
 import Avatar from '@material-ui/core/Avatar';
 import Typography from '@material-ui/core/Typography';
@@ -70,8 +70,8 @@ class HeaderAvatar extends Component {
 
   static styles = theme => ({
     root: {
-      background: "#FFF",
-      color: "#666"
+      background: theme.palette.common.white,
+      color: theme.palette.grey[700]
     },
   });
 

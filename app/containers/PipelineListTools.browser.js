@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { withRouter, Link } from 'react-router-dom'
-import { withStyles } from '@material-ui/core'
+import { withStyles } from '@material-ui/core/styles'
 
 import Typography from '@material-ui/core/Typography'
 import Grid from '@material-ui/core/Grid'
@@ -81,7 +81,7 @@ class PipelineListTools extends Component {
     const { classes, projects, pipelines, datasets } = this.props
 
     return (
-      <React.Fragment>
+      <>
         <input type="file" id="pipeline-upload" onChange={this.handleSelectPipeline} style={{
           opacity: 0,
           position: 'absolute',
@@ -97,7 +97,7 @@ class PipelineListTools extends Component {
             <UploadIcon />
           </IconButton>
         </Tooltip>
-      </React.Fragment>
+      </>
     )
   }
 }

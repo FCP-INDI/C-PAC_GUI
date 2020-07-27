@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { withStyles } from '@material-ui/core'
+import { withStyles } from '@material-ui/core/styles'
 import clsx from 'clsx'
 
 import Paper from '@material-ui/core/Paper'
@@ -29,13 +29,13 @@ class Box extends Component {
       background: ({ inner }) => inner ? theme.palette.primary.light : theme.palette.primary.main,
     },
     headerText: {
-      color: "#444",
+      color: theme.palette.grey[800],
       padding: `0 ${theme.spacing(2)}px`,
       flexGrow: 1
     },
     headerAvatar: {
-      background: "#FFF",
-      color: "#666"
+      background: theme.palette.common.white,
+      color: theme.palette.grey[700],
     },
     headerTools: {
 

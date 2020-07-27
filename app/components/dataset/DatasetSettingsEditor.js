@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 
-import { withStyles } from '@material-ui/core'
+import { withStyles } from '@material-ui/core/styles'
 
 import Content from '../Content'
 import Header, { HeaderText, HeaderAvatar, HeaderTools } from '../Header'
@@ -46,7 +46,7 @@ class DatasetSettingsEditor extends Component {
   renderBidsFormatForm() {
     const { settings } = this.state
     return (
-      <React.Fragment>
+      <>
         <TextField
           label="Base Directory"
           name="base_directory" value={settings.getIn(['base_directory'])}
@@ -54,14 +54,14 @@ class DatasetSettingsEditor extends Component {
           fullWidth={true} margin="normal" variant="outlined"
           helperText='The base directory of the BIDS-organized data.'
         />
-      </React.Fragment>
+      </>
     )
   }
 
   renderCustomFormatForm() {
     const { settings } = this.state
     return (
-      <React.Fragment>
+      <>
         <TextField
           label="Anatomical Path Template"
           name="anatomical_path_template" value={settings.getIn(['anatomical_path_template'])}
@@ -101,7 +101,7 @@ class DatasetSettingsEditor extends Component {
           fullWidth={true} margin="normal" variant="outlined"
           helperText=''
         />
-      </React.Fragment>
+      </>
     )
   }
 
@@ -151,7 +151,7 @@ class DatasetSettingsEditor extends Component {
     )
 
     return (
-      <React.Fragment>
+      <>
         <TextField
           select
           label="Dataset Format"
@@ -193,7 +193,7 @@ class DatasetSettingsEditor extends Component {
           fullWidth={true} margin="normal" variant="outlined"
           helperText=''
         />
-      </React.Fragment>
+      </>
     )
   }
 }

@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Immutable from 'immutable';
 
-import { withStyles } from '@material-ui/core';
+import { withStyles } from '@material-ui/core/styles';
 
 import Content from '../../components/Content';
 import Header, { HeaderText, HeaderAvatar, HeaderTools } from '../../components/Header';
@@ -119,6 +119,7 @@ class PipelineEditor extends Component {
           textColor="primary"
           variant="scrollable"
         >
+<<<<<<< HEAD
           {
             tabSequence.map((k) => (
               <Tab label={formatLabel(k)} value={k} key={`tabtab-${k}`} />
@@ -133,6 +134,35 @@ class PipelineEditor extends Component {
             level={1}
           />
         </Collapse>
+=======
+          <Tab label="General" />
+          <Tab label="Anatomical" />
+          { configuration.getIn(["anatomical", "enabled"]) ?
+          <Tab label={(
+            <>
+              <Switch
+                name="functional.enabled"
+                checked={configuration.getIn(["functional", "enabled"])}
+                onClick={disable}
+                onChange={this.handleStateChange}
+                color="primary"
+              />
+              Functional
+            </>
+          )} classes={{
+            wrapper: classes.tabWrap
+          }} />
+          : null }
+          { configuration.getIn(["derivatives", "enabled"]) ?
+          <Tab label="Derivatives" />
+          : null }
+        </Tabs>
+
+        <Collapse in={tab === 0}><GeneralPage configuration={configuration} onChange={onChange} /></Collapse>
+        <Collapse in={tab === 1}><AnatomicalPage configuration={configuration} onChange={onChange} /></Collapse>
+        <Collapse in={tab === 2}><FunctionalPage configuration={configuration} onChange={onChange} /></Collapse>
+        <Collapse in={tab === 3}><DerivativesPage configuration={configuration} onChange={onChange} /></Collapse>
+>>>>>>> dcb2f54 (cleaning and code styling)
       </>
     );
   }
