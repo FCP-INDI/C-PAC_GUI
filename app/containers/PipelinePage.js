@@ -30,7 +30,6 @@ import { fromJS, isImmutable } from 'immutable';
 
 import {
   PipelineIcon,
-  SubjectIcon,
   ExpandMoreIcon,
   NavigateNextIcon,
   DownloadIcon,
@@ -75,7 +74,7 @@ class PipelinePage extends Component {
       dirty = true
       version = "0"
     } else {
-      version = versions.keySeq().max()
+      version = `${versions.keySeq().map(i => +i).max()}`
     }
 
     this.state = {
@@ -120,7 +119,7 @@ class PipelinePage extends Component {
         dirty = true
         version = "0"
       } else {
-        version = versions.keySeq().max()
+        version = `${versions.keySeq().map(i => +i).max()}`
       }
 
       this.setState({
@@ -328,7 +327,7 @@ const mapDispatchToProps = {
 }
 
 const areStatesEqual = (next, prev) => {
-  // TODO review
+  // @TODO review
   return false
 }
 

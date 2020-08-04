@@ -1,45 +1,120 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { withStyles } from '@material-ui/core/styles'
-import { grey } from '@material-ui/core/colors'
 import clsx from 'clsx'
 
-console.log(grey)
+import Popper from '@material-ui/core/Popper'
+import Typography from '@material-ui/core/Typography'
+import Fade from '@material-ui/core/Fade'
+import Paper from '@material-ui/core/Paper'
+import Tooltip from '@material-ui/core/Tooltip'
+import ClickAwayListener from '@material-ui/core/ClickAwayListener'
+
+import { styles as TooltipStyles } from '@material-ui/core/Tooltip/Tooltip'
+import capitalize from '@material-ui/core/utils/capitalize';
+
 
 class ExecutionNodesGraph extends Component {
 
   static styles = theme => ({
     container: {
-      display: 'flex',
-      flexDirection: 'column',
-      flexWrap: 'wrap-reverse',
+      display: 'grid',
+      flexGrow: 1,
 
-      // display: 'grid',
-      // gridAutoFlow: 'row dense',
-      // gridTemplateColumns: 'repeat(20, auto)',
-      // display: 'grid',
-      // flexGrow: 1,
-      // gridTemplateColumns: 'repeat(30, 1fr)',
-      // gridTemplateRows: 'repeat(autoFit, 250px)',
-      // justifyContent: 'center',
-      // alignContent: 'center',
-      // direction: 'rtl',
+      gridTemplateColumns: 'repeat(30, 1fr)',
+      [theme.breakpoints.only('xs')]: {
+        gridTemplateColumns: 'repeat(20, 1fr)',
+      },
+      [theme.breakpoints.only('sm')]: {
+        gridTemplateColumns: 'repeat(30, 1fr)',
+      },
+      [theme.breakpoints.only('md')]: {
+        gridTemplateColumns: 'repeat(25, 1fr)',
+      },
+      [theme.breakpoints.between('xs', 'sm')]: {
+        marginTop: theme.spacing(2),
+      },
+      justifyContent: 'center',
+      alignContent: 'center',
+      direction: 'rtl',
+      overflow: 'hidden',
     },
     square: {
       display: 'block',
-      // paddingTop: '100%',
-      height: 10,
-      width: 10, //({ nodes }) => `${20 / 60 * 100}%`,
-      boxShadow: 'inset 0 0 1px #000000',
+      paddingTop: '100%',
+      boxShadow: 'inset 0 0 1px #FFF',
+    },
+    active: {
+      boxShadow: 'inset 0 0 5px #FFF',
     },
     running: { backgroundColor: theme.palette.info.light },
     success: { backgroundColor: theme.palette.success.light },
     error: { backgroundColor: theme.palette.error.light },
-    unknown: { backgroundColor: grey[400] },
+    unknown: { backgroundColor: theme.palette.grey[400] },
+
+    nomouse: { pointerEvents: 'none' },
+
+    ...TooltipStyles(theme),
   })
+
+  state = {
+    node: false,
+    nodeI: -1,
+  }
+
+  constructor(props) {
+    super(props);
+    this.arrowRef = React.createRef()
+    this.gridRef = React.createRef()
+    this.anchorEl = null
+  }
+
+  handleEnter = (e) => {
+    e.persist();
+
+    let clientX = e.clientX
+    let clientY = e.clientY
+    if (e.type === 'touchstart' && e.targetTouches.length) {
+      clientX = e.targetTouches[0].clientX
+      clientY = e.targetTouches[0].clientY
+    }
+
+    this.anchorEl = {
+      getBoundingClientRect: () => ({
+        left: clientX,
+        right: clientX,
+        top: clientY,
+        bottom: clientY,
+        width: 0,
+        height: 0,
+        x: clientX,
+        y: clientY,
+      }),
+      get clientWidth() {
+        return window.innerWidth;
+      },
+      get clientHeight() {
+        return window.innerHeight;
+      },
+    }
+  }
+  
+  handleHover = (node, nodeI) => (e) => {
+    this.setState({ node, nodeI })
+  }
+
+  handleClose = (e) => {
+    const elementRelated = event.toElement || event.relatedTarget
+    if (this.gridRef.current && elementRelated.parentNode == this.gridRef.current) {
+      return
+    }
+    this.anchorEl = null
+    this.setState({ node: null, nodeI: -1 })
+  }
 
   render() {
     const { classes, nodes } = this.props
+    const { node, nodeI } = this.state
     const statuses = ['running', 'success', 'error', 'unknown']
 
     const bp = {
@@ -49,25 +124,56 @@ class ExecutionNodesGraph extends Component {
     }
 
     return (
-      <div className={classes.container}>
-        {
-          nodes
-            .valueSeq()
-            .slice(0, 67)
-            .sortBy((l) => l.get('start'))
-            .map((l, i) => {
-              const status = 
-                i < bp.success ? 'success' : (
-                  i < bp.running + bp.success ? 'running' : (
-                    i < bp.error + bp.running + bp.success ? 'error' : 'unknown'
-                  )
+      <>
+        <Popper
+          className={clsx(classes.popper, classes.popperArrow)}
+          placement={'bottom'}
+          anchorEl={this.anchorEl}
+          open={!!this.anchorEl}
+          modifiers={{
+            flip: {
+              enabled: true,
+            },
+            preventOverflow: {
+              enabled: true,
+              boundariesElement: 'scrollParent',
+            },
+            arrow: {
+              enabled: true,
+              element: this.arrowRef.current,
+            },
+          }}
+        >
+          {({ placement: placementInner }) => (
+          <div
+            className={clsx(
+              classes.tooltip, classes.touch, classes.tooltipArrow, classes.nomouse,
+              classes[`tooltipPlacement${capitalize(placementInner.split('-')[0])}`],
+            )}
+          >
+            { node.get('name') }
+            <span className={classes.arrow} ref={this.arrowRef} />
+          </div>
+          )}
+        </Popper>
+        
+        <div className={classes.container} ref={this.gridRef} onMouseOver={this.handleEnter} onMouseMove={this.handleEnter} onMouseOut={this.handleClose}>
+          {
+            nodes
+              .map((l, i) => {
+                const status = l.get('status')
+                return (
+                  <div
+                    key={i}
+                    className={clsx(classes.square, classes[status || 'unknown'], i === nodeI ? classes.active : null)}
+                    onMouseOver={this.handleHover(l, i)}
+                    onMouseOut={this.handleClose}
+                  />
                 )
-              return (
-                <div key={i} className={clsx(classes.square, classes[status])}></div>
-              )
-            })
-        }
-      </div>
+              })
+          }
+        </div>
+      </>
     )
   }
 }

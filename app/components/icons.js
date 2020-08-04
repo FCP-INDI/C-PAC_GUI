@@ -12,10 +12,9 @@ export { default as MenuIcon } from '@material-ui/icons/Menu'
 export { default as AuthErrorIcon } from '@material-ui/icons/Lock'
 export { default as ErrorIcon } from '@material-ui/icons/Error'
 export { default as DoneIcon } from '@material-ui/icons/Done'
-export { default as TimerIcon } from '@material-ui/icons/Timer'
-export { default as LogIcon } from '@material-ui/icons/Note'
 export { default as HomeIcon } from '@material-ui/icons/Home'
 export { default as NextIcon } from '@material-ui/icons/KeyboardArrowRight'
+export { default as PreviousIcon } from '@material-ui/icons/KeyboardArrowLeft'
 export { default as DownloadIcon } from '@material-ui/icons/CloudDownload'
 export { default as SaveIcon } from '@material-ui/icons/Save'
 export { default as RevertIcon } from '@material-ui/icons/Restore'
@@ -42,22 +41,89 @@ export { default as PipelineStepIcon } from '@material-ui/icons/Extension'
 export { default as PipelineExecutionTimeIcon } from '@material-ui/icons/AccessTime'
 
 export { default as DatasetIcon } from '@material-ui/icons/Accessibility'
-export { default as SubjectIcon } from '@material-ui/icons/Accessibility'
-export { default as ParticipantIcon } from '@material-ui/icons/Accessibility'
+export { default as DatasetSubjectIcon } from '@material-ui/icons/Accessibility'
+export { default as DatasetParticipantIcon } from '@material-ui/icons/Accessibility'
+export { default as DatasetSiteIcon } from '@material-ui/icons/Domain'
+export { default as DatasetSessionIcon } from '@material-ui/icons/Timelapse'
 
 export { default as SchedulerIcon } from '@material-ui/icons/DeveloperBoard'
+export { default as SchedulerStatusIcon } from '@material-ui/icons/Info'
 export { default as SchedulerAwsIcon } from '@material-ui/icons/Cloud'
 export { default as SchedulerLocalIcon } from '@material-ui/icons/Laptop'
 export { default as SchedulerApiIcon } from '@material-ui/icons/SettingsRemote'
 export { default as SchedulerSshIcon } from '@material-ui/icons/Link'
-export { default as SchedulerDockerIcon } from '@material-ui/icons/Devices'
+
+export const SchedulerBackendDockerIcon = (props) => 
+<SvgIcon viewBox="0 0 40 40" {...props}>
+  <path d="M 10 5 L 10 10 L 15 10 L 15 5 Z M 17.5 5 L 17.5 10 L 22.5 10 L 22.5 5 Z M 29.496094 11.679688 L 28.480469 12.425781
+    C 28.480469 12.425781 27.632812 13.050781 26.792969 14.023438 C 25.949219 14.996094 25 16.378906 25 18.125 C 25 19.351562
+    25.101562 19.410156 25.199219 20 L 2.449219 20 L 2.5 21.296875 C 2.636719 24.699219 3.6875 27.5625 5.3125 29.808594
+    L 5.3125 30 L 5.464844 30 C 7.824219 33.136719 11.347656 34.988281 15.308594 35 L 15.3125 35 C 20.035156 35 23.308594 33.875
+    25.710938 31.910156 C 27.945312 30.082031 29.320312 27.558594 30.734375 24.859375 C 35.34375 24.453125 37.375 20.859375
+    37.375 20.859375 L 37.796875 19.992188 L 37.066406 19.367188 C 37.066406 19.367188 34.976562 17.90625 32.222656 17.714844
+    C 31.792969 15.027344 30.234375 12.703125 30.234375 12.703125 Z M 2.5 12.5 L 2.5 17.5 L 7.5 17.5 L 7.5 12.5 Z M 10 12.5 L
+    10 17.5 L 15 17.5 L 15 12.5 Z M 17.5 12.5 L 17.5 17.5 L 22.5 17.5 L 22.5 12.5 Z M 28.757812 15.582031 C 29.289062 16.515625
+    30 17.488281 30 18.75 L 30 20.148438 L 31.386719 19.992188 C 32.660156 19.847656 33.679688 20.246094 34.429688 20.648438
+    C 33.800781 21.457031 32.675781 22.5 30 22.5 L 29.238281 22.5 L 28.886719 23.179688 C 27.390625 26.082031 26.050781 28.402344
+    24.132812 29.976562 C 22.210938 31.546875 19.652344 32.5 15.316406 32.5 C 12.777344 32.492188 10.515625 31.617188 8.765625
+    30 L 12.5 30 L 12.5 27.5 L 6.851562 27.5 C 6.0625 26.09375 5.492188 24.445312 5.253906 22.5 L 28.296875 22.5 L 27.75 20.855469
+    C 27.75 20.855469 27.5 20.195312 27.5 18.125 C 27.5 17.371094 28.035156 16.40625 28.679688 15.660156 C 28.722656 15.613281
+    28.71875 15.625 28.757812 15.582031 Z M 16.25 25 C 15.558594 25 15 25.558594 15 26.25 C 15 26.941406 15.558594 27.5 16.25 27.5
+    C 16.941406 27.5 17.5 26.941406 17.5 26.25 C 17.5 25.558594 16.941406 25 16.25 25 Z M 16.25 25 "/>
+</SvgIcon>
+
+export const SchedulerBackendSingularityIcon = (props) => 
+<SvgIcon viewBox="0 0 40 40" {...props}>
+  <path d="M 21.448 5.285 C 22.419 5.285 23.403 5.333 24.4 5.426 C 25.396 5.52 26.424 5.653 27.483 5.828 C 28.542 6.002 29.519 6.201
+    30.417 6.426 C 31.314 6.65 32.135 6.905 32.883 7.191 L 29.744 16.178 C 28.76 14.858 27.664 13.834 26.455 13.105 C 25.247 12.376
+    23.983 12.012 22.663 12.012 C 21.877 12.012 21.311 12.171 20.962 12.488 C 20.613 12.807 20.439 13.202 20.439 13.675 C 20.439 14.123
+    20.778 14.554 21.457 14.964 C 22.136 15.375 23.185 15.849 24.606 16.383 C 28.306 17.742 30.696 19.093 31.78 20.439 C 32.839 21.759
+    33.368 23.39 33.368 25.334 C 33.368 28.36 32.22 30.682 29.921 32.294 C 27.623 33.907 24.2 34.714 19.654 34.714 C 17.288 34.714
+    15.039 34.552 12.909 34.228 C 10.779 33.904 8.686 33.349 6.631 32.565 L 9.713 23.036 C 10.586 24.406 11.689 25.508 13.02 26.343
+    C 14.341 27.177 15.618 27.595 16.851 27.595 C 17.462 27.595 17.97 27.442 18.374 27.138 C 18.779 26.832 18.981 26.449 18.981 25.988
+    C 18.981 25.44 18.698 24.964 18.131 24.559 C 17.565 24.153 16.684 23.721 15.487 23.26 C 12.548 22.151 10.53 20.95 9.433 19.654 C 8.35
+    18.346 7.809 16.745 7.809 14.852 C 7.809 11.675 8.954 9.288 11.246 7.687 C 13.538 6.086 16.939 5.285 21.448 5.285 Z" />
+</SvgIcon>
+
+import { default as ExecutionBackendUnknownIcon } from '@material-ui/icons/Remove'
+
+export const ExecutionCurrentBackendIcon = ({ backend, ...props }) => {
+  return {
+    docker: <SchedulerBackendDockerIcon key="docker" {...props} />,
+    singularity: <SchedulerBackendSingularityIcon key="singularity" {...props} />,
+    slurm: <ExecutionBackendUnknownIcon key="slurm" {...props} />,
+    awsbatch: <ExecutionBackendUnknownIcon key="awsbatch" {...props} />,
+    null: <ExecutionBackendUnknownIcon key="null" {...props} />,
+  }[backend] || null
+}
 
 export { default as ExecutionIcon } from '@material-ui/icons/PlayCircleFilled'
 export { default as ExecutionPausedIcon } from '@material-ui/icons/PauseCircleFilled'
-export { default as ExecutionSuccess } from '@material-ui/icons/Done'
-export { default as ExecutionError } from '@material-ui/icons/Error'
-export { default as ExecutionRunning } from '@material-ui/icons/PlayArrow'
-export { default as ExecutionUnknown } from '@material-ui/icons/Remove'
+export { default as ExecutionTimingIcon } from '@material-ui/icons/Timer'
+export { default as ExecutionLogsIcon } from '@material-ui/icons/Note'
+export { default as ExecutionCrashIcon } from '@material-ui/icons/BugReport'
+
+import { default as ExecutionStatusSuccessIcon } from '@material-ui/icons/Done'
+import { default as ExecutionStatusErrorIcon } from '@material-ui/icons/Error'
+import { default as ExecutionStatusRunningIcon } from '@material-ui/icons/PlayArrow'
+import { default as ExecutionStatusUnknownIcon } from '@material-ui/icons/Remove'
+
+export {
+  ExecutionStatusSuccessIcon,
+  ExecutionStatusErrorIcon,
+  ExecutionStatusRunningIcon,
+  ExecutionStatusUnknownIcon,
+}
+
+export const ExecutionCurrentStatusIcon = (props) => {
+  return {
+    running: <ExecutionStatusRunningIcon key="running" />,
+    success: <ExecutionStatusSuccessIcon key="success" />,
+    error: <ExecutionStatusErrorIcon key="error" />,
+    unknown: <ExecutionStatusUnknownIcon key="unknown" />,
+    null: <ExecutionStatusUnknownIcon key="unknown" />,
+  }[props.status || 'null'] || null
+}
 
 import SvgIcon from '@material-ui/core/SvgIcon';
 

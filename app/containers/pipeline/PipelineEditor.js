@@ -20,7 +20,6 @@ import {
   PipelineIcon,
   RevertIcon,
   SaveIcon,
-  SubjectIcon,
 } from 'components/icons';
 
 import {

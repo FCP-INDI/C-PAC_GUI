@@ -24,7 +24,6 @@ import { Map, updateIn } from 'immutable'
 import {
   HomeIcon,
   PipelineIcon,
-  SubjectIcon,
   ExpandMoreIcon,
   NavigateNextIcon,
 } from '../icons'

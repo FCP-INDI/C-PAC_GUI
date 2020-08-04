@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { withStyles } from '@material-ui/core'
+import { withStyles } from '@material-ui/core/styles'
 
 import Grid from '@material-ui/core/Grid'
 import Tabs from '@material-ui/core/Tabs'
@@ -14,12 +14,12 @@ import Select from '@material-ui/core/Select'
 import MenuItem from '@material-ui/core/MenuItem'
 import Tooltip from '@material-ui/core/Tooltip'
 import CircularProgress from '@material-ui/core/CircularProgress'
-import Skeleton from '@material-ui/lab/Skeleton';
-import { default  as FlexBox } from '@material-ui/core/Box'
+import Typography from '@material-ui/core/Typography'
+import Skeleton from '@material-ui/lab/Skeleton'
+import { default as FlexBox } from '@material-ui/core/Box'
 
 import {
   DatasetIcon,
-  SubjectIcon,
   ExpandMoreIcon,
   NavigateNextIcon,
   DownloadIcon,
@@ -62,11 +62,13 @@ class DatasetPage extends Component {
   }
 
   handleGenerateDataConfig = () => {
-    this.props.generateDataConfig({
-      dataset: this.props.dataset.get('id'),
-      dataSettings: this.props.dataset,
-      version: this.props.version,
-    })
+    this.props.generateDataConfig(
+      'local',
+      {
+        id: this.props.dataset.get('id'),
+        version: this.props.version,
+      }
+    )
   }
 
   handleFilter(view) {
@@ -197,7 +199,7 @@ class DatasetPage extends Component {
     const { rows, columns } = this.prepareData(loading ? null : dataset)
 
     const tools = (
-      <React.Fragment>
+      <>
         <Button size="small">
           <DownloadIcon />
         </Button>
@@ -207,17 +209,19 @@ class DatasetPage extends Component {
         {/* <Button size="small">
           <RevertIcon />
         </Button> */}
-      </React.Fragment>
+      </>
     )
 
     const viewTools = (
-      <React.Fragment>
+      <>
         <Tooltip title="Create View">
-          <IconButton onClick={() => this.handleCreateView()}>
+          <span> {/* @TODO abstract tooltip + button into a component */}
+          <IconButton disabled={!columns} onClick={() => this.handleCreateView()}>
             <AddIcon />
           </IconButton>
+          </span>
         </Tooltip>
-      </React.Fragment>
+      </>
     )
 
     return (
@@ -235,17 +239,21 @@ class DatasetPage extends Component {
               />
           </FlexBox>
           <FlexBox p={1}>
-            <Button variant="contained" color="secondary" onClick={this.handleGenerateDataConfig}>Generate</Button>
+            <Button variant="contained" color="secondary" onClick={this.handleGenerateDataConfig}>Build Dataset</Button>
           </FlexBox>
         </FlexBox>
 
         <Grid container alignItems="stretch">
-          <Grid item xs={12} lg={8} alignItems="stretch" style={{display: 'flex'}}>
-            <Paper style={{flexGrow: 1, display: 'flex', flexDirection: 'column'}}> 
+          <Grid item xs={12} lg={8} style={{display: 'flex'}}>
+            <Paper style={{flexGrow: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', minHeight: 100}}> 
               {
                 loading ?
                 <Skeleton animation="wave" variant="rect" style={{flexGrow: 1}} /> :
-                (columns ? this.renderTable(columns, rows): null)
+                (
+                  columns ?
+                  this.renderTable(columns, rows):
+                  <Typography style={{ textAlign: 'center' }}>The dataset must be build before accessing it.</Typography>
+                )
               }
             </Paper>
           </Grid>
@@ -270,7 +278,7 @@ const mapStateToProps = (state, props) => {
   }
 
   const dataset = state.dataset.getIn(['datasets']).find((p) => p.get('id') == id)
-  const version = dataset.get('versions').keySeq().max()
+  const version =  `${dataset.get('versions').keySeq().map(i => +i).max()}`
 
   return {
     dataset,
