@@ -9,13 +9,20 @@ import Paper from '@material-ui/core/Paper'
 import Modal from '@material-ui/core/Modal'
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 // import GroupAnalysisList from 'containers/GroupAnalysisList'
 =======
 >>>>>>> f2a1340 (theo data-config generation! and some other stuff)
 
+=======
+>>>>>>> e1cbefa (add execution pages, fine tuning styles, new icons, yada)
 import DatasetList from 'containers/DatasetList'
+import ExecutionList from 'containers/ExecutionList'
 import PipelineList from 'containers/PipelineList'
 import PipelineListTools from 'containers/PipelineListTools.platform'
+
+import DatasetListTools from 'containers/DatasetListTools'
+import ExecutionListTools from 'containers/ExecutionListTools'
 
 import IconButton from '@material-ui/core/IconButton'
 import Button from '@material-ui/core/Button'
@@ -59,6 +66,8 @@ class HomePage extends Component {
   render() {
     const { classes, pipelines } = this.props
 
+    // @TODO fix horizontal scroll on home page
+
     return (
       <Grid container>
         <Grid item md={8} sm={12} className={classes.cell}>
@@ -74,6 +83,7 @@ class HomePage extends Component {
             <Grid item xs={12} className={classes.cell}>
               <Box title="Datasets"
                   avatar={<DatasetIcon />}
+                  tools={<DatasetListTools />}
                   className={classes.expand}>
                 <DatasetList />
               </Box>
@@ -81,10 +91,9 @@ class HomePage extends Component {
             <Grid item xs={12} className={classes.cell}>
               <Box title="Executions"
                   avatar={<ExecutionIcon />}
+                  tools={<ExecutionListTools />}
                   className={classes.expand}>
-
-                <a onClick={this.handleOpen}>Executions</a>
-
+                <ExecutionList />
               </Box>
             </Grid>
           </Grid>

@@ -25,23 +25,17 @@ import IconButton from '@material-ui/core/IconButton'
 import Button from '@material-ui/core/Button'
 
 import {
-  DatasetIcon,
-  FormatIcon,
-  PipelineIcon,
-  LaunchIcon,
-  SettingsIcon,
-  NavigateNextIcon
+  ExecutionIcon,
+  NavigateNextIcon,
+  SchedulerStatusIcon,
+  ExecutionCurrentStatusIcon,
 } from './icons'
 
-class DatasetCard extends Component {
+class ExecutionCard extends Component {
 
   static styles = theme => ({
     card: {
       minWidth: 240
-    },
-    actions: {
-      display: 'flex',
-      paddingLeft: 20,
     },
     expand: {
       marginLeft: 'auto',
@@ -55,41 +49,43 @@ class DatasetCard extends Component {
   })
 
   handleOpen = (dataset) => {
-    this.props.history.push(`/datasets/${dataset}`)
+    this.props.history.push(`/executions/${dataset}`)
   }
 
   render() {
-    const { classes, raised = false, dataset } = this.props
+    const { classes, raised = false, execution } = this.props
 
     const labels = {
-      bids: 'BIDS',
-      custom: 'Custom'
+      running: 'Running',
+      success: 'Success',
+      error: 'Error',
+      [null]: 'Unknown',
+      [undefined]: 'Unknown',
+      unknown: 'Unknown'
     }
-
-    const versions = dataset.get('versions')
-    const version = `${versions.keySeq().map(i => +i).max()}`
-    const configuration = dataset.getIn(['versions', version, 'configuration'])
 
     return (
       <Card className={classes.card} raised={raised}>
         <CardHeader
           avatar={
-            <Avatar aria-label={dataset.get('name')} className={classes.avatar}><DatasetIcon /></Avatar>
+            <Avatar className={classes.avatar}>
+              <ExecutionCurrentStatusIcon status={execution.get('status')} />
+            </Avatar>
           }
-          title={dataset.get('name')}
+          title={execution.get('note')}
         />
         <CardContent className={classes.info}>
           <List>
             <ListItem>
               <ListItemIcon>
-                <FormatIcon />
+                <SchedulerStatusIcon />
               </ListItemIcon>
-              <ListItemText primary={`${labels[configuration.getIn(['format'])]}`} />
+              <ListItemText primary={`${labels[execution.get('status')]}`} />
             </ListItem>
           </List>
         </CardContent>
         <CardActions disableSpacing>
-          <IconButton className={classes.expand} onClick={() => this.handleOpen(dataset.get('id'))}>
+          <IconButton className={classes.expand} onClick={() => this.handleOpen(execution.get('id'))}>
             <NavigateNextIcon />
           </IconButton>
         </CardActions>
@@ -98,4 +94,7 @@ class DatasetCard extends Component {
   }
 }
 
-export default withRouter(withStyles(DatasetCard.styles)(DatasetCard))
+export default 
+  withRouter(
+    withStyles(ExecutionCard.styles)
+      (ExecutionCard))

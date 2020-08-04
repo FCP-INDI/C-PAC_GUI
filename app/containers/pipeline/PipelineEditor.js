@@ -23,7 +23,6 @@ import {
   PipelineIcon,
   RevertIcon,
   SaveIcon,
-  SubjectIcon,
 } from 'components/icons';
 
 import { formatLabel, PipelinePart } from 'containers/pipeline/parts';

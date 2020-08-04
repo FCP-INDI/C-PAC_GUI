@@ -12,7 +12,7 @@ import IconButton from '@material-ui/core/IconButton'
 import FormControl from '@material-ui/core/FormControl'
 import Select from '@material-ui/core/Select'
 import MenuItem from '@material-ui/core/MenuItem'
-import { default  as FlexBox } from '@material-ui/core/Box'
+import { default as FlexBox } from '@material-ui/core/Box'
 
 import List from '@material-ui/core/List'
 import ListItem from '@material-ui/core/ListItem'
@@ -63,12 +63,12 @@ class DatasetViewsList extends Component {
               <ListItemSecondaryAction>
                 {
                   view.get('id') !== 'default' ? (
-                    <IconButton edge="end" onClick={() => onView(view)}>
+                    <IconButton disabled={disabled} edge="end" onClick={() => onView(view)}>
                       <EditIcon />
                     </IconButton>
                   ) : null
                 }
-                <IconButton edge="end" onClick={() => onView(view)}>
+                <IconButton disabled={disabled} edge="end" onClick={() => onView(view)}>
                   <ExecutionIcon />
                 </IconButton>
               </ListItemSecondaryAction>
