@@ -12,10 +12,8 @@ export const CPACPY_SCHEDULER_CONNECT_MESSAGE = 'CPACPY_SCHEDULER_CONNECT_MESSAG
 export const CPACPY_SCHEDULER_CONNECT_SEND = 'CPACPY_SCHEDULER_CONNECT_SEND'
 export const CPACPY_SCHEDULER_CONNECT_SEND_CALLBACK = 'CPACPY_SCHEDULER_CONNECT_SEND_CALLBACK'
 
+export const CPACPY_SCHEDULER_INFO = 'CPACPY_SCHEDULER_INFO'
 export const CPACPY_SCHEDULER_DETECT = 'CPACPY_SCHEDULER_DETECT'
-export const CPACPY_SCHEDULER_DETECT_WAIT = 'CPACPY_SCHEDULER_DETECT_WAIT'
-export const CPACPY_SCHEDULER_DETECT_SUCCESS = 'CPACPY_SCHEDULER_DETECT_SUCCESS'
-export const CPACPY_SCHEDULER_DETECT_FAIL = 'CPACPY_SCHEDULER_DETECT_FAIL'
 
 export const CPACPY_SCHEDULER_ONLINE = 'CPACPY_SCHEDULER_ONLINE'
 export const CPACPY_SCHEDULER_OFFLINE = 'CPACPY_SCHEDULER_OFFLINE'
@@ -26,16 +24,23 @@ export function init() {
   }
 }
 
-export function detect(scheduler) {
+export function detect(scheduler, poll=true) {
   return {
     type: CPACPY_SCHEDULER_DETECT,
+    scheduler, poll,
+  }
+}
+
+export function poll(scheduler) {
+  return {
+    type: CPACPY_SCHEDULER_POLLING,
     scheduler,
   }
 }
 
-export function polling(scheduler) {
+export function pollCancel(scheduler) {
   return {
-    type: CPACPY_SCHEDULER_POLLING,
+    type: CPACPY_SCHEDULER_POLLING_CANCEL,
     scheduler,
   }
 }
@@ -51,6 +56,120 @@ export function watchCancel(scheduler) {
   return {
     type: CPACPY_SCHEDULER_CONNECT_CANCEL,
     scheduler,
+  }
+}
+
+export function connectSendCallback(scheduler, callbackId, callbackAction) {
+  return {
+    type: CPACPY_SCHEDULER_CONNECT_SEND_CALLBACK,
+    scheduler,
+    callbackId,
+    callbackAction
+  }
+}
+
+export function connectSendCallbackCall(scheduler, callbackType, data) {
+  return {
+    type: callbackType,
+    scheduler,
+    data
+  }
+}
+
+export function connectSendWatch(scheduler, schedule, { action, error }) {
+  return {
+    type: CPACPY_SCHEDULER_CONNECT_SEND,
+    scheduler,
+    action,
+    error,
+    message: {
+      type: 'watch',
+      schedule,
+      watchers: ['Spawn', 'Start', 'End', 'Status']
+    }
+  }
+}
+
+export function call(scheduler, method='GET', endpoint, data, { success, error }) {
+  return {
+    type: CPACPY_SCHEDULER_CALL,
+    scheduler,
+    method,
+    endpoint,
+    data,
+    response: {
+      success,
+      error,
+    }
+  }
+}
+
+export function callSuccess(scheduler, type, data) {
+  return {
+    type,
+    scheduler,
+    data
+  }
+}
+
+export function callError(scheduler, type, exception) {
+  return {
+    type,
+    scheduler,
+    exception
+  }
+}
+
+export function schedule(scheduler, data, { success, error }) {
+  return call(
+    scheduler,
+    'POST',
+    '/schedule',
+    data,
+    {
+      success,
+      error,
+    }
+  )
+}
+
+export function scheduleDataSettings(scheduler, dataSettings, { success, error }){
+  return schedule(
+    scheduler,
+    {
+      type: 'data_settings',
+      data_settings: dataSettings,
+    },
+    { success, error }
+  )
+}
+
+export function schedulePipeline(scheduler, dataConfig, pipeline, { success, error }){
+  return schedule(
+    scheduler,
+    {
+      type: 'pipeline',
+      data_config: dataConfig,
+      pipeline,
+    },
+    { success, error }
+  )
+}
+
+export function fetchResults(scheduler, schedule, result, { success, error }) {
+  return call(
+    scheduler,
+    'GET',
+    `/schedule/${schedule}/result/${result}`,
+    null,
+    { success, error }
+  )
+}
+
+export function info(scheduler, info) {
+  return {
+    type: CPACPY_SCHEDULER_INFO,
+    scheduler, info
   }
 }
 

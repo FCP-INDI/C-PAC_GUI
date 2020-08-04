@@ -134,7 +134,7 @@ export default function main(state, action) {
       if (versions.has("0")) {
         oldVersion = "0"
       } else {
-        oldVersion = versions.keySeq().max()
+        oldVersion = `${versions.keySeq().map(i => +i).max()}`
       }
 
       let name = pipeline.get('name').trim()

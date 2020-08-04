@@ -10,12 +10,12 @@ abide.views = [
   {
     id: 'default',
     name: 'All',
-    filter: (subject) => true,
+    query: 'true',
   },
   {
     id: 'site-nyu',
-    name: 'Site NYU subjects',
-    filter: (subject) => subject.site === 'NYU',
+    name: 'Site: NYU',
+    query: "dataConfig.site === 'NYU'",
   }
 ]
 
@@ -24,6 +24,13 @@ const abide2Version = Object.keys(abide2.versions)[0]
 abide2.id = 'abide2'
 abide2.name = 'ABIDE II'
 abide2.versions[abide2Version].configuration.options.base = 's3://fcp-indi/data/Projects/ABIDE/RawDataBIDS'
+abide2.views = [
+  {
+    id: 'default',
+    name: 'All',
+    query: 'true',
+  }
+]
 
 export const datasets = [
   abide,

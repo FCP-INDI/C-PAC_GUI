@@ -1,10 +1,18 @@
 import { eventChannel } from 'redux-saga'
 import { all, delay, select, call, cancelled, put, race, take, takeEvery } from 'redux-saga/effects'
 
+import cpac from '@internal/c-pac'
+
 import {
   DATASET_CONFIG_LOAD,
   DATASET_CONFIG_LOAD_SUCCESS,
   DATASET_CONFIG_LOAD_ERROR,
+  DATASET_CONFIG_SAVE,
+  DATASET_CONFIG_SAVE_SUCCESS,
+  DATASET_CONFIG_SAVE_ERROR,
+  DATASET_CONFIG_CLEAR,
+  DATASET_CONFIG_CLEAR_SUCCESS,
+  DATASET_CONFIG_CLEAR_ERROR,
   DATASET_GENERATE_DATA_CONFIG,
   DATASET_GENERATE_DATA_CONFIG_SUCCESS,
   DATASET_GENERATE_DATA_CONFIG_ERROR,
@@ -14,102 +22,74 @@ import {
 } from '../actions/dataset'
 
 import {
-  CPACPY_SCHEDULER_CALL,
-  CPACPY_SCHEDULER_CONNECT_SEND,
+  scheduleDataSettings as cpacpyScheduleDataSettings,
+  connectSendWatch as cpacpyConnectSendWatch,
+  fetchResults as cpacpyFetchResults,
 } from '../actions/cpacpy'
+
+import {
+  selectDataset,
+} from '../reducers/dataset'
 
 import {
   datasets,
 } from './dataset.default'
 
-import cpac from '@internal/c-pac'
+import {
+  selectSaga as selectSagaFunc,
+  configLocalState,
+} from './utils'
 
-function* loadLocalState () {
-  const initialState = {
-    version: VERSION,
-    datasets,
-  }
+const selectSaga = selectSagaFunc('dataset')
 
-  let localState = null
-  try {
-    localState = JSON.parse(localStorage.getItem('dataset'))
-  } catch (e) {
-  }
 
-  if (!localState) {
-    localState = initialState
-    localStorage.setItem('dataset', JSON.stringify(localState))
-  }
+function* generateDataConfig({ dataset: { id, version }, scheduler }) {
+  const dataset = yield selectSaga(selectDataset(id))
 
-  yield put({
-    type: DATASET_CONFIG_LOAD_SUCCESS,
-    config: localState
-  })
-}
-
-function* saveLocalState() {
-  const config = yield select((state) => state.dataset);
-  localStorage.setItem('dataset', JSON.stringify(config.toJS()))
-}
-
-function* clearLocalState(config) {
-  localStorage.removeItem('dataset')
-}
-
-function* generateDataConfig({ dataset, dataSettings, version }) {
-  yield put({
-    type: CPACPY_SCHEDULER_CALL,
-    scheduler: 'localhost:3333',
-    method: 'POST',
-    endpoint: '/schedule',
-    data: {
-      type: 'data_settings',
-      data_settings: cpac.data_settings.dump(dataSettings.toJS(), version),
-    },
-    response: {
+  yield put(cpacpyScheduleDataSettings(
+    scheduler,
+    cpac.data_settings.dump(dataset.toJS(), version),
+    {
       success: (data) => ({
         type: DATASET_GENERATE_DATA_CONFIG_SCHEDULED,
-        dataset, data
+        dataset: { id, version }, scheduler, schedule: data.schedule
       }),
       error: (exception) => ({
         type: DATASET_GENERATE_DATA_CONFIG_ERROR,
-        dataset, exception
+        dataset: { id, version }, exception
       }),
     }
-  })
+  ))
 }
 
-function* generateDataConfigWatch({ dataset, data: { schedule } }) {
-  yield put({
-    type: CPACPY_SCHEDULER_CONNECT_SEND,
-    scheduler: 'localhost:3333',
-    action: (scheduler, data) => {
-      if (data.type !== "End") {
-        return
-      }
-      return {
-        type: DATASET_GENERATE_DATA_CONFIG_FINISHED,
-        dataset, data
-      }
-    },
-    error: (exception) => ({
-      type: DATASET_GENERATE_DATA_CONFIG_ERROR,
-      dataset, exception
-    }),
-    message: {
-      type: 'watch',
-      schedule,
+function* generateDataConfigWatch({ dataset, scheduler, schedule }) {
+  yield put(cpacpyConnectSendWatch(
+    scheduler,
+    schedule,
+    {
+      action: (scheduler, data) => {
+        if (data.type !== "End") {
+          return
+        }
+        return {
+          type: DATASET_GENERATE_DATA_CONFIG_FINISHED,
+          dataset, scheduler, schedule
+        }
+      },
+      error: (exception) => ({
+        type: DATASET_GENERATE_DATA_CONFIG_ERROR,
+        dataset, scheduler, schedule, exception
+      })
     }
-  })
+  ))
 }
 
-function* generateDataConfigFetchResult({ dataset, data: { id, statuses, available_results } }) {
-  yield put({
-    type: CPACPY_SCHEDULER_CALL,
-    scheduler: 'localhost:3333',
-    method: 'GET',
-    endpoint: `/schedule/${id}/result/data_config`,
-    response: {
+function* generateDataConfigFetchResult({ dataset, scheduler, schedule }) {
+  yield put(cpacpyFetchResults(
+    scheduler,
+    schedule,
+    'data_config',
+    {
       success: (data) => ({
         type: DATASET_GENERATE_DATA_CONFIG_FETCHED,
         dataset, data: data.result.data_config,
@@ -119,7 +99,7 @@ function* generateDataConfigFetchResult({ dataset, data: { id, statuses, availab
         dataset, exception
       }),
     }
-  })
+  ))
 }
 
 function* generateDataConfigResult({ dataset, data }) {
@@ -128,12 +108,26 @@ function* generateDataConfigResult({ dataset, data }) {
     dataset,
     config: cpac.data_config.parse(data),
   })
+  yield put({
+    type: DATASET_CONFIG_SAVE,
+    dataset,
+    config: cpac.data_config.parse(data),
+  })
 }
 
 export default function* configSaga() {
   yield all([
-    takeEvery(DATASET_CONFIG_LOAD, loadLocalState),
-    takeEvery(DATASET_GENERATE_DATA_CONFIG_SUCCESS, saveLocalState),
+    ...configLocalState('dataset', { datasets }, {
+      load: DATASET_CONFIG_LOAD,
+      save: DATASET_CONFIG_SAVE,
+      clear: DATASET_CONFIG_CLEAR,
+      loadSuccess: DATASET_CONFIG_LOAD_SUCCESS,
+      loadError: DATASET_CONFIG_LOAD_ERROR,
+      saveSuccess: DATASET_CONFIG_SAVE_SUCCESS,
+      saveError: DATASET_CONFIG_SAVE_ERROR,
+      clearSuccess: DATASET_CONFIG_CLEAR_SUCCESS,
+      clearError: DATASET_CONFIG_CLEAR_ERROR,
+    }),
     takeEvery(DATASET_GENERATE_DATA_CONFIG, generateDataConfig),
     takeEvery(DATASET_GENERATE_DATA_CONFIG_SCHEDULED, generateDataConfigWatch),
     takeEvery(DATASET_GENERATE_DATA_CONFIG_FINISHED, generateDataConfigFetchResult),

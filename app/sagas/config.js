@@ -17,6 +17,10 @@ import {
 } from '../actions/dataset'
 
 import {
+  EXECUTION_CONFIG_LOAD,
+} from '../actions/execution'
+
+import {
   PIPELINE_NAME_UPDATE,
   PIPELINE_DUPLICATE,
   PIPELINE_VERSION_DIRTY_UPDATE,
@@ -77,6 +81,7 @@ function* loadConfig () {
   }
 
   yield put({ type: DATASET_CONFIG_LOAD })
+  yield put({ type: EXECUTION_CONFIG_LOAD })
   yield put(configLoaded(localState))
 
   yield put(cpacpyInit())
