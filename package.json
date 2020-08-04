@@ -153,8 +153,12 @@
     "@hot-loader/react-dom": "^16.11.0",
     "@material-ui/core": "^4.11.0",
     "@material-ui/icons": "^4.9.1",
+<<<<<<< HEAD
 >>>>>>> 885b723 (upgrade material-ui and update w new components)
     "@material-ui/lab": "^4.0.0-alpha.21",
+=======
+    "@material-ui/lab": "^4.0.0-alpha.56",
+>>>>>>> 414f3fd (upgrade lab)
     "clsx": "^1.0.4",
     "connected-react-router": "^6.5.2",
     "devtron": "shnizzedy/devtron#security_updates",
