@@ -59,6 +59,38 @@ export function parse(content) {
   }
 }
 
-export function dump(sets) {
-  return yaml.safeDump(sets)
+export function dump(dataset, version='0', view=null) {
+  let viewFilter
+  if (!view) {
+    viewFilter = (dataConfig) => true
+  } else {
+    const views = dataset.views.filter((v) => v.id === view)
+    if (!views) {
+      throw "View not found"
+    }
+    viewFilter = (dataConfig) => eval(views[0].query)
+  }
+
+  const sets = dataset.data.sets
+  const dataConfigList = []
+
+  for (const sub of Object.keys(sets)) {
+    for (const ses of Object.keys(sets[sub])) {
+      const subses = sets[sub][ses]
+      const dataConfig = {
+        anat: subses.anatomical,
+        func: subses.functionals,
+        site: subses.site,
+        subject_id: sub,
+        unique_id: ses,
+      }
+      if (!viewFilter(dataConfig)) {
+        continue
+      }
+
+      dataConfigList.push(dataConfig)
+    }
+  }
+
+  return yaml.safeDump(dataConfigList)
 }

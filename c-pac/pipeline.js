@@ -291,7 +291,7 @@ export function parse(content) {
   const config = normalizeValues(yaml.safeLoad(content))
 
   const t = clone(defaultTemplate)
-  const newver = `${new Date().getTime()}`
+  const newver = `1`
   t.versions[newver] = t.versions['default']
   delete t.versions['default']
   const c = t.versions[newver].configuration

@@ -17,7 +17,7 @@ export function parse(content) {
   const settings = yaml.safeLoad(content)
 
   const t = clone(defaultTemplate)
-  const newver = `${new Date().getTime()}`
+  const newver = `1`
   t.versions[newver] = t.versions['default']
   delete t.versions['default']
   const c = t.versions[newver].configuration
@@ -38,14 +38,20 @@ export function parse(content) {
   return t
 }
 
-export function dump(data_settings, version='0') {
+export function dump(data_settings, version) {
+
+  if (!version) {
+    if (data_settings.versions['0']) {
+      version = '0'
+    } else {
+      version = `${Math.max(Object.keys(data_settings.versions).map((i) => +i))}`
+    }
+  }
 
   const c = data_settings.versions[version].configuration
 
   const config = {}
-
   config.dataFormat = c.format
-
   config.bidsBaseDir = c.options.base
 
   config.anatomicalTemplate = c.options.patterns.anatomical_path_template

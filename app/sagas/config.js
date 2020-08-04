@@ -24,7 +24,14 @@ import {
 } from '../actions/dataset'
 
 import {
+<<<<<<< HEAD
 >>>>>>> f2a1340 (theo data-config generation! and some other stuff)
+=======
+  EXECUTION_CONFIG_LOAD,
+} from '../actions/execution'
+
+import {
+>>>>>>> 89e26b6 (create execution module, dataset views, parametrize scheduler for tasks, refactor a bazillion things (sorry))
   PIPELINE_NAME_UPDATE,
   PIPELINE_DUPLICATE,
   PIPELINE_VERSION_DIRTY_UPDATE,
@@ -317,6 +324,7 @@ function* loadConfig(action) {
   }
 
   yield put({ type: DATASET_CONFIG_LOAD })
+  yield put({ type: EXECUTION_CONFIG_LOAD })
   yield put(configLoaded(localState))
 
 <<<<<<< HEAD
