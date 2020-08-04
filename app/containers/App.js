@@ -48,7 +48,6 @@ import {
   DeleteIcon,
   NextIcon,
   PipelineIcon,
-  SubjectIcon,
   ExecutionIcon,
   EnvironmentIcon,
   ProjectIcon,
@@ -134,6 +133,11 @@ class App extends React.Component {
   state = {
     feedback: false
   }
+  
+  constructor(props) {
+    super(props);
+    this.app = React.createRef()
+  }
 
   componentDidMount() {
     this.props.configLoad()
@@ -184,7 +188,12 @@ class App extends React.Component {
             <HomeIcon className={classes.icon} />
             Home
           </Button>
+<<<<<<< HEAD
           {crumbs}
+=======
+          { crumbs }
+          {/* @TODO review this grow div  */}
+>>>>>>> 6dd5792 (scroll to the top when change pages)
           <div className={classes.crumbs}>
           </div>
 <<<<<<< HEAD
@@ -215,7 +224,13 @@ class App extends React.Component {
   }
 
   render() {
-    const { classes, theme, main } = this.props
+    const { classes, theme, main, forwardedRef } = this.props
+
+    const node = this.app.current
+    if (node) {
+      node.scrollTop = 0
+      node.scrollLeft = 0
+    }
 
     return (
 <<<<<<< HEAD
@@ -260,8 +275,13 @@ class App extends React.Component {
 >>>>>>> 31b5f4b (data config viewer)
 
           <div className={classes.root}>
+<<<<<<< HEAD
             {this.renderBreadcrumbs()}
             <main className={classes.content}>
+=======
+            { this.renderBreadcrumbs() }
+            <main className={classes.content} ref={this.app}>
+>>>>>>> 6dd5792 (scroll to the top when change pages)
               <ErrorBoundary FallbackComponent={ItWentWrong}>
                 {main.has('config') ? this.props.children : "Loading..."}
               </ErrorBoundary>
@@ -284,7 +304,11 @@ class Shell extends React.Component {
   render() {
     return (
       <MuiThemeProvider theme={theme}>
+<<<<<<< HEAD
         <AppConnected {...this.props}>{this.props.children}</AppConnected>
+=======
+        <AppConnected {...this.props} />
+>>>>>>> 6dd5792 (scroll to the top when change pages)
       </MuiThemeProvider>
     )
   }
