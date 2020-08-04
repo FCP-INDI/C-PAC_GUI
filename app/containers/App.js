@@ -42,7 +42,6 @@ import {
   DeleteIcon,
   NextIcon,
   PipelineIcon,
-  SubjectIcon,
   ExecutionIcon,
   EnvironmentIcon,
   ProjectIcon,
@@ -128,6 +127,11 @@ class App extends React.Component {
   state = {
     feedback: false
   }
+  
+  constructor(props) {
+    super(props);
+    this.app = React.createRef()
+  }
 
   componentDidMount() {
     this.props.configLoad()
@@ -179,6 +183,7 @@ class App extends React.Component {
             Home
           </Button>
           { crumbs }
+          {/* @TODO review this grow div  */}
           <div className={classes.crumbs}>
           </div>
           <CpacpySchedulersWidget />
@@ -205,7 +210,13 @@ class App extends React.Component {
   }
 
   render() {
-    const { classes, theme, main } = this.props
+    const { classes, theme, main, forwardedRef } = this.props
+
+    const node = this.app.current
+    if (node) {
+      node.scrollTop = 0
+      node.scrollLeft = 0
+    }
 
     return (
       <MathJax.Provider>
@@ -230,7 +241,7 @@ class App extends React.Component {
 
           <div className={classes.root}>
             { this.renderBreadcrumbs() }
-            <main className={classes.content}>
+            <main className={classes.content} ref={this.app}>
               <ErrorBoundary FallbackComponent={ItWentWrong}>
                 { main.has('config') ? this.props.children : "Loading..." }
               </ErrorBoundary>
@@ -253,7 +264,7 @@ class Shell extends React.Component {
   render() {
     return (
       <MuiThemeProvider theme={theme}>
-        <AppConnected {...this.props}>{ this.props.children }</AppConnected>
+        <AppConnected {...this.props} />
       </MuiThemeProvider>
     )
   }
