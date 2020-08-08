@@ -28,6 +28,10 @@ import {
 } from '../actions/cpacpy'
 
 import {
+  selectCurrentScheduler,
+} from '../reducers/cpacpy'
+
+import {
   selectDataset,
 } from '../reducers/dataset'
 
@@ -45,6 +49,10 @@ const selectSaga = selectSagaFunc('dataset')
 
 function* generateDataConfig({ dataset: { id, version }, scheduler }) {
   const dataset = yield selectSaga(selectDataset(id))
+
+  if (!scheduler) {
+    scheduler = (yield selectSagaFunc('cpacpy')(selectCurrentScheduler())).get('id')
+  }
 
   yield put(cpacpyScheduleDataSettings(
     scheduler,
