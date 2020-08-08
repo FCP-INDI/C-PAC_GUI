@@ -16,6 +16,11 @@ abide.views = [
     id: 'site-nyu',
     name: 'Site: NYU',
     query: "dataConfig.site === 'NYU'",
+  },
+  {
+    id: 'site-sbl',
+    name: 'Site: SBL',
+    query: "dataConfig.site === 'SBL'",
   }
 ]
 
