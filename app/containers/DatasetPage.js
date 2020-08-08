@@ -58,7 +58,8 @@ import {
   AddIcon,
 } from '../components/icons'
 
-import Header, { HeaderText, HeaderAvatar, HeaderTools } from '../components/Header'
+import withCurrentScheduler from '../components/cpacpy/withCurrentScheduler'
+
 import Content from '../components/Content'
 import Box from '../components/Box'
 import Table from '../components/Table'
@@ -88,7 +89,7 @@ class DatasetPage extends Component {
 
   handleGenerateDataConfig = () => {
     this.props.generateDataConfig(
-      'local',
+      null,
       {
         id: this.props.dataset.get('id'),
         version: this.props.version,
@@ -239,14 +240,14 @@ class DatasetPage extends Component {
     const viewTools = (
       <>
         <Tooltip title="Create View">
-          <span> {/* @TODO abstract tooltip + button into a component */}
           <IconButton disabled={!columns} onClick={() => this.handleCreateView()}>
             <AddIcon />
           </IconButton>
-          </span>
         </Tooltip>
       </>
     )
+
+    const BuildDatasetButton = withCurrentScheduler(Button)
 
     return (
       <Box title={dataset.get('name')}
@@ -263,7 +264,7 @@ class DatasetPage extends Component {
               />
           </FlexBox>
           <FlexBox p={1}>
-            <Button variant="contained" color="secondary" onClick={this.handleGenerateDataConfig}>Build Dataset</Button>
+            <BuildDatasetButton variant="contained" color="secondary" onClick={this.handleGenerateDataConfig}>Build Dataset</BuildDatasetButton>
           </FlexBox>
         </FlexBox>
 

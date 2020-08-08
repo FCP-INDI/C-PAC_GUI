@@ -1,31 +1,31 @@
-import * as React from 'react';
-import { connect } from 'react-redux';
+import * as React from 'react'
+import { connect } from 'react-redux'
 import { withRouter } from 'react-router-dom'
 import { Link } from 'react-router-dom'
-import { configLoad } from '../actions/main'
+
 
 import bugsnag from '@bugsnag/js'
 import bugsnagReact from '@bugsnag/plugin-react'
 
-import classNames from 'clsx';
-import { withStyles, typography } from '@material-ui/core/styles';
+import classNames from 'clsx'
+import { withStyles, typography } from '@material-ui/core/styles'
 
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
-import Button from '@material-ui/core/Button';
-import { Paper, Modal, Dialog } from '@material-ui/core';
+import AppBar from '@material-ui/core/AppBar'
+import Toolbar from '@material-ui/core/Toolbar'
+import Button from '@material-ui/core/Button'
+import { Paper, Modal, Dialog } from '@material-ui/core'
 
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemText from '@material-ui/core/ListItemText';
+import List from '@material-ui/core/List'
+import ListItem from '@material-ui/core/ListItem'
+import ListItemIcon from '@material-ui/core/ListItemIcon'
+import ListItemText from '@material-ui/core/ListItemText'
 
-import Typography from '@material-ui/core/Typography';
-import Divider from '@material-ui/core/Divider';
-import IconButton from '@material-ui/core/IconButton';
+import Typography from '@material-ui/core/Typography'
+import Divider from '@material-ui/core/Divider'
+import IconButton from '@material-ui/core/IconButton'
 
-import Slide from '@material-ui/core/Slide';
-import Switch from '@material-ui/core/Switch';
+import Slide from '@material-ui/core/Slide'
+import Switch from '@material-ui/core/Switch'
 
 <<<<<<< HEAD
 import Help from 'components/Help';
@@ -37,8 +37,18 @@ import ItWentWrong from 'containers/ItWentWrong'
 import CpacpySchedulersWidget from 'containers/CpacpySchedulersWidget'
 >>>>>>> ab98471 (rename theodore to cpacpy)
 
+<<<<<<< HEAD
 import theme from '../theme';
 import '../app.global.css';
+=======
+import CpacpySchedulerSelector from 'containers/cpacpy/SchedulerSelector'
+
+import { configLoad } from '../actions/main'
+import { selectCurrentScheduler } from '../actions/cpacpy'
+
+import theme from '../theme'
+import '../app.global.css'
+>>>>>>> 9c61527 (scheduler selector and avoiding app rerendering)
 
 import { MuiThemeProvider } from '@material-ui/core/styles';
 import MathJax from 'react-mathjax';
@@ -128,10 +138,11 @@ class App extends React.Component {
 
   static mapDispatchToProps = {
     configLoad,
+    selectCurrentScheduler,
   }
 
   static mapStateToProps = (state) => ({
-    main: state.main,
+    configLoaded: !!(state.main && state.main.get('config')),
   })
 
   state = {
@@ -152,27 +163,27 @@ class App extends React.Component {
     window.location.href = '/'
   }
 
-  renderBreadcrumbs = () => {
-    const { classes } = this.props
+  handleScheduler = (scheduler) => {
+    this.props.selectCurrentScheduler(scheduler)
+  }
 
-    if (!this.props.main || !this.props.main.get('config')) {
+  renderBreadcrumbs = () => {
+    const { classes, configLoaded } = this.props
+
+    if (!configLoaded) {
       return null
     }
 
-    const config = this.props.main.get('config')
-
-    let project = null
-    let pipeline = null
-
-    const place = this.props.location.pathname.substr(1).split('/')
     const crumbs = []
-    for (let i = 0; i < place.length; i++) {
-      if (place[i] == "pipelines") {
+    // const place = this.props.location.pathname.substr(1).split('/')
+    // for (let i = 0; i < place.length; i++) {
+    //   if (place[i] == "pipelines") {
 
-        if (i + 1 < place.length) {
-          pipeline = config.get('pipelines').find((p) => p.get('id') == place[++i])
-        }
+    //     if (i + 1 < place.length) {
+    //       pipeline = config.get('pipelines').find((p) => p.get('id') == place[++i])
+    //     }
 
+<<<<<<< HEAD
         crumbs.push(
           <NextIcon key={crumbs.length} />
         )
@@ -184,6 +195,19 @@ class App extends React.Component {
         )
       }
     }
+=======
+    //     crumbs.push(
+    //       <NextIcon key={crumbs.length} />
+    //     )
+    //     crumbs.push(
+    //       <Button key={crumbs.length} size="small">
+    //         <PipelineIcon className={classes.icon} />
+    //         { pipeline ? pipeline.get('name') : "Pipelines" }
+    //       </Button>
+    //     )
+    //   }
+    // }
+>>>>>>> 9c61527 (scheduler selector and avoiding app rerendering)
 
     return (
       <AppBar position="static" color="default" className={classes.bread}>
@@ -192,6 +216,7 @@ class App extends React.Component {
             <HomeIcon className={classes.icon} />
             Home
           </Button>
+<<<<<<< HEAD
 <<<<<<< HEAD
           {crumbs}
 =======
@@ -214,6 +239,21 @@ class App extends React.Component {
           <Help help={`Enable advanced options.`} style={{ padding: 0 }} />
           */}
 >>>>>>> ab98471 (rename theodore to cpacpy)
+=======
+          
+          { crumbs }
+
+          <div className={classes.crumbs}>
+          </div>
+          <CpacpySchedulerSelector
+            buttonProps={{
+              variant: 'contained',
+              className: classes.selectorButton,
+            }}
+            onSelect={this.handleScheduler}
+          />
+
+>>>>>>> 9c61527 (scheduler selector and avoiding app rerendering)
         </Toolbar>
       </AppBar>
     )
@@ -228,7 +268,7 @@ class App extends React.Component {
   }
 
   render() {
-    const { classes, theme, main, forwardedRef } = this.props
+    const { classes, theme, main, forwardedRef, configLoaded } = this.props
 
     const node = this.app.current
     if (node) {
@@ -287,7 +327,11 @@ class App extends React.Component {
             <main className={classes.content} ref={this.app}>
 >>>>>>> 6dd5792 (scroll to the top when change pages)
               <ErrorBoundary FallbackComponent={ItWentWrong}>
+<<<<<<< HEAD
                 {main.has('config') ? this.props.children : "Loading..."}
+=======
+                { configLoaded ? this.props.children : "Loading..." }
+>>>>>>> 9c61527 (scheduler selector and avoiding app rerendering)
               </ErrorBoundary>
             </main>
           </div>

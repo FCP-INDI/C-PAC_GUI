@@ -8,6 +8,7 @@ import { fetch, websocketChannel, scheduler as schedulerMatch } from './utils'
 
 import {
   CPACPY_INIT,
+  CPACPY_SCHEDULER_SCHEDULER,
   CPACPY_SCHEDULER_DETECT,
   CPACPY_SCHEDULER_OFFLINE,
   CPACPY_SCHEDULER_POLLING,
@@ -44,10 +45,10 @@ const selectSaga = (callback) => select((state) => callback(state.cpacpy))
 
 function* init() {
   const scheduler = yield selectSaga(selectCurrentScheduler())
-  yield put(cpacpyDetect(scheduler.get('id')))
+  yield put(cpacpyDetect(scheduler.get('id'), true, true))
 }
 
-function* detect({ scheduler: id, poll = true }) {
+function* detect({ scheduler: id, poll=true, current=false }) {
   const scheduler = yield selectSaga(selectScheduler(id))
   if (scheduler.get('online')) {
     yield put(cpacpySchedulerOnline(id))
@@ -76,7 +77,7 @@ function* detect({ scheduler: id, poll = true }) {
   }
   yield put(cpacpySchedulerOffline(id))
   if (poll) {
-    yield put(cpacpyPoll(id))
+    yield put(cpacpyPoll(id, current))
   }
 }
 
@@ -90,10 +91,13 @@ function* pollingBackground(scheduler) {
   yield put(cpacpyDetect(scheduler))
 }
 
-function* polling({ scheduler }) {
+function* polling({ scheduler, current }) {
   yield race({
     task: call(pollingBackground, scheduler),
-    cancel: take(schedulerMatch(CPACPY_SCHEDULER_POLLING_CANCEL, scheduler))
+    cancel: take([
+      CPACPY_SCHEDULER_SCHEDULER,
+      schedulerMatch(CPACPY_SCHEDULER_POLLING_CANCEL, scheduler)
+    ])
   })
 }
 

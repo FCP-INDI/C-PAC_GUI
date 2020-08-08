@@ -6,6 +6,7 @@ import { scheduler } from 'consts'
 
 import {
   CPACPY_INIT,
+  CPACPY_SCHEDULER_SCHEDULER,
   CPACPY_SCHEDULER_DETECT,
   CPACPY_SCHEDULER_POLLING,
   CPACPY_SCHEDULER_POLLING_CANCEL,
@@ -57,6 +58,9 @@ export default function (state = initialState, action) {
   switch (action.type) {
     case CPACPY_INIT:
       return state
+
+    case CPACPY_SCHEDULER_SCHEDULER:
+      return state.setIn(['scheduler'], id)
 
     case CPACPY_SCHEDULER_DETECT:
       return state.setIn(['schedulers', i, 'detecting'], true)
