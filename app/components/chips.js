@@ -14,6 +14,10 @@ import {
   DatasetIcon,
 } from '../components/icons'
 
+import {
+  selectScheduler,
+} from '../reducers/cpacpy'
+
 
 class PipelineChip extends Component {
 
@@ -133,7 +137,7 @@ class SchedulerChip extends Component {
   static mapStateToProps = (state, props) => {
     const { scheduler } = props
     return {
-      scheduler //: state.main.getIn(['config', 'schedulers']).find((p) => p.get('id') == scheduler),
+      scheduler: selectScheduler(scheduler)(state.cpacpy)
     }
   }
 
@@ -162,7 +166,7 @@ class SchedulerChip extends Component {
         >
           <Chip
             icon={<SchedulerIcon />}
-            label={scheduler}
+            label={scheduler.get('name')}
             color="primary"
           />
         </Badge>
@@ -171,7 +175,7 @@ class SchedulerChip extends Component {
       return (
         <Chip
           icon={<SchedulerIcon />}
-          label={scheduler}
+          label={scheduler.get('name')}
           color="primary"
         />
       )
