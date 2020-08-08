@@ -14,7 +14,6 @@ import { withStyles } from '@material-ui/core/styles';
 
 import Grid from '@material-ui/core/Grid';
 import PipelineEditor from 'containers/pipeline/PipelineEditor';
-import Header, { HeaderText, HeaderAvatar, HeaderTools } from 'components/Header';
 import Content from 'components/Content';
 import Box from 'components/Box';
 import NotFound from 'components/404';
@@ -25,7 +24,7 @@ import Paper from '@material-ui/core/Paper';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import IconButton from '@material-ui/core/IconButton'
-import Tooltip from '@material-ui/core/Tooltip'
+import Tooltip from 'components/Tooltip'
 import Drawer from '@material-ui/core/Drawer';
 
 import { fromJS, isImmutable } from 'immutable';
@@ -329,13 +328,14 @@ class PipelinePage extends Component {
            avatar={<PipelineIcon />}
            tools={tools}>
         {
-          this.state.configuration ?
+          this.state.configuration &&
           (
 <<<<<<< HEAD
             <React.Fragment>
             { this.state.isDefault ?
 =======
             <>
+<<<<<<< HEAD
             { this.state.default ?
 >>>>>>> dcb2f54 (cleaning and code styling)
               <div className={classes.warning}>
@@ -347,11 +347,22 @@ class PipelinePage extends Component {
             </React.Fragment>
 =======
               <PipelineEditor default={this.state.default} configuration={this.state.configuration} onChange={this.handleChange} onSave={this.handleSave} />
+=======
+              { this.state.default &&
+              <div className={classes.warning}>
+                You cannot change the default template! Please, duplicate it to create your own pipeline.
+              </div>
+              }
+              <PipelineEditor
+                default={this.state.default}
+                configuration={this.state.configuration}
+                onChange={this.handleChange}
+                onSave={this.handleSave}
+              />
+>>>>>>> fee8c14 (styling, cleaning and tooltip abstraction)
             </>
 >>>>>>> dcb2f54 (cleaning and code styling)
           )
-          :
-          null
         }
       </Box>
     );
@@ -380,6 +391,7 @@ const areStatesEqual = (next, prev) => {
   return false
 }
 
+<<<<<<< HEAD
 /**
  * Checks if a given pipeline ID is for a default pipeline.
  * @param {string} pipelineID
@@ -390,3 +402,9 @@ export const isADefault = (pipelineId) => {
 }
 
 export default connect(mapStateToProps, mapDispatchToProps, null, { areStatesEqual })(withStyles(PipelinePage.styles)(PipelinePage));
+=======
+export default 
+  connect(mapStateToProps, mapDispatchToProps, null, { /*areStatesEqual*/ })
+    (withStyles(PipelinePage.styles)
+      (PipelinePage))
+>>>>>>> fee8c14 (styling, cleaning and tooltip abstraction)

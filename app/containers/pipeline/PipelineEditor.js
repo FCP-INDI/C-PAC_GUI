@@ -5,7 +5,6 @@ import Immutable from 'immutable';
 import { withStyles } from '@material-ui/core/styles';
 
 import Content from '../../components/Content';
-import Header, { HeaderText, HeaderAvatar, HeaderTools } from '../../components/Header';
 
 import Grid from '@material-ui/core/Grid';
 import Tabs from '@material-ui/core/Tabs';

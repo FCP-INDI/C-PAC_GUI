@@ -2,17 +2,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { withStyles } from '@material-ui/core/styles'
 
-import Grid from '@material-ui/core/Grid'
-import Tabs from '@material-ui/core/Tabs'
-import Tab from '@material-ui/core/Tab'
-import Paper from '@material-ui/core/Paper'
-import Button from '@material-ui/core/Button'
-import TextField from '@material-ui/core/TextField'
 import IconButton from '@material-ui/core/IconButton'
-import FormControl from '@material-ui/core/FormControl'
-import Select from '@material-ui/core/Select'
-import MenuItem from '@material-ui/core/MenuItem'
-import { default as FlexBox } from '@material-ui/core/Box'
 
 import List from '@material-ui/core/List'
 import ListItem from '@material-ui/core/ListItem'
@@ -27,21 +17,10 @@ import {
   EditIcon,
 } from 'components/icons'
 
-import Header, { HeaderText, HeaderAvatar, HeaderTools } from 'components/Header'
-import Content from 'components/Content'
-import Box from 'components/Box'
-
 
 class DatasetViewsList extends Component {
 
   static styles = theme => ({
-    content: {
-      padding: 20,
-      marginTop: 20,
-    },
-    loading: {
-      width: 36, height: 36,
-    },
   })
 
   render() {

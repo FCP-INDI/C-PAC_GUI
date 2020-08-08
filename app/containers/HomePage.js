@@ -26,7 +26,7 @@ import ExecutionListTools from 'containers/ExecutionListTools'
 
 import IconButton from '@material-ui/core/IconButton'
 import Button from '@material-ui/core/Button'
-import Tooltip from '@material-ui/core/Tooltip'
+import Tooltip from 'components/Tooltip'
 
 import Box from 'components/Box'
 

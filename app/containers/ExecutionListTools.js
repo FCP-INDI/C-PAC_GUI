@@ -4,15 +4,24 @@ import { withRouter, Link } from 'react-router-dom'
 import { withStyles } from '@material-ui/core/styles'
 
 import IconButton from '@material-ui/core/IconButton'
-import Tooltip from '@material-ui/core/Tooltip'
+import Tooltip from 'components/Tooltip'
 
 import {
   AddIcon,
+  NavigateNextIcon,
 } from '../components/icons'
-class DatasetListTools extends Component {
+class ExecutionListTools extends Component {
 
   static styles = theme => ({
   })
+
+  handleNew = (pipeline) => {
+    this.props.history.push(`/executions/new`)
+  }
+
+  handleList = (pipeline) => {
+    this.props.history.push(`/executions`)
+  }
 
   render() {
     const { classes } = this.props
@@ -20,9 +29,14 @@ class DatasetListTools extends Component {
     return (
       <>
         <Tooltip title="New execution">
-          <Link to={`/executions/new`} component={forwardRef(({ children, href }, forwardedRef) => <IconButton ref={forwardedRef} href={href} children={children} />)}>
+          <IconButton onClick={() => this.handleNew()}>
             <AddIcon />
-          </Link>
+          </IconButton>
+        </Tooltip>
+        <Tooltip title="Executions">
+          <IconButton onClick={() => this.handleList()}>
+            <NavigateNextIcon />
+          </IconButton>
         </Tooltip>
       </>
     )
@@ -37,5 +51,5 @@ const mapDispatchToProps = {
 
 export default 
   withRouter(connect(mapStateToProps, mapDispatchToProps)
-    (withStyles(DatasetListTools.styles)
-      (DatasetListTools)))
+    (withStyles(ExecutionListTools.styles)
+      (ExecutionListTools)))

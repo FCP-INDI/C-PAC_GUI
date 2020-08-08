@@ -29,7 +29,7 @@ class Box extends Component {
       background: ({ inner }) => inner ? theme.palette.primary.light : theme.palette.primary.main,
     },
     headerText: {
-      color: theme.palette.grey[800],
+      color: theme.palette.type === 'dark' ? theme.palette.grey[300] : theme.palette.grey[800],
       padding: `0 ${theme.spacing(2)}px`,
       flexGrow: 1
     },

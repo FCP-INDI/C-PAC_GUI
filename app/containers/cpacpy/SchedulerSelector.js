@@ -37,9 +37,6 @@ class CpacpySchedulerSelector extends Component {
   static styles = theme => ({
     button: {
       padding: '5px 15px',
-      border: `1px solid ${
-        theme.palette.type === 'light' ? 'rgba(0, 0, 0, 0.23)' : 'rgba(255, 255, 255, 0.23)'
-      }`,
       boxSizing: 'border-box',
       minWidth: 64,
       padding: '6px 16px',
@@ -49,10 +46,8 @@ class CpacpySchedulerSelector extends Component {
         duration: theme.transitions.duration.short,
       }),
 
-      '&$disabled': {
-        border: `1px solid ${theme.palette.action.disabledBackground}`,
-        color: theme.palette.action.disabled,
-      },
+      textTransform: 'uppercase',
+      fontSize: '0.9rem',
       '&:hover': {
         textDecoration: 'none',
         backgroundColor: fade(theme.palette.text.primary, theme.palette.action.hoverOpacity),
@@ -63,6 +58,15 @@ class CpacpySchedulerSelector extends Component {
           backgroundColor: 'transparent',
         },
       },
+    },
+    outlined: {
+      border: `1px solid ${
+        theme.palette.type === 'light' ? 'rgba(0, 0, 0, 0.23)' : 'rgba(255, 255, 255, 0.23)'
+      }`,
+    },
+    disabled: {
+      border: `1px solid ${theme.palette.action.disabledBackground}`,
+      color: theme.palette.action.disabled,
     },
     bullet: {
       fontSize: theme.typography.fontSize,
@@ -157,7 +161,7 @@ class CpacpySchedulerSelector extends Component {
   }
 
   render() {
-    const { classes, schedulers, watch, stop, buttonProps, buttonMenuProps, popoverProps } = this.props
+    const { classes, schedulers, watch, stop, buttonProps: { className: buttonClassName, ...buttonProps }, buttonMenuProps, popoverProps } = this.props
     const { selector, selectorAnchor, fullSelector, scheduler: selectedScheduler } = this.state
 
     if (!schedulers) {
@@ -235,7 +239,7 @@ class CpacpySchedulerSelector extends Component {
               <ListItemIcon>
                 <BulletIcon className={clsx(
                   classes.bullet,
-                  (scheduler.get('detecting') || scheduler.get('polling')) ? classes.detecting : null,
+                  (s.get('detecting') || s.get('polling')) ? classes.detecting : null,
                   s.get('online') === null ? classes.unknown : (s.get('online') ? classes.online : classes.offline)
                 )} />
               </ListItemIcon>
@@ -244,7 +248,18 @@ class CpacpySchedulerSelector extends Component {
           ))}
         </Popover>
 
-        <ButtonBase component='a' className={classes.button} onClick={this.toggleSelector} {...buttonProps}>
+        <ButtonBase
+          component='a'
+          className={clsx(
+            classes.button,
+            {
+              [classes[buttonProps.variant]]: buttonProps.variant,
+            },
+            buttonClassName,
+          )}
+          onClick={this.toggleSelector}
+          {...buttonProps}
+        >
           <BulletIcon className={clsx(
             classes.bullet,
             (scheduler.get('detecting') || scheduler.get('polling')) ? classes.detecting : null,

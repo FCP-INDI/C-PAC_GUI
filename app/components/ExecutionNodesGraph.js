@@ -7,7 +7,7 @@ import Popper from '@material-ui/core/Popper'
 import Typography from '@material-ui/core/Typography'
 import Fade from '@material-ui/core/Fade'
 import Paper from '@material-ui/core/Paper'
-import Tooltip from '@material-ui/core/Tooltip'
+import Tooltip from 'components/Tooltip'
 import ClickAwayListener from '@material-ui/core/ClickAwayListener'
 
 import { styles as TooltipStyles } from '@material-ui/core/Tooltip/Tooltip'
@@ -55,6 +55,14 @@ class ExecutionNodesGraph extends Component {
     nomouse: { pointerEvents: 'none' },
 
     ...TooltipStyles(theme),
+
+    arrowPos: {
+      marginTop: '-0.71em',
+      marginLeft: 4,
+      marginRight: 4,
+      top: 0,
+      left: 'calc(50% - 0.705em) !important',
+    },
   })
 
   state = {
@@ -105,7 +113,7 @@ class ExecutionNodesGraph extends Component {
 
   handleClose = (e) => {
     const elementRelated = event.toElement || event.relatedTarget
-    if (this.gridRef.current && elementRelated.parentNode == this.gridRef.current) {
+    if (this.gridRef.current && elementRelated?.parentNode == this.gridRef.current) {
       return
     }
     this.anchorEl = null
@@ -138,10 +146,6 @@ class ExecutionNodesGraph extends Component {
               enabled: true,
               boundariesElement: 'scrollParent',
             },
-            arrow: {
-              enabled: true,
-              element: this.arrowRef.current,
-            },
           }}
         >
           {({ placement: placementInner }) => (
@@ -151,8 +155,8 @@ class ExecutionNodesGraph extends Component {
               classes[`tooltipPlacement${capitalize(placementInner.split('-')[0])}`],
             )}
           >
-            { node.get('name') }
-            <span className={classes.arrow} ref={this.arrowRef} />
+            { node && node.get('name') }
+            <span className={clsx(classes.arrowPos, classes.arrow)} />
           </div>
           )}
         </Popper>
