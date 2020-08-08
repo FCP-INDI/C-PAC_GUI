@@ -1,5 +1,8 @@
+import React from 'react'
 import { createMuiTheme } from '@material-ui/core/styles';
 import teal from '@material-ui/core/colors/teal';
+
+const prefersDarkMode = false
 
 export default createMuiTheme({
   typography: {
@@ -7,8 +10,9 @@ export default createMuiTheme({
     fontSize: 15,
   },
   palette: {
-    primary: { main: teal[200] },
-    secondary: { main: teal[600] }
+    type: prefersDarkMode ? 'dark' : 'light',
+    primary: { main: prefersDarkMode ? teal[900] : teal[200] },
+    secondary: { main: prefersDarkMode ? teal[300] : teal[600] },
   },
   props: {
     MuiGrid: {
@@ -65,13 +69,6 @@ export default createMuiTheme({
         },
       },
     },
-    MuiSelect: {
-      select: {
-        '&:focus': {
-          backgroundColor: 'inherit',
-        }
-      },
-    },
     MuiStepper: {
       root: {
         '&$vertical': {
@@ -81,16 +78,23 @@ export default createMuiTheme({
         },
       },
     },
-    MuiListItemIcon: {
+    MuiSelect: {
       root: {
-        minWidth: 32
-      }
+        "& .MuiListItemIcon-root": {
+          minWidth: 32,
+        },
+      },
+      select: {
+        '&:focus': {
+          backgroundColor: 'inherit',
+        }
+      },
     },
     MuiBadge: {
       root: {
         "& .MuiSvgIcon-root": {
-          fontSize: '1.4em',
-        }
+          fontSize: '1.2rem',
+        },
       },
     },
     MuiFormGroup: {
@@ -109,4 +113,4 @@ export default createMuiTheme({
       }
     }
   }
-});
+})
