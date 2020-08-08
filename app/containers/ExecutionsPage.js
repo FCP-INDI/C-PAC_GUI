@@ -83,7 +83,7 @@ class ExecutionsPage extends Component {
       animation: `$shinebrightlikeadiamond 1s linear infinite`
     },
     status_success: getColor(theme, 'success'),
-    status_error: getColor(theme, 'error'),
+    status_failure: getColor(theme, 'error'),
     status_unknown: {},
     content: {
       padding: theme.spacing() * 2,
@@ -172,7 +172,7 @@ class ExecutionsPage extends Component {
                   Logs
                 </Button>
               </Tooltip>
-              {e.get('status') === 'error' ? (
+              {e.get('status') === 'failure' ? (
               <Tooltip title="Check the execution crashes">
                 <Button color="secondary" variant="contained" startIcon={<ExecutionCrashIcon />}>
                   Crashes

@@ -57,7 +57,7 @@ class ExecutionCard extends Component {
     const labels = {
       running: 'Running',
       success: 'Success',
-      error: 'Error',
+      failure: 'Failure',
       [null]: 'Unknown',
       [undefined]: 'Unknown',
       unknown: 'Unknown'

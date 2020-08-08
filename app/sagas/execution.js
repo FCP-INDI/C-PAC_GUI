@@ -131,11 +131,15 @@ function* preprocessDatasetProcessingScheduleWatch({ scheduler, execution, sched
 
 function* preprocessDatasetProcessingScheduleFinish({ scheduler, execution: executionId }) {
   const execution = yield selectSaga(selectExecution(executionId))
-  const allStatuses = execution.get('schedules').valueSeq().every((s) => s.get('status') === 'success')
+  const allStatuses = execution
+    .get('schedules')
+    .valueSeq()
+    .every((s) => s.get('status') === 'success' || s.get('status') === 'failure')
+    
   if (allStatuses) {
     yield put({
       type: EXECUTION_PREPROCESS_DATASET_FINISHED,
-      scheduler, execution,
+      scheduler, execution: executionId,
     })
     yield put({ type: EXECUTION_CONFIG_SAVE })
   }

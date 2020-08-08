@@ -166,25 +166,25 @@ export { default as ExecutionLogsIcon } from '@material-ui/icons/Note'
 export { default as ExecutionCrashIcon } from '@material-ui/icons/BugReport'
 
 import { default as ExecutionStatusSuccessIcon } from '@material-ui/icons/Done'
-import { default as ExecutionStatusErrorIcon } from '@material-ui/icons/Error'
+import { default as ExecutionStatusFailureIcon } from '@material-ui/icons/Error'
 import { default as ExecutionStatusRunningIcon } from '@material-ui/icons/PlayArrow'
 import { default as ExecutionStatusUnknownIcon } from '@material-ui/icons/Remove'
 
 export {
   ExecutionStatusSuccessIcon,
-  ExecutionStatusErrorIcon,
+  ExecutionStatusFailureIcon,
   ExecutionStatusRunningIcon,
   ExecutionStatusUnknownIcon,
 }
 
-export const ExecutionCurrentStatusIcon = (props) => {
+export const ExecutionCurrentStatusIcon = ({ status, ...props }) => {
   return {
-    running: <ExecutionStatusRunningIcon key="running" />,
-    success: <ExecutionStatusSuccessIcon key="success" />,
-    error: <ExecutionStatusErrorIcon key="error" />,
-    unknown: <ExecutionStatusUnknownIcon key="unknown" />,
+    running: <ExecutionStatusRunningIcon key="running" {...props} />,
+    success: <ExecutionStatusSuccessIcon key="success" {...props} />,
+    failure: <ExecutionStatusFailureIcon key="failure" {...props} />,
+    unknown: <ExecutionStatusUnknownIcon key="unknown" {...props} />,
     null: <ExecutionStatusUnknownIcon key="unknown" />,
-  }[props.status || 'null'] || null
+  }[status || 'null'] || null
 }
 
 import SvgIcon from '@material-ui/core/SvgIcon';

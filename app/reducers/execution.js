@@ -90,7 +90,12 @@ export default function (state = initialState, action) {
     case EXECUTION_PREPROCESS_DATASET_FINISHED: {
       const { execution } = action
       const i = state.get('executions').findIndex((e) => e.get('id') === execution)
-      return state.setIn(['executions', i, 'status'], 'success')
+
+      const status = state.getIn(['executions', i, 'schedules'])
+        .valueSeq()
+        .every((s) => s.get('status') === 'success') ? 'success' : 'failure'
+
+      return state.setIn(['executions', i, 'status'], status)
     }
     default:
       return state
