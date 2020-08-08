@@ -49,7 +49,7 @@ class ExecutionNodesGraph extends Component {
     },
     running: { backgroundColor: theme.palette.info.light },
     success: { backgroundColor: theme.palette.success.light },
-    error: { backgroundColor: theme.palette.error.light },
+    failure: { backgroundColor: theme.palette.error.light },
     unknown: { backgroundColor: theme.palette.grey[400] },
 
     nomouse: { pointerEvents: 'none' },
@@ -123,12 +123,12 @@ class ExecutionNodesGraph extends Component {
   render() {
     const { classes, nodes } = this.props
     const { node, nodeI } = this.state
-    const statuses = ['running', 'success', 'error', 'unknown']
+    const statuses = ['running', 'success', 'failure', 'unknown']
 
     const bp = {
       success: ~~(nodes.size * 0.5),
       running: ~~(nodes.size * 0.3),
-      error: ~~(nodes.size * 0.05),
+      failure: ~~(nodes.size * 0.05),
     }
 
     return (
