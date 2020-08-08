@@ -6,6 +6,8 @@ export const CPACPY_SCHEDULER_CALL = 'CPACPY_SCHEDULER_CALL'
 export const CPACPY_SCHEDULER_POLLING = 'CPACPY_SCHEDULER_POLLING'
 export const CPACPY_SCHEDULER_POLLING_CANCEL = 'CPACPY_SCHEDULER_POLLING_CANCEL'
 
+export const CPACPY_SCHEDULER_SCHEDULER = 'CPACPY_SCHEDULER_SCHEDULER'
+
 export const CPACPY_SCHEDULER_CONNECT = 'CPACPY_SCHEDULER_CONNECT'
 export const CPACPY_SCHEDULER_CONNECT_CANCEL = 'CPACPY_SCHEDULER_CONNECT_CANCEL'
 export const CPACPY_SCHEDULER_CONNECT_MESSAGE = 'CPACPY_SCHEDULER_CONNECT_MESSAGE'
@@ -23,18 +25,24 @@ export function init() {
     type: CPACPY_INIT,
   }
 }
-
-export function detect(scheduler, poll=true) {
+export function selectCurrentScheduler(scheduler) {
   return {
-    type: CPACPY_SCHEDULER_DETECT,
-    scheduler, poll,
+    type: CPACPY_SCHEDULER_SCHEDULER,
+    scheduler,
   }
 }
 
-export function poll(scheduler) {
+export function detect(scheduler, poll=true, current=false) {
+  return {
+    type: CPACPY_SCHEDULER_DETECT,
+    scheduler, poll, current,
+  }
+}
+
+export function poll(scheduler, current=false) {
   return {
     type: CPACPY_SCHEDULER_POLLING,
-    scheduler,
+    scheduler, current,
   }
 }
 
