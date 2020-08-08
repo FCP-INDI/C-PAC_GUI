@@ -41,7 +41,6 @@ class ExecutionCard extends Component {
       marginLeft: 'auto',
     },
     avatar: {
-      backgroundColor: blue[500],
     },
     info: {
       padding: 0

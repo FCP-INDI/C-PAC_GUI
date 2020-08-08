@@ -3,8 +3,6 @@ import React, { Component } from 'react'
 import { withStyles } from '@material-ui/core/styles'
 
 import Content from '../Content'
-import Header, { HeaderText, HeaderAvatar, HeaderTools } from '../Header'
-
 import Collapse from '@material-ui/core/Collapse'
 import Grid from '@material-ui/core/Grid'
 import MenuItem from '@material-ui/core/MenuItem'

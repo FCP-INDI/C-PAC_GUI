@@ -17,7 +17,7 @@ class Modal extends Component {
       maxHeight: '90vh',
       [theme.breakpoints.down('sm')]: {
         width: '95vw',
-        maxHeight: '100vh',
+        maxHeight: '95vh',
       },
       padding: theme.spacing(1),
       top: `50%`,

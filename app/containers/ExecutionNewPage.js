@@ -4,7 +4,6 @@ import { withRouter, Link } from 'react-router-dom'
 
 import { withStyles, lighten } from '@material-ui/core/styles'
 import { fromJS, isImmutable } from 'immutable'
-import clsx from 'clsx'
 
 import Badge from '@material-ui/core/Badge'
 import Chip from '@material-ui/core/Chip'
@@ -19,7 +18,7 @@ import InputAdornment from '@material-ui/core/InputAdornment'
 import IconButton from '@material-ui/core/IconButton'
 import Select from '@material-ui/core/Select'
 import MenuItem from '@material-ui/core/MenuItem'
-import Tooltip from '@material-ui/core/Tooltip'
+import Tooltip from 'components/Tooltip'
 import Typography from '@material-ui/core/Typography'
 import Avatar from '@material-ui/core/Avatar'
 import Alert from '@material-ui/lab/Alert'
@@ -148,6 +147,9 @@ class ExecutionNewPage extends Component {
   constructor(props) {
     super(props);
     const p = props.parameters
+    if (props.scheduler && props.scheduler.get('online')) {
+      this.state.scheduler.id = props.scheduler.get('id')
+    }
     if (p) {
       if (p.dataset) {
         const [dataset, view] = p.dataset.split(':')
@@ -198,7 +200,7 @@ class ExecutionNewPage extends Component {
               null
 
           if (!view) {
-            state = state.setIn(['dataset', 'view'], null)
+            state = state.setIn(['dataset', 'view'], 'default')
           }
 
           const version = `${dataset.get('versions').keySeq().map(i => +i).max()}`
@@ -416,7 +418,10 @@ class ExecutionNewPage extends Component {
                 {
                 (dataset && summary.dataset?.dirty) ? (
                   <Grid item xs={12}>
-                    <Alert severity="warning" action={
+                    <Alert
+                      severity="warning"
+                      style={{ margin: '0 -10px' }}
+                      action={
                       <>
                         <Button
                           disabled={dataset.get('loading')} variant="contained"
@@ -425,8 +430,8 @@ class ExecutionNewPage extends Component {
                         >
                           Build Dataset on
                           <CpacpySchedulerSelector buttonProps={{
-                            style: { marginLeft: 10 },
-                            variant: 'outlined',
+                              style: { marginLeft: 10 },
+                              variant: 'outlined',
                             }}
                             onSelect={this.handleDatabaseScheduler}
                           />
@@ -470,7 +475,7 @@ class ExecutionNewPage extends Component {
                     select
                     label="Backend"
                     fullWidth margin="normal" variant="outlined"
-                    disabled={this.state.scheduler.id === null}
+                    disabled={this.state.scheduler.id === null || !scheduler.get('online')}
                     value={this.state.scheduler.backend || ''}
                     onChange={this.handleChange(['scheduler', 'backend'])}
                     className={classes.backend}

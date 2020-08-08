@@ -13,7 +13,6 @@ import { withStyles } from '@material-ui/core/styles';
 
 import Grid from '@material-ui/core/Grid';
 import PipelineEditor from 'containers/pipeline/PipelineEditor';
-import Header, { HeaderText, HeaderAvatar, HeaderTools } from 'components/Header';
 import Content from 'components/Content';
 import Box from 'components/Box';
 
@@ -23,7 +22,7 @@ import Paper from '@material-ui/core/Paper';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import IconButton from '@material-ui/core/IconButton'
-import Tooltip from '@material-ui/core/Tooltip'
+import Tooltip from 'components/Tooltip'
 import Drawer from '@material-ui/core/Drawer';
 
 import { fromJS, isImmutable } from 'immutable';
@@ -291,19 +290,22 @@ class PipelinePage extends Component {
            avatar={<PipelineIcon />}
            tools={tools}>
         {
-          this.state.configuration ?
+          this.state.configuration &&
           (
             <>
-            { this.state.default ?
+              { this.state.default &&
               <div className={classes.warning}>
                 You cannot change the default template! Please, duplicate it to create your own pipeline.
               </div>
-              : null }
-              <PipelineEditor default={this.state.default} configuration={this.state.configuration} onChange={this.handleChange} onSave={this.handleSave} />
+              }
+              <PipelineEditor
+                default={this.state.default}
+                configuration={this.state.configuration}
+                onChange={this.handleChange}
+                onSave={this.handleSave}
+              />
             </>
           )
-          :
-          null
         }
       </Box>
     );
@@ -331,4 +333,7 @@ const areStatesEqual = (next, prev) => {
   return false
 }
 
-export default connect(mapStateToProps, mapDispatchToProps, null, { areStatesEqual })(withStyles(PipelinePage.styles)(PipelinePage));
+export default 
+  connect(mapStateToProps, mapDispatchToProps, null, { /*areStatesEqual*/ })
+    (withStyles(PipelinePage.styles)
+      (PipelinePage))
