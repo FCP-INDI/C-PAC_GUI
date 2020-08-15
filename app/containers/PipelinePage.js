@@ -387,8 +387,10 @@ const mapDispatchToProps = {
 }
 
 const areStatesEqual = (next, prev) => {
-  // @TODO review
-  return false
+  if (!prev.main.hasIn(['config', 'pipelines']) || !next.main.hasIn(['config', 'pipelines'])) {
+    return false;
+  }
+  return next.main.getIn(['config', 'pipelines']) === prev.main.getIn(['config', 'pipelines'])
 }
 
 <<<<<<< HEAD
@@ -404,7 +406,7 @@ export const isADefault = (pipelineId) => {
 export default connect(mapStateToProps, mapDispatchToProps, null, { areStatesEqual })(withStyles(PipelinePage.styles)(PipelinePage));
 =======
 export default 
-  connect(mapStateToProps, mapDispatchToProps, null, { /*areStatesEqual*/ })
+  connect(mapStateToProps, mapDispatchToProps, null, { areStatesEqual })
     (withStyles(PipelinePage.styles)
       (PipelinePage))
 >>>>>>> fee8c14 (styling, cleaning and tooltip abstraction)
