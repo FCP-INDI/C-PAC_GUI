@@ -329,11 +329,13 @@ const mapDispatchToProps = {
 }
 
 const areStatesEqual = (next, prev) => {
-  // @TODO review
-  return false
+  if (!prev.main.hasIn(['config', 'pipelines']) || !next.main.hasIn(['config', 'pipelines'])) {
+    return false;
+  }
+  return next.main.getIn(['config', 'pipelines']) === prev.main.getIn(['config', 'pipelines'])
 }
 
 export default 
-  connect(mapStateToProps, mapDispatchToProps, null, { /*areStatesEqual*/ })
+  connect(mapStateToProps, mapDispatchToProps, null, { areStatesEqual })
     (withStyles(PipelinePage.styles)
       (PipelinePage))
