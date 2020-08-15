@@ -3,11 +3,11 @@ import MUITooltip from '@material-ui/core/Tooltip'
 
 class Tooltip extends React.Component {
   render() {
-    const { title } = this.props
+    const { title, ...props } = this.props
 
     return (
       <MUITooltip title={title}>
-        <span>
+        <span {...props}>
           { this.props.children }
         </span>
       </MUITooltip>

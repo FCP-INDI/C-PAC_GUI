@@ -55,7 +55,6 @@ class PipelineCard extends Component {
     info: {
       padding: 0
     },
-
     featDisabled: { opacity: 0.5 },
     featEnabled: { opacity: 1.0 },
   })
@@ -152,8 +151,8 @@ class PipelineCard extends Component {
             : null
           }
 
-          <Tooltip title="Edit">
-            <IconButton className={classes.expand} onClick={() => this.handleOpen(pipeline.get('id'))}>
+          <Tooltip title="Edit" className={classes.expand}>
+            <IconButton onClick={() => this.handleOpen(pipeline.get('id'))}>
               <NavigateNextIcon />
             </IconButton>
           </Tooltip>
