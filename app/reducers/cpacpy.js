@@ -35,7 +35,14 @@ export const selectScheduler =
 export const selectCurrentScheduler =
   () => 
     (state) =>
-    selectScheduler(state.get('scheduler'))(state)
+      selectScheduler(state.get('scheduler'))(state)
+
+export const selectSchedulerBackend =
+  (scheduler, backend) =>
+    (state) =>
+      selectScheduler(scheduler)(state)
+        .get('backends')
+        .find((b) => b.get('id') == backend)
   
 export const selectSchedulerConnectCallback =
   (scheduler, callbackId) => 
