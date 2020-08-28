@@ -189,3 +189,63 @@ const ConnectedSchedulerChip =
       (SchedulerChip))
 
 export { ConnectedSchedulerChip as SchedulerChip }
+
+
+class BackendChip extends Component {
+
+  static mapStateToProps = (state, props) => {
+    const { scheduler, backend } = props
+    return {
+      scheduler: selectScheduler(scheduler)(state.cpacpy),
+      backend: selectSchedulerBackend(scheduler, backend)(state.cpacpy),
+    }
+  }
+
+  static mapDispatchToProps = {
+  }
+
+  static styles = theme => ({
+    badgeIcon: {
+      fontSize: theme.typography.pxToRem(14)
+    },
+  })
+
+
+  render() {
+    const { scheduler, backend, classes } = this.props
+
+    if (backend) {
+      return (
+        <Badge
+          badgeContent={<ExecutionCurrentBackendIcon backend={backend} />}
+          color="secondary"
+          anchorOrigin={{
+            vertical: 'bottom',
+            horizontal: 'right',
+          }}
+        >
+          <Chip
+            icon={<SchedulerIcon />}
+            label={scheduler.get('name')}
+            color="primary"
+          />
+        </Badge>
+      )
+    } else {
+      return (
+        <Chip
+          icon={<SchedulerIcon />}
+          label={scheduler.get('name')}
+          color="primary"
+        />
+      )
+    }
+  }
+}
+
+const ConnectedBackendChip = 
+  connect(BackendChip.mapStateToProps, BackendChip.mapDispatchToProps)
+    (withStyles(BackendChip.styles)
+      (BackendChip))
+
+export { ConnectedBackendChip as BackendChip }

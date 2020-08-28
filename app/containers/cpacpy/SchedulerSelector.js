@@ -13,12 +13,17 @@ import ListItem from '@material-ui/core/ListItem'
 import ListItemIcon from '@material-ui/core/ListItemIcon'
 import ListItemText from '@material-ui/core/ListItemText'
 import Box from 'components/Box'
+import { default as FlexBox } from '@material-ui/core/Box'
+import Typography from '@material-ui/core/Typography'
+import Tooltip from '@material-ui/core/Tooltip'
 
 
 import {
   BulletIcon,
   SchedulerIcon,
 } from 'components/icons'
+
+import { SchedulerBackendChip } from 'components/chips'
 
 import {
   watchCancel as cpacpyWatchCancel,
@@ -30,6 +35,7 @@ import {
   selectCurrentScheduler,
 } from 'reducers/cpacpy'
 import { fromJS } from 'immutable'
+import { Grid } from '@material-ui/core'
 
 
 class CpacpySchedulerSelector extends Component {
@@ -100,8 +106,37 @@ class CpacpySchedulerSelector extends Component {
         flexGrow: 1,
       }
     },
+    scheduler: {
+      margin: theme.spacing(0, 0, 3, 0),
+    },
+    description: {
+      margin: theme.spacing(),
+      padding: theme.spacing(1, 1, 0, 1),
+    },
     content: {
       overflow: 'auto'
+    },
+    manage: {
+      textAlign: 'center',
+      '& .MuiListItemText-root': {
+        color: theme.palette.secondary.main,
+      },
+    },
+    actions: {
+      padding: `${theme.spacing(0, 1, 1, 1)} !important`,
+      '& > *': {
+        margin: theme.spacing(),
+        marginTop: 0,
+        paddingTop: theme.spacing(),
+        borderTop: `1px solid ${theme.palette.divider}`,
+        '& > *': {
+          marginRight: theme.spacing(),
+        },
+      },
+    },
+    '@keyframes shinebrightlikeadiamond': {
+      '0%': { strokeWidth: 0, strokeOpacity: 1 },
+      '80%': { strokeWidth: 6, strokeOpacity: 0 },
     },
     '@keyframes shinebrightlikeadiamond': {
       '0%': { strokeWidth: 0, strokeOpacity: 0 },
@@ -146,10 +181,22 @@ class CpacpySchedulerSelector extends Component {
     this.setState({ selector: !this.state.selector, selectorAnchor: e.target })
   }
 
+  toggleFullSelector = (e) => {
+    e.stopPropagation()
+    e.preventDefault()
+    this.setState({ fullSelector: !this.state.fullSelector })
+  }
+
   handleClose = (e) => {
     e.stopPropagation()
     e.preventDefault()
     this.setState({ selector: false })
+  }
+
+  handleFullClose = (e) => {
+    e.stopPropagation()
+    e.preventDefault()
+    this.setState({ fullSelector: false })
   }
 
   handleSelect = (scheduler) => (e) => {
@@ -158,6 +205,12 @@ class CpacpySchedulerSelector extends Component {
     this.setState({ selector: false, scheduler })
     this.props.detect(scheduler, false)
     this.props.onSelect && this.props.onSelect(scheduler)
+  }
+
+  handleManage = (e) => {
+    e.stopPropagation()
+    e.preventDefault()
+    this.setState({ selector: false, fullSelector: true })
   }
 
   render() {
@@ -176,7 +229,7 @@ class CpacpySchedulerSelector extends Component {
           disableAutoFocus
           disableEnforceFocus
           open={fullSelector}
-          onClose={this.toggleSelector}
+          onClose={this.handleFullClose}
         >
           <Paper className={classes.paper}>
             <Box
@@ -186,36 +239,46 @@ class CpacpySchedulerSelector extends Component {
                 content: classes.content
               }}
             >
-              <p>Hello!</p>
-              <p>Hello!</p>
-              <p>Hello!</p>
-              <p>Hello!</p>
-              <p>Hello!</p>
-              <p>Hello!</p>
-              <p>Hello!</p>
-              <p>Hello!</p>
-              <p>Hello!</p>
-              <p>Hello!</p>
-              <p>Hello!</p>
-              <p>Hello!</p>
-              <p>Hello!</p>
-              <p>Hello!</p>
-              <p>Hello!</p>
-              <p>Hello!</p>
-              <p>Hello!</p>
-              <p>Hello!</p>
-              <p>Hello!</p>
-              <p>Hello!</p>
-              <p>Hello!</p>
-              <p>Hello!</p>
-              <p>Hello!</p>
-              <p>Hello!</p>
-              <p>Hello!</p>
-              <p>Hello!</p>
-              <p>Hello!</p>
-              <p>Hello!</p>
-              <p>Hello!</p>
-              <p>Hello!</p>
+              {
+                schedulers.map((s) => (
+                  <Paper key={s.get('id')} elevation={3} className={classes.scheduler}>
+                    <Grid container spacing={0}>
+                      <Grid item xs={12} className={classes.description}>
+                        <Grid container xs={12} spacing={0}>
+                          <Grid item xs={6}>
+                            <Typography>
+                              { s.get('name') }
+                            </Typography>
+                          </Grid>
+                          <Grid item xs={6}>
+                            <Typography>
+                              {
+                                s.get('backends')
+                                  .map(
+                                    b => 
+                                      <SchedulerBackendChip
+                                        key={`${s.get('id')}-${b.get('id')}`}
+                                        scheduler={s.get('id')}
+                                        backend={b.get('id')} />
+                                  )
+                              }
+                            </Typography>
+                          </Grid>
+                        </Grid>
+                      </Grid>
+                      <Grid item xs={12} className={classes.actions}>
+                        <FlexBox>
+                          <Tooltip title="Check the execution logs">
+                            <Button color="secondary" variant="contained">
+                              Logs
+                            </Button>
+                          </Tooltip>
+                        </FlexBox>
+                      </Grid>
+                    </Grid>
+                  </Paper>
+                ))
+              }
             </Box>
           </Paper>
         </Modal>
@@ -246,6 +309,10 @@ class CpacpySchedulerSelector extends Component {
               <ListItemText primary={s.get('name')} />
             </ListItem>
           ))}
+
+          <ListItem button key="manage" className={classes.manage} onClick={this.handleManage} {...buttonMenuProps}>
+            <ListItemText primary={'Manage'} />
+          </ListItem>
         </Popover>
 
         <ButtonBase
