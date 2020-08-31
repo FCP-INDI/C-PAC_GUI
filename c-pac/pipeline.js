@@ -581,6 +581,10 @@ export function parse(content) {
   c.functional.anatomical_registration.registration_input =
   config.func_reg_input.includes('Mean Functional') ? 'mean' : 'selected'
   c.functional.anatomical_registration.functional_volume = config.func_reg_input_volume
+
+  c.functional.anatomical_registration.bb_registration_wm_source.fsl = config.motion_correction.includes('FSL')
+  c.functional.anatomical_registration.bb_registration_wm_source.freesurfer = config.motion_correction.includes('FreeSurfer')
+
   c.functional.anatomical_registration.functional_masking.fsl.enabled = config.functionalMasking.includes('FSL')
   c.functional.anatomical_registration.functional_masking.afni = config.functionalMasking.includes('AFNI')
   c.functional.anatomical_registration.functional_masking.fsl_afni = config.functionalMasking.includes('FSL_AFNI')
@@ -1206,6 +1210,10 @@ export function dump(pipeline, version='0') {
   config.boundaryBasedRegistrationSchedule = c.functional.anatomical_registration.bb_registration_scheduler
   config.func_reg_input = [c.functional.anatomical_registration.registration_input === 'mean' ?
     "Mean Functional" : "Selected Functional Volume"]
+  
+  config.BBR_WM_source = []
+    .concat(c.functional.anatomical_registration.bb_registration_wm_source.fsl ? ["FSL"] : [])
+    .concat(c.functional.anatomical_registration.bb_registration_wm_source.freesurfer ? ["FreeSurfer"] : [])
 
   config.func_reg_input_volume = c.functional.anatomical_registration.functional_volume
   config.functionalMasking = []

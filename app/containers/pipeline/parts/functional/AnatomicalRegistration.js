@@ -156,6 +156,37 @@ class AnatomicalRegistration extends Component {
             <FormLabel>
               <Help
                 type="pipeline"
+                regex={/^BBR_WM_source/}
+                help={`Choose the tool to generate white matter segmentation for BB registration.`}
+              />
+              BB Registration White Matter Source
+            </FormLabel>
+            <FormControl>
+              <FormGroup row>
+                <FormControlLabelled label="FSL: FAST">
+                  <Switch
+                    name="functional.anatomical_registration.bb_registration_wm_source.fsl"
+                    checked={configuration.getIn(["functional", "anatomical_registration", "bb_registration_wm_source", "fsl"])}
+                    onChange={onChange}
+                    color="primary"
+                  />
+                </FormControlLabelled>
+                <FormControlLabelled label="FreeSurfer: recon-all">
+                  <Switch
+                    name="functional.anatomical_registration.bb_registration_wm_source.freesurfer"
+                    checked={configuration.getIn(["functional", "anatomical_registration", "bb_registration_wm_source", "freesurfer"])}
+                    onChange={onChange}
+                    color="primary"
+                  />
+                </FormControlLabelled>
+              </FormGroup>
+            </FormControl>
+          </FormGroup>
+
+          <FormGroup>
+            <FormLabel>
+              <Help
+                type="pipeline"
                 regex={/^functionalMasking/}
                 help={`Choose which tool to be used in functional masking.`}
               />

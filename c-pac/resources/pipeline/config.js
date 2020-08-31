@@ -250,6 +250,10 @@ export default {
             bb_registration: false,
             bb_registration_scheduler: '${environment.paths.fsl_dir}/etc/flirtsch/bbr.sch',
             registration_input: 'mean',
+            bb_registration_wm_source : {
+              'fsl': false,
+              'freesurfer': false
+            },
             functional_volume: 0,
             functional_masking: {
               fsl: {
