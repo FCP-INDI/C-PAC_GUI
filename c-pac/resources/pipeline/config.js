@@ -68,6 +68,9 @@ export default {
               },
               n4: {
                 enabled: false,
+              },
+              surface_reconstruction: {
+                enabled: false,
               }
             }
           },

@@ -74,6 +74,23 @@ class InitialPreprocessing extends Component {
               </FormControlLabelled>
             </Help>
           </FormGroup>
+
+          <FormGroup row>
+            <Help
+              type="pipeline"
+              regex={/^surface_reconstruction/}
+              help={`Turn on to generate surface meshes from FreeSurfer`}
+            >
+              <FormControlLabelled label="Surface Reconstruction">
+                <Switch
+                  name="anatomical.preprocessing.methods.surface_reconstruction.enabled"
+                  checked={configuration.getIn("anatomical.preprocessing.methods.surface_reconstruction.enabled".split("."))}
+                  onChange={onChange}
+                  color="primary"
+                />
+              </FormControlLabelled>
+            </Help>
+          </FormGroup>
         </FormControl>
       </React.Fragment>
     )
