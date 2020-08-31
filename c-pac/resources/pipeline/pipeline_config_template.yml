@@ -117,8 +117,8 @@ n4_bias_field_correction: False
 already_skullstripped :  [0]
 
 
-# Choice of using AFNI-3dSkullStrip or FSL-BET or niworkflows-ants or UNet for monkey data to perform SkullStripping
-# Options: ['AFNI', 'FSL', 'niworkflows-ants', 'unet'] 
+# Choice of using AFNI (3dSkullStrip), FSL (BET), niworkflows-ants, FreeSurfer (recon-all) or UNet for monkey data to perform skull-stripping.
+# Options: ['AFNI', 'FSL', 'niworkflows-ants', 'FreeSurfer', 'unet']
 skullstrip_option :  ['AFNI']
 
 
@@ -479,6 +479,10 @@ ANTs_prior_seg_left_WM_label: 2
 ANTs_prior_seg_right_WM_label: 41
 
 
+# Reconstruct surface via FreeSurfer
+surface_reconstruction: False
+
+
 # Run functional preproceessing
 runFunctional: [1]
 
@@ -585,6 +589,11 @@ runRegisterFuncToAnat :  [1]
 
 # Run Functional to Anatomical Registration with BB Register
 runBBReg :  [1]
+
+
+# BBR_WM_source :  ['FSL', 'FreeSurfer']
+# Choose FSL (FAST) or FreeSurfer (reconall) to get WM segmentation for BBR 
+BBR_WM_source : ['FSL']
 
 
 # Standard FSL 5.0 Scheduler used for Boundary Based Registration.

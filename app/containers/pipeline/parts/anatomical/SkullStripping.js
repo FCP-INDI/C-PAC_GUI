@@ -40,6 +40,7 @@ class SkullStripping extends Component {
     afniOptions: false,
     niworkflows_antsOptions: false,
     unetOptions: false,
+    freesurferOptions: false,
   }
 
   handleValueChange = (event) => {
@@ -50,6 +51,7 @@ class SkullStripping extends Component {
       "anatomical.skull_stripping.methods.bet.enabled",
       "anatomical.skull_stripping.methods.niworkflows_ants.enabled",
       "anatomical.skull_stripping.methods.unet.enabled",
+      "anatomical.skull_stripping.methods.freesurfer.enabled",
       "anatomical.skull_stripping.enabled"
     ]
 
@@ -69,6 +71,7 @@ class SkullStripping extends Component {
           changes.push(["anatomical.skull_stripping.methods.bet.enabled", false])
           changes.push(["anatomical.skull_stripping.methods.niworkflows_ants.enabled", false])
           changes.push(["anatomical.skull_stripping.methods.unet.enabled", false])
+          changes.push(["anatomical.skull_stripping.methods.freesurfer.enabled", false])
         }
       }
 
@@ -76,7 +79,8 @@ class SkullStripping extends Component {
         "anatomical.skull_stripping.methods.afni.enabled",
         "anatomical.skull_stripping.methods.bet.enabled",
         "anatomical.skull_stripping.methods.niworkflows_ants.enabled",
-        "anatomical.skull_stripping.methods.unet.enabled"
+        "anatomical.skull_stripping.methods.unet.enabled",
+        "anatomical.skull_stripping.methods.freesurfer.enabled"
       ]
       if (methods.includes(name)) {
         changes.push([name, value])
@@ -97,7 +101,7 @@ class SkullStripping extends Component {
     this.setState({ betOptions: true })
   }
   
-  handleOpenNiworkflows_ants = () => {
+  handleOpenNiworkflowsAnts = () => {
     this.setState({ niworkflows_antsOptions: true })
   }
 
@@ -113,7 +117,7 @@ class SkullStripping extends Component {
     this.setState({ betOptions: false })
   }
 
-  handleCloseNiworkflows_ants = () => {
+  handleCloseNiworkflowsAnts = () => {
     this.setState({ niworkflows_antsOptions: false })
   }
 
@@ -736,7 +740,7 @@ class SkullStripping extends Component {
         </Dialog>
         <Dialog
           open={this.state.niworkflows_antsOptions && configuration.getIn(['anatomical', 'skull_stripping', 'methods', 'niworkflows_ants', 'enabled'])}
-          onClose={this.handleCloseNiworkflows_ants}
+          onClose={this.handleCloseNiworkflowsAnts}
           fullWidth={true}
         >
           <DialogTitle>{`niworkflows-ants Options`}</DialogTitle>
@@ -811,7 +815,7 @@ class SkullStripping extends Component {
               </Help>
             </FormGroup>
           </DialogContent>
-        </Dialog> 
+        </Dialog>
         <FormControl fullWidth>
           <FormGroup row>
             <Help
@@ -833,8 +837,8 @@ class SkullStripping extends Component {
             <Help
               type="pipeline"
               regex={/^skullstrip_option/}
-              help={`Choice of using AFNI-3dSkullStrip, FSL-BET, NIworkflows-ANTS and/or U-Net to perform SkullStripping.`}
-            >              
+              help={`Choice of using AFNI (3dSkullStrip), FSL (BET), NIworkflows-ANTS, U-Net and/or FreeSurfer (recon-all) to perform skull stripping.`}
+            >
               <FormControlLabel
                 label="AFNI 3dSkullStrip"
                 control={
@@ -884,7 +888,7 @@ class SkullStripping extends Component {
               />
               { configuration.getIn(['anatomical', 'skull_stripping', 'methods', 'niworkflows_ants', 'enabled']) ?
                 <IconButton
-                  onClick={() => this.handleOpenNiworkflows_ants()}>
+                  onClick={() => this.handleOpenNiworkflowsAnts()}>
                   <SettingsIcon />
                 </IconButton>
               : null }
@@ -906,6 +910,18 @@ class SkullStripping extends Component {
                   <SettingsIcon />
                 </IconButton>
                 : null}
+
+              <FormControlLabel
+                label="FreeSurfer"
+                control={
+                  <Switch
+                    name="anatomical.skull_stripping.methods.freesurfer.enabled"
+                    checked={configuration.getIn(['anatomical', 'skull_stripping', 'methods', 'freesurfer', 'enabled'])}
+                    onChange={this.handleValueChange}
+                    color="primary"
+                  />
+                }
+              />
 
             </Help>
           </FormGroup>

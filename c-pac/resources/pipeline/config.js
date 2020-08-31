@@ -133,6 +133,9 @@ export default {
               unet: {
                 enabled: false,
                 unet_model: 's3://fcp-indi/resources/cpac/resources/Site-All-T-epoch_36.model',
+              },
+              freesurfer: {
+                enabled: false
               }
             }
           },

@@ -279,7 +279,11 @@ export function parse(content) {
   
   if (config.skullstrip_option.includes("unet")) {
     c.anatomical.skull_stripping.methods.unet.enabled = true
-  } 
+  }
+
+  if (config.skullstrip_option.includes("FreeSurfer")) {
+    c.anatomical.skull_stripping.methods.freesurfer.enabled = true
+  }
 
   c.anatomical.skull_stripping.methods.bet.configuration.threshold = config.bet_frac 
   c.anatomical.skull_stripping.methods.bet.configuration.mask = config.bet_mask_boolean
@@ -947,6 +951,7 @@ export function dump(pipeline, version='0') {
     .concat(c.anatomical.skull_stripping.methods.bet.enabled ? ["FSL"] : [])
     .concat(c.anatomical.skull_stripping.methods.niworkflows_ants.enabled ? ["niworkflows-ants"] : [])
     .concat(c.anatomical.skull_stripping.methods.unet.enabled ? ["unet"] : [])
+    .concat(c.anatomical.skull_stripping.methods.freesurfer.enabled ? ["FreeSurfer"] : [])
 
   config.skullstrip_mask_vol = c.anatomical.skull_stripping.methods.afni.configuration.mask_vol
   config.skullstrip_shrink_factor = c.anatomical.skull_stripping.methods.afni.configuration.shrink_factor.threshold
