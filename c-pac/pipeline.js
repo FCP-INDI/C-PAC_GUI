@@ -258,6 +258,10 @@ export function parse(content) {
 
   c.anatomical.preprocessing.methods.nlmf.enabled = config.non_local_means_filtering
   c.anatomical.preprocessing.methods.n4.enabled = config.n4_bias_field_correction
+  c.anatomical.preprocessing.methods.acpc_align.enabled = config.acpc_align
+  c.anatomical.preprocessing.methods.acpc_align.acpc_brainsize = config.acpc_brainsize
+  c.anatomical.preprocessing.methods.acpc_align.acpc_template_skull = config.acpc_template_skull
+  c.anatomical.preprocessing.methods.acpc_align.acpc_template_brain = config.acpc_template_brain
 
   c.anatomical.skull_stripping.enabled = config.already_skullstripped.includes(0)
 
@@ -940,6 +944,10 @@ export function dump(pipeline, version='0') {
 
   config.non_local_means_filtering = c.anatomical.preprocessing.methods.nlmf.enabled
   config.n4_bias_field_correction = c.anatomical.preprocessing.methods.n4.enabled
+  config.acpc_align = c.anatomical.preprocessing.methods.acpc_align.enabled 
+  config.acpc_brainsize =   parseInt(c.anatomical.preprocessing.methods.acpc_align.acpc_brainsize)
+  config.acpc_template_skull = c.anatomical.preprocessing.methods.acpc_align.acpc_template_skull
+  config.acpc_template_brain = c.anatomical.preprocessing.methods.acpc_align.acpc_template_brain
 
   config.already_skullstripped = [c.anatomical.skull_stripping.enabled ? 0 : 1]
   config.skullstrip_option = []

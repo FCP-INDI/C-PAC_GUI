@@ -68,7 +68,13 @@ export default {
               },
               n4: {
                 enabled: false,
-              }
+              },
+              acpc_align: {
+                enabled: false,
+                acpc_brainsize: 150,
+                acpc_template_skull: '$FSLDIR/data/standard/MNI152_T1_1mm.nii.gz',
+                acpc_template_brain: 'None',
+              },
             }
           },
           skull_stripping: {
