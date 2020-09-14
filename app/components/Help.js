@@ -7,7 +7,7 @@ import IconButton from '@material-ui/core/IconButton'
 import Grid from '@material-ui/core/Grid'
 import Popover from '@material-ui/core/Popover'
 import SyntaxHighlighter from 'react-syntax-highlighter'
-import { darcula as highlightStyle } from 'react-syntax-highlighter/dist/styles/hljs'
+import { darcula as highlightStyle } from 'react-syntax-highlighter/dist/esm/styles/hljs'
 
 import cpac from '@internal/c-pac'
 
