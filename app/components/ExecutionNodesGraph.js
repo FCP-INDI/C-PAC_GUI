@@ -47,6 +47,9 @@ class ExecutionNodesGraph extends Component {
     active: {
       boxShadow: 'inset 0 0 5px #FFF',
     },
+    selected: {
+      boxShadow: `inset 0 0 5px ${theme.palette.grey[800]}`,
+    },
     running: { backgroundColor: theme.palette.info.light },
     success: { backgroundColor: theme.palette.success.light },
     failure: { backgroundColor: theme.palette.error.light },
@@ -111,6 +114,13 @@ class ExecutionNodesGraph extends Component {
     this.setState({ node, nodeI })
   }
 
+  handleClick =  (node) => (e) => {
+    const { onClickSchedule } = this.props
+    if (onClickSchedule) {
+      onClickSchedule(node)
+    }
+  }
+
   handleClose = (e) => {
     const elementRelated = event.toElement || event.relatedTarget
     if (this.gridRef.current && elementRelated?.parentNode == this.gridRef.current) {
@@ -121,7 +131,7 @@ class ExecutionNodesGraph extends Component {
   }
 
   render() {
-    const { classes, nodes } = this.props
+    const { classes, nodes, onClickSchedule, selectedSchedule } = this.props
     const { node, nodeI } = this.state
     const statuses = ['running', 'success', 'failure', 'unknown']
 
@@ -169,7 +179,14 @@ class ExecutionNodesGraph extends Component {
                 return (
                   <div
                     key={i}
-                    className={clsx(classes.square, classes[status || 'unknown'], i === nodeI ? classes.active : null)}
+                    className={clsx(
+                      classes.square,
+                      classes[status || 'unknown'],
+                      i === nodeI ? classes.active : null,
+                      selectedSchedule && selectedSchedule === l.get('id') ? classes.selected : null,
+
+                    )}
+                    onClick={this.handleClick(l, i)}
                     onMouseOver={this.handleHover(l, i)}
                     onMouseOut={this.handleClose}
                   />

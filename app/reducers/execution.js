@@ -1,4 +1,4 @@
-import { fromJS, List } from 'immutable'
+import { fromJS, isImmutable, List } from 'immutable'
 
 import {
   EXECUTION_CONFIG_LOAD_SUCCESS,
@@ -6,6 +6,9 @@ import {
   EXECUTION_PREPROCESS_DATASET_SCHEDULED,
   EXECUTION_PREPROCESS_DATASET_PROCESSING_SCHEDULED,
   EXECUTION_PREPROCESS_DATASET_PROCESSING_STATUS,
+  EXECUTION_PREPROCESS_DATASET_PROCESSING_RESULT,
+  EXECUTION_PREPROCESS_DATASET_PROCESSING_CRASH,
+  EXECUTION_PREPROCESS_DATASET_PROCESSING_LOG,
   EXECUTION_PREPROCESS_DATASET_PROCESSING_FINISHED,
   EXECUTION_PREPROCESS_DATASET_FINISHED,
 } from '../actions/execution'
@@ -20,6 +23,9 @@ export const selectExecutions =
 
 export const selectExecution =
   (execution) => (state) => state.get('executions').find((e) => e.get('id') == execution)
+
+export const selectSchedule =
+  (execution, schedule) => (state) => selectExecution(execution)(state).getIn(['schedules', schedule])
 
 
 export default function (state = initialState, action) {
@@ -81,6 +87,34 @@ export default function (state = initialState, action) {
       return state.setIn(['executions', i, 'schedules', schedule, 'status'], status)
     }
 
+    case EXECUTION_PREPROCESS_DATASET_PROCESSING_RESULT: {
+      const { execution, schedule, key, result: { type } } = action
+      if (type === "crash" || type === "log") {
+        return state
+      }
+
+      const i = state.get('executions').findIndex((e) => e.get('id') === execution)
+      const resultByType = ['executions', i, 'schedules', schedule, 'results', type]
+      return state.setIn(
+        resultByType,
+        state.getIn(resultByType, List()).push(key)
+      )
+    }
+
+    case EXECUTION_PREPROCESS_DATASET_PROCESSING_LOG: {
+      const { execution, schedule, key, log, timestamp, name } = action
+      const i = state.get('executions').findIndex((e) => e.get('id') === execution)
+      const resultByType = ['executions', i, 'schedules', schedule, 'results', 'logs', key]
+      return state.setIn(resultByType, fromJS({ log, name, at: timestamp, _cache: true }))
+    }
+
+    case EXECUTION_PREPROCESS_DATASET_PROCESSING_CRASH: {
+      const { execution, schedule, key, crash, timestamp, name } = action
+      const i = state.get('executions').findIndex((e) => e.get('id') === execution)
+      const resultByType = ['executions', i, 'schedules', schedule, 'results', 'crashes', key]
+      return state.setIn(resultByType, fromJS({ ...crash, name, at: timestamp, _cache: true }))
+    }
+
     case EXECUTION_PREPROCESS_DATASET_PROCESSING_FINISHED: {
       const { execution, schedule, status } = action
       const i = state.get('executions').findIndex((e) => e.get('id') === execution)
@@ -95,7 +129,9 @@ export default function (state = initialState, action) {
         .valueSeq()
         .every((s) => s.get('status') === 'success') ? 'success' : 'failure'
 
-      return state.setIn(['executions', i, 'status'], status)
+      return state
+        .setIn(['executions', i, 'finish'], new Date().getTime())
+        .setIn(['executions', i, 'status'], status)
     }
     default:
       return state
