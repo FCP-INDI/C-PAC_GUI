@@ -179,23 +179,24 @@ function* callScheduler({
   method='GET',
   endpoint,
   data,
-  response: { success, error }
+  response: { success, error },
+  headers = {}
 }) {
 
   const scheduler = yield selectSaga(selectScheduler(id))
 
-  const success_return = (data) =>
+  const success_return = (data, headers) =>
     success instanceof Function ?
-      success(data) :
-      cpacpyCallSuccess(scheduler, success, data)
+      success(data, headers) :
+      cpacpyCallSuccess(scheduler, success, data, headers)
 
-  const error_return = (exception) =>
+  const error_return = (exception, headers) =>
     error instanceof Function ?
-      error(exception) :
-      cpacpyCallError(scheduler, error, exception)
+      error(exception, headers) :
+      cpacpyCallError(scheduler, error, exception, headers)
 
   try {
-    const { response, error } = yield call(
+    const { response, error, headers: resHeaders } = yield call(
       fetch,
       `http://${scheduler.get('address')}${endpoint}`,
       {
@@ -203,15 +204,16 @@ function* callScheduler({
         body: data === null ? null : JSON.stringify(data),
         headers: {
           'Accept': 'application/json',
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          ...headers,
         }
       }
     )
 
-    yield put(success_return(response))
+    yield put(success_return(response, resHeaders))
   } catch (exception) {
     console.log(exception)
-    yield put(error_return(exception))
+    yield put(error_return(exception, resHeaders))
   }
 }
 

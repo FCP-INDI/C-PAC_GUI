@@ -8,6 +8,10 @@ export default createMuiTheme({
   typography: {
     useNextVariants: true,
     fontSize: 15,
+    subtitle1: {
+      textAlign: 'center',
+      padding: 20,
+    }
   },
   palette: {
     type: prefersDarkMode ? 'dark' : 'light',

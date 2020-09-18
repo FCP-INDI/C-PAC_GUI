@@ -22,6 +22,11 @@ import {
   EXECUTION_PREPROCESS_DATASET_SCHEDULED,
   EXECUTION_PREPROCESS_DATASET_PROCESSING_SCHEDULED,
   EXECUTION_PREPROCESS_DATASET_PROCESSING_STATUS,
+  EXECUTION_PREPROCESS_DATASET_PROCESSING_RESULT,
+  EXECUTION_PREPROCESS_DATASET_PROCESSING_CRASH,
+  EXECUTION_PREPROCESS_DATASET_PROCESSING_CRASH_ERROR,
+  EXECUTION_PREPROCESS_DATASET_PROCESSING_LOG,
+  EXECUTION_PREPROCESS_DATASET_PROCESSING_LOG_ERROR,
   EXECUTION_PREPROCESS_DATASET_PROCESSING_FINISHED,
   EXECUTION_PREPROCESS_DATASET_PROCESSING_ERROR,
   EXECUTION_PREPROCESS_DATASET_FINISHED,
@@ -30,6 +35,7 @@ import {
 
 import {
   selectExecution,
+  selectSchedule,
 } from '../reducers/execution'
 
 import {
@@ -97,27 +103,37 @@ function* preprocessDatasetProcessingScheduleWatch({ scheduler, execution, sched
     schedule,
     {
       action: (scheduler, data) => {
-        if (data.type === "Spawn") {
-          const { name, schedule: subSchedule } = data.message
-          return {
-            type: EXECUTION_PREPROCESS_DATASET_PROCESSING_SCHEDULED,
-            scheduler, execution, schedule: subSchedule, name, parent: schedule,
+        switch (data.type) {
+          case 'Spawn': {
+            const { name, child: subSchedule } = data.message
+            return {
+              type: EXECUTION_PREPROCESS_DATASET_PROCESSING_SCHEDULED,
+              scheduler, execution, schedule: subSchedule, name, parent: schedule,
+            }
           }
-        }
-        if (data.type === "Status") {
-          const subSchedule = data.id
-          const status = data.message.status
-          return {
-            type: EXECUTION_PREPROCESS_DATASET_PROCESSING_STATUS,
-            scheduler, execution, schedule: subSchedule, status,
+          case 'Status': {
+            const subSchedule = data.id
+            const status = data.message.status
+            return {
+              type: EXECUTION_PREPROCESS_DATASET_PROCESSING_STATUS,
+              scheduler, execution, schedule: subSchedule, status,
+            }
           }
-        }
-        if (data.type === "End") {
-          const subSchedule = data.id
-          const status = data.message.status.toLowerCase()
-          return {
-            type: EXECUTION_PREPROCESS_DATASET_PROCESSING_FINISHED,
-            scheduler, execution, schedule: subSchedule, status
+          case 'Result': {
+            const subSchedule = data.id
+            const { result, timestamp, key} = data.message
+            return {
+              type: EXECUTION_PREPROCESS_DATASET_PROCESSING_RESULT,
+              scheduler, execution, schedule: subSchedule, key, result, timestamp: timestamp * 1000.,
+            }
+          }
+          case 'End': {
+            const subSchedule = data.id
+            const status = data.message.status.toLowerCase()
+            return {
+              type: EXECUTION_PREPROCESS_DATASET_PROCESSING_FINISHED,
+              scheduler, execution, schedule: subSchedule, status
+            }
           }
         }
       },
@@ -145,30 +161,47 @@ function* preprocessDatasetProcessingScheduleFinish({ scheduler, execution: exec
   }
 }
 
-function* preprocessDatasetFetchResult({ scheduler, execution, schedule }) {
+function* preprocessDatasetFetchLogResult({ scheduler, execution, schedule: scheduleId, key, timestamp }) {
+  const schedule = yield selectSaga(selectSchedule(execution, scheduleId))
+  let log = ''
+  if (schedule) {
+    log = schedule.get('log') || ''
+  }
+
   yield put(cpacpyFetchResults(
     scheduler,
-    schedule,
-    'logs',
+    scheduleId,
+    key,
     {
-      success: (data) => ({
-        type: EXECUTION_PREPROCESS_DATASET_FETCHED,
-        execution, data: data.result.logs,
+      success: (data, name) => ({
+        type: EXECUTION_PREPROCESS_DATASET_PROCESSING_LOG,
+        scheduler, execution, schedule: scheduleId, key, log: log + data, timestamp, name,
       }),
       error: (exception) => ({
-        type: EXECUTION_PREPROCESS_DATASET_ERROR,
-        execution, exception
+        type: EXECUTION_PREPROCESS_DATASET_PROCESSING_LOG_ERROR,
+        scheduler, execution, schedule: scheduleId, key, exception
       }),
-    }
+    },
+    { start: 0, end: null }
   ))
 }
 
-function* preprocessDatasetResult({ dataset, data }) {
-  yield put({
-    type: EXECUTION_PREPROCESS_DATASET_SUCCESS,
-    dataset,
-    config: cpac.data_config.parse(data),
-  })
+function* preprocessDatasetFetchCrashResult({ scheduler, execution, schedule, key, timestamp }) {
+  yield put(cpacpyFetchResults(
+    scheduler,
+    schedule,
+    key,
+    {
+      success: (data, name) => ({
+        type: EXECUTION_PREPROCESS_DATASET_PROCESSING_CRASH,
+        scheduler, execution, schedule, key, crash: JSON.parse(data), timestamp, name,
+      }),
+      error: (exception) => ({
+        type: EXECUTION_PREPROCESS_DATASET_PROCESSING_CRASH_ERROR,
+        scheduler, execution, schedule, key, exception
+      }),
+    }
+  ))
 }
 
 export default function* configSaga() {
@@ -188,7 +221,15 @@ export default function* configSaga() {
     takeEvery(EXECUTION_PREPROCESS_DATASET_SCHEDULED, preprocessDatasetWatch),
     takeEvery(EXECUTION_PREPROCESS_DATASET_PROCESSING_SCHEDULED, preprocessDatasetProcessingScheduleWatch),
     takeEvery(EXECUTION_PREPROCESS_DATASET_PROCESSING_FINISHED, preprocessDatasetProcessingScheduleFinish),
-    // takeEvery(EXECUTION_PREPROCESS_DATASET_FINISHED, preprocessDatasetFetchResult),
-    // takeEvery(EXECUTION_PREPROCESS_DATASET_FETCHED, preprocessDatasetResult),
+    takeEvery(
+      (act) => 
+        act.type === EXECUTION_PREPROCESS_DATASET_PROCESSING_RESULT && act?.result?.type === 'crash',
+      preprocessDatasetFetchCrashResult
+    ),
+    takeEvery(
+      (act) => 
+        act.type === EXECUTION_PREPROCESS_DATASET_PROCESSING_RESULT && act?.result?.type === 'log',
+      preprocessDatasetFetchLogResult
+    ),
   ])
 }

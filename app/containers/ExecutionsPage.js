@@ -37,6 +37,7 @@ import Content from '../components/Content'
 import Box from '../components/Box'
 import Table from '../components/Table'
 import ExecutionNodesGraph from '../components/ExecutionNodesGraph'
+import ExecutionDetailCard from '../components/ExecutionDetailCard'
 
 import { PipelineChip, DatasetChip, SchedulerChip } from '../components/chips'
 
@@ -128,64 +129,6 @@ class ExecutionsPage extends Component {
     this.props.history.push(`/executions`)
   }
 
-  renderExecution(e) {
-    const { classes } = this.props
-    return (
-      <Paper key={e.get('id')} className={classes.paper} elevation={3}>
-        <Avatar className={clsx(classes.status, classes[`status_${e.get('status')}`])}>
-          <ExecutionCurrentStatusIcon status={e.get('status')} />
-        </Avatar>
-        <Grid container>
-          <Grid item xs={12} md={6}>
-            <FlexBox className={classes.content}>
-              <Grid container justify="center">
-                <Grid item xs={12} sm={10} xl={8}>
-                  <Typography variant="h6">
-                    {e.get('note')}
-                  </Typography>
-                </Grid>
-              </Grid>
-              <Grid container className={classes.chips} justify="center">
-                <Grid item xs={4} lg={3} xl={2}>
-                  <SchedulerChip scheduler={e.getIn(['scheduler', 'id'])} backend={e.getIn(['scheduler', 'backend'])} />
-                </Grid>
-                <Grid item xs={4} lg={3} xl={2}>
-                  <PipelineChip pipeline={e.getIn(['pipeline', 'id'])} version={e.getIn(['pipeline', 'version'])} />
-                </Grid>
-                <Grid item xs={4} lg={3} xl={2}>
-                  <DatasetChip dataset={e.getIn(['dataset', 'id'])} version={e.getIn(['dataset', 'version'])} />
-                </Grid>
-              </Grid>
-            </FlexBox>
-          </Grid>
-          <Grid item xs={12} md={6}>
-            <ExecutionNodesGraph nodes={
-              e.get('schedules') ?
-                e.get('schedules').valueSeq().filter((s) => s.get('parent')) :
-                fromJS([])
-            } style={{flexGrow: 1}} />
-          </Grid>
-          <Grid item xs={12}>
-            <FlexBox className={classes.actions}>
-              <Tooltip title="Check the execution logs">
-                <Button color="secondary" variant="contained" startIcon={<ExecutionLogsIcon />}>
-                  Logs
-                </Button>
-              </Tooltip>
-              {e.get('status') === 'failure' ? (
-              <Tooltip title="Check the execution crashes">
-                <Button color="secondary" variant="contained" startIcon={<ExecutionCrashIcon />}>
-                  Crashes
-                </Button>
-              </Tooltip>
-              ) : null }
-            </FlexBox>
-          </Grid>
-        </Grid>
-      </Paper>
-    )
-  }
-
   render() {
     const { classes, executions, operation, parameters } = this.props
     const tools = (
@@ -209,7 +152,12 @@ class ExecutionsPage extends Component {
           <ExecutionNewPage parameters={parameters} onSchedule={this.handleExecutionClose} />
         </Modal>
         <Box avatar={<ExecutionIcon />} title="Executions" tools={tools}>
-          { executions && executions.sortBy((e) => e.get('id')).map(e => this.renderExecution(e))}
+          {
+            executions &&
+            executions
+              .sortBy((e) => e.get('id'))
+              .map(e => <ExecutionDetailCard key={e.get('id')} execution={e.get('id')} />)
+          }
         </Box>
       </>
     )

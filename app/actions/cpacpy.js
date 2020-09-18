@@ -93,12 +93,12 @@ export function connectSendWatch(scheduler, schedule, { action, error }) {
     message: {
       type: 'watch',
       schedule,
-      watchers: ['Spawn', 'Start', 'End', 'Status']
+      watchers: ['Spawn', 'Start', 'End', 'Status', 'Result']
     }
   }
 }
 
-export function call(scheduler, method='GET', endpoint, data, { success, error }) {
+export function call(scheduler, method='GET', endpoint, data, { success, error }, headers = {}) {
   return {
     type: CPACPY_SCHEDULER_CALL,
     scheduler,
@@ -108,7 +108,8 @@ export function call(scheduler, method='GET', endpoint, data, { success, error }
     response: {
       success,
       error,
-    }
+    },
+    headers,
   }
 }
 
@@ -164,13 +165,32 @@ export function schedulePipeline(scheduler, dataConfig, pipeline, { success, err
   )
 }
 
-export function fetchResults(scheduler, schedule, result, { success, error }) {
+export function fetchResults(scheduler, schedule, result, { success, error }, { start, end } = { start: 0, end: null }) {
   return call(
     scheduler,
     'GET',
     `/schedule/${schedule}/result/${result}`,
     null,
-    { success, error }
+    {
+      success: (body, headers) => {
+        let name = null
+        if (headers.get('content-disposition')) {
+          const disposition = headers.get('content-disposition')
+          if (disposition && disposition.indexOf('attachment') !== -1) {
+            const filenameRegex = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/;
+            const matches = filenameRegex.exec(disposition);
+            if (matches != null && matches[1]) { 
+              name = matches[1].replace(/['"]/g, '');
+            }
+          }
+        }
+        return success(body, name)
+      },
+      error
+    },
+    {
+      Range: `bytes=${start}-${end ? end : ''}`
+    }
   )
 }
 

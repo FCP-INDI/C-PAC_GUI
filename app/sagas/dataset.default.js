@@ -21,6 +21,11 @@ abide.views = [
     id: 'site-sbl',
     name: 'Site: SBL',
     query: "dataConfig.site === 'SBL'",
+  },
+  {
+    id: 'subject-right',
+    name: 'Subject: 0050952',
+    query: "dataConfig.subject_id === '0050952'",
   }
 ]
 
