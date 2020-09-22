@@ -16,6 +16,7 @@ import {
 
 import {
   selectScheduler,
+  selectSchedulerBackend,
 } from '../reducers/cpacpy'
 
 
@@ -191,7 +192,7 @@ const ConnectedSchedulerChip =
 export { ConnectedSchedulerChip as SchedulerChip }
 
 
-class BackendChip extends Component {
+class SchedulerBackendChip extends Component {
 
   static mapStateToProps = (state, props) => {
     const { scheduler, backend } = props
@@ -210,14 +211,12 @@ class BackendChip extends Component {
     },
   })
 
-
   render() {
     const { scheduler, backend, classes } = this.props
-
     if (backend) {
       return (
         <Badge
-          badgeContent={<ExecutionCurrentBackendIcon backend={backend} />}
+          badgeContent={<ExecutionCurrentBackendIcon backend={backend.get('backend')} />}
           color="secondary"
           anchorOrigin={{
             vertical: 'bottom',
@@ -240,6 +239,47 @@ class BackendChip extends Component {
         />
       )
     }
+  }
+}
+
+const ConnectedSchedulerBackendChip = 
+  connect(SchedulerBackendChip.mapStateToProps, SchedulerBackendChip.mapDispatchToProps)
+    (withStyles(SchedulerBackendChip.styles)
+      (SchedulerBackendChip))
+
+export { ConnectedSchedulerBackendChip as SchedulerBackendChip }
+
+
+class BackendChip extends Component {
+
+  static mapStateToProps = (state, props) => {
+    const { scheduler, backend } = props
+    return {
+      scheduler: selectScheduler(scheduler)(state.cpacpy),
+      backend: selectSchedulerBackend(scheduler, backend)(state.cpacpy),
+    }
+  }
+
+  static mapDispatchToProps = {
+  }
+
+  static styles = theme => ({
+  })
+
+  render() {
+    const { scheduler, backend, classes } = this.props
+
+    if (!backend) {
+      return null
+    }
+
+    return (
+      <Chip
+        icon={<ExecutionCurrentBackendIcon backend={backend.get('backend')} />}
+        label={backend.get('id')}
+        color="primary"
+      />
+    )
   }
 }
 

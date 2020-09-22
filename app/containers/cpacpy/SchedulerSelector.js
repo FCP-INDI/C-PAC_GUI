@@ -23,7 +23,7 @@ import {
   SchedulerIcon,
 } from 'components/icons'
 
-import { SchedulerBackendChip } from 'components/chips'
+import { BackendChip } from 'components/chips'
 
 import {
   watchCancel as cpacpyWatchCancel,
@@ -165,7 +165,7 @@ class CpacpySchedulerSelector extends Component {
   }
 
   state = {
-    fullSelector: false,
+    fullSelector: true,
     selector: false,
     selectorAnchor: null,
   }
@@ -244,36 +244,25 @@ class CpacpySchedulerSelector extends Component {
                   <Paper key={s.get('id')} elevation={3} className={classes.scheduler}>
                     <Grid container spacing={0}>
                       <Grid item xs={12} className={classes.description}>
-                        <Grid container xs={12} spacing={0}>
+                        <Grid container spacing={0}>
                           <Grid item xs={6}>
                             <Typography>
                               { s.get('name') }
                             </Typography>
                           </Grid>
                           <Grid item xs={6}>
-                            <Typography>
-                              {
-                                s.get('backends')
-                                  .map(
-                                    b => 
-                                      <SchedulerBackendChip
-                                        key={`${s.get('id')}-${b.get('id')}`}
-                                        scheduler={s.get('id')}
-                                        backend={b.get('id')} />
-                                  )
-                              }
-                            </Typography>
+                            {
+                              s.get('backends')
+                                .map(
+                                  b => 
+                                    <BackendChip
+                                      key={`${s.get('id')}-${b.get('id')}`}
+                                      scheduler={s.get('id')}
+                                      backend={b.get('id')} />
+                                )
+                            }
                           </Grid>
                         </Grid>
-                      </Grid>
-                      <Grid item xs={12} className={classes.actions}>
-                        <FlexBox>
-                          <Tooltip title="Check the execution logs">
-                            <Button color="secondary" variant="contained">
-                              Logs
-                            </Button>
-                          </Tooltip>
-                        </FlexBox>
                       </Grid>
                     </Grid>
                   </Paper>
