@@ -50,26 +50,14 @@ import {
   selectCurrentScheduler,
 } from '../reducers/cpacpy'
 
+import format from '../utils/format'
+
 const getColor = (theme, status) => ({
   backgroundColor: lighten(theme.palette[status].light, 0.7),
   color: theme.palette[status].main
 })
 
 class ExecutionDetailCard extends Component {
-
-  static styles = theme => ({
-    card: {
-      minWidth: 240
-    },
-    expand: {
-      marginLeft: 'auto',
-    },
-    avatar: {
-    },
-    info: {
-      padding: 0
-    }
-  })
 
   static styles = theme => ({
     loading: {
@@ -150,6 +138,9 @@ class ExecutionDetailCard extends Component {
                   <Typography variant="h6">
                     {e.get('note')}
                   </Typography>
+                  <Typography variant="subtitle2">
+                    {format(e.get('start'))} {e.get('finish') ? `– ${format(e.get('finish'))}` : ''}
+                  </Typography>
                 </Grid>
               </Grid>
               <Grid container className={classes.chips} justify="center">
@@ -182,7 +173,7 @@ class ExecutionDetailCard extends Component {
             <FlexBox className={classes.actions}>
               <Tooltip title="Check the execution">
                 <Button color="secondary" variant="contained" startIcon={<ExecutionLogsIcon />} onClick={this.handleDetail}>
-                  Execution details
+                  Details
                 </Button>
               </Tooltip>
             </FlexBox>
