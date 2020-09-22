@@ -29,9 +29,8 @@ import Switch from '@material-ui/core/Switch'
 
 import Help from 'components/Help'
 import ItWentWrong from 'containers/ItWentWrong'
-import CpacpySchedulersWidget from 'containers/CpacpySchedulersWidget'
-
 import CpacpySchedulerSelector from 'containers/cpacpy/SchedulerSelector'
+import Breadcrumbs from 'components/Breadcrumbs'
 
 import { configLoad } from '../actions/main'
 import { selectCurrentScheduler } from '../actions/cpacpy'
@@ -48,10 +47,6 @@ import {
   NextIcon,
   PipelineIcon,
   ExecutionIcon,
-  EnvironmentIcon,
-  ProjectIcon,
-  ProjectOpenIcon,
-  AdvancedConfigIcon,
   FeedbackIcon,
 } from 'components/icons';
 
@@ -90,13 +85,6 @@ class App extends React.Component {
       flexGrow: 1,
     },
 
-    bread: {
-      flexShrink: 0,
-      flexGrow: 0,
-    },
-    crumbs: {
-      flexGrow: 1,
-    },
     content: {
       overflow: 'auto',
       padding: theme.spacing(),
@@ -107,9 +95,6 @@ class App extends React.Component {
       flexGrow: 1,
     },
 
-    icon: {
-      marginRight: theme.spacing(),
-    },
     singleIcon: {
       marginRight: 0,
     },
@@ -118,10 +103,6 @@ class App extends React.Component {
       top: '50%',
       left: '50%',
       transform: 'translate(-50%, -50%)',
-    },
-
-    selectorButton: {
-      padding: theme.spacing(2),
     },
   })
 
@@ -155,59 +136,6 @@ class App extends React.Component {
   handleScheduler = (scheduler) => {
     this.props.selectCurrentScheduler(scheduler)
   }
-
-  renderBreadcrumbs = () => {
-    const { classes, configLoaded } = this.props
-
-    if (!configLoaded) {
-      return null
-    }
-
-    const crumbs = []
-    // const place = this.props.location.pathname.substr(1).split('/')
-    // for (let i = 0; i < place.length; i++) {
-    //   if (place[i] == "pipelines") {
-
-    //     if (i + 1 < place.length) {
-    //       pipeline = config.get('pipelines').find((p) => p.get('id') == place[++i])
-    //     }
-
-    //     crumbs.push(
-    //       <NextIcon key={crumbs.length} />
-    //     )
-    //     crumbs.push(
-    //       <Button key={crumbs.length} size="small">
-    //         <PipelineIcon className={classes.icon} />
-    //         { pipeline ? pipeline.get('name') : "Pipelines" }
-    //       </Button>
-    //     )
-    //   }
-    // }
-
-    return (
-      <AppBar position="static" color="default" className={classes.bread}>
-        <Toolbar>
-          <Button size="small" component={Link} to={`/`}>
-            <HomeIcon className={classes.icon} />
-            Home
-          </Button>
-          
-          { crumbs }
-
-          <div className={classes.crumbs}>
-          </div>
-          <CpacpySchedulerSelector
-            buttonProps={{
-              variant: 'contained',
-              className: classes.selectorButton,
-            }}
-            onSelect={this.handleScheduler}
-          />
-
-        </Toolbar>
-      </AppBar>
-    )
-  };
 
   handleFeedbackOpen = () => {
     this.setState({ feedback: true })
@@ -248,7 +176,7 @@ class App extends React.Component {
           </header>
 
           <div className={classes.root}>
-            { this.renderBreadcrumbs() }
+            <Breadcrumbs />
             <main className={classes.content} ref={this.app}>
               <ErrorBoundary FallbackComponent={ItWentWrong}>
                 { configLoaded ? this.props.children : "Loading..." }
