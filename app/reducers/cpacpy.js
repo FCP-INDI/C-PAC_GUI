@@ -19,7 +19,6 @@ import {
 const initialState = fromJS({
   schedulers: [
     { id: 'local', name: 'Local', version: 'unknown', backends: [], address: scheduler.local, polling: false, detecting: false, online: null, connected: false, connect: { callbacks: {} } },
-    { id: 'serenity', name: 'Serenity', version: 'unknown', backends: [], address: 'serenity:3333', polling: false, detecting: false, online: null, connected: false, connect: { callbacks: {} } },
   ],
   scheduler: 'local',
 })
