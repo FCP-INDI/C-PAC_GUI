@@ -76,7 +76,6 @@ export default function (state = initialState, action) {
           id: schedule,
           name,
           parent,
-          logs: [],
           status: null,
         }))
     }
