@@ -4,6 +4,13 @@ import ReactDOM from 'react-dom';
 import { configureStore, history } from './store/configureStore';
 import Root from './containers/Root';
 
+import Immutable from 'immutable'
+import keyIn from './utils/keyIn'
+
+Immutable.Map.prototype.subset = function (keys) {
+  return this.filter(keyIn(...keys))
+}
+
 const store = configureStore();
 
 const render = Component => {
