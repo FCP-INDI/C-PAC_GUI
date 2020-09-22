@@ -1,0 +1,1 @@
+(window.webpackJsonpCPAC=window.webpackJsonpCPAC||[]).push([[125],{"./node_modules/highlight.js/lib/languages/plaintext.js":function(t,e){t.exports=function(t){return{name:"Plain text",aliases:["text","txt"],disableAutodetect:!0}}}}]);
