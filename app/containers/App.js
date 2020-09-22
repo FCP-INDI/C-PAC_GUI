@@ -34,6 +34,7 @@ import ItWentWrong from 'containers/ItWentWrong';
 =======
 import Help from 'components/Help'
 import ItWentWrong from 'containers/ItWentWrong'
+<<<<<<< HEAD
 import CpacpySchedulersWidget from 'containers/CpacpySchedulersWidget'
 >>>>>>> ab98471 (rename theodore to cpacpy)
 
@@ -41,7 +42,10 @@ import CpacpySchedulersWidget from 'containers/CpacpySchedulersWidget'
 import theme from '../theme';
 import '../app.global.css';
 =======
+=======
+>>>>>>> 9b7611e (rework breadcrumbs, so to reduce rerenderings)
 import CpacpySchedulerSelector from 'containers/cpacpy/SchedulerSelector'
+import Breadcrumbs from 'components/Breadcrumbs'
 
 import { configLoad } from '../actions/main'
 import { selectCurrentScheduler } from '../actions/cpacpy'
@@ -59,10 +63,6 @@ import {
   NextIcon,
   PipelineIcon,
   ExecutionIcon,
-  EnvironmentIcon,
-  ProjectIcon,
-  ProjectOpenIcon,
-  AdvancedConfigIcon,
   FeedbackIcon,
 } from 'components/icons';
 
@@ -101,13 +101,6 @@ class App extends React.Component {
       flexGrow: 1,
     },
 
-    bread: {
-      flexShrink: 0,
-      flexGrow: 0,
-    },
-    crumbs: {
-      flexGrow: 1,
-    },
     content: {
       overflow: 'auto',
       padding: theme.spacing(),
@@ -118,9 +111,6 @@ class App extends React.Component {
       flexGrow: 1,
     },
 
-    icon: {
-      marginRight: theme.spacing(),
-    },
     singleIcon: {
       marginRight: 0,
     },
@@ -129,10 +119,6 @@ class App extends React.Component {
       top: '50%',
       left: '50%',
       transform: 'translate(-50%, -50%)',
-    },
-
-    selectorButton: {
-      padding: theme.spacing(2),
     },
   })
 
@@ -167,6 +153,7 @@ class App extends React.Component {
     this.props.selectCurrentScheduler(scheduler)
   }
 
+<<<<<<< HEAD
   renderBreadcrumbs = () => {
     const { classes, configLoaded } = this.props
 
@@ -259,6 +246,8 @@ class App extends React.Component {
     )
   };
 
+=======
+>>>>>>> 9b7611e (rework breadcrumbs, so to reduce rerenderings)
   handleFeedbackOpen = () => {
     this.setState({ feedback: true })
   }
@@ -320,10 +309,14 @@ class App extends React.Component {
 
           <div className={classes.root}>
 <<<<<<< HEAD
+<<<<<<< HEAD
             {this.renderBreadcrumbs()}
             <main className={classes.content}>
 =======
             { this.renderBreadcrumbs() }
+=======
+            <Breadcrumbs />
+>>>>>>> 9b7611e (rework breadcrumbs, so to reduce rerenderings)
             <main className={classes.content} ref={this.app}>
 >>>>>>> 6dd5792 (scroll to the top when change pages)
               <ErrorBoundary FallbackComponent={ItWentWrong}>
