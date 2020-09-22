@@ -170,6 +170,18 @@ export default {
                   gray_matter: '${environment.paths.fsl_dir}/data/standard/tissuepriors/2mm/avg152T1_gray_bin.nii.gz',
                   cerebrospinal_fluid: '${environment.paths.fsl_dir}/data/standard/tissuepriors/2mm/avg152T1_csf_bin.nii.gz',
                 }
+              },
+              ANTs_prior_based_seg: {
+                enabled: false,
+                template_brain_list: [
+                ], 
+                template_segmentation_list: [
+                ], 
+                CSF_label: 24,
+                left_GM_label: 3,
+                right_GM_label: 42,
+                left_WM_label: 2,         
+                right_WM_label: 41,
               }
             }
           }
@@ -265,6 +277,7 @@ export default {
             enabled: true,
             functional_resolution: 3,
             derivative_resolution: 3,
+            template_for_resample: '${environment.paths.fsl_dir}/data/standard/MNI152_T1_1mm_brain.nii.gz',
             identity_matrix: '${environment.paths.fsl_dir}/etc/flirtsch/ident.mat',
             methods: {
               ants: {
@@ -485,8 +498,8 @@ export default {
             },
             t1_template: {
               enabled: true,
-              brain_template: '${environment.paths.fsl_dir}/data/standard/MNI152_T1_${pipeline.functional.registration.functional_resolution}_brain.nii.gz',
-              skull_template: '${environment.paths.fsl_dir}/data/standard/MNI152_T1_${pipeline.functional.registration.functional_resolution}.nii.gz',
+              brain_template: '${environment.paths.fsl_dir}/data/standard/MNI152_T1_${pipeline.functional.template_registration.functional_resolution}_brain.nii.gz',
+              skull_template: '${environment.paths.fsl_dir}/data/standard/MNI152_T1_${pipeline.functional.template_registration.functional_resolution}.nii.gz',
             },
           },
           nuisance_regression: {
@@ -607,6 +620,17 @@ export default {
             before_zscore: false,
             zscore_derivatives: false,
           }
+        },
+        longitudinal: {
+          enabled: true,
+          run_anatomical: false,
+          run_functional: false,
+          average_method: 'median',
+          dof: 12,
+          interpolation: 'trilinear',
+          cost_function: 'corratio',
+          thread_pool: 2,
+          convergence_threshold: -1,
         },
         derivatives: {
           enabled: true,

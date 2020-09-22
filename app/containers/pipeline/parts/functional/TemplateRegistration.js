@@ -253,6 +253,20 @@ class TemplateRegistration extends Component {
 
           <Help
             type="pipeline"
+            regex={/^template_for_resample/}
+            help={`A standard template for resampling if using float resolution.`}
+            fullWidth
+          >
+            <TextField label="Template for Resampling"
+              fullWidth margin="normal" variant="outlined"
+              name="functional.template_registration.template_for_resample"
+              value={configuration.getIn(["functional", "template_registration", "template_for_resample"])}
+              onChange={onChange}
+            />
+          </Help>
+
+          <Help
+            type="pipeline"
             regex={/^identityMatrix/}
             help={`Matrix containing all 1's. Used as an identity matrix during registration. It is not necessary to change this path unless you intend to use non-standard MNI registration.`}
             fullWidth
