@@ -31,6 +31,8 @@ import {
   ExecutionCurrentStatusIcon,
 } from './icons'
 
+import format from '../utils/format'
+
 class ExecutionCard extends Component {
 
   static styles = theme => ({
@@ -72,6 +74,7 @@ class ExecutionCard extends Component {
             </Avatar>
           }
           title={execution.get('note')}
+          subheader={`Start at ${format(execution.get('start'))}`}
         />
         <CardContent className={classes.info}>
           <List>

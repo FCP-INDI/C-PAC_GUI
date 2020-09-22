@@ -36,6 +36,7 @@ import TimelineContent from '@material-ui/lab/TimelineContent'
 import TimelineDot from '@material-ui/lab/TimelineDot'
 import TimelineOppositeContent from '@material-ui/lab/TimelineOppositeContent'
 
+import format from '../utils/format'
 
 import {
   AddIcon,
@@ -113,7 +114,7 @@ class ExecutionPage extends Component {
   })
 
   static mapStateToProps = (state, props) => {
-    const { execution, operation, schedule } = props.match.params
+    const { execution, schedule, operation } = props.match.params
     return {
       execution: state.execution.get('executions').find((e) => e.get('id') == execution),
       operation,
@@ -214,7 +215,7 @@ class ExecutionPage extends Component {
             )
           }
         </Modal>
-        <Box avatar={<ExecutionIcon />} title="Executions Logs">
+        <Box avatar={<ExecutionIcon />} title="Execution">
           {
             execution && (
               <>
@@ -302,10 +303,7 @@ class ExecutionPage extends Component {
                                   </TimelineSeparator>
                                   <TimelineContent>
                                     <Typography>
-                                      Started at {
-                                        new Intl.DateTimeFormat('en', { dateStyle: 'short', timeStyle: 'short' })
-                                          .format(new Date(execution.get('start')))
-                                      }
+                                      Start at { format(execution.get('start')) }
                                     </Typography>
                                   </TimelineContent>
                                 </TimelineItem>
