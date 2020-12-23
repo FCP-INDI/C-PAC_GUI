@@ -779,20 +779,41 @@ export function parse(content) {
   c.functional.smoothing.zscore_derivatives = config.runZScoring.includes(1)
 
   // longitudinal
-  if (config.run_longitudinal.includes("anat")) {
-    c.longitudinal.run_anatomical = true
-  }
+  if (config.longitudinal_template_generation) {
 
-  if (config.run_longitudinal.includes("func")) {
-    c.longitudinal.run_functional = true
-  }
+    for (const longitudinal_template of config.longitudinal_template_generation) {
 
-  c.longitudinal.average_method = config.longitudinal_template_average_method
-  c.longitudinal.dof = config.longitudinal_template_dof
-  c.longitudinal.interpolation = config.longitudinal_template_interp
-  c.longitudinal.cost_function = config.longitudinal_template_cost
-  c.longitudinal.thread_pool = config.longitudinal_template_thread_pool
-  c.longitudinal.convergence_threshold = config.longitudinal_template_convergence_threshold
+      if (longitudinal_template['run']) {
+        c.longitudinal.run_anatomical = true
+      }
+
+      if (longitudinal_template['average_method']) {
+        c.longitudinal.average_method = longitudinal_template['average_method']
+      }
+
+      if (longitudinal_template['dof']) {
+        c.longitudinal.dof = longitudinal_template['dof']
+      }
+
+      if (longitudinal_template['interpolation']) {
+        c.longitudinal.interpolation = longitudinal_template['interpolation']
+      }
+
+      if (longitudinal_template['cost_function']) {
+        c.longitudinal.cost_function = longitudinal_template['cost_function']
+      }
+
+      if (longitudinal_template['thread_pool']) {
+        c.longitudinal.thread_pool = longitudinal_template['thread_pool']
+      }
+
+      if (longitudinal_template['convergence_threshold']) {
+        c.longitudinal.convergence_threshold = longitudinal_template['convergence_threshold']
+      }
+
+    }
+
+  }
 
   c.derivatives.timeseries_extraction.enabled = config.runROITimeseries.includes(1)
 
@@ -1345,16 +1366,26 @@ export function dump(pipeline, version='0') {
   config.targetAngleDeg = [c.functional.median_angle_correction.target_angle]
   
   // longitudinal
-  config.run_longitudinal = []
-    .concat(c.longitudinal.run_anatomical ? ["anat"] : [])
-    .concat(c.longitudinal.run_functional ? ["func"] : [])
+  config.longitudinal_template_generation = []
+  console.log(c.longitudinal.run_anatomical)
+  config.longitudinal_template_generation.push(c.longitudinal.run_anatomical)
+  config.longitudinal_template_generation.push(c.longitudinal.average_method)
+  config.longitudinal_template_generation.push(c.longitudinal.dof)
+  config.longitudinal_template_generation.push(c.longitudinal.interpolation)
+  config.longitudinal_template_generation.push(c.longitudinal.cost_function)
+  config.longitudinal_template_generation.push(c.longitudinal.thread_pool)
+  config.longitudinal_template_generation.push(c.longitudinal.convergence_threshold)
 
-  config.longitudinal_template_average_method = c.longitudinal.average_method
-  config.longitudinal_template_dof = c.longitudinal.dof
-  config.longitudinal_template_interp = c.longitudinal.interpolation
-  config.longitudinal_template_cost = c.longitudinal.cost_function
-  config.longitudinal_template_thread_pool = c.longitudinal.thread_pool
-  config.longitudinal_template_convergence_threshold = c.longitudinal.convergence_threshold
+  // config.run_longitudinal = []
+  //   .concat(c.longitudinal.run_anatomical ? ["anat"] : [])
+  //   .concat(c.longitudinal.run_functional ? ["func"] : [])
+
+  // config.longitudinal_template_average_method = c.longitudinal.average_method
+  // config.longitudinal_template_dof = c.longitudinal.dof
+  // config.longitudinal_template_interp = c.longitudinal.interpolation
+  // config.longitudinal_template_cost = c.longitudinal.cost_function
+  // config.longitudinal_template_thread_pool = c.longitudinal.thread_pool
+  // config.longitudinal_template_convergence_threshold = c.longitudinal.convergence_threshold
 
   config.runROITimeseries = [c.derivatives.timeseries_extraction.enabled ? 1 : 0]
 
