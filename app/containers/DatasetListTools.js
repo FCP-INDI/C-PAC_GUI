@@ -62,6 +62,10 @@ class DatasetListTools extends Component {
     }
   })
 
+  handleNew = (pipeline) => {
+    this.props.history.push(`/datasets/new`)
+  }
+
   handleSelectDataset = (e) => {
     // var files = e.target.files
     // for (var i = 0, f; f = files[i]; i++) {
@@ -85,15 +89,15 @@ class DatasetListTools extends Component {
           zIndex: -1,
         }} />
         <Tooltip title="Create new dataset">
-          <IconButton onClick={() => this.props.datasetDuplicate()}>
+          <IconButton onClick={() => this.handleNew()}>
             <AddIcon />
           </IconButton>
         </Tooltip>
-        <Tooltip title="Upload a dataset">
+        {/* <Tooltip title="Upload a dataset">
           <IconButton component="label" htmlFor="dataset-upload">
             <UploadIcon />
           </IconButton>
-        </Tooltip>
+        </Tooltip> */}
       </>
     )
   }

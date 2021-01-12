@@ -67,6 +67,8 @@ import Table from '../components/Table'
 import DatasetViewsList from './dataset/DatasetViewsList'
 
 import {
+  createDataSettings,
+  updateDataSettings,
   generateDataConfig,
 } from '../actions/dataset'
 
@@ -83,8 +85,59 @@ class DatasetPage extends Component {
     },
   })
 
+  state = {
+    name: '',
+    base: ''
+  }
+
+  constructor(props) {
+    super(props)
+    const { dataset, configuration } = this.props
+    if (dataset) {
+      this.state.base = configuration.getIn(['options', 'base']);
+    }
+  }
+
+  componentDidUpdate(prevProps) {
+    if (this.props.datasets && prevProps.datasets) {
+      if (this.props.datasets.size > prevProps.datasets.size) {
+        const dataset = this.props.datasets.last()
+        this.props.history.push(`/datasets/${dataset.get('id')}`)
+      }
+    }
+  }
+
   handleCreateView = () => {
     
+  }
+
+  handleChangeForm(event) {
+    this.setState({[event.target.name]: event.target.value});
+  }
+
+  handleCreateDataset = () => {
+    this.props.createDataSettings(
+      this.state.name,
+      {
+        format: 'bids',
+        options: {
+          base: this.state.base,
+        }
+      },
+    )
+  }
+
+  handleUpdateDataset = () => {
+    const { dataset } = this.props
+    this.props.updateDataSettings(
+      dataset.get('id'),
+      dataset.get('name'),
+      {
+        options: {
+          base: this.state.base,
+        }
+      },
+    )
   }
 
   handleGenerateDataConfig = () => {
@@ -102,7 +155,6 @@ class DatasetPage extends Component {
   }
 
   prepareData(dataset) {
-
     if (!dataset || !dataset.get('data')) {
       return { rows: null, columns: null }
     }
@@ -214,7 +266,36 @@ class DatasetPage extends Component {
   }
 
   render() {
-    const { classes, dataset, configuration } = this.props
+    const { classes, dataset, configuration, create } = this.props
+
+    if (create) {
+      return (
+        <Box title={<TextField
+          label="Dataset Name"
+          name="name"
+          value={this.state.name}
+          onChange={this.handleChangeForm.bind(this)}
+          fullWidth={true} margin="normal" variant="outlined"
+        />}
+             avatar={<DatasetIcon />}>
+  
+          <FlexBox display="flex" alignItems="center" p={1}>
+            <FlexBox p={1} flexGrow={1}>
+              <TextField
+                  label="BIDS Directory"
+                  name="base"
+                  value={this.state.base}
+                  onChange={this.handleChangeForm.bind(this)}
+                  fullWidth={true} margin="normal" variant="outlined"
+                />
+            </FlexBox>
+            <FlexBox p={1}>
+              <Button variant="contained" color="secondary" onClick={this.handleCreateDataset}>Create</Button>
+            </FlexBox>
+          </FlexBox>
+        </Box>
+      )
+    }
 
     if (!dataset) {
       return <NotFound />
@@ -258,13 +339,20 @@ class DatasetPage extends Component {
           <FlexBox p={1} flexGrow={1}>
             <TextField
                 label="BIDS Directory"
-                name="derivatives.network_centrality.mask"
-                value={configuration.getIn(['options', 'base'])}
+                name="base"
+                value={this.state.base}
+                onChange={this.handleChangeForm.bind(this)}
                 fullWidth={true} margin="normal" variant="outlined"
               />
           </FlexBox>
           <FlexBox p={1}>
-            <BuildDatasetButton variant="contained" color="secondary" onClick={this.handleGenerateDataConfig}>Build Dataset</BuildDatasetButton>
+            {
+              this.state.base === configuration.getIn(['options', 'base']) ? (
+                <BuildDatasetButton variant="contained" color="secondary" onClick={this.handleGenerateDataConfig}>Build Dataset</BuildDatasetButton>
+              ) : (
+                <Button variant="contained" color="secondary" onClick={this.handleUpdateDataset}>Update</Button>
+              )
+            }
           </FlexBox>
         </FlexBox>
 
@@ -302,8 +390,15 @@ const mapStateToProps = (state, props) => {
     }
   }
 
+  if (id === 'new') {
+    return {
+      datasets: state.dataset.getIn(['datasets']),
+      create: true
+    };
+  }
+
   const dataset = state.dataset.getIn(['datasets']).find((p) => p.get('id') == id)
-  const version =  `${dataset.get('versions').keySeq().map(i => +i).max()}`
+  const version = `${dataset.get('versions').keySeq().map(i => +i).max()}`
 
   return {
     dataset,
@@ -313,6 +408,8 @@ const mapStateToProps = (state, props) => {
 }
 
 const mapDispatchToProps = {
+  createDataSettings,
+  updateDataSettings,
   generateDataConfig,
 }
 

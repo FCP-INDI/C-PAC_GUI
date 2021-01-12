@@ -1,7 +1,10 @@
 import { fromJS } from 'immutable'
+import cpac from '@internal/c-pac'
 
 import {
   DATASET_CONFIG_LOAD_SUCCESS,
+  DATASET_SETTINGS_CREATE,
+  DATASET_SETTINGS_UPDATE,
   DATASET_GENERATE_DATA_CONFIG,
   DATASET_GENERATE_DATA_CONFIG_SUCCESS,
   DATASET_GENERATE_DATA_CONFIG_ERROR,
@@ -66,6 +69,41 @@ export default function (state = initialState, action) {
 
       return state
         .setIn(['datasets', i, 'data'], fromJS(config))
+    }
+
+    case DATASET_SETTINGS_CREATE: {
+      const { dataset: { name, configuration } } = action
+      let id = cpac.utils.slugify(name);
+      let i = state.get('datasets').findIndex((d) => d.get('id') === id)
+      let c = null;
+      if (i !== -1) {
+        c = 0;
+        while (i > -1) {
+          c++;
+          i = state.get('datasets').findIndex((d) => d.get('id') === `${id}-${c}`);
+        }
+      }
+
+      const version = Object.keys(cpac.data_settings.template.versions)[0]
+
+      id = c !== null ? `${id}-${c}` : id;
+      const dataset = fromJS(cpac.data_settings.template)
+        .set('id', id)
+        .set('name', name)
+        .mergeIn(['versions', version, 'configuration'], fromJS(configuration))
+
+      return state
+        .updateIn(['datasets'], datasets => datasets.push(dataset))
+    }
+
+    case DATASET_SETTINGS_UPDATE: {
+      const { dataset: { id, name, configuration } } = action
+      const i = state.get('datasets').findIndex((d) => d.get('id') === id)
+      const version = `${state.getIn(['datasets', i, 'versions']).keySeq().map(i => +i).max()}`
+
+      return state
+        .setIn(['datasets', i, 'name'], name)
+        .mergeIn(['datasets', i, 'versions', version, 'configuration'], fromJS(configuration))
     }
     
     default:
