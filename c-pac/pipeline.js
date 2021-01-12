@@ -45,7 +45,7 @@ export function normalize(pipeline) {
     return pipeline
   }
 
-  const newVersionKey = new Date().getTime().toString()
+  const newVersionKey = pipeline.versions.length
   const newVersion = {
     version: supportedCpacVersion,
   }
@@ -426,7 +426,6 @@ export function parse(content) {
       }
     }
   }
-// add ants-para
 
   c.anatomical.tissue_segmentation.enabled = config.runSegmentationPreprocessing.includes(1)
   c.anatomical.tissue_segmentation.configuration.priors.enabled = config.seg_use_priors
@@ -479,7 +478,7 @@ export function parse(content) {
   c.anatomical.tissue_segmentation.configuration.template_based_seg.tissue_path.cerebrospinal_fluid = config.template_based_segmentation_CSF.replace("$FSLDIR", "${environment.paths.fsl_dir}")
   
   // ANTs priors based segmentation
-  c.anatomical.tissue_segmentation.configuration.ANTs_prior_based_seg.enabled = config.ANTs_prior_based_segmentation.includes(1)
+  c.anatomical.tissue_segmentation.configuration.ANTs_prior_based_seg.enabled =( config.ANTs_prior_based_segmentation || []).includes(1)
   c.anatomical.tissue_segmentation.configuration.ANTs_prior_based_seg.CSF_label = config.ANTs_prior_seg_CSF_label
   c.anatomical.tissue_segmentation.configuration.ANTs_prior_based_seg.left_GM_label = config.ANTs_prior_seg_left_GM_label 
   c.anatomical.tissue_segmentation.configuration.ANTs_prior_based_seg.right_GM_label = config.ANTs_prior_seg_right_GM_label 
@@ -509,7 +508,7 @@ export function parse(content) {
   c.functional.preprocessing.motion_correction.reference.median = config.motion_correction_reference.includes('median')
   c.functional.preprocessing.motion_correction.reference.selected_volume = config.motion_correction_reference.includes('selected volume')
   c.functional.preprocessing.motion_correction.reference.reference_volume = config.motion_correction_reference_volume
-  c.functional.preprocessing.despike.enabled = config.runDespike.includes(1)
+  c.functional.preprocessing.despike.enabled = (config.runDespike || []).includes(1)
   c.functional.preprocessing.scaling.enabled = config.runScaling
   c.functional.preprocessing.scaling.factor = config.scaling_factor
 
@@ -767,6 +766,8 @@ export function parse(content) {
   c.functional.smoothing.kernel_fwhm = config.fwhm[0]
   c.functional.smoothing.before_zscore = config.smoothing_order[0] == 'Before'
   c.functional.smoothing.zscore_derivatives = config.runZScoring.includes(1)
+
+  config.run_longitudinal = (config.run_longitudinal || [])
 
   // longitudinal
   if (config.run_longitudinal.includes("anat")) {
