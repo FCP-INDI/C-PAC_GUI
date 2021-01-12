@@ -8,6 +8,8 @@ export const DATASET_CONFIG_CLEAR = 'DATASET_CONFIG_CLEAR'
 export const DATASET_CONFIG_CLEAR_SUCCESS = 'DATASET_CONFIG_CLEAR_SUCCESS'
 export const DATASET_CONFIG_CLEAR_ERROR = 'DATASET_CONFIG_CLEAR_ERROR'
 
+export const DATASET_SETTINGS_CREATE = 'DATASET_SETTINGS_CREATE'
+export const DATASET_SETTINGS_UPDATE = 'DATASET_SETTINGS_UPDATE'
 
 export const DATASET_GENERATE_DATA_CONFIG = 'DATASET_GENERATE_DATA_CONFIG'
 export const DATASET_GENERATE_DATA_CONFIG_SUCCESS = 'DATASET_GENERATE_DATA_CONFIG_SUCCESS'
@@ -16,6 +18,20 @@ export const DATASET_GENERATE_DATA_CONFIG_ERROR = 'DATASET_GENERATE_DATA_CONFIG_
 export const DATASET_GENERATE_DATA_CONFIG_SCHEDULED = 'DATASET_GENERATE_DATA_CONFIG_SCHEDULED'
 export const DATASET_GENERATE_DATA_CONFIG_FINISHED = 'DATASET_GENERATE_DATA_CONFIG_FINISHED'
 export const DATASET_GENERATE_DATA_CONFIG_FETCHED = 'DATASET_GENERATE_DATA_CONFIG_FETCHED'
+
+export function createDataSettings(name, configuration) {
+  return {
+    type: DATASET_SETTINGS_CREATE,
+    dataset: { name, configuration }
+  }
+}
+
+export function updateDataSettings(id, name, configuration) {
+  return {
+    type: DATASET_SETTINGS_UPDATE,
+    dataset: { id, name, configuration }
+  }
+}
 
 export function generateDataConfig(scheduler, dataset) {
   return {
