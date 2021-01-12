@@ -165,7 +165,7 @@ class CpacpySchedulerSelector extends Component {
   }
 
   state = {
-    fullSelector: true,
+    fullSelector: false,
     selector: false,
     selectorAnchor: null,
   }

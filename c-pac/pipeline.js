@@ -114,7 +114,7 @@ export function normalize(pipeline) {
     return pipeline
   }
 
-  const newVersionKey = new Date().getTime().toString()
+  const newVersionKey = pipeline.versions.length
   const newVersion = {
 <<<<<<< HEAD
     version: '1.4.3',
@@ -363,6 +363,98 @@ export function parse(content) {
     config.ref_mask
       .replace("${resolution_for_anat}", "${pipeline.anatomical.registration.resolution}mm")
       .replace("$FSLDIR", "${environment.paths.fsl_dir}")
+<<<<<<< HEAD
+=======
+  
+  switch (config.anatRegFSLinterpolation) {
+    case 'sinc':
+      c.anatomical.registration.methods.fsl.interpolation = 'sinc'
+      break;
+    case 'trilinear':
+      c.anatomical.registration.methods.fsl.interpolation = 'linear'
+      break;
+    case 'spline':
+      c.anatomical.registration.methods.fsl.interpolation = 'spline'
+      break;
+  }
+  
+  // add ants_para T1
+  c.anatomical.registration.methods.ants.ANTs_para_T1_registration = {}
+  if (config.ANTs_para_T1_registration && config.ANTs_para_T1_registration.length > 0) {
+    const ANTs_para_T1 = config.ANTs_para_T1_registration
+    for (const k of [
+      ['collapse_output_transforms', 'collapse-output-transforms'],
+      ['dimensionality', 'dimensionality'],
+      ['initial_moving_transform', 'initial-moving-transform'],
+      ['transforms', 'transforms'],
+    ]) {
+      let listItem = ANTs_para_T1.filter((item) => k[1] in item)  // find a config in the list of config
+      if (listItem.length > 0 && k[1] != 'transforms') {  // check if it found anything
+        c.anatomical.registration.methods.ants.ANTs_para_T1_registration[k[0]] = listItem[0][k[1]]
+      }
+
+      else if (listItem.length > 0 && k[1] == 'transforms') {
+        c.anatomical.registration.methods.ants.ANTs_para_T1_registration['transforms'] = {}  // add {} to push next layer values
+        c.anatomical.registration.methods.ants.ANTs_para_T1_registration['transforms']['Rigid'] = {}
+        c.anatomical.registration.methods.ants.ANTs_para_T1_registration['transforms']['Affine'] = {}
+        c.anatomical.registration.methods.ants.ANTs_para_T1_registration['transforms']['SyN'] = {}
+        for (const t of [
+          'Rigid',
+          'Affine',
+          'SyN',
+        ]) {
+          let listItem_transform = listItem[0]["transforms"].filter((item) => t in item)
+          if (listItem_transform.length == 0) {
+            c.anatomical.registration.methods.ants.ANTs_para_T1_registration[k[0]][t]['enabled'] = false
+          }
+          else if (listItem_transform.length > 0) {
+            c.anatomical.registration.methods.ants.ANTs_para_T1_registration[k[0]][t]['enabled'] = true
+            if (t != 'SyN') {
+              for (const j of [
+                ['gradientStep', 'gradientStep'],
+                ['convergence', 'convergence'],
+                ['smoothing_sigmas', 'smoothing-sigmas'],
+                ['shrink_factors', 'shrink-factors'],
+                ['use_histogram_matching', 'use-histogram-matching'],
+              ])
+                c.anatomical.registration.methods.ants.ANTs_para_T1_registration[k[0]][t][j[0]] = listItem_transform[0][t][j[1]]
+            }
+            else if (t == 'SyN') {
+              for (const j of [
+                ['gradientStep', 'gradientStep'],
+                ['updateFieldVarianceInVoxelSpace', 'updateFieldVarianceInVoxelSpace'],
+                ['totalFieldVarianceInVoxelSpace', 'totalFieldVarianceInVoxelSpace'],
+                ['convergence', 'convergence'],
+                ['smoothing_sigmas', 'smoothing-sigmas'],
+                ['shrink_factors', 'shrink-factors'],
+                ['use_histogram_matching', 'use-histogram-matching'],
+                ['winsorize_image_intensities', 'winsorize-image-intensities'],
+              ])
+                c.anatomical.registration.methods.ants.ANTs_para_T1_registration[k[0]][t][j[0]] = listItem_transform[0][t][j[1]]
+            }
+
+            if (listItem_transform[0][t]['metric']['type'] == 'MI') {
+              c.anatomical.registration.methods.ants.ANTs_para_T1_registration[k[0]][t]['metric'] = {}
+              c.anatomical.registration.methods.ants.ANTs_para_T1_registration[k[0]][t]['metric']['type'] = {}
+              c.anatomical.registration.methods.ants.ANTs_para_T1_registration[k[0]][t]['metric']['type']['MI'] = {}
+              delete listItem_transform[0][t]['metric']['type']
+              c.anatomical.registration.methods.ants.ANTs_para_T1_registration[k[0]][t]['metric']['type']['MI'] = listItem_transform[0][t]['metric']
+              c.anatomical.registration.methods.ants.ANTs_para_T1_registration[k[0]][t]['metric']['type']['MI']['enabled'] = true
+            }
+            else if (listItem_transform[0][t]['metric']['type'] == 'CC') {
+              c.anatomical.registration.methods.ants.ANTs_para_T1_registration[k[0]][t]['metric'] = {}
+              c.anatomical.registration.methods.ants.ANTs_para_T1_registration[k[0]][t]['metric']['type'] = {}
+              c.anatomical.registration.methods.ants.ANTs_para_T1_registration[k[0]][t]['metric']['type']['CC'] = {}
+              delete listItem_transform[0][t]['metric']['type']
+              c.anatomical.registration.methods.ants.ANTs_para_T1_registration[k[0]][t]['metric']['type']['CC'] = listItem_transform[0][t]['metric']
+              c.anatomical.registration.methods.ants.ANTs_para_T1_registration[k[0]][t]['metric']['type']['CC']['enabled'] = true
+            }
+          }
+        }
+      }
+    }
+  }
+>>>>>>> 9e0b350 (small bug fixes)
 
   c.anatomical.tissue_segmentation.enabled = config.runSegmentationPreprocessing.includes(1)
 
@@ -371,9 +463,88 @@ export function parse(content) {
     priors_path = config.priors_path.replace("$FSLDIR", "${environment.paths.fsl_dir}")
   }
 
+<<<<<<< HEAD
   c.anatomical.tissue_segmentation.priors.white_matter = config.PRIORS_WHITE.replace("$priors_path", priors_path)
   c.anatomical.tissue_segmentation.priors.gray_matter = config.PRIORS_GRAY.replace("$priors_path", priors_path)
   c.anatomical.tissue_segmentation.priors.cerebrospinal_fluid = config.PRIORS_CSF.replace("$priors_path", priors_path)
+=======
+  c.anatomical.tissue_segmentation.configuration.priors.priors.white_matter = config.PRIORS_WHITE.replace("$priors_path", priors_path)
+  c.anatomical.tissue_segmentation.configuration.priors.priors.gray_matter = config.PRIORS_GRAY.replace("$priors_path", priors_path)
+  c.anatomical.tissue_segmentation.configuration.priors.priors.cerebrospinal_fluid = config.PRIORS_CSF.replace("$priors_path", priors_path)
+
+  if (config.seg_use_threshold.includes("FSL-FAST Thresholding")) {
+    c.anatomical.tissue_segmentation.configuration.fast_threshold.enabled = true
+    c.anatomical.tissue_segmentation.configuration.custom_threshold.enabled = false
+  } else if (config.seg_use_threshold.includes("Customized Thresholding")) {
+    c.anatomical.tissue_segmentation.configuration.fast_threshold.enabled = false
+    c.anatomical.tissue_segmentation.configuration.custom_threshold.enabled = true
+  }
+
+  // seg_{tissue}_threshold_value not strict to custom_threshold.enabled, avoid undefined fields in yml file
+  c.anatomical.tissue_segmentation.configuration.custom_threshold.threshold.white_matter = config.seg_WM_threshold_value
+  c.anatomical.tissue_segmentation.configuration.custom_threshold.threshold.gray_matter = config.seg_GM_threshold_value
+  c.anatomical.tissue_segmentation.configuration.custom_threshold.threshold.cerebrospinal_fluid = config.seg_CSF_threshold_value
+
+  c.anatomical.tissue_segmentation.configuration.erosion.enabled = config.seg_use_erosion
+  c.anatomical.tissue_segmentation.configuration.erosion.proportion = config.seg_erosion_prop
+ 
+  if (typeof config.template_based_segmentation === "string") {
+    config.template_based_segmentation = [config.template_based_segmentation]
+  }
+
+  if (config.template_based_segmentation.includes("None")) {
+    c.anatomical.tissue_segmentation.configuration.template_based_seg.enabled = false
+  }
+
+  if (config.template_based_segmentation.includes("EPI_template")) {
+    c.anatomical.tissue_segmentation.configuration.template_based_seg.enabled = true
+    c.anatomical.tissue_segmentation.configuration.template_based_seg.methods = 'epi_template_based'
+  }
+
+  if (config.template_based_segmentation.includes("T1_template")) {
+    c.anatomical.tissue_segmentation.configuration.template_based_seg.enabled = true
+    c.anatomical.tissue_segmentation.configuration.template_based_seg.methods = 't1_templated_based'
+  } 
+
+  c.anatomical.tissue_segmentation.configuration.template_based_seg.tissue_path.white_matter = config.template_based_segmentation_WHITE.replace("$FSLDIR", "${environment.paths.fsl_dir}")
+  c.anatomical.tissue_segmentation.configuration.template_based_seg.tissue_path.gray_matter = config.template_based_segmentation_GRAY.replace("$FSLDIR", "${environment.paths.fsl_dir}")
+  c.anatomical.tissue_segmentation.configuration.template_based_seg.tissue_path.cerebrospinal_fluid = config.template_based_segmentation_CSF.replace("$FSLDIR", "${environment.paths.fsl_dir}")
+  
+  // ANTs priors based segmentation
+  c.anatomical.tissue_segmentation.configuration.ANTs_prior_based_seg.enabled =( config.ANTs_prior_based_segmentation || []).includes(1)
+  c.anatomical.tissue_segmentation.configuration.ANTs_prior_based_seg.CSF_label = config.ANTs_prior_seg_CSF_label
+  c.anatomical.tissue_segmentation.configuration.ANTs_prior_based_seg.left_GM_label = config.ANTs_prior_seg_left_GM_label 
+  c.anatomical.tissue_segmentation.configuration.ANTs_prior_based_seg.right_GM_label = config.ANTs_prior_seg_right_GM_label 
+  c.anatomical.tissue_segmentation.configuration.ANTs_prior_based_seg.left_WM_label = config.ANTs_prior_seg_left_WM_label 
+  c.anatomical.tissue_segmentation.configuration.ANTs_prior_based_seg.right_WM_label = config.ANTs_prior_seg_right_WM_label
+
+  if (typeof config.ANTs_prior_seg_template_brain_list == 'object') {
+    for (let mask of config.ANTs_prior_seg_template_brain_list) {
+      c.anatomical.tissue_segmentation.configuration.ANTs_prior_based_seg.template_brain_list.push({
+        mask,
+      })
+    }
+  }
+  if (typeof config.ANTs_prior_seg_template_segmentation_list == 'object') {
+    for (let mask of config.ANTs_prior_seg_template_segmentation_list) {
+      c.anatomical.tissue_segmentation.configuration.ANTs_prior_based_seg.template_segmentation_list.push({
+        mask,
+      })
+    }
+  }
+
+  c.functional.preprocessing.n4_mean_epi.enabled = config.n4_correct_mean_EPI
+  c.functional.preprocessing.motion_stats.enabled = config.runMotionStatisticsFirst.includes(1)
+  c.functional.preprocessing.motion_correction.method.volreg = config.motion_correction.includes('3dvolreg')
+  c.functional.preprocessing.motion_correction.method.mcflirt = config.motion_correction.includes('mcflirt')
+  c.functional.preprocessing.motion_correction.reference.mean = config.motion_correction_reference.includes('mean')
+  c.functional.preprocessing.motion_correction.reference.median = config.motion_correction_reference.includes('median')
+  c.functional.preprocessing.motion_correction.reference.selected_volume = config.motion_correction_reference.includes('selected volume')
+  c.functional.preprocessing.motion_correction.reference.reference_volume = config.motion_correction_reference_volume
+  c.functional.preprocessing.despike.enabled = (config.runDespike || []).includes(1)
+  c.functional.preprocessing.scaling.enabled = config.runScaling
+  c.functional.preprocessing.scaling.factor = config.scaling_factor
+>>>>>>> 9e0b350 (small bug fixes)
 
   c.functional.slice_timing_correction.enabled = config.slice_timing_correction.includes(1)
   c.functional.slice_timing_correction.repetition_time = !config.TR || config.TR == "None" ? '' : config.TR
@@ -481,6 +652,27 @@ export function parse(content) {
   c.functional.smoothing.before_zscore = config.smoothing_order[0] == 'Before'
   c.functional.smoothing.zscore_derivatives = config.runZScoring.includes(1)
 
+<<<<<<< HEAD
+=======
+  config.run_longitudinal = (config.run_longitudinal || [])
+
+  // longitudinal
+  if (config.run_longitudinal.includes("anat")) {
+    c.longitudinal.run_anatomical = true
+  }
+
+  if (config.run_longitudinal.includes("func")) {
+    c.longitudinal.run_functional = true
+  }
+
+  c.longitudinal.average_method = config.longitudinal_template_average_method
+  c.longitudinal.dof = config.longitudinal_template_dof
+  c.longitudinal.interpolation = config.longitudinal_template_interp
+  c.longitudinal.cost_function = config.longitudinal_template_cost
+  c.longitudinal.thread_pool = config.longitudinal_template_thread_pool
+  c.longitudinal.convergence_threshold = config.longitudinal_template_convergence_threshold
+
+>>>>>>> 9e0b350 (small bug fixes)
   c.derivatives.timeseries_extraction.enabled = config.runROITimeseries.includes(1)
 
   if (config.tsa_roi_paths instanceof Array && config.tsa_roi_paths.length > 0) {

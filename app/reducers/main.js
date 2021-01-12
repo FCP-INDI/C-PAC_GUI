@@ -182,7 +182,7 @@ export default function main(state, action) {
       }
       name = name + ' (' + iName + ')'
 
-      const newVersion = new Date().getTime().toString()
+      const newVersion = `${(+oldVersion) + 1}`
       const newPipelineId = uuid()
       const newPipeline = pipeline
         .set('versions', fromJS({ [newVersion]: pipeline.getIn(['versions', oldVersion]) }))
