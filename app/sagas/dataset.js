@@ -13,6 +13,8 @@ import {
   DATASET_CONFIG_CLEAR,
   DATASET_CONFIG_CLEAR_SUCCESS,
   DATASET_CONFIG_CLEAR_ERROR,
+  DATASET_SETTINGS_CREATE,
+  DATASET_SETTINGS_UPDATE,
   DATASET_GENERATE_DATA_CONFIG,
   DATASET_GENERATE_DATA_CONFIG_SUCCESS,
   DATASET_GENERATE_DATA_CONFIG_ERROR,
@@ -116,11 +118,11 @@ function* generateDataConfigResult({ dataset, data }) {
     dataset,
     config: cpac.data_config.parse(data),
   })
-  yield put({
-    type: DATASET_CONFIG_SAVE,
-    dataset,
-    config: cpac.data_config.parse(data),
-  })
+  yield put({ type: DATASET_CONFIG_SAVE })
+}
+
+function* updateDataset() {
+  yield put({ type: DATASET_CONFIG_SAVE })
 }
 
 export default function* configSaga() {
@@ -140,5 +142,7 @@ export default function* configSaga() {
     takeEvery(DATASET_GENERATE_DATA_CONFIG_SCHEDULED, generateDataConfigWatch),
     takeEvery(DATASET_GENERATE_DATA_CONFIG_FINISHED, generateDataConfigFetchResult),
     takeEvery(DATASET_GENERATE_DATA_CONFIG_FETCHED, generateDataConfigResult),
+    takeEvery(DATASET_SETTINGS_CREATE, updateDataset),
+    takeEvery(DATASET_SETTINGS_UPDATE, updateDataset),
   ])
 }

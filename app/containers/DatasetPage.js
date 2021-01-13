@@ -398,12 +398,13 @@ const mapStateToProps = (state, props) => {
   }
 
   const dataset = state.dataset.getIn(['datasets']).find((p) => p.get('id') == id)
-  const version = `${dataset.get('versions').keySeq().map(i => +i).max()}`
+  const version = dataset ? `${dataset.get('versions').keySeq().map(i => +i).max()}` : null
+  const configuration = dataset ? dataset.getIn(['versions', version, 'configuration']) : null
 
   return {
     dataset,
     version,
-    configuration: dataset.getIn(['versions', version, 'configuration']),
+    configuration,
   }
 }
 
