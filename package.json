@@ -12,7 +12,7 @@
     "electron-rebuild": "electron-rebuild --parallel --force --types prod,dev,optional --module-dir app",
     "postinstall": "yarn run build-dll && electron-builder install-app-deps && yarn run link",
     "prestart": "yarn run build",
-    "link": "cd c-pac && yarn unlink @internal/c-pac && yarn && yarn link && cd .. && yarn link @internal/c-pac",
+    "link": "cd c-pac && ( yarn unlink @internal/c-pac || true ) && yarn && yarn link && cd .. && yarn link @internal/c-pac",
     "start": "cross-env NODE_ENV=production electron ./app/",
     "dev:browser": "TARGET=browser yarn run dev:renderer",
     "dev:electron": "npm-run-all --parallel dev:renderer dev:electron-main",
