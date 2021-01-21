@@ -51,7 +51,7 @@ class InitialPreprocessing extends Component {
     const { classes, configuration, advanced, onChange } = this.props
 
     return (
-      <React.Fragment>
+      <>
         {/* acpc align dialog */}
         <Dialog
           open={this.state.ACPC && configuration.getIn("anatomical.preprocessing.methods.acpc_align.enabled".split("."))}
@@ -107,7 +107,6 @@ class InitialPreprocessing extends Component {
             </FormGroup>
           </DialogContent>
         </Dialog> 
-
         <FormControl fullWidth>
           {/* ACPC alignment */}
           <FormGroup row>
@@ -173,7 +172,7 @@ class InitialPreprocessing extends Component {
           </FormGroup>
 
         </FormControl>
-      </React.Fragment>
+      </>
     )
   }
 }

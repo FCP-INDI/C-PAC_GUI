@@ -23,21 +23,17 @@ import Typography from '@material-ui/core/Typography'
 import Avatar from '@material-ui/core/Avatar'
 import IconButton from '@material-ui/core/IconButton'
 import Button from '@material-ui/core/Button'
-import Tooltip from '@material-ui/core/Tooltip'
+import Tooltip from 'components/Tooltip'
 
 import {
   EnvironmentIcon,
   PipelineIcon,
   PipelineStepIcon,
   PipelineExecutionTimeIcon,
-  SubjectIcon,
-  RunIcon,
+  ExecutionIcon,
   LaunchIcon,
   SettingsIcon,
   NavigateNextIcon,
-  TimerIcon,
-  LogIcon,
-  BrainIcon,
   DeleteIcon,
   DuplicateIcon,
 } from './icons'
@@ -49,9 +45,6 @@ class PipelineCard extends Component {
     card: {
       minWidth: 240
     },
-    actions: {
-      display: 'flex',
-    },
     expand: {
       marginLeft: 'auto',
     },
@@ -62,7 +55,6 @@ class PipelineCard extends Component {
     info: {
       padding: 0
     },
-
     featDisabled: { opacity: 0.5 },
     featEnabled: { opacity: 1.0 },
   })
@@ -77,7 +69,7 @@ class PipelineCard extends Component {
     let versionId = '0'
     const versions = pipeline.get('versions')
     if (!versions.has("0")) {
-      versionId = versions.keySeq().max()
+      versionId = `${versions.keySeq().map(i => +i).max()}`
     }
 
     const version = versions.get(versionId)
@@ -143,8 +135,7 @@ class PipelineCard extends Component {
             </ListItem>
           </List>
         </CardContent>
-        <CardActions className={classes.actions}>
-
+        <CardActions disableSpacing>
           <Tooltip title="Duplicate">
             <IconButton onClick={() => this.props.onDuplicate(pipeline.get('id'))}>
               <DuplicateIcon />
@@ -160,8 +151,8 @@ class PipelineCard extends Component {
             : null
           }
 
-          <Tooltip title="Edit">
-            <IconButton className={classes.expand} onClick={() => this.handleOpen(pipeline.get('id'))}>
+          <Tooltip title="Edit" className={classes.expand}>
+            <IconButton onClick={() => this.handleOpen(pipeline.get('id'))}>
               <NavigateNextIcon />
             </IconButton>
           </Tooltip>

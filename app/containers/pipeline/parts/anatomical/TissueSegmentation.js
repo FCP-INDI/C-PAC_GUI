@@ -148,7 +148,7 @@ class TissueSegmentation extends Component {
     const config = configuration.getIn(['anatomical','tissue_segmentation','configuration','ANTs_prior_based_seg'])
 
     return (
-      <React.Fragment>
+      <>
 
         <FormGroup>
           <FormLabel>
@@ -691,7 +691,7 @@ class TissueSegmentation extends Component {
             </Grid>
           </Grid>
         </FormGroup>
-      </React.Fragment>
+      </>
     )
   }
 }

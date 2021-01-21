@@ -1,13 +1,23 @@
 import yaml from 'js-yaml'
+import semver from 'semver'
+import deepmerge from 'deepmerge'
 
-import template from './resources/data_settings/config'
-export { template }
+import { slugify, clone } from './utils'
+
+import { default as defaultTemplate } from './resources/data_settings/config'
+import yamlTemplate, { raw } from './resources/data_settings/yaml'
+
+const template = parse(raw)
+template.subjectListName = 'Default'
+template.outputSubjectListLocation = '.'
+
+export { yamlTemplate, template, raw as rawTemplate }
 
 export function parse(content) {
   const settings = yaml.safeLoad(content)
 
-  const t = JSON.parse(JSON.stringify(template))
-  const newver = `${new Date().getTime()}`
+  const t = clone(defaultTemplate)
+  const newver = `1`
   t.versions[newver] = t.versions['default']
   delete t.versions['default']
   const c = t.versions[newver].configuration
@@ -22,28 +32,48 @@ export function parse(content) {
     throw new Error('Only BIDS format is supported.')
   }
 
-  c.format = 'BIDS'
-  c.base = (settings.bidsBaseDir || '').replace(/\/$/, '')
+  c.format = 'bids'
+  c.options.base = (settings.bidsBaseDir || '').replace(/\/$/, '')
 
   return t
 }
 
-export function dump(data_settings, version='0') {
+export function dump(data_settings, version) {
+
+  if (!version) {
+    if (data_settings.versions['0']) {
+      version = '0'
+    } else {
+      version = `${Math.max(Object.keys(data_settings.versions).map((i) => +i))}`
+    }
+  }
 
   const c = data_settings.versions[version].configuration
 
   const config = {}
+  config.dataFormat = c.format
+  config.bidsBaseDir = c.options.base
 
-  config.dataFormat = ['BIDS']
-  config.bidsBaseDir = c.base.replace(/\/$/, '')
-  config.outputSubjectListLocation = ''
+  config.anatomicalTemplate = c.options.patterns.anatomical_path_template
+  config.functionalTemplate = c.options.patterns.functional_path_template
+  config.scanParametersCSV = c.options.patterns.scan_parameters_path
+  config.brain_mask_template = c.options.patterns.brain_mask_path
+  config.fieldMapPhase = c.options.patterns.fieldmap_phase_path_template
+  config.fieldMapMagnitude = c.options.patterns.fieldmap_magnitude_path_template
+  config.anatomical_scan = c.options.patterns.anatomical_scan
+
+  config.awsCredentialsFile = c.options.aws_credential_path
+  config.subjectList = null
+  config.exclusionSubjectList = null
+  config.siteList = null
+  config.exclusionSiteList = null
+  config.sessionList = null
+  config.exclusionSessionList = null
+  config.scanList = null
+  config.exclusionScanList = null
+
+  config.outputSubjectListLocation = '.'
   config.subjectListName = data_settings.name
 
-  // Generate valid YAML syntax
-  const configYamled = {}
-  for (let k of Object.keys(config)) {
-    configYamled[k] = yaml.safeDump({ [k]: config[k] })
-  }
-
-  return yamlTemplate(configYamled)
+  return yamlTemplate(config)
 }

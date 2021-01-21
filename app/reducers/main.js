@@ -1,11 +1,6 @@
 import {
   CONFIG_LOADED,
-
   SETTINGS_UPDATE,
-
-  ENVIRONMENT_CHECKED,
-  ENVIRONMENT_SELECT,
-
 } from '../actions/main'
 
 import {
@@ -48,7 +43,7 @@ export default function main(state, action) {
 
     case PIPELINE_NAME_UPDATE: {
       const { pipeline: id, name } = action
-      const i = state.getIn(['config', 'pipelines']).findIndex((p) => p.id == id)
+      const i = state.getIn(['config', 'pipelines']).findIndex((p) => p.get('id') === id)
 
       return state.setIn([
         'config', 'pipelines', i, 'name'
@@ -64,7 +59,7 @@ export default function main(state, action) {
       return state.setIn(
         ['config', 'pipelines', i, 'versions', '0'],
         fromJS({
-          version: '1.6.0',
+          version: cpac.pipeline.version,
           configuration
         })
       )
@@ -82,9 +77,10 @@ export default function main(state, action) {
 
       return state
         .setIn([
-          'config', 'pipelines', i, 'versions', new Date().getTime().toString()
+          'config', 'pipelines', i, 'versions', "" + state.getIn(['config', 'pipelines', i, 'versions']).size
         ], fromJS({
-          version: '1.3.0',
+          version: cpac.pipeline.version,
+          date: new Date().getTime(),
           configuration: state.getIn(['config', 'pipelines', i, 'versions', '0', 'configuration'])
         }))
         .deleteIn(['config', 'pipelines', i, 'versions', '0'])
@@ -138,7 +134,7 @@ export default function main(state, action) {
       if (versions.has("0")) {
         oldVersion = "0"
       } else {
-        oldVersion = versions.keySeq().max()
+        oldVersion = `${versions.keySeq().map(i => +i).max()}`
       }
 
       let name = pipeline.get('name').trim()
@@ -156,7 +152,7 @@ export default function main(state, action) {
       }
       name = name + ' (' + iName + ')'
 
-      const newVersion = new Date().getTime().toString()
+      const newVersion = `${(+oldVersion) + 1}`
       const newPipelineId = uuid()
       const newPipeline = pipeline
         .set('versions', fromJS({ [newVersion]: pipeline.getIn(['versions', oldVersion]) }))

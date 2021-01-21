@@ -1,12 +1,14 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { withStyles } from '@material-ui/core/styles'
+import { fade } from '@material-ui/core/styles/colorManipulator'
 import Typography from '@material-ui/core/Typography'
 import Collapse from '@material-ui/core/Collapse'
 import IconButton from '@material-ui/core/IconButton'
 import Grid from '@material-ui/core/Grid'
 import Popover from '@material-ui/core/Popover'
 import SyntaxHighlighter from 'react-syntax-highlighter'
+
 import { darcula as highlightStyle } from 'react-syntax-highlighter/dist/styles/hljs'
 
 import cpac from '@internal/c-pac'
@@ -43,7 +45,7 @@ class Help extends React.Component {
   }
 
   render() {
-    const { classes, regex, type, help, mini, style: rootStyle, fullWidth, width=600 } = this.props
+    const { classes, regex, type, help, mini, style: rootStyle, theme, fullWidth, width=600 } = this.props
 
     let helper = help
     if (typeof help === "string") {
@@ -107,15 +109,15 @@ class Help extends React.Component {
     )
 
     return (
-      <React.Fragment>
+      <>
 
         {
           this.props.children ? (
             mini ?
-              <React.Fragment>
+              <>
                 { this.props.children }
                 { button }
-              </React.Fragment>
+              </>
             :
             <Grid container spacing={0} wrap={`nowrap`} alignItems={`center`} style={style}>
               <Grid item style={subStyle}>
@@ -161,7 +163,7 @@ class Help extends React.Component {
                   style: {
                     display: 'block', ...(
                       lineNumber == matchedRelLine ?
-                      { backgroundColor: '#FFFFFF12' } :
+                      { backgroundColor: fade(theme.palette.common.white, 0.1) } :
                       {}
                     )
                   },
@@ -170,9 +172,9 @@ class Help extends React.Component {
             : null }
           </Grid>
         </Popover>
-      </React.Fragment>
+      </>
     )
   }
 }
 
-export default withStyles(Help.styles)(Help)
+export default withStyles(Help.styles, { withTheme: true })(Help)

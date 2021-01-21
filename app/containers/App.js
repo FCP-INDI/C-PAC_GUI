@@ -1,38 +1,42 @@
-import * as React from 'react';
-import { connect } from 'react-redux';
+import * as React from 'react'
+import { connect } from 'react-redux'
 import { withRouter } from 'react-router-dom'
 import { Link } from 'react-router-dom'
-import { configLoad } from '../actions/main'
+
 
 import bugsnag from '@bugsnag/js'
 import bugsnagReact from '@bugsnag/plugin-react'
 
-import classNames from 'clsx';
-import { withStyles, typography } from '@material-ui/core/styles';
+import classNames from 'clsx'
+import { withStyles, typography } from '@material-ui/core/styles'
 
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
-import Button from '@material-ui/core/Button';
-import { Paper, Modal, Dialog } from '@material-ui/core';
+import AppBar from '@material-ui/core/AppBar'
+import Toolbar from '@material-ui/core/Toolbar'
+import Button from '@material-ui/core/Button'
+import { Paper, Modal, Dialog } from '@material-ui/core'
 
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemText from '@material-ui/core/ListItemText';
+import List from '@material-ui/core/List'
+import ListItem from '@material-ui/core/ListItem'
+import ListItemIcon from '@material-ui/core/ListItemIcon'
+import ListItemText from '@material-ui/core/ListItemText'
 
-import Typography from '@material-ui/core/Typography';
-import Divider from '@material-ui/core/Divider';
-import IconButton from '@material-ui/core/IconButton';
+import Typography from '@material-ui/core/Typography'
+import Divider from '@material-ui/core/Divider'
+import IconButton from '@material-ui/core/IconButton'
 
-import Slide from '@material-ui/core/Slide';
-import Switch from '@material-ui/core/Switch';
+import Slide from '@material-ui/core/Slide'
+import Switch from '@material-ui/core/Switch'
 
 import Help from 'components/Help'
 import ItWentWrong from 'containers/ItWentWrong'
-// import TheodoreList from 'containers/TheodoreList'
+import CpacpySchedulerSelector from 'containers/cpacpy/SchedulerSelector'
+import Breadcrumbs from 'components/Breadcrumbs'
+
+import { configLoad } from '../actions/main'
+import { selectCurrentScheduler } from '../actions/cpacpy'
 
 import theme from '../theme'
-import '../app.global.css';
+import '../app.global.css'
 
 import { MuiThemeProvider } from '@material-ui/core/styles'
 import MathJax from 'react-mathjax'
@@ -42,12 +46,7 @@ import {
   DeleteIcon,
   NextIcon,
   PipelineIcon,
-  SubjectIcon,
-  RunIcon,
-  EnvironmentIcon,
-  ProjectIcon,
-  ProjectOpenIcon,
-  AdvancedConfigIcon,
+  ExecutionIcon,
   FeedbackIcon,
 } from 'components/icons';
 
@@ -86,12 +85,6 @@ class App extends React.Component {
       flexGrow: 1,
     },
 
-    bread: {
-      flexShrink: 0,
-    },
-    crumbs: {
-      flexGrow: 1,
-    },
     content: {
       overflow: 'auto',
       padding: theme.spacing(),
@@ -102,9 +95,6 @@ class App extends React.Component {
       flexGrow: 1,
     },
 
-    icon: {
-      marginRight: theme.spacing(),
-    },
     singleIcon: {
       marginRight: 0,
     },
@@ -113,19 +103,25 @@ class App extends React.Component {
       top: '50%',
       left: '50%',
       transform: 'translate(-50%, -50%)',
-    }
+    },
   })
 
   static mapDispatchToProps = {
     configLoad,
+    selectCurrentScheduler,
   }
   
   static mapStateToProps = (state) => ({
-    main: state.main,
+    configLoaded: !!(state.main && state.main.get('config')),
   })
 
   state = {
     feedback: false
+  }
+  
+  constructor(props) {
+    super(props);
+    this.app = React.createRef()
   }
 
   componentDidMount() {
@@ -137,54 +133,9 @@ class App extends React.Component {
     window.location.href = '/'
   }
 
-  renderBreadcrumbs = () => {
-    const { classes } = this.props
-
-    if (!this.props.main || !this.props.main.get('config')) {
-      return null
-    }
-
-    const config = this.props.main.get('config')
-
-    let project = null
-    let pipeline = null
-
-    const place = this.props.location.pathname.substr(1).split('/')
-    const crumbs = []
-    for (let i = 0; i < place.length; i++) {
-      if (place[i] == "pipelines") {
-
-        if (i + 1 < place.length) {
-          pipeline = config.get('pipelines').find((p) => p.get('id') == place[++i])
-        }
-
-        crumbs.push(
-          <NextIcon key={crumbs.length} />
-        )
-        crumbs.push(
-          <Button key={crumbs.length} size="small">
-            <PipelineIcon className={classes.icon} />
-            { pipeline ? pipeline.get('name') : "Pipelines" }
-          </Button>
-        )
-      }
-    }
-
-    return (
-      <AppBar position="static" color="default" className={classes.bread}>
-        <Toolbar>
-          <Button size="small" component={Link} to={`/`}>
-            <HomeIcon className={classes.icon} />
-            Home
-          </Button>
-          { crumbs }
-          <div className={classes.crumbs}>
-          </div>
-          {/* <TheodoreList /> */}
-        </Toolbar>
-      </AppBar>
-    )
-  };
+  handleScheduler = (scheduler) => {
+    this.props.selectCurrentScheduler(scheduler)
+  }
 
   handleFeedbackOpen = () => {
     this.setState({ feedback: true })
@@ -195,7 +146,13 @@ class App extends React.Component {
   }
 
   render() {
-    const { classes, theme, main } = this.props
+    const { classes, theme, main, forwardedRef, configLoaded } = this.props
+
+    const node = this.app.current
+    if (node) {
+      node.scrollTop = 0
+      node.scrollLeft = 0
+    }
 
     return (
       <MathJax.Provider>
@@ -219,10 +176,10 @@ class App extends React.Component {
           </header>
 
           <div className={classes.root}>
-            { this.renderBreadcrumbs() }
-            <main className={classes.content}>
+            <Breadcrumbs />
+            <main className={classes.content} ref={this.app}>
               <ErrorBoundary FallbackComponent={ItWentWrong}>
-                { main.has('config') ? this.props.children : "Loading..." }
+                { configLoaded ? this.props.children : "Loading..." }
               </ErrorBoundary>
             </main>
           </div>
@@ -243,7 +200,7 @@ class Shell extends React.Component {
   render() {
     return (
       <MuiThemeProvider theme={theme}>
-        <AppConnected {...this.props}>{ this.props.children }</AppConnected>
+        <AppConnected {...this.props} />
       </MuiThemeProvider>
     )
   }

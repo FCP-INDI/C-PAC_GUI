@@ -13,5 +13,8 @@
     "npm-debug.log.*": true,
     "test/**/__snapshots__": true,
     "yarn.lock": true
-  }
+  },
+  "[javascript]": {
+    "editor.tabSize": 2
+  },
 }

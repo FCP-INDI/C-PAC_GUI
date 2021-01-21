@@ -4,7 +4,7 @@ import fs from 'fs'
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { withRouter, Link } from 'react-router-dom'
-import { withStyles } from '@material-ui/core'
+import { withStyles } from '@material-ui/core/styles'
 
 import Typography from '@material-ui/core/Typography'
 import Grid from '@material-ui/core/Grid'
@@ -14,7 +14,7 @@ import PipelineCard from '../components/PipelineCard'
 
 import IconButton from '@material-ui/core/IconButton'
 import Button from '@material-ui/core/Button'
-import Tooltip from '@material-ui/core/Tooltip'
+import Tooltip from 'components/Tooltip'
 
 import {
   PipelineIcon,
@@ -53,7 +53,7 @@ class PipelineListTools extends Component {
     const { classes, projects, pipelines, datasets } = this.props
 
     return (
-      <React.Fragment>
+      <>
         <Tooltip title="Create new pipeline">
           <IconButton onClick={() => this.props.pipelineDuplicate()}>
             <AddIcon />
@@ -64,7 +64,7 @@ class PipelineListTools extends Component {
             <UploadIcon />
           </IconButton>
         </Tooltip>
-      </React.Fragment>
+      </>
     )
   }
 }

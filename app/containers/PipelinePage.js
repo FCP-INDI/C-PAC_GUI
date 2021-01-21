@@ -9,11 +9,10 @@ import {
   pipelineDownload,
 } from 'actions/pipeline'
 
-import { withStyles } from '@material-ui/core';
+import { withStyles } from '@material-ui/core/styles';
 
 import Grid from '@material-ui/core/Grid';
 import PipelineEditor from 'containers/pipeline/PipelineEditor';
-import Header, { HeaderText, HeaderAvatar, HeaderTools } from 'components/Header';
 import Content from 'components/Content';
 import Box from 'components/Box';
 
@@ -23,14 +22,13 @@ import Paper from '@material-ui/core/Paper';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import IconButton from '@material-ui/core/IconButton'
-import Tooltip from '@material-ui/core/Tooltip'
+import Tooltip from 'components/Tooltip'
 import Drawer from '@material-ui/core/Drawer';
 
 import { fromJS, isImmutable } from 'immutable';
 
 import {
   PipelineIcon,
-  SubjectIcon,
   ExpandMoreIcon,
   NavigateNextIcon,
   DownloadIcon,
@@ -40,6 +38,8 @@ import {
 } from 'components/icons';
 
 import cpac from '@internal/c-pac'
+
+// @TODO add Snackbar on pipeline duplicate/save successfully
 
 
 class PipelinePage extends Component {
@@ -73,7 +73,7 @@ class PipelinePage extends Component {
       dirty = true
       version = "0"
     } else {
-      version = versions.keySeq().max()
+      version = `${versions.keySeq().map(i => +i).max()}`
     }
 
     this.state = {
@@ -83,6 +83,28 @@ class PipelinePage extends Component {
       configuration: pipeline.getIn(['versions', version, 'configuration'])
     }
   }
+
+  /*
+  @TODO
+
+  react-dom.development.js?7f13:12339 Warning: componentWillReceiveProps
+  has been renamed, and is not recommended for use.
+  See https://fb.me/react-unsafe-component-lifecycles for details.
+
+  * Move data fetching code or side effects to componentDidUpdate.
+  * If you're updating state whenever props change, refactor your code to
+  use memoization techniques or move it to static getDerivedStateFromProps.
+
+  Learn more at: https://fb.me/react-derived-state
+
+  * Rename componentWillReceiveProps to UNSAFE_componentWillReceiveProps
+  to suppress this warning in non-strict mode. In React 17.x, only the
+  UNSAFE_ name will work. To rename all deprecated lifecycles to their
+  new names, you can run `npx react-codemod rename-unsafe-lifecycles`
+  in your project source folder.
+
+  Please update the following components: PipelinePage
+  */
 
   componentWillReceiveProps(nextProps) {
     if (!nextProps.pipeline.get('versions').keySeq().equals(this.props.pipeline.get('versions').keySeq())) {
@@ -96,7 +118,7 @@ class PipelinePage extends Component {
         dirty = true
         version = "0"
       } else {
-        version = versions.keySeq().max()
+        version = `${versions.keySeq().map(i => +i).max()}`
       }
 
       this.setState({
@@ -200,7 +222,7 @@ class PipelinePage extends Component {
 
   renderTitle(pipeline) {
     return this.state.isTitleEditing ? (
-      <React.Fragment>
+      <>
         <TextField
           label="Pipeline Name"
           defaultValue={pipeline.get('name')}
@@ -216,7 +238,7 @@ class PipelinePage extends Component {
         <IconButton onClick={this.handleTitleSaveClick}>
           <SaveIcon />
         </IconButton>
-      </React.Fragment>
+      </>
     ) : (
       <div
         onMouseEnter={this.handleTitleHover}
@@ -238,7 +260,7 @@ class PipelinePage extends Component {
     }
 
     const tools = (
-      <React.Fragment>
+      <>
         <Tooltip title="Download config file">
           <IconButton onClick={this.handleDownload}>
             <DownloadIcon />
@@ -260,7 +282,7 @@ class PipelinePage extends Component {
             </IconButton>
           </span>
         </Tooltip>
-      </React.Fragment>
+      </>
     )
 
     return (
@@ -268,19 +290,22 @@ class PipelinePage extends Component {
            avatar={<PipelineIcon />}
            tools={tools}>
         {
-          this.state.configuration ?
+          this.state.configuration &&
           (
-            <React.Fragment>
-            { this.state.default ?
+            <>
+              { this.state.default &&
               <div className={classes.warning}>
                 You cannot change the default template! Please, duplicate it to create your own pipeline.
               </div>
-              : null }
-              <PipelineEditor default={this.state.default} configuration={this.state.configuration} onChange={this.handleChange} onSave={this.handleSave} />
-            </React.Fragment>
+              }
+              <PipelineEditor
+                default={this.state.default}
+                configuration={this.state.configuration}
+                onChange={this.handleChange}
+                onSave={this.handleSave}
+              />
+            </>
           )
-          :
-          null
         }
       </Box>
     );
@@ -304,8 +329,13 @@ const mapDispatchToProps = {
 }
 
 const areStatesEqual = (next, prev) => {
-  // TODO review
-  return false
+  if (!prev.main.hasIn(['config', 'pipelines']) || !next.main.hasIn(['config', 'pipelines'])) {
+    return false;
+  }
+  return next.main.getIn(['config', 'pipelines']) === prev.main.getIn(['config', 'pipelines'])
 }
 
-export default connect(mapStateToProps, mapDispatchToProps, null, { areStatesEqual })(withStyles(PipelinePage.styles)(PipelinePage));
+export default 
+  connect(mapStateToProps, mapDispatchToProps, null, { areStatesEqual })
+    (withStyles(PipelinePage.styles)
+      (PipelinePage))

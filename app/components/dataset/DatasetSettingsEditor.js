@@ -1,42 +1,39 @@
-import React, { Component } from 'react';
+import React, { Component } from 'react'
 
-import { withStyles } from '@material-ui/core';
+import { withStyles } from '@material-ui/core/styles'
 
-import Content from '../Content';
-import Header, { HeaderText, HeaderAvatar, HeaderTools } from '../Header';
+import Content from '../Content'
+import Collapse from '@material-ui/core/Collapse'
+import Grid from '@material-ui/core/Grid'
+import MenuItem from '@material-ui/core/MenuItem'
+import TextField from '@material-ui/core/TextField'
+import InputAdornment from '@material-ui/core/InputAdornment'
+import Switch from '@material-ui/core/Switch'
+import Paper from '@material-ui/core/Paper'
 
-import Collapse from '@material-ui/core/Collapse';
-import Grid from '@material-ui/core/Grid';
-import MenuItem from '@material-ui/core/MenuItem';
-import TextField from '@material-ui/core/TextField';
-import InputAdornment from '@material-ui/core/InputAdornment';
-import Switch from '@material-ui/core/Switch';
-import Paper from '@material-ui/core/Paper';
+import FormGroup from '@material-ui/core/FormGroup'
+import FormLabel from '@material-ui/core/FormLabel'
+import FormControl from '@material-ui/core/FormControl'
+import FormControlLabel from '@material-ui/core/FormControlLabel'
+import FormHelperText from '@material-ui/core/FormHelperText'
 
-import FormGroup from '@material-ui/core/FormGroup';
-import FormLabel from '@material-ui/core/FormLabel';
-import FormControl from '@material-ui/core/FormControl';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import FormHelperText from '@material-ui/core/FormHelperText';
-
-import { Map, updateIn } from 'immutable';
+import { Map, updateIn } from 'immutable'
 
 import {
   HomeIcon,
   PipelineIcon,
-  SubjectIcon,
   ExpandMoreIcon,
   NavigateNextIcon,
-} from '../icons';
+} from '../icons'
 
 
 class DatasetSettingsEditor extends Component {
 
   static styles = theme => ({
-  });
+  })
 
   state = {
-  };
+  }
 
   constructor(props) {
     super(props)
@@ -46,7 +43,7 @@ class DatasetSettingsEditor extends Component {
   renderBidsFormatForm() {
     const { settings } = this.state
     return (
-      <React.Fragment>
+      <>
         <TextField
           label="Base Directory"
           name="base_directory" value={settings.getIn(['base_directory'])}
@@ -54,14 +51,14 @@ class DatasetSettingsEditor extends Component {
           fullWidth={true} margin="normal" variant="outlined"
           helperText='The base directory of the BIDS-organized data.'
         />
-      </React.Fragment>
+      </>
     )
   }
 
   renderCustomFormatForm() {
     const { settings } = this.state
     return (
-      <React.Fragment>
+      <>
         <TextField
           label="Anatomical Path Template"
           name="anatomical_path_template" value={settings.getIn(['anatomical_path_template'])}
@@ -101,7 +98,7 @@ class DatasetSettingsEditor extends Component {
           fullWidth={true} margin="normal" variant="outlined"
           helperText=''
         />
-      </React.Fragment>
+      </>
     )
   }
 
@@ -110,10 +107,10 @@ class DatasetSettingsEditor extends Component {
     switch(settings.getIn(['format'])) {
       case 'bids':
         return this.renderBidsFormatForm()
-      break;
+      break
       case 'custom':
         return this.renderCustomFormatForm()
-      break;
+      break
     }
   }
 
@@ -121,7 +118,7 @@ class DatasetSettingsEditor extends Component {
     const { settings } = this.state
     const value = event.target.type && event.target.type == "checkbox" ? event.target.checked : event.target.value
     this.setState({ settings: settings.setIn(event.target.name.split('.'), value) })
-  };
+  }
 
   render() {
     const { classes, onChange } = this.props
@@ -151,7 +148,7 @@ class DatasetSettingsEditor extends Component {
     )
 
     return (
-      <React.Fragment>
+      <>
         <TextField
           select
           label="Dataset Format"
@@ -193,9 +190,9 @@ class DatasetSettingsEditor extends Component {
           fullWidth={true} margin="normal" variant="outlined"
           helperText=''
         />
-      </React.Fragment>
-    );
+      </>
+    )
   }
 }
 
-export default withStyles(DatasetSettingsEditor.styles)(DatasetSettingsEditor);
+export default withStyles(DatasetSettingsEditor.styles)(DatasetSettingsEditor)

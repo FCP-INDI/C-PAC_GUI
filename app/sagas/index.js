@@ -1,14 +1,16 @@
 import configSaga from './config';
-// import environmentSaga from './environment';
-// import dockerSaga from './docker';
+import datasetSaga from './dataset';
+import executionSaga from './execution';
+import cpacpySaga from './cpacpy';
 
 import { all } from 'redux-saga/effects'
 
 function* rootSaga () {
     yield all([
       configSaga(),
-      // environmentSaga(),
-      // dockerSaga()
+      datasetSaga(),
+      executionSaga(),
+      cpacpySaga(),
     ])
   }
 

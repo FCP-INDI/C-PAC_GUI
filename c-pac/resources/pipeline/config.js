@@ -23,7 +23,7 @@ export default {
               log: './cpac_runs/default/log',
             },
             outputs: {
-              aws: ' ',
+              aws: '',
               s3: false,
               extra: false,
               debug: false,

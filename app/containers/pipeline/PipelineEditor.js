@@ -1,9 +1,8 @@
 import React, { Component } from 'react';
 
-import { withStyles } from '@material-ui/core';
+import { withStyles } from '@material-ui/core/styles';
 
 import Content from '../../components/Content';
-import Header, { HeaderText, HeaderAvatar, HeaderTools } from '../../components/Header';
 
 import Grid from '@material-ui/core/Grid';
 import Tabs from '@material-ui/core/Tabs';
@@ -20,7 +19,6 @@ import {
   PipelineIcon,
   RevertIcon,
   SaveIcon,
-  SubjectIcon,
 } from 'components/icons';
 
 import {
@@ -83,7 +81,7 @@ class PipelineEditor extends Component {
     }
 
     return (
-      <React.Fragment>
+      <>
         <Tabs
           value={tab}
           onChange={this.handleTabChange}
@@ -95,7 +93,7 @@ class PipelineEditor extends Component {
           <Tab label="Anatomical" />
           { configuration.getIn(["anatomical", "enabled"]) ?
           <Tab label={(
-            <React.Fragment>
+            <>
               <Switch
                 name="functional.enabled"
                 checked={configuration.getIn(["functional", "enabled"])}
@@ -104,7 +102,7 @@ class PipelineEditor extends Component {
                 color="primary"
               />
               Functional
-            </React.Fragment>
+            </>
           )} classes={{
             wrapper: classes.tabWrap
           }} />
@@ -122,7 +120,7 @@ class PipelineEditor extends Component {
         <Collapse in={tab === 2}><FunctionalPage configuration={configuration} onChange={onChange} /></Collapse>
         <Collapse in={tab === 3}><LongitudinalPage configuration={configuration} onChange={onChange} /></Collapse>
         <Collapse in={tab === 4}><DerivativesPage configuration={configuration} onChange={onChange} /></Collapse>
-      </React.Fragment>
+      </>
     );
   }
 }

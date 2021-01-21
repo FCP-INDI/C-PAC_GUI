@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { withRouter, Link } from 'react-router-dom'
-import { withStyles } from '@material-ui/core'
+import { withStyles } from '@material-ui/core/styles'
 
 import Typography from '@material-ui/core/Typography'
 import Grid from '@material-ui/core/Grid'
@@ -11,7 +11,7 @@ import PipelineCard from '../components/PipelineCard'
 
 import IconButton from '@material-ui/core/IconButton'
 import Button from '@material-ui/core/Button'
-import Tooltip from '@material-ui/core/Tooltip'
+import Tooltip from 'components/Tooltip'
 
 import Dialog from '@material-ui/core/Dialog'
 import DialogActions from '@material-ui/core/DialogActions'
@@ -65,7 +65,7 @@ class PipelineList extends Component {
     const { classes, pipelines } = this.props
 
     return (
-      <React.Fragment>
+      <>
         <Dialog
           open={this.state.openDeleteConfirm}
           onClose={this.handleClose}
@@ -94,7 +94,7 @@ class PipelineList extends Component {
             ))
           }
         </Grid>
-      </React.Fragment>
+      </>
     )
   }
 }
