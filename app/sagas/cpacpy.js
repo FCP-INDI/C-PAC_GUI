@@ -47,7 +47,7 @@ function* init() {
   const scheduler = yield selectSaga(selectCurrentScheduler())
   yield put(cpacpyDetect(scheduler.get('id'), true, true))
 }
-
+// TODO
 function* detect({ scheduler: id, poll=true, current=false }) {
   const scheduler = yield selectSaga(selectScheduler(id))
   if (scheduler.get('online')) {
@@ -126,7 +126,7 @@ function* receiverListener(scheduler, channel) {
 
     if (message && message.__cpacpy_message_id) {
       const { data } = message
-      
+
       let callbacks = yield selectSaga(
         selectSchedulerConnectCallback(scheduler.get('id'), message.__cpacpy_message_id)
       )
@@ -149,9 +149,10 @@ function* receiverListener(scheduler, channel) {
   }
 }
 
+// TODO: websocket to keep connect
 function* connect({ scheduler: id }) {
   const scheduler = yield selectSaga(selectScheduler(id))
-  const ws = new WebSocket(`ws://${scheduler.get('address')}/schedule/connect`) 
+  const ws = new WebSocket(`ws://${scheduler.get('address')}/schedule/connect`)
 
   const channel = yield call(
     websocketChannel,

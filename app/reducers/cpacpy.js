@@ -14,12 +14,14 @@ import {
   CPACPY_SCHEDULER_ONLINE,
   CPACPY_SCHEDULER_OFFLINE,
   CPACPY_SCHEDULER_CONNECT_SEND_CALLBACK,
+  CPACPY_SCHEDULER_ADDNEW,
 } from '../actions/cpacpy'
 
 const initialState = fromJS({
   schedulers: [
     { id: 'local', name: 'Local', version: 'unknown', backends: [], address: scheduler.local, polling: false, detecting: false, online: null, connected: false, connect: { callbacks: {} } },
   ],
+  // id for scheduler
   scheduler: 'local',
 })
 
@@ -32,7 +34,7 @@ export const selectScheduler =
       state.get('schedulers').find((s) => s.get('id') == scheduler)
 
 export const selectCurrentScheduler =
-  () => 
+  () =>
     (state) =>
       selectScheduler(state.get('scheduler'))(state)
 
@@ -42,10 +44,10 @@ export const selectSchedulerBackend =
       selectScheduler(scheduler)(state)
         .get('backends')
         .find((b) => b.get('id') == backend)
-  
+
 export const selectSchedulerConnectCallback =
-  (scheduler, callbackId) => 
-    (state) => 
+  (scheduler, callbackId) =>
+    (state) =>
       selectScheduler(scheduler)(state).getIn(['connect', 'callbacks', callbackId])
 
 
@@ -88,7 +90,7 @@ export default function (state = initialState, action) {
       return state
         .setIn(['schedulers', i, 'online'], action.type == CPACPY_SCHEDULER_ONLINE)
         .setIn(['schedulers', i, 'detecting'], false)
-      
+
     case CPACPY_SCHEDULER_CONNECT_SEND_CALLBACK:
       const { callbackId, callbackAction } = action
       const callbackPath = [
@@ -102,7 +104,25 @@ export default function (state = initialState, action) {
       let callbacks = state.getIn(callbackPath, List())
       callbacks = callbacks.push(callbackAction)
       return state.setIn(callbackPath, callbacks)
-        
+
+    case CPACPY_SCHEDULER_ADDNEW:
+      const name = action.payload.newName
+      const IP = action.payload.newIP
+      const port = action.payload.newPort
+      const newObj = fromJS({ id: name,
+          name: name,
+          version: 'unknown',
+          backends: [],
+          address: IP + ':' + port,
+          polling: false,
+          detecting: false,
+          online: null,
+          connected: false,
+          connect: { callbacks: {} } })
+      const newState = state.update('schedulers', scheduler => scheduler.push(newObj)).setIn(['scheduler'], name)
+      return newState
+
+
     default:
       return state
   }
