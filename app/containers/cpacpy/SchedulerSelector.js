@@ -1,9 +1,9 @@
-import React, { Component } from 'react'
-import { connect } from 'react-redux'
+import React, {Component} from 'react'
+import {connect} from 'react-redux'
 import clsx from 'clsx'
 
-import { withStyles } from '@material-ui/core/styles'
-import { fade } from '@material-ui/core/styles/colorManipulator'
+import {withStyles} from '@material-ui/core/styles'
+import {fade} from '@material-ui/core/styles/colorManipulator'
 import Button from '@material-ui/core/Button'
 import ButtonBase from '@material-ui/core/ButtonBase'
 import Modal from '@material-ui/core/Modal'
@@ -13,7 +13,7 @@ import ListItem from '@material-ui/core/ListItem'
 import ListItemIcon from '@material-ui/core/ListItemIcon'
 import ListItemText from '@material-ui/core/ListItemText'
 import Box from 'components/Box'
-import { default as FlexBox } from '@material-ui/core/Box'
+import {default as FlexBox} from '@material-ui/core/Box'
 import Typography from '@material-ui/core/Typography'
 import Tooltip from '@material-ui/core/Tooltip'
 
@@ -23,19 +23,21 @@ import {
   SchedulerIcon,
 } from 'components/icons'
 
-import { BackendChip } from 'components/chips'
+import {BackendChip} from 'components/chips'
 
 import {
   watchCancel as cpacpyWatchCancel,
   detect as cpacpyDetect,
+  addNew as cpacpyAddNew,
 } from 'actions/cpacpy'
 
 import {
   selectSchedulers,
   selectCurrentScheduler,
 } from 'reducers/cpacpy'
-import { fromJS } from 'immutable'
-import { Grid } from '@material-ui/core'
+import {fromJS} from 'immutable'
+import {Grid} from '@material-ui/core'
+import TextField from "@material-ui/core/TextField";
 
 
 class CpacpySchedulerSelector extends Component {
@@ -135,17 +137,17 @@ class CpacpySchedulerSelector extends Component {
       },
     },
     '@keyframes shinebrightlikeadiamond': {
-      '0%': { strokeWidth: 0, strokeOpacity: 1 },
-      '80%': { strokeWidth: 6, strokeOpacity: 0 },
+      '0%': {strokeWidth: 0, strokeOpacity: 1},
+      '80%': {strokeWidth: 6, strokeOpacity: 0},
     },
     '@keyframes shinebrightlikeadiamond': {
-      '0%': { strokeWidth: 0, strokeOpacity: 0 },
-      '50%': { strokeWidth: 10, strokeOpacity: 0.5 },
-      '100%': { strokeWidth: 0, strokeOpacity: 0 },
+      '0%': {strokeWidth: 0, strokeOpacity: 0},
+      '50%': {strokeWidth: 10, strokeOpacity: 0.5},
+      '100%': {strokeWidth: 0, strokeOpacity: 0},
     },
   });
 
-  static mapStateToProps = ({ cpacpy: state }, props) => {
+  static mapStateToProps = ({cpacpy: state}, props) => {
     if (!state || !state.get('schedulers')) {
       return {
         schedulers: fromJS([]),
@@ -162,12 +164,16 @@ class CpacpySchedulerSelector extends Component {
   static mapDispatchToProps = {
     stop: cpacpyWatchCancel,
     detect: cpacpyDetect,
+    addNew: cpacpyAddNew,
   }
 
   state = {
     fullSelector: false,
     selector: false,
     selectorAnchor: null,
+    newName: "",
+    newIP: "",
+    newPort: "",
   }
 
   constructor(props) {
@@ -178,31 +184,31 @@ class CpacpySchedulerSelector extends Component {
   toggleSelector = (e) => {
     e.stopPropagation()
     e.preventDefault()
-    this.setState({ selector: !this.state.selector, selectorAnchor: e.target })
+    this.setState({selector: !this.state.selector, selectorAnchor: e.target})
   }
 
   toggleFullSelector = (e) => {
     e.stopPropagation()
     e.preventDefault()
-    this.setState({ fullSelector: !this.state.fullSelector })
+    this.setState({fullSelector: !this.state.fullSelector})
   }
 
   handleClose = (e) => {
     e.stopPropagation()
     e.preventDefault()
-    this.setState({ selector: false })
+    this.setState({selector: false})
   }
 
   handleFullClose = (e) => {
     e.stopPropagation()
     e.preventDefault()
-    this.setState({ fullSelector: false })
+    this.setState({fullSelector: false})
   }
 
   handleSelect = (scheduler) => (e) => {
     e.stopPropagation()
     e.preventDefault()
-    this.setState({ selector: false, scheduler })
+    this.setState({selector: false, scheduler})
     this.props.detect(scheduler, false)
     this.props.onSelect && this.props.onSelect(scheduler)
   }
@@ -210,12 +216,33 @@ class CpacpySchedulerSelector extends Component {
   handleManage = (e) => {
     e.stopPropagation()
     e.preventDefault()
-    this.setState({ selector: false, fullSelector: true })
+    this.setState({selector: false, fullSelector: true})
+  }
+
+  // Handler function that is invoked when the `Add new backend` button is clicked.
+  handleAddBackend = (e) => {
+    e.stopPropagation()
+    e.preventDefault()
+    const newName = this.state.newName
+    const newIP = this.state.newIP
+    const newPort = this.state.newPort
+    this.props.addNew(newName, newIP, newPort)
+  }
+
+  // When content of a textfield changes, the updated val will be recorded to states.
+  handleNewName = (e) => {
+    this.setState({newName: e.target.value})
+  }
+  handleNewIP = (e) => {
+    this.setState({newIP: e.target.value})
+  }
+  handleNewPort = (e) => {
+    this.setState({newPort: e.target.value})
   }
 
   render() {
-    const { classes, schedulers, watch, stop, buttonProps: { className: buttonClassName, ...buttonProps }, buttonMenuProps, popoverProps } = this.props
-    const { selector, selectorAnchor, fullSelector, scheduler: selectedScheduler } = this.state
+    const {classes, schedulers, watch, stop, buttonProps: {className: buttonClassName, ...buttonProps}, buttonMenuProps, popoverProps} = this.props
+    const {selector, selectorAnchor, fullSelector, scheduler: selectedScheduler} = this.state
 
     if (!schedulers) {
       return null
@@ -234,7 +261,7 @@ class CpacpySchedulerSelector extends Component {
           <Paper className={classes.paper}>
             <Box
               title="Schedulers"
-              avatar={<SchedulerIcon />}
+              avatar={<SchedulerIcon/>}
               classes={{
                 content: classes.content
               }}
@@ -247,18 +274,18 @@ class CpacpySchedulerSelector extends Component {
                         <Grid container spacing={0}>
                           <Grid item xs={6}>
                             <Typography>
-                              { s.get('name') }
+                              {s.get('name')}
                             </Typography>
                           </Grid>
                           <Grid item xs={6}>
                             {
                               s.get('backends')
                                 .map(
-                                  b => 
+                                  b =>
                                     <BackendChip
                                       key={`${s.get('id')}-${b.get('id')}`}
                                       scheduler={s.get('id')}
-                                      backend={b.get('id')} />
+                                      backend={b.get('id')}/>
                                 )
                             }
                           </Grid>
@@ -268,6 +295,38 @@ class CpacpySchedulerSelector extends Component {
                   </Paper>
                 ))
               }
+              {/*  Add New BackEnds */}
+              <Paper key='connectNewBackend' elevation={3} className={classes.scheduler}>
+                <Grid container spacing={0}>
+                  <Grid item xs={12} className={classes.description}>
+                    <Grid container spacing={1}>
+                      <Grid item xs={3}>
+                        <TextField
+                          label="Unique Name" fullWidth margin="normal" variant="outlined"
+                          name="general.environment.memory"
+                          onChange={this.handleNewName}
+                        />
+                        <Button variant="contained" color="secondary" onClick={this.handleAddBackend}>Add new
+                          backend</Button>
+                      </Grid>
+                      <Grid item xs={3}>
+                        <TextField
+                          label="IP Address/URL" fullWidth margin="normal" variant="outlined"
+                          name="general.environment.memory"
+                          onChange={this.handleNewIP}
+                        />
+                      </Grid>
+                      <Grid item xs={3}>
+                        <TextField
+                          label="Port" fullWidth margin="normal" variant="outlined"
+                          name="general.environment.memory"
+                          onChange={this.handleNewPort}
+                        />
+                      </Grid>
+                    </Grid>
+                  </Grid>
+                </Grid>
+              </Paper>
             </Box>
           </Paper>
         </Modal>
@@ -286,21 +345,21 @@ class CpacpySchedulerSelector extends Component {
           }}
           {...popoverProps}
         >
-          { schedulers.map((s) => (
+          {schedulers.map((s) => (
             <ListItem button key={s.get('id')} onClick={this.handleSelect(s.get('id'))} {...buttonMenuProps}>
               <ListItemIcon>
                 <BulletIcon className={clsx(
                   classes.bullet,
                   (s.get('detecting') || s.get('polling')) ? classes.detecting : null,
                   s.get('online') === null ? classes.unknown : (s.get('online') ? classes.online : classes.offline)
-                )} />
+                )}/>
               </ListItemIcon>
-              <ListItemText primary={s.get('name')} />
+              <ListItemText primary={s.get('name')}/>
             </ListItem>
           ))}
 
           <ListItem button key="manage" className={classes.manage} onClick={this.handleManage} {...buttonMenuProps}>
-            <ListItemText primary={'Manage'} />
+            <ListItemText primary={'Manage'}/>
           </ListItem>
         </Popover>
 
@@ -320,8 +379,8 @@ class CpacpySchedulerSelector extends Component {
             classes.bullet,
             (scheduler.get('detecting') || scheduler.get('polling')) ? classes.detecting : null,
             scheduler.get('online') === null ? classes.unknown : (scheduler.get('online') ? classes.online : classes.offline)
-          )} />
-          { scheduler.get('name') }
+          )}/>
+          {scheduler.get('name')}
         </ButtonBase>
       </>
     )
