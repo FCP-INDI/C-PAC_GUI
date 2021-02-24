@@ -59,6 +59,7 @@ import {
 } from '../components/icons'
 
 import withCurrentScheduler from '../components/cpacpy/withCurrentScheduler'
+import {parse} from '../../c-pac/data_config'
 
 import Content from '../components/Content'
 import Box from '../components/Box'
@@ -70,6 +71,7 @@ import {
   createDataSettings,
   updateDataSettings,
   generateDataConfig,
+  generateDataConfigSync,
 } from '../actions/dataset'
 
 
@@ -87,13 +89,16 @@ class DatasetPage extends Component {
 
   state = {
     name: '',
-    base: ''
+    base: '',
+    format: '',
+    uploadFileName: 'No file has been uploaded',
   }
 
   constructor(props) {
     super(props)
     const { dataset, configuration } = this.props
     if (dataset) {
+      this.state.format = configuration.getIn(['format'])
       this.state.base = configuration.getIn(['options', 'base']);
     }
   }
@@ -115,13 +120,52 @@ class DatasetPage extends Component {
     this.setState({[event.target.name]: event.target.value});
   }
 
-  handleCreateDataset = () => {
+  handleCreateDatasetBIDS = () => {
+    if(this.state.name === "") {
+      alert("Please set a name for the dataset =)")
+      return
+    }
+    this.state.format = 'bids'
     this.props.createDataSettings(
       this.state.name,
       {
         format: 'bids',
         options: {
           base: this.state.base,
+        }
+      },
+    )
+  }
+
+  handleCreateDatasetUpload = () => {
+    if(this.state.name === "") {
+      alert("Please set a name for the dataset =)")
+      return
+    }
+    this.state.format = 'upload'
+    this.props.createDataSettings(
+      this.state.name,
+      {
+        format: 'upload',
+        options: {
+          base: null,
+        }
+      },
+    )
+  }
+
+  handleCreateDatasetFetchURL = () => {
+    if(this.state.name === "") {
+      alert("Please set a name for the dataset =)")
+      return
+    }
+    this.state.format = 'fetch'
+    this.props.createDataSettings(
+      this.state.name,
+      {
+        format: 'fetch',
+        options: {
+          base: null,
         }
       },
     )
@@ -148,6 +192,28 @@ class DatasetPage extends Component {
         version: this.props.version,
       }
     )
+  }
+  handleUpload = (e) => {
+    var files = e.target.files
+    var f = files[0]
+    var reader = new FileReader();
+    reader.onload = ((e) => {
+      try {
+        let id = this.props.dataset.get('id')
+        let datasetConfig = parse(e.target.result)
+        this.state.uploadFileName = f.name
+        this.props.generateDataConfigSync(
+          {id: id},
+          datasetConfig
+        )
+      } catch (error) {
+        console.error(error)
+        alert('Something wrong during parsing the YML file. \n' +
+          'Please check your file format :3')
+      }
+    })
+    reader.readAsText(f)
+    e.target.value = null
   }
 
   handleFilter(view) {
@@ -278,8 +344,18 @@ class DatasetPage extends Component {
           fullWidth={true} margin="normal" variant="outlined"
         />}
              avatar={<DatasetIcon />}>
-  
+
           <FlexBox display="flex" alignItems="center" p={1}>
+            <FlexBox p={1}>
+              <Button variant="contained" color="secondary" component="span" onClick={this.handleCreateDatasetUpload}>
+                Upload yml File
+              </Button>
+            </FlexBox>
+            <FlexBox p={1}> | </FlexBox>
+            <FlexBox p={1}>
+              <Button variant="contained" color="secondary" onClick={this.handleCreateDatasetFetchURL}>Fetch raw</Button>
+            </FlexBox>
+            <FlexBox p={1}> | </FlexBox>
             <FlexBox p={1} flexGrow={1}>
               <TextField
                   label="BIDS Directory"
@@ -290,7 +366,7 @@ class DatasetPage extends Component {
                 />
             </FlexBox>
             <FlexBox p={1}>
-              <Button variant="contained" color="secondary" onClick={this.handleCreateDataset}>Create</Button>
+              <Button variant="contained" color="secondary" onClick={this.handleCreateDatasetBIDS}>Create from BIDS</Button>
             </FlexBox>
           </FlexBox>
         </Box>
@@ -329,13 +405,21 @@ class DatasetPage extends Component {
     )
 
     const BuildDatasetButton = withCurrentScheduler(Button)
+    let bidsBlockStyle = {display:'none'}
+    let uploadBlockStyle = {display:'none'}
+    let fetchBlockStyle = {display:'none'}
+    this.state.format === 'bids' ? bidsBlockStyle = {} : bidsBlockStyle
+    this.state.format === 'upload' ? uploadBlockStyle = {} : uploadBlockStyle
+    this.state.format === 'fetch' ? fetchBlockStyle = {} : fetchBlockStyle
+
 
     return (
       <Box title={dataset.get('name')}
            avatar={<DatasetIcon />}
            tools={tools}>
 
-        <FlexBox display="flex" alignItems="center" p={1}>
+        <FlexBox display="flex" alignItems="center" p={1}
+                 style={bidsBlockStyle}>
           <FlexBox p={1} flexGrow={1}>
             <TextField
                 label="BIDS Directory"
@@ -356,9 +440,37 @@ class DatasetPage extends Component {
           </FlexBox>
         </FlexBox>
 
+        <FlexBox display="flex" alignItems="center" p={1}
+                 style={uploadBlockStyle}>
+          <FlexBox p={1} flexGrow={1}>
+            <TextField
+              label="File Name"
+              name="uploadFileName"
+              value={this.state.uploadFileName}
+              InputProps={{
+                readOnly: true,
+              }}
+              fullWidth={true} margin="normal"
+            />
+          </FlexBox>
+          <FlexBox p={1}>
+            <input
+              style={{ display: "none" }}
+              id="contained-button-file1"
+              type="file"
+              onChange={this.handleUpload}
+            />
+            <label htmlFor="contained-button-file1">
+              <Button variant="contained" color="secondary" component="span">
+                Upload yml File
+              </Button>
+            </label>
+          </FlexBox>
+        </FlexBox>
+
         <Grid container alignItems="stretch">
           <Grid item xs={12} lg={8} style={{display: 'flex'}}>
-            <Paper style={{flexGrow: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', minHeight: 100}}> 
+            <Paper style={{flexGrow: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', minHeight: 100}}>
               {
                 loading ?
                 <Skeleton animation="wave" variant="rect" style={{flexGrow: 1}} /> :
@@ -412,6 +524,7 @@ const mapDispatchToProps = {
   createDataSettings,
   updateDataSettings,
   generateDataConfig,
+  generateDataConfigSync,
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(

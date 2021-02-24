@@ -39,3 +39,10 @@ export function generateDataConfig(scheduler, dataset) {
     scheduler, dataset
   }
 }
+
+export function generateDataConfigSync(dataset, config) {
+  return {
+    type: DATASET_GENERATE_DATA_CONFIG_SUCCESS,
+    dataset, config
+  }
+}
