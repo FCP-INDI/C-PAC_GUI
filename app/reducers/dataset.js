@@ -52,14 +52,19 @@ export default function (state = initialState, action) {
       return state
         .setIn(['datasets', i, 'data'], fromJS(config))
         .setIn(['datasets', i, 'loading'], false)
+        .removeIn(['datasets', i, 'error'])
     }
 
     case DATASET_GENERATE_DATA_CONFIG_ERROR: {
       const { dataset: { id }, exception } = action
       const i = state.get('datasets').findIndex((d) => d.get('id') === id)
+      let errorMessage = exception.message
+      if (!errorMessage) {
+        errorMessage = 'general exception'
+      }
 
       return state
-        .setIn(['datasets', i, 'error'], exception.message)
+        .setIn(['datasets', i, 'error'], errorMessage)
         .setIn(['datasets', i, 'loading'], false)
     }
 

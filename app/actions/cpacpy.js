@@ -223,3 +223,14 @@ export function addNew(name, ip, port) {
     payload: {newName: name, newIP: ip, newPort: port},
   }
 }
+
+export function fetchRaw(url, {success, error}, header = {}) {
+  return call (
+    {id: -1},
+    'GET',
+    url,
+    null,
+    {success, error},
+    header,
+  )
+}

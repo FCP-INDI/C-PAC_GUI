@@ -19,6 +19,8 @@ export const DATASET_GENERATE_DATA_CONFIG_SCHEDULED = 'DATASET_GENERATE_DATA_CON
 export const DATASET_GENERATE_DATA_CONFIG_FINISHED = 'DATASET_GENERATE_DATA_CONFIG_FINISHED'
 export const DATASET_GENERATE_DATA_CONFIG_FETCHED = 'DATASET_GENERATE_DATA_CONFIG_FETCHED'
 
+export const DATASET_GENERATE_DATA_CONFIG_URL = 'DATASET_GENERATE_DATA_CONFIG_URL'
+
 export function createDataSettings(name, configuration) {
   return {
     type: DATASET_SETTINGS_CREATE,
@@ -44,5 +46,12 @@ export function generateDataConfigSync(dataset, config) {
   return {
     type: DATASET_GENERATE_DATA_CONFIG_SUCCESS,
     dataset, config
+  }
+}
+
+export function generateDataConfigUrlFetch(dataset, url) {
+  return {
+    type : DATASET_GENERATE_DATA_CONFIG_URL,
+    dataset, url
   }
 }

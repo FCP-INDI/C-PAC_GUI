@@ -17,6 +17,7 @@ import CircularProgress from '@material-ui/core/CircularProgress'
 import Typography from '@material-ui/core/Typography'
 import Skeleton from '@material-ui/lab/Skeleton'
 import { default as FlexBox } from '@material-ui/core/Box'
+import Alert from '@material-ui/lab/Alert'
 
 import {
   DatasetIcon,
@@ -47,6 +48,7 @@ import {
   updateDataSettings,
   generateDataConfig,
   generateDataConfigSync,
+  generateDataConfigUrlFetch,
 } from '../actions/dataset'
 
 
@@ -66,6 +68,7 @@ class DatasetPage extends Component {
     name: '',
     base: '',
     format: '',
+    fetchUrl: '',
     uploadFileName: 'No file has been uploaded',
   }
 
@@ -75,6 +78,7 @@ class DatasetPage extends Component {
     if (dataset) {
       this.state.format = configuration.getIn(['format'])
       this.state.base = configuration.getIn(['options', 'base']);
+      this.state.fetchUrl = configuration.getIn(['options', 'base']);
     }
   }
 
@@ -140,7 +144,7 @@ class DatasetPage extends Component {
       {
         format: 'fetch',
         options: {
-          base: null,
+          base: this.state.fetchUrl,
         }
       },
     )
@@ -189,6 +193,16 @@ class DatasetPage extends Component {
     })
     reader.readAsText(f)
     e.target.value = null
+  }
+
+  handleFetch = () => {
+    if (this.state.fetchUrl === '') {
+      return
+    }
+    this.props.generateDataConfigUrlFetch(
+      {id: this.props.dataset.get('id')},
+      this.state.fetchUrl,
+    )
   }
 
   handleFilter(view) {
@@ -384,10 +398,19 @@ class DatasetPage extends Component {
     let bidsBlockStyle = {display:'none'}
     let uploadBlockStyle = {display:'none'}
     let fetchBlockStyle = {display:'none'}
-    this.state.format === 'bids' ? bidsBlockStyle = {} : bidsBlockStyle
-    this.state.format === 'upload' ? uploadBlockStyle = {} : uploadBlockStyle
-    this.state.format === 'fetch' ? fetchBlockStyle = {} : fetchBlockStyle
+    const format = configuration.getIn(['format'])
+    format === 'bids' ? bidsBlockStyle = {} : bidsBlockStyle
+    format === 'upload' ? uploadBlockStyle = {} : uploadBlockStyle
+    format === 'fetch' ? fetchBlockStyle = {} : fetchBlockStyle
 
+    let fetchWarningStyle = {display:'none'}
+    console.log(format)
+    console.log(dataset)
+    console.log(dataset.getIn(['error']))
+    format === 'fetch' && dataset.getIn(['error']) ? fetchWarningStyle = {} : fetchWarningStyle
+
+    let fetchErrorMessage = 'Last valid results are shown below.'
+    columns == null ? fetchErrorMessage = '' : fetchErrorMessage
 
     return (
       <Box title={dataset.get('name')}
@@ -434,6 +457,7 @@ class DatasetPage extends Component {
               style={{ display: "none" }}
               id="contained-button-file1"
               type="file"
+              accept=".yml"
               onChange={this.handleUpload}
             />
             <label htmlFor="contained-button-file1">
@@ -443,6 +467,31 @@ class DatasetPage extends Component {
             </label>
           </FlexBox>
         </FlexBox>
+
+        <FlexBox display="flex" alignItems="center" p={1}
+                 style={fetchBlockStyle}>
+          <FlexBox p={1} flexGrow={1}>
+            <TextField
+              label="URL for the raw file"
+              name="fetchUrl"
+              value={this.state.fetchUrl}
+              onChange={this.handleChangeForm.bind(this)}
+              fullWidth={true} margin="normal" variant="outlined"
+            />
+          </FlexBox>
+          <FlexBox p={1}>
+            <Button variant="contained" color="secondary" component="span"
+            onClick={this.handleFetch}>
+              fetch from this URL
+            </Button>
+          </FlexBox>
+        </FlexBox>
+
+        <Alert severity="warning"
+               style={fetchWarningStyle}>
+          Invalid URL or browser same-origin mode enabled. {fetchErrorMessage}
+
+        </Alert>
 
         <Grid container alignItems="stretch">
           <Grid item xs={12} lg={8} style={{display: 'flex'}}>
@@ -501,6 +550,7 @@ const mapDispatchToProps = {
   updateDataSettings,
   generateDataConfig,
   generateDataConfigSync,
+  generateDataConfigUrlFetch,
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(

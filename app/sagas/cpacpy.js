@@ -175,7 +175,7 @@ function* connect({ scheduler: id }) {
   }
 }
 
-function* callScheduler({
+function* callAny({
   scheduler: id,
   method='GET',
   endpoint,
@@ -184,22 +184,23 @@ function* callScheduler({
   headers = {}
 }) {
 
-  const scheduler = yield selectSaga(selectScheduler(id))
+  const scheduler = id > -1 ? yield selectSaga(selectScheduler(id)) : -1
+  const url = id > -1 ? `http://${scheduler.get('address')}${endpoint}` : endpoint
 
   const success_return = (data, headers) =>
     success instanceof Function ?
       success(data, headers) :
       cpacpyCallSuccess(scheduler, success, data, headers)
 
-  const error_return = (exception, headers) =>
+  const error_return = (exception) =>
     error instanceof Function ?
-      error(exception, headers) :
-      cpacpyCallError(scheduler, error, exception, headers)
+      error(exception) :
+      cpacpyCallError(scheduler, error, exception)
 
   try {
     const { response, error, headers: resHeaders } = yield call(
       fetch,
-      `http://${scheduler.get('address')}${endpoint}`,
+      url,
       {
         method,
         body: data === null ? null : JSON.stringify(data),
@@ -214,7 +215,7 @@ function* callScheduler({
     yield put(success_return(response, resHeaders))
   } catch (exception) {
     console.log(exception)
-    yield put(error_return(exception, resHeaders))
+    yield put(error_return(exception))
   }
 }
 
@@ -225,6 +226,6 @@ export default function* configSaga() {
     takeEvery(CPACPY_SCHEDULER_POLLING, polling),
     takeEvery(CPACPY_SCHEDULER_CONNECT, connect),
     takeEvery(CPACPY_SCHEDULER_CONNECT_CANCEL, offline),
-    takeEvery(CPACPY_SCHEDULER_CALL, callScheduler),
+    takeEvery(CPACPY_SCHEDULER_CALL, callAny),
   ])
 }
