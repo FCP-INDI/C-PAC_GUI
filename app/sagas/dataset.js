@@ -21,12 +21,14 @@ import {
   DATASET_GENERATE_DATA_CONFIG_SCHEDULED,
   DATASET_GENERATE_DATA_CONFIG_FINISHED,
   DATASET_GENERATE_DATA_CONFIG_FETCHED,
+  DATASET_GENERATE_DATA_CONFIG_URL,
 } from '../actions/dataset'
 
 import {
   scheduleDataSettings as cpacpyScheduleDataSettings,
   connectSendWatch as cpacpyConnectSendWatch,
   fetchResults as cpacpyFetchResults,
+  fetchRaw as cpacpyFetchURL,
 } from '../actions/cpacpy'
 
 import {
@@ -45,6 +47,8 @@ import {
   selectSaga as selectSagaFunc,
   configLocalState,
 } from './utils'
+
+import {parse} from '../../c-pac/data_config'
 
 const selectSaga = selectSagaFunc('dataset')
 
@@ -69,6 +73,35 @@ function* generateDataConfig({ dataset: { id, version }, scheduler }) {
         dataset: { id, version }, exception
       }),
     }
+  ))
+}
+
+function* generateDataConfigUrlFetch({dataset: {id}, url}) {
+  console.log('generating function', id, url)
+  yield put(cpacpyFetchURL(
+    url,
+    {
+      success: (data) => {
+        return {
+          type: DATASET_GENERATE_DATA_CONFIG_SUCCESS,
+          dataset: { id },
+          config: parse(data),
+      }},
+      error: (exception) => {
+        return {
+          type: DATASET_GENERATE_DATA_CONFIG_ERROR,
+          dataset: {id},
+          exception: exception
+        }
+      },
+    },
+    {
+      'Accept': '*',
+      'Content-Type': '*',
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, PATCH, OPTIONS',
+      'Access-Control-Allow-Headers': 'X-Requested-With, Content-Type, Authorization',
+      }
   ))
 }
 
@@ -144,5 +177,6 @@ export default function* configSaga() {
     takeEvery(DATASET_GENERATE_DATA_CONFIG_FETCHED, generateDataConfigResult),
     takeEvery(DATASET_SETTINGS_CREATE, updateDataset),
     takeEvery(DATASET_SETTINGS_UPDATE, updateDataset),
+    takeEvery(DATASET_GENERATE_DATA_CONFIG_URL, generateDataConfigUrlFetch),
   ])
 }
