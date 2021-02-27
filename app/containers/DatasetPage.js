@@ -203,6 +203,16 @@ class DatasetPage extends Component {
       {id: this.props.dataset.get('id')},
       this.state.fetchUrl,
     )
+    this.props.updateDataSettings(
+      this.props.dataset.get('id'),
+      this.props.dataset.get('name'),
+      {
+        format: 'fetch',
+        options: {
+          base: this.state.fetchUrl,
+        }
+      }
+    )
   }
 
   handleFilter(view) {
@@ -404,9 +414,6 @@ class DatasetPage extends Component {
     format === 'fetch' ? fetchBlockStyle = {} : fetchBlockStyle
 
     let fetchWarningStyle = {display:'none'}
-    console.log(format)
-    console.log(dataset)
-    console.log(dataset.getIn(['error']))
     format === 'fetch' && dataset.getIn(['error']) ? fetchWarningStyle = {} : fetchWarningStyle
 
     let fetchErrorMessage = 'Last valid results are shown below.'
