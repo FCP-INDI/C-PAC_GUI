@@ -42,7 +42,7 @@ export default function (state = initialState, action) {
 
       return state
         .setIn(['datasets', i, 'loading'], true)
-        .setIn(['datasets', i, 'error'], null)
+        .removeIn(['datasets', i, 'error'])
     }
     
     case DATASET_GENERATE_DATA_CONFIG_SUCCESS: {

@@ -48,8 +48,6 @@ import {
   configLocalState,
 } from './utils'
 
-import {parse} from '../../c-pac/data_config'
-
 const selectSaga = selectSagaFunc('dataset')
 
 
@@ -77,15 +75,14 @@ function* generateDataConfig({ dataset: { id, version }, scheduler }) {
 }
 
 function* generateDataConfigUrlFetch({dataset: {id}, url}) {
-  console.log('generating function', id, url)
   yield put(cpacpyFetchURL(
     url,
     {
       success: (data) => {
         return {
-          type: DATASET_GENERATE_DATA_CONFIG_SUCCESS,
+          type: DATASET_GENERATE_DATA_CONFIG_FETCHED,
           dataset: { id },
-          config: parse(data),
+          data: data,
       }},
       error: (exception) => {
         return {
@@ -95,13 +92,6 @@ function* generateDataConfigUrlFetch({dataset: {id}, url}) {
         }
       },
     },
-    {
-      'Accept': '*',
-      'Content-Type': '*',
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, PATCH, OPTIONS',
-      'Access-Control-Allow-Headers': 'X-Requested-With, Content-Type, Authorization',
-      }
   ))
 }
 
