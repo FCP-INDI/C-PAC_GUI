@@ -42,7 +42,7 @@ export function generateDataConfig(scheduler, dataset) {
   }
 }
 
-export function generateDataConfigSync(dataset, config) {
+export function importDataConfig(dataset, config) {
   return {
     type: DATASET_GENERATE_DATA_CONFIG_SUCCESS,
     dataset, config
@@ -53,5 +53,19 @@ export function generateDataConfigUrlFetch(dataset, url) {
   return {
     type : DATASET_GENERATE_DATA_CONFIG_URL,
     dataset, url
+  }
+}
+
+export function updateDataset(dataset) {
+  return {
+    type: DATASET_SETTINGS_UPDATE,
+    dataset,
+  }
+}
+
+export function updateDatasetError(dataset, exception) {
+  return {
+    type: DATASET_GENERATE_DATA_CONFIG_ERROR,
+    dataset, exception
   }
 }

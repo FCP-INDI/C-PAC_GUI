@@ -72,8 +72,10 @@ import {
   createDataSettings,
   updateDataSettings,
   generateDataConfig,
-  generateDataConfigSync,
   generateDataConfigUrlFetch,
+  importDataConfig,
+  updateDataset,
+  updateDatasetError,
 } from '../actions/dataset'
 
 
@@ -104,6 +106,7 @@ class DatasetPage extends Component {
       this.state.format = configuration.getIn(['format'])
       this.state.base = configuration.getIn(['options', 'base']);
       this.state.fetchUrl = configuration.getIn(['options', 'base']);
+      this.state.uploadFileName = configuration.getIn(['options', 'base']);
     }
   }
 
@@ -198,22 +201,28 @@ class DatasetPage extends Component {
     )
   }
   handleUpload = (e) => {
-    var files = e.target.files
-    var f = files[0]
-    var reader = new FileReader();
+    const files = e.target.files
+    const f = files[0]
+    const datasetInfo = {
+      id: this.props.dataset.get('id'),
+      name: this.props.dataset.get('name'),
+      configuration: {
+        format: 'upload',
+        options: {
+          base: f.name,
+        }
+      }
+    }
+    this.state.uploadFileName = f.name
+    const reader = new FileReader();
     reader.onload = ((e) => {
       try {
-        let id = this.props.dataset.get('id')
-        let datasetConfig = parse(e.target.result)
-        this.state.uploadFileName = f.name
-        this.props.generateDataConfigSync(
-          {id: id},
-          datasetConfig
-        )
-      } catch (error) {
-        console.error(error)
-        alert('Something wrong during parsing the YML file. \n' +
-          'Please check your file format :3')
+        const datasetConfig = parse(e.target.result)
+        this.props.importDataConfig(datasetInfo, datasetConfig)
+        this.props.updateDataset(datasetInfo)
+      } catch (e) {
+        this.props.updateDatasetError(datasetInfo, e)
+        this.props.updateDataset(datasetInfo)
       }
     })
     reader.readAsText(f)
@@ -377,7 +386,7 @@ class DatasetPage extends Component {
             </FlexBox>
             <FlexBox p={1}> | </FlexBox>
             <FlexBox p={1}>
-              <Button variant="contained" color="secondary" onClick={this.handleCreateDatasetFetchURL}>Fetch raw</Button>
+              <Button variant="contained" color="secondary" onClick={this.handleCreateDatasetFetchURL}>Fetch From URL</Button>
             </FlexBox>
             <FlexBox p={1}> | </FlexBox>
             <FlexBox p={1} flexGrow={1}>
@@ -438,10 +447,12 @@ class DatasetPage extends Component {
     format === 'fetch' ? fetchBlockStyle = {} : fetchBlockStyle
 
     let fetchWarningStyle = {display:'none'}
+    let uploadWarningStyle = {display:'none'}
     format === 'fetch' && dataset.getIn(['error']) ? fetchWarningStyle = {} : fetchWarningStyle
+    format === 'upload' && dataset.getIn(['error']) ? uploadWarningStyle = {} : uploadWarningStyle
 
-    let fetchErrorMessage = 'Last valid results are shown below.'
-    columns == null ? fetchErrorMessage = '' : fetchErrorMessage
+    let errorMessage = 'Last valid results are shown below.'
+    columns == null ? errorMessage = '' : errorMessage
 
     return (
       <Box title={dataset.get('name')}
@@ -520,8 +531,12 @@ class DatasetPage extends Component {
 
         <Alert severity="warning"
                style={fetchWarningStyle}>
-          Invalid URL or browser same-origin mode enabled. {fetchErrorMessage}
+          Invalid URL or browser same-origin mode enabled. {errorMessage}
+        </Alert>
 
+        <Alert severity="warning"
+               style={uploadWarningStyle}>
+          Invalid YML format. {errorMessage}
         </Alert>
 
         <Grid container alignItems="stretch">
@@ -580,8 +595,10 @@ const mapDispatchToProps = {
   createDataSettings,
   updateDataSettings,
   generateDataConfig,
-  generateDataConfigSync,
   generateDataConfigUrlFetch,
+  importDataConfig,
+  updateDataset,
+  updateDatasetError,
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(

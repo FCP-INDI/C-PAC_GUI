@@ -62,7 +62,9 @@ class DatasetCard extends Component {
 
     const labels = {
       bids: 'BIDS',
-      custom: 'Custom'
+      custom: 'Custom',
+      upload: dataset.getIn(['versions', version, 'configuration']),
+      fetch: 'From URL',
     }
 
     const versions = dataset.get('versions')
