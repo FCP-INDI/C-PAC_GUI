@@ -94,10 +94,8 @@ export function configLocalState(key, initialState = {}, {
   const requestKey = (stateKey) => `${key}/${stateKey.join('/')}`
 
   function* loadLocalState () {
-    const versionedInitialState = {
-      version: VERSION,
-      ...initialState,
-    }
+    const versionedInitialState = key === 'cpacpy' ?
+      initialState : { version: VERSION, ...initialState, }
 
     let localState = null
     try {
