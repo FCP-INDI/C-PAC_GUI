@@ -4,7 +4,7 @@ import { all, delay, select, call, cancelled, put, race, take, takeEvery } from 
 import uuid from 'uuid/v4'
 
 import { scheduler } from 'consts'
-import { fetch, websocketChannel, scheduler as schedulerMatch } from './utils'
+import {fetch, websocketChannel, scheduler as schedulerMatch, configLocalState} from './utils'
 
 import {
   CPACPY_INIT,
@@ -19,6 +19,17 @@ import {
   CPACPY_SCHEDULER_CONNECT_SEND,
   CPACPY_SCHEDULER_CONNECT_SEND_CALLBACK,
   CPACPY_SCHEDULER_CALL,
+  CPACPY_SCHEDULER_ADDNEW,
+
+  CPACPY_CONFIG_LOAD,
+  CPACPY_CONFIG_CLEAR,
+  CPACPY_CONFIG_SAVE,
+  CPACPY_CONFIG_LOAD_SUCCESS,
+  CPACPY_CONFIG_LOAD_ERROR,
+  CPACPY_CONFIG_CLEAR_SUCCESS,
+  CPACPY_CONFIG_CLEAR_ERROR,
+  CPACPY_CONFIG_SAVE_SUCCESS,
+  CPACPY_CONFIG_SAVE_ERROR,
 
   init as cpacpyInit,
   detect as cpacpyDetect,
@@ -41,12 +52,19 @@ import {
   selectSchedulerConnectCallback,
 } from '../reducers/cpacpy'
 
+import {cpacpyConfig} from './cpacpy.default'
+
 const selectSaga = (callback) => select((state) => callback(state.cpacpy))
 
 function* init() {
   const scheduler = yield selectSaga(selectCurrentScheduler())
   yield put(cpacpyDetect(scheduler.get('id'), true, true))
 }
+
+function* loadSuccess() {
+  yield put(cpacpyInit())
+}
+
 // TODO
 function* detect({ scheduler: id, poll=true, current=false }) {
   const scheduler = yield selectSaga(selectScheduler(id))
@@ -219,13 +237,30 @@ function* callAny({
   }
 }
 
+function* addNew() {
+  yield put({type: CPACPY_CONFIG_SAVE})
+}
+
 export default function* configSaga() {
   yield all([
+    ...configLocalState('cpacpy', cpacpyConfig, {
+      load: CPACPY_CONFIG_LOAD,
+      save: CPACPY_CONFIG_SAVE,
+      clear: CPACPY_CONFIG_CLEAR,
+      loadSuccess: CPACPY_CONFIG_LOAD_SUCCESS,
+      loadError: CPACPY_CONFIG_LOAD_ERROR,
+      saveSuccess: CPACPY_CONFIG_SAVE_SUCCESS,
+      saveError: CPACPY_CONFIG_SAVE_ERROR,
+      clearSuccess: CPACPY_CONFIG_CLEAR_SUCCESS,
+      clearError: CPACPY_CONFIG_CLEAR_ERROR,
+    }),
     takeEvery(CPACPY_INIT, init),
+    takeEvery(CPACPY_CONFIG_LOAD_SUCCESS, loadSuccess),
     takeEvery(CPACPY_SCHEDULER_DETECT, detect),
     takeEvery(CPACPY_SCHEDULER_POLLING, polling),
     takeEvery(CPACPY_SCHEDULER_CONNECT, connect),
     takeEvery(CPACPY_SCHEDULER_CONNECT_CANCEL, offline),
     takeEvery(CPACPY_SCHEDULER_CALL, callAny),
+    takeEvery(CPACPY_SCHEDULER_ADDNEW, addNew)
   ])
 }

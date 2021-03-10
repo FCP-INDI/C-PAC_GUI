@@ -15,8 +15,9 @@ import {
   CPACPY_SCHEDULER_OFFLINE,
   CPACPY_SCHEDULER_CONNECT_SEND_CALLBACK,
   CPACPY_SCHEDULER_ADDNEW,
-} from '../actions/cpacpy'
 
+  CPACPY_CONFIG_LOAD_SUCCESS,
+} from '../actions/cpacpy'
 const initialState = fromJS({
   schedulers: [
     { id: 'local', name: 'Local', version: 'unknown', backends: [], address: scheduler.local, polling: false, detecting: false, online: null, connected: false, connect: { callbacks: {} } },
@@ -119,8 +120,12 @@ export default function (state = initialState, action) {
           online: null,
           connected: false,
           connect: { callbacks: {} } })
-      const newState = state.update('schedulers', scheduler => scheduler.push(newObj)).setIn(['scheduler'], name)
+      const newState = state.update('schedulers', scheduler => scheduler.push(newObj)).setIn(['scheduler'], name).
+      setIn(['scheduler'], name)
       return newState
+
+    case CPACPY_CONFIG_LOAD_SUCCESS:
+      return fromJS(action.config)
 
 
     default:

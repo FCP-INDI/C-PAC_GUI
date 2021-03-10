@@ -39,6 +39,7 @@ class Breadcrumbs extends Component {
 
   static mapStateToProps = (state, { execution }) => {
     return {
+      configLoaded: !!(state.main && state.main.get('config')),
     }
   }
   
@@ -93,7 +94,7 @@ class Breadcrumbs extends Component {
           </Button>
         )
     }
-
+    const schedulerSelectorkStyle = this.props.configLoaded ? {} : {display:'none'}
     return (
       <AppBar position="static" color="default" className={classes.bread}>
         <Toolbar>
@@ -101,6 +102,7 @@ class Breadcrumbs extends Component {
             { crumbs }
           </div>
           <CpacpySchedulerSelector
+            style={schedulerSelectorkStyle}
             buttonProps={{
               variant: 'contained',
               className: classes.selectorButton,
