@@ -288,7 +288,8 @@ class CpacpySchedulerSelector extends Component {
                                     <BackendChip
                                       key={`${s.get('id')}-${b.get('id')}`}
                                       scheduler={s.get('id')}
-                                      backend={b.get('id')}/>
+                                      backend={b.get('id')}
+                                    />
                                 )
                             }
                           </Grid>
@@ -298,15 +299,13 @@ class CpacpySchedulerSelector extends Component {
                   </Paper>
                 ))
               }
-              {/*  Add New BackEnds */}
-              <Paper key='connectNewBackend' elevation={3} className={classes.scheduler}>
+              <Paper key='new' elevation={3} className={classes.scheduler}>
                 <Grid container spacing={0}>
                   <Grid item xs={12} className={classes.description}>
                     <Grid container spacing={1}>
                       <Grid item xs={3}>
                         <TextField
                           label="Unique Name" fullWidth margin="normal" variant="outlined"
-                          name="general.environment.memory"
                           onChange={this.handleNewName}
                         />
                         <Button variant="contained" color="secondary" onClick={this.handleAddBackend}>Add new
@@ -315,14 +314,12 @@ class CpacpySchedulerSelector extends Component {
                       <Grid item xs={3}>
                         <TextField
                           label="IP Address/URL" fullWidth margin="normal" variant="outlined"
-                          name="general.environment.memory"
                           onChange={this.handleNewIP}
                         />
                       </Grid>
                       <Grid item xs={3}>
                         <TextField
                           label="Port" fullWidth margin="normal" variant="outlined"
-                          name="general.environment.memory"
                           onChange={this.handleNewPort}
                         />
                       </Grid>
