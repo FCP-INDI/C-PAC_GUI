@@ -22,7 +22,6 @@ import {
   DATASET_GENERATE_DATA_CONFIG_FINISHED,
   DATASET_GENERATE_DATA_CONFIG_FETCHED,
   DATASET_GENERATE_DATA_CONFIG_URL,
-  DATASET_FETCHURL_CALL,
 
   fetchRaw as datasetFetchURL,
 } from '../actions/dataset'
@@ -76,26 +75,6 @@ function* generateDataConfig({ dataset: { id, version }, scheduler }) {
   ))
 }
 
-function* generateDataConfigUrlFetch({dataset: {id}, url}) {
-  yield put(datasetFetchURL(
-    url,
-    {
-      success: (data) => {
-        return {
-          type: DATASET_GENERATE_DATA_CONFIG_FETCHED,
-          dataset: { id },
-          data: data,
-      }},
-      error: (exception) => {
-        return {
-          type: DATASET_GENERATE_DATA_CONFIG_ERROR,
-          dataset: {id},
-          exception: exception
-        }
-      },
-    },
-  ))
-}
 
 function* generateDataConfigWatch({ dataset, scheduler, schedule }) {
   yield put(cpacpyConnectSendWatch(
@@ -150,33 +129,29 @@ function* updateDataset() {
   yield put({ type: DATASET_CONFIG_SAVE })
 }
 
-function* callAny({ method='GET', endpoint, data, response: { success, error }, headers = {} }) {
-  if (!success instanceof Function || !error instanceof Function) {
-    console.log('success & error functions need to be specified. ')
-    return
-  }
-  console.log("Callback: ", success instanceof Function, error instanceof Function)
-  const success_return = (data, headers) => success(data, headers)
-  const error_return = (exception) => error(exception)
+function* generateDataConfigUrlFetch({ dataset: { id }, url }) {
   try {
     const { response, error, headers: resHeaders } = yield call(
       fetch,
-      endpoint,
+      url,
       {
-        method,
-        body: data === null ? null : JSON.stringify(data),
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-          ...headers,
-        }
+        method: 'GET',
+        mode: 'cors',
+        cache: 'no-cache',
       }
     )
 
-    yield put(success_return(response, resHeaders))
+    yield put({
+      type: DATASET_GENERATE_DATA_CONFIG_FETCHED,
+      dataset: { id },
+      data: response,
+    })
   } catch (exception) {
-    console.log(exception)
-    yield put(error_return(exception))
+    yield put({
+      type: DATASET_GENERATE_DATA_CONFIG_ERROR,
+      dataset: { id },
+      exception: exception
+    })
   }
 }
 
@@ -199,7 +174,6 @@ export default function* configSaga() {
     takeEvery(DATASET_GENERATE_DATA_CONFIG_FETCHED, generateDataConfigResult),
     takeEvery(DATASET_SETTINGS_CREATE, updateDataset),
     takeEvery(DATASET_SETTINGS_UPDATE, updateDataset),
-    takeEvery(DATASET_FETCHURL_CALL, callAny),
     takeEvery(DATASET_GENERATE_DATA_CONFIG_URL, generateDataConfigUrlFetch),
   ])
 }
