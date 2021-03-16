@@ -10,6 +10,7 @@ import {
   DATASET_GENERATE_DATA_CONFIG_ERROR,
   DATASET_GENERATE_DATA_CONFIG_SCHEDULED,
   DATASET_GENERATE_DATA_CONFIG_FETCHED,
+  DATASET_SELECT_SCHEDULER,
 } from '../actions/dataset'
 
 const initialState = fromJS({
@@ -110,7 +111,15 @@ export default function (state = initialState, action) {
         .setIn(['datasets', i, 'name'], name)
         .mergeIn(['datasets', i, 'versions', version, 'configuration'], fromJS(configuration))
     }
-    
+
+    case DATASET_SELECT_SCHEDULER: {
+      const {dataset: {id}, scheduler} = action
+      const i = state.get('datasets').findIndex((d) => d.get('id') === id)
+      const version = `${state.getIn(['datasets', i, 'versions']).keySeq().map(i => +i).max()}`
+
+      return state.setIn(['datasets', i, 'versions', version, 'configuration', 'options', 'scheduler'], scheduler)
+    }
+
     default:
       return state
   }

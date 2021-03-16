@@ -120,9 +120,7 @@ export default function (state = initialState, action) {
           online: null,
           connected: false,
           connect: { callbacks: {} } })
-      const newState = state.update('schedulers', scheduler => scheduler.push(newObj)).setIn(['scheduler'], name).
-      setIn(['scheduler'], name)
-      return newState
+      return state.update('schedulers', scheduler => scheduler.push(newObj)).setIn(['scheduler'], name)
 
     case CPACPY_CONFIG_LOAD_SUCCESS:
       return fromJS(action.config)

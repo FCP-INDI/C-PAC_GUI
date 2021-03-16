@@ -22,17 +22,19 @@ import {
   DATASET_GENERATE_DATA_CONFIG_FINISHED,
   DATASET_GENERATE_DATA_CONFIG_FETCHED,
   DATASET_GENERATE_DATA_CONFIG_URL,
+  DATASET_FETCHURL_CALL,
+
+  fetchRaw as datasetFetchURL,
 } from '../actions/dataset'
 
 import {
   scheduleDataSettings as cpacpyScheduleDataSettings,
   connectSendWatch as cpacpyConnectSendWatch,
   fetchResults as cpacpyFetchResults,
-  fetchRaw as cpacpyFetchURL,
 } from '../actions/cpacpy'
 
 import {
-  selectCurrentScheduler,
+  selectCurrentScheduler, selectScheduler,
 } from '../reducers/cpacpy'
 
 import {
@@ -45,7 +47,7 @@ import {
 
 import {
   selectSaga as selectSagaFunc,
-  configLocalState,
+  configLocalState, fetch,
 } from './utils'
 
 const selectSaga = selectSagaFunc('dataset')
@@ -75,7 +77,7 @@ function* generateDataConfig({ dataset: { id, version }, scheduler }) {
 }
 
 function* generateDataConfigUrlFetch({dataset: {id}, url}) {
-  yield put(cpacpyFetchURL(
+  yield put(datasetFetchURL(
     url,
     {
       success: (data) => {
@@ -148,6 +150,36 @@ function* updateDataset() {
   yield put({ type: DATASET_CONFIG_SAVE })
 }
 
+function* callAny({ method='GET', endpoint, data, response: { success, error }, headers = {} }) {
+  if (!success instanceof Function || !error instanceof Function) {
+    console.log('success & error functions need to be specified. ')
+    return
+  }
+  console.log("Callback: ", success instanceof Function, error instanceof Function)
+  const success_return = (data, headers) => success(data, headers)
+  const error_return = (exception) => error(exception)
+  try {
+    const { response, error, headers: resHeaders } = yield call(
+      fetch,
+      endpoint,
+      {
+        method,
+        body: data === null ? null : JSON.stringify(data),
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+          ...headers,
+        }
+      }
+    )
+
+    yield put(success_return(response, resHeaders))
+  } catch (exception) {
+    console.log(exception)
+    yield put(error_return(exception))
+  }
+}
+
 export default function* configSaga() {
   yield all([
     ...configLocalState('dataset', { datasets }, {
@@ -167,6 +199,7 @@ export default function* configSaga() {
     takeEvery(DATASET_GENERATE_DATA_CONFIG_FETCHED, generateDataConfigResult),
     takeEvery(DATASET_SETTINGS_CREATE, updateDataset),
     takeEvery(DATASET_SETTINGS_UPDATE, updateDataset),
+    takeEvery(DATASET_FETCHURL_CALL, callAny),
     takeEvery(DATASET_GENERATE_DATA_CONFIG_URL, generateDataConfigUrlFetch),
   ])
 }
