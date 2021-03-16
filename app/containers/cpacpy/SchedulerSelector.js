@@ -29,6 +29,7 @@ import {
   watchCancel as cpacpyWatchCancel,
   detect as cpacpyDetect,
   addNew as cpacpyAddNew,
+  selectCurrentScheduler as setCurrentScheduler,
 } from 'actions/cpacpy'
 
 import {
@@ -165,6 +166,7 @@ class CpacpySchedulerSelector extends Component {
     stop: cpacpyWatchCancel,
     detect: cpacpyDetect,
     addNew: cpacpyAddNew,
+    setCurrent: setCurrentScheduler,
   }
 
   state = {
@@ -209,6 +211,7 @@ class CpacpySchedulerSelector extends Component {
     e.stopPropagation()
     e.preventDefault()
     this.setState({selector: false, scheduler})
+    this.props.setCurrent(scheduler)
     this.props.detect(scheduler, false)
     this.props.onSelect && this.props.onSelect(scheduler)
   }

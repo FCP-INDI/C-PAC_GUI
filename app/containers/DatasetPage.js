@@ -68,6 +68,8 @@ import Table from '../components/Table'
 
 import DatasetViewsList from './dataset/DatasetViewsList'
 
+import CpacpySchedulerSelector from 'containers/cpacpy/SchedulerSelector'
+
 import {
   createDataSettings,
   updateDataSettings,
@@ -76,6 +78,7 @@ import {
   importDataConfig,
   updateDataset,
   updateDatasetError,
+  selectScheduler,
 } from '../actions/dataset'
 
 
@@ -97,6 +100,7 @@ class DatasetPage extends Component {
     format: '',
     fetchUrl: '',
     uploadFileName: 'No file has been uploaded',
+    scheduler: null,
   }
 
   constructor(props) {
@@ -251,6 +255,14 @@ class DatasetPage extends Component {
 
   handleFilter(view) {
     console.log(view.toJS())
+  }
+
+  handleDatasetScheduler(scheduler) {
+    this.state.scheduler = scheduler
+    this.props.selectScheduler(
+      this.props.dataset.get('id'),
+      scheduler
+    )
   }
 
   prepareData(dataset) {
@@ -471,6 +483,15 @@ class DatasetPage extends Component {
               />
           </FlexBox>
           <FlexBox p={1}>
+            <CpacpySchedulerSelector
+              name='scheduler'
+              buttonProps={{
+                variant: 'contained',
+                className: classes.selectorButton,
+              }}
+            />
+          </FlexBox>
+          <FlexBox p={1}>
             {
               this.state.base === configuration.getIn(['options', 'base']) ? (
                 <BuildDatasetButton variant="contained" color="secondary" onClick={this.handleGenerateDataConfig}>Build Dataset</BuildDatasetButton>
@@ -599,6 +620,7 @@ const mapDispatchToProps = {
   importDataConfig,
   updateDataset,
   updateDatasetError,
+  selectScheduler,
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(

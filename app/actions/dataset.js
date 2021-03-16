@@ -20,6 +20,9 @@ export const DATASET_GENERATE_DATA_CONFIG_FINISHED = 'DATASET_GENERATE_DATA_CONF
 export const DATASET_GENERATE_DATA_CONFIG_FETCHED = 'DATASET_GENERATE_DATA_CONFIG_FETCHED'
 
 export const DATASET_GENERATE_DATA_CONFIG_URL = 'DATASET_GENERATE_DATA_CONFIG_URL'
+export const DATASET_FETCHURL_CALL = 'DATASET_FETCHURL_CALL'
+
+export const DATASET_SELECT_SCHEDULER = 'DATASET_SELECT_SCHEDULER'
 
 export function createDataSettings(name, configuration) {
   return {
@@ -68,4 +71,35 @@ export function updateDatasetError(dataset, exception) {
     type: DATASET_GENERATE_DATA_CONFIG_ERROR,
     dataset, exception
   }
+}
+
+export function selectScheduler(dataset, scheduler) {
+  return {
+    type: DATASET_SELECT_SCHEDULER,
+    dataset, scheduler
+  }
+}
+
+export function call(method='GET', endpoint, data, { success, error }, headers = {}) {
+  return {
+    type: DATASET_FETCHURL_CALL,
+    method,
+    endpoint,
+    data,
+    response: {
+      success,
+      error,
+    },
+    headers,
+  }
+}
+
+export function fetchRaw(url, {success, error}, header = {}) {
+  return call (
+    'GET',
+    url,
+    null,
+    {success, error},
+    header,
+  )
 }

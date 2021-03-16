@@ -20,7 +20,7 @@ export const CPACPY_SCHEDULER_DETECT = 'CPACPY_SCHEDULER_DETECT'
 export const CPACPY_SCHEDULER_ONLINE = 'CPACPY_SCHEDULER_ONLINE'
 export const CPACPY_SCHEDULER_OFFLINE = 'CPACPY_SCHEDULER_OFFLINE'
 
-export const CPACPY_SCHEDULER_ADDNEW = 'CPACY_SCHEDULER_ADDNEW'
+export const CPACPY_SCHEDULER_ADDNEW = 'CPACPY_SCHEDULER_ADDNEW'
 
 export const CPACPY_CONFIG_LOAD = 'CPACPY_CONFIG_LOAD'
 export const CPACPY_CONFIG_LOAD_SUCCESS = 'CPACPY_CONFIG_LOAD_SUCCESS'
@@ -232,15 +232,4 @@ export function addNew(name, ip, port) {
     type: CPACPY_SCHEDULER_ADDNEW,
     payload: {newName: name, newIP: ip, newPort: port},
   }
-}
-
-export function fetchRaw(url, {success, error}, header = {}) {
-  return call (
-    {id: -1},
-    'GET',
-    url,
-    null,
-    {success, error},
-    header,
-  )
 }

@@ -201,9 +201,8 @@ function* callAny({
   response: { success, error },
   headers = {}
 }) {
-
-  const scheduler = id > -1 ? yield selectSaga(selectScheduler(id)) : -1
-  const url = id > -1 ? `http://${scheduler.get('address')}${endpoint}` : endpoint
+  const scheduler = yield selectSaga(selectScheduler(id))
+  const url = `http://${scheduler.get('address')}${endpoint}`
 
   const success_return = (data, headers) =>
     success instanceof Function ?
