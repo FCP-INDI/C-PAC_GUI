@@ -94,22 +94,12 @@ class Breadcrumbs extends Component {
           </Button>
         )
     }
-    const schedulerSelectorkStyle = this.props.configLoaded ? {} : {display:'none'}
     return (
       <AppBar position="static" color="default" className={classes.bread}>
         <Toolbar>
           <div className={classes.crumbs}>
             { crumbs }
           </div>
-          {/*<CpacpySchedulerSelector*/}
-          {/*  style={schedulerSelectorkStyle}*/}
-          {/*  buttonProps={{*/}
-          {/*    variant: 'contained',*/}
-          {/*    className: classes.selectorButton,*/}
-          {/*  }}*/}
-          {/*  onSelect={this.handleScheduler}*/}
-          {/*/>*/}
-
         </Toolbar>
       </AppBar>
     )
