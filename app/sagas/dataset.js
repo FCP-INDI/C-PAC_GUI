@@ -22,8 +22,6 @@ import {
   DATASET_GENERATE_DATA_CONFIG_FINISHED,
   DATASET_GENERATE_DATA_CONFIG_FETCHED,
   DATASET_GENERATE_DATA_CONFIG_URL,
-
-  fetchRaw as datasetFetchURL,
 } from '../actions/dataset'
 
 import {
