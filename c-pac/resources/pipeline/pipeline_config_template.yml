@@ -105,6 +105,16 @@ reGenerateOutputs :  False
 runSymbolicLinks :  [1]
 
 
+# PREPROCESSING
+# -------------
+surface_analysis:
+
+  # Will run Freesurfer for surface-based analysis. Will output traditional Freesurfer derivatives.
+  # If you wish to employ Freesurfer outputs for brain masking or tissue segmentation in the voxel-based pipeline,
+  # select those 'Freesurfer-' labeled options further below in anatomical_preproc.
+  run_freesurfer: Off
+
+
 # Non-local means filtering / Denoise image
 non_local_means_filtering: False
 

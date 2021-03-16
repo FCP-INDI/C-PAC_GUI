@@ -256,6 +256,8 @@ export function parse(content) {
   c.general.environment.outputs.organized = config.runSymbolicLinks.includes(1)
   c.general.environment.outputs.remove_working = config.removeWorkingDir
 
+  c.anatomical.surface.enabled = config.surface_analysis['run_freesurfer']
+
   c.anatomical.preprocessing.methods.nlmf.enabled = config.non_local_means_filtering
   c.anatomical.preprocessing.methods.n4.enabled = config.n4_bias_field_correction
 
@@ -937,6 +939,10 @@ export function dump(pipeline, version='0') {
   config.run_logging = c.general.environment.outputs.logging
   config.reGenerateOutputs = c.general.environment.outputs.regenerate
   config.runSymbolicLinks = [c.general.environment.outputs.organized ? 1 : 0]
+
+  config.surface_analysis = [
+    { 'run_freesurfer': c.anatomical.surface.enabled },
+  ]
 
   config.non_local_means_filtering = c.anatomical.preprocessing.methods.nlmf.enabled
   config.n4_bias_field_correction = c.anatomical.preprocessing.methods.n4.enabled

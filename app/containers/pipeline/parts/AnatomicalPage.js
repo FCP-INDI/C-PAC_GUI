@@ -14,6 +14,7 @@ import {
 } from 'containers/pipeline/parts/anatomical'
 
 import Help from 'components/Help'
+import SurfaceAnalysis from './anatomical/SurfaceAnalysis';
 import InitialPreprocessing from './anatomical/InitialPreprocessing';
 
 
@@ -31,6 +32,24 @@ class AnatomicalPage extends Component {
 
     return (
       <React.Fragment>
+        <ExpansionPanel expanded>
+          <ExpansionPanelSummary disabled>
+            <Help
+              help={`Included as part of the 'Image Resource Files' package available on the Install page of the User Guide.`}
+            />
+            <Typography variant="h6" className={classes.sectionTitle}>
+              Surface Analysis
+            </Typography>
+          </ExpansionPanelSummary>
+          <ExpansionPanelDetails>
+            <Grid container>
+              <Grid item xs={12}>
+                <SurfaceAnalysis configuration={configuration} onChange={onChange} />
+              </Grid>
+            </Grid>
+          </ExpansionPanelDetails>
+        </ExpansionPanel>
+
         <ExpansionPanel expanded>
           <ExpansionPanelSummary disabled>
             <Help
