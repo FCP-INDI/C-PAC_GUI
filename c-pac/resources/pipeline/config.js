@@ -61,6 +61,9 @@ export default {
               }
             }
           },
+          surface: {
+            enabled: false,
+          },
           preprocessing: {
             methods: {
               nlmf: {
