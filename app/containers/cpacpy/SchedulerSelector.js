@@ -21,6 +21,7 @@ import Tooltip from '@material-ui/core/Tooltip'
 import {
   BulletIcon,
   SchedulerIcon,
+  SchedulerConnectionRetryIcon,
 } from 'components/icons'
 
 import {BackendChip} from 'components/chips'
@@ -111,6 +112,16 @@ class CpacpySchedulerSelector extends Component {
         flexGrow: 1,
       }
     },
+    buttons: {
+      textAlign: 'center',
+      alignItems: 'center',
+      display: 'flex',
+      flexWrap: 'wrap',
+      justifyContent: 'center',
+      '& .MuiButton-root ': {
+        margin: 3,
+      },
+    },
     scheduler: {
       margin: theme.spacing(0, 0, 3, 0),
     },
@@ -175,7 +186,7 @@ class CpacpySchedulerSelector extends Component {
   }
 
   state = {
-    fullSelector: false,
+    fullSelector: true,
     selector: false,
     selectorAnchor: null,
     newName: "",
@@ -331,7 +342,7 @@ class CpacpySchedulerSelector extends Component {
                 <Grid container spacing={0}>
                   <Grid item xs={12} className={classes.description}>
                     <Grid container spacing={1}>
-                      <Grid item xs={3}>
+                      <Grid item xs={12} sm={6} md={3} >
                         <TextField
                           required
                           label="Unique Name" fullWidth margin="normal" variant="outlined"
@@ -339,7 +350,7 @@ class CpacpySchedulerSelector extends Component {
                           inputRef={this.nameRef}
                         />
                       </Grid>
-                      <Grid item xs={3}>
+                      <Grid item xs={8} sm={4} md={3}>
                         <TextField
                           required
                           label="IP Address/URL" fullWidth margin="normal" variant="outlined"
@@ -347,7 +358,7 @@ class CpacpySchedulerSelector extends Component {
                           inputRef={this.ipRef}
                         />
                       </Grid>
-                      <Grid item xs={2}>
+                      <Grid item xs={4} sm={2} md={2}>
                         <TextField
                           required
                           label="Port" fullWidth margin="normal" variant="outlined"
@@ -355,7 +366,7 @@ class CpacpySchedulerSelector extends Component {
                           inputRef={this.portRef}
                         />
                       </Grid>
-                      <Grid item xs={2} style={{"alignSelf": "center"}}>
+                      <Grid item xs={12} md={4} className={classes.buttons}>
                         <Button onClick={this.handleConnectionTest} variant="contained">
                           {
                             newIP + ':' + newPort !== testingScheduler.get('address') ? null :
@@ -369,9 +380,13 @@ class CpacpySchedulerSelector extends Component {
                             newIP + ':' + newPort !== testingScheduler.get('address') ? "Test Connection" :
                               (testingScheduler.get('success')? "Connected" : (testingScheduler.get('detecting') ? "Detecting" : "Offline"))
                           }
+                          {
+                            newIP + ':' + newPort === testingScheduler.get('address') &&
+                            !testingScheduler.get('success') &&
+                            !testingScheduler.get('detecting') &&
+                            <SchedulerConnectionRetryIcon />
+                          }
                         </Button>
-                      </Grid>
-                      <Grid item xs={2} style={{"alignSelf": "center"}}>
                         <Button variant="contained"
                                 color="secondary"
                                 onClick={this.handleAddBackend}>

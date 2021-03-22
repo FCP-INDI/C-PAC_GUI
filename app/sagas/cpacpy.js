@@ -245,7 +245,7 @@ function* addNew() {
   yield put({type: CPACPY_CONFIG_SAVE})
 }
 
-function* test({name, ip, port}) {
+function* test({ ip, port }) {
   try {
     const { response, error } = yield call(
       fetch,
@@ -253,13 +253,11 @@ function* test({name, ip, port}) {
       { method: 'GET' }
     )
     if (response.api === 'cpacpy') {
-      yield put({type: CPACPY_SCHEDULER_TEST_TEMP_CONNECTION_SUCCESS})
-      return
+      yield put({ type: CPACPY_SCHEDULER_TEST_TEMP_CONNECTION_SUCCESS })
     }
   } catch (error) {
-    console.log(error)
+    yield put({ type: CPACPY_SCHEDULER_TEST_TEMP_CONNECTION_FAILED, error })
   }
-  yield put({type: CPACPY_SCHEDULER_TEST_TEMP_CONNECTION_FAILED})
 }
 
 export default function* configSaga() {
