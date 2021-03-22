@@ -274,7 +274,6 @@ class CpacpySchedulerSelector extends Component {
       buttonMenuProps, popoverProps, testingScheduler} = this.props
     const {selector, selectorAnchor, fullSelector, scheduler: selectedScheduler} = this.state
     const {newIP, newPort} = this.state
-    console.log("New ip, new port", newIP, newPort)
 
     if (!schedulers) {
       return null
