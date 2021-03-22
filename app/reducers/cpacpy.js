@@ -15,6 +15,9 @@ import {
   CPACPY_SCHEDULER_OFFLINE,
   CPACPY_SCHEDULER_CONNECT_SEND_CALLBACK,
   CPACPY_SCHEDULER_ADDNEW,
+  CPACPY_SCHEDULER_TEST_TEMP_CONNECTION,
+  CPACPY_SCHEDULER_TEST_TEMP_CONNECTION_SUCCESS,
+  CPACPY_SCHEDULER_TEST_TEMP_CONNECTION_FAILED,
 
   CPACPY_CONFIG_LOAD_SUCCESS,
 } from '../actions/cpacpy'
@@ -22,12 +25,17 @@ const initialState = fromJS({
   schedulers: [
     { id: 'local', name: 'Local', version: 'unknown', backends: [], address: scheduler.local, polling: false, detecting: false, online: null, connected: false, connect: { callbacks: {} } },
   ],
-  // id for scheduler
-  scheduler: 'local',
+  // id for the latest used scheduler
+  latestSheduler: 'local',
+
+  testingScheduler: {address: null, success: false, detecting: false},
 })
 
 export const selectSchedulers =
   () => (state) => state.get('schedulers')
+
+export const getTestingScheduler =
+  () => (state) => state.get('testingScheduler')
 
 export const selectScheduler =
   (scheduler) =>
@@ -37,7 +45,7 @@ export const selectScheduler =
 export const selectCurrentScheduler =
   () =>
     (state) =>
-      selectScheduler(state.get('scheduler'))(state)
+      selectScheduler(state.get('latestScheduler'))(state)
 
 export const selectSchedulerBackend =
   (scheduler, backend) =>
@@ -69,7 +77,7 @@ export default function (state = initialState, action) {
       return state
 
     case CPACPY_SCHEDULER_SCHEDULER:
-      return state.setIn(['scheduler'], id)
+      return state.setIn(['latestScheduler'], id)
 
     case CPACPY_SCHEDULER_DETECT:
       return state.setIn(['schedulers', i, 'detecting'], true)
@@ -120,7 +128,19 @@ export default function (state = initialState, action) {
           online: null,
           connected: false,
           connect: { callbacks: {} } })
-      return state.update('schedulers', scheduler => scheduler.push(newObj)).setIn(['scheduler'], name)
+      return state.update('schedulers', scheduler => scheduler.push(newObj)).setIn(['latestScheduler'], name)
+
+    case CPACPY_SCHEDULER_TEST_TEMP_CONNECTION:
+      return state.setIn(['testingScheduler'], fromJS(
+        {address: action.ip + ':' + action.port,
+        detecting: true,
+        success: false,}))
+
+    case CPACPY_SCHEDULER_TEST_TEMP_CONNECTION_SUCCESS:
+      return state.setIn(['testingScheduler', 'detecting'], false).setIn(['testingScheduler', 'success'], true)
+
+    case CPACPY_SCHEDULER_TEST_TEMP_CONNECTION_FAILED:
+      return state.setIn(['testingScheduler', 'detecting'], false).setIn(['testingScheduler', 'success'], false)
 
     case CPACPY_CONFIG_LOAD_SUCCESS:
       return fromJS(action.config)
