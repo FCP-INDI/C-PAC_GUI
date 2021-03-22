@@ -51,9 +51,8 @@ import {
   generateDataConfig,
   generateDataConfigUrlFetch,
   importDataConfig,
-  updateDataset,
   updateDatasetError,
-  selectScheduler,
+  datasetSaveAll,
 } from '../actions/dataset'
 
 
@@ -81,11 +80,12 @@ class DatasetPage extends Component {
   constructor(props) {
     super(props)
     const { dataset, configuration } = this.props
+    this.datasetNameInputRef = React.createRef()
     if (dataset) {
       this.state.format = configuration.getIn(['format'])
-      this.state.base = configuration.getIn(['options', 'base']);
-      this.state.fetchUrl = configuration.getIn(['options', 'base']);
-      this.state.uploadFileName = configuration.getIn(['options', 'base']);
+      this.state.base = configuration.getIn(['options', 'base'])
+      this.state.fetchUrl = configuration.getIn(['options', 'base'])
+      this.state.uploadFileName = configuration.getIn(['options', 'base'])
     }
   }
 
@@ -107,8 +107,8 @@ class DatasetPage extends Component {
   }
 
   handleCreateDatasetBIDS = () => {
-    if(this.state.name === "") {
-      alert("Please set a name for the dataset =)")
+    const ifValid = this.datasetNameInputRef.current.reportValidity()
+    if (!ifValid) {
       return
     }
     this.state.format = 'bids'
@@ -124,8 +124,8 @@ class DatasetPage extends Component {
   }
 
   handleCreateDatasetUpload = () => {
-    if(this.state.name === "") {
-      alert("Please set a name for the dataset =)")
+    const ifValid = this.datasetNameInputRef.current.reportValidity()
+    if (!ifValid) {
       return
     }
     this.state.format = 'upload'
@@ -141,8 +141,8 @@ class DatasetPage extends Component {
   }
 
   handleCreateDatasetFetchURL = () => {
-    if(this.state.name === "") {
-      alert("Please set a name for the dataset =)")
+    const ifValid = this.datasetNameInputRef.current.reportValidity()
+    if (!ifValid) {
       return
     }
     this.state.format = 'fetch'
@@ -198,11 +198,10 @@ class DatasetPage extends Component {
       try {
         const datasetConfig = parse(e.target.result)
         this.props.importDataConfig(datasetInfo, datasetConfig)
-        this.props.updateDataset(datasetInfo)
       } catch (e) {
         this.props.updateDatasetError(datasetInfo, e)
-        this.props.updateDataset(datasetInfo)
       }
+      this.props.datasetSaveAll()
     })
     reader.readAsText(f)
     e.target.value = null
@@ -230,14 +229,6 @@ class DatasetPage extends Component {
 
   handleFilter(view) {
     console.log(view.toJS())
-  }
-
-  handleDatasetScheduler(scheduler) {
-    this.state.scheduler = scheduler
-    this.props.selectScheduler(
-      this.props.dataset.get('id'),
-      scheduler
-    )
   }
 
   prepareData(dataset) {
@@ -356,9 +347,12 @@ class DatasetPage extends Component {
 
     if (create) {
       return (
+        <form>
         <Box title={<TextField
+          required
           label="Dataset Name"
           name="name"
+          inputRef={this.datasetNameInputRef}
           value={this.state.name}
           onChange={this.handleChangeForm.bind(this)}
           fullWidth={true} margin="normal" variant="outlined"
@@ -368,28 +362,20 @@ class DatasetPage extends Component {
           <FlexBox display="flex" alignItems="center" p={1}>
             <FlexBox p={1}>
               <Button variant="contained" color="secondary" component="span" onClick={this.handleCreateDatasetUpload}>
-                Upload yml File
+                Upload Data Config file
               </Button>
             </FlexBox>
             <FlexBox p={1}> | </FlexBox>
             <FlexBox p={1}>
-              <Button variant="contained" color="secondary" onClick={this.handleCreateDatasetFetchURL}>Fetch From URL</Button>
+              <Button variant="contained" color="secondary" onClick={this.handleCreateDatasetFetchURL}>Get Data Config from URL</Button>
             </FlexBox>
             <FlexBox p={1}> | </FlexBox>
-            <FlexBox p={1} flexGrow={1}>
-              <TextField
-                  label="BIDS Directory"
-                  name="base"
-                  value={this.state.base}
-                  onChange={this.handleChangeForm.bind(this)}
-                  fullWidth={true} margin="normal" variant="outlined"
-                />
-            </FlexBox>
             <FlexBox p={1}>
               <Button variant="contained" color="secondary" onClick={this.handleCreateDatasetBIDS}>Create from BIDS</Button>
             </FlexBox>
           </FlexBox>
         </Box>
+        </form>
       )
     }
 
@@ -426,18 +412,14 @@ class DatasetPage extends Component {
     )
 
     const BuildDatasetButton = withCurrentScheduler(Button)
-    let bidsBlockStyle = {display:'none'}
-    let uploadBlockStyle = {display:'none'}
-    let fetchBlockStyle = {display:'none'}
-    const format = configuration.getIn(['format'])
-    format === 'bids' ? bidsBlockStyle = {} : bidsBlockStyle
-    format === 'upload' ? uploadBlockStyle = {} : uploadBlockStyle
-    format === 'fetch' ? fetchBlockStyle = {} : fetchBlockStyle
 
-    let fetchWarningStyle = {display:'none'}
-    let uploadWarningStyle = {display:'none'}
-    format === 'fetch' && dataset.getIn(['error']) ? fetchWarningStyle = {} : fetchWarningStyle
-    format === 'upload' && dataset.getIn(['error']) ? uploadWarningStyle = {} : uploadWarningStyle
+    const format = configuration.getIn(['format'])
+    const bidsBlockStyle = format === 'bids' ? {} : { display: 'none' }
+    const uploadBlockStyle = format === 'upload' ? {} : { display: 'none' }
+    const fetchBlockStyle = format === 'fetch' ? {} : { display: 'none' }
+
+    const fetchWarningStyle = format === 'fetch' && dataset.getIn(['error']) ? {} : {display:'none'}
+    const uploadWarningStyle = format === 'upload' && dataset.getIn(['error']) ? {} : {display:'none'}
 
     let errorMessage = 'Last valid results are shown below.'
     columns == null ? errorMessage = '' : errorMessage
@@ -594,9 +576,8 @@ const mapDispatchToProps = {
   generateDataConfig,
   generateDataConfigUrlFetch,
   importDataConfig,
-  updateDataset,
   updateDatasetError,
-  selectScheduler,
+  datasetSaveAll,
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(

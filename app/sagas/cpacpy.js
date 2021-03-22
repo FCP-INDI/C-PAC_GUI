@@ -20,6 +20,9 @@ import {
   CPACPY_SCHEDULER_CONNECT_SEND_CALLBACK,
   CPACPY_SCHEDULER_CALL,
   CPACPY_SCHEDULER_ADDNEW,
+  CPACPY_SCHEDULER_TEST_TEMP_CONNECTION,
+  CPACPY_SCHEDULER_TEST_TEMP_CONNECTION_SUCCESS,
+  CPACPY_SCHEDULER_TEST_TEMP_CONNECTION_FAILED,
 
   CPACPY_CONFIG_LOAD,
   CPACPY_CONFIG_CLEAR,
@@ -193,7 +196,7 @@ function* connect({ scheduler: id }) {
   }
 }
 
-function* callAny({
+function* callScheduler({
   scheduler: id,
   method='GET',
   endpoint,
@@ -240,6 +243,23 @@ function* addNew() {
   yield put({type: CPACPY_CONFIG_SAVE})
 }
 
+function* test({name, ip, port}) {
+  try {
+    const { response, error } = yield call(
+      fetch,
+      `http://` + ip + `:` + port,
+      { method: 'GET' }
+    )
+    if (response.api === 'cpacpy') {
+      yield put({type: CPACPY_SCHEDULER_TEST_TEMP_CONNECTION_SUCCESS})
+      return
+    }
+  } catch (error) {
+    console.log(error)
+  }
+  yield put({type: CPACPY_SCHEDULER_TEST_TEMP_CONNECTION_FAILED})
+}
+
 export default function* configSaga() {
   yield all([
     ...configLocalState('cpacpy', cpacpyConfig, {
@@ -259,7 +279,8 @@ export default function* configSaga() {
     takeEvery(CPACPY_SCHEDULER_POLLING, polling),
     takeEvery(CPACPY_SCHEDULER_CONNECT, connect),
     takeEvery(CPACPY_SCHEDULER_CONNECT_CANCEL, offline),
-    takeEvery(CPACPY_SCHEDULER_CALL, callAny),
-    takeEvery(CPACPY_SCHEDULER_ADDNEW, addNew)
+    takeEvery(CPACPY_SCHEDULER_CALL, callScheduler),
+    takeEvery(CPACPY_SCHEDULER_ADDNEW, addNew),
+    takeEvery(CPACPY_SCHEDULER_TEST_TEMP_CONNECTION, test),
   ])
 }

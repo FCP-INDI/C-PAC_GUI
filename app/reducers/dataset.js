@@ -112,14 +112,6 @@ export default function (state = initialState, action) {
         .mergeIn(['datasets', i, 'versions', version, 'configuration'], fromJS(configuration))
     }
 
-    case DATASET_SELECT_SCHEDULER: {
-      const {dataset: {id}, scheduler} = action
-      const i = state.get('datasets').findIndex((d) => d.get('id') === id)
-      const version = `${state.getIn(['datasets', i, 'versions']).keySeq().map(i => +i).max()}`
-
-      return state.setIn(['datasets', i, 'versions', version, 'configuration', 'options', 'scheduler'], scheduler)
-    }
-
     default:
       return state
   }

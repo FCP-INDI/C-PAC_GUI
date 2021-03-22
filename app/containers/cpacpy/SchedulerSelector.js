@@ -30,11 +30,13 @@ import {
   detect as cpacpyDetect,
   addNew as cpacpyAddNew,
   selectCurrentScheduler as setCurrentScheduler,
+  test as cpacpyTestConnection,
 } from 'actions/cpacpy'
 
 import {
   selectSchedulers,
   selectCurrentScheduler,
+  getTestingScheduler
 } from 'reducers/cpacpy'
 import {fromJS} from 'immutable'
 import {Grid} from '@material-ui/core'
@@ -153,12 +155,14 @@ class CpacpySchedulerSelector extends Component {
       return {
         schedulers: fromJS([]),
         scheduler: null,
+        testingScheduler: getTestingScheduler()(state),
       }
     }
 
     return {
       schedulers: selectSchedulers()(state),
       scheduler: props.scheduler || selectCurrentScheduler()(state).get('id'),
+      testingScheduler: getTestingScheduler()(state),
     }
   }
 
@@ -167,6 +171,7 @@ class CpacpySchedulerSelector extends Component {
     detect: cpacpyDetect,
     addNew: cpacpyAddNew,
     setCurrent: setCurrentScheduler,
+    testConnection: cpacpyTestConnection,
   }
 
   state = {
@@ -181,6 +186,9 @@ class CpacpySchedulerSelector extends Component {
   constructor(props) {
     super(props)
     this.state.scheduler = props.scheduler
+    this.nameRef = React.createRef()
+    this.ipRef = React.createRef()
+    this.portRef = React.createRef()
   }
 
   toggleSelector = (e) => {
@@ -204,6 +212,7 @@ class CpacpySchedulerSelector extends Component {
   handleFullClose = (e) => {
     e.stopPropagation()
     e.preventDefault()
+    this.setState({newName: '', newIp: '', newPort: ''})
     this.setState({fullSelector: false})
   }
 
@@ -226,6 +235,10 @@ class CpacpySchedulerSelector extends Component {
   handleAddBackend = (e) => {
     e.stopPropagation()
     e.preventDefault()
+    const ifValid = (this.nameRef.current.reportValidity() && this.ipRef.current.reportValidity() && this.portRef.current.reportValidity())
+    if (!ifValid) {
+      return
+    }
     const newName = this.state.newName
     const newIP = this.state.newIP
     const newPort = this.state.newPort
@@ -243,9 +256,25 @@ class CpacpySchedulerSelector extends Component {
     this.setState({newPort: e.target.value})
   }
 
+  handleConnectionTest = (e) => {
+    e.stopPropagation()
+    e.preventDefault()
+    const ifValid = (this.nameRef.current.reportValidity() && this.ipRef.current.reportValidity() && this.portRef.current.reportValidity())
+    if (!ifValid) {
+      return
+    }
+    const newName = this.state.newName
+    const newIP = this.state.newIP
+    const newPort = this.state.newPort
+    this.props.testConnection(newName, newIP, newPort)
+  }
+
   render() {
-    const {classes, schedulers, watch, stop, buttonProps: {className: buttonClassName, ...buttonProps}, buttonMenuProps, popoverProps} = this.props
+    const {classes, schedulers, watch, stop, buttonProps: {className: buttonClassName, ...buttonProps},
+      buttonMenuProps, popoverProps, testingScheduler} = this.props
     const {selector, selectorAnchor, fullSelector, scheduler: selectedScheduler} = this.state
+    const {newIP, newPort} = this.state
+    console.log("New ip, new port", newIP, newPort)
 
     if (!schedulers) {
       return null
@@ -305,23 +334,47 @@ class CpacpySchedulerSelector extends Component {
                     <Grid container spacing={1}>
                       <Grid item xs={3}>
                         <TextField
+                          required
                           label="Unique Name" fullWidth margin="normal" variant="outlined"
                           onChange={this.handleNewName}
+                          inputRef={this.nameRef}
                         />
-                        <Button variant="contained" color="secondary" onClick={this.handleAddBackend}>Add new
-                          backend</Button>
                       </Grid>
                       <Grid item xs={3}>
                         <TextField
+                          required
                           label="IP Address/URL" fullWidth margin="normal" variant="outlined"
                           onChange={this.handleNewIP}
+                          inputRef={this.ipRef}
                         />
                       </Grid>
-                      <Grid item xs={3}>
+                      <Grid item xs={2}>
                         <TextField
+                          required
                           label="Port" fullWidth margin="normal" variant="outlined"
                           onChange={this.handleNewPort}
+                          inputRef={this.portRef}
                         />
+                      </Grid>
+                      <Grid item xs={2} >
+                        <Button onClick={this.handleConnectionTest}>
+                          {
+                            newIP + ':' + newPort !== testingScheduler.get('address') ? null :
+                              <BulletIcon className={clsx(
+                              classes.bullet,
+                              testingScheduler.get('detecting') ? classes.detecting : null,
+                              testingScheduler.get('success')? classes.online : (testingScheduler.get('detecting') ? classes.unknown : classes.offline)
+                              )}/>
+                          }
+                          Test
+                        </Button>
+                      </Grid>
+                      <Grid item xs={2} >
+                        <Button variant="contained"
+                                color="secondary"
+                                onClick={this.handleAddBackend}>
+                          Add
+                        </Button>
                       </Grid>
                     </Grid>
                   </Grid>

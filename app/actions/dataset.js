@@ -58,13 +58,6 @@ export function generateDataConfigUrlFetch(dataset, url) {
   }
 }
 
-export function updateDataset(dataset) {
-  return {
-    type: DATASET_SETTINGS_UPDATE,
-    dataset,
-  }
-}
-
 export function updateDatasetError(dataset, exception) {
   return {
     type: DATASET_GENERATE_DATA_CONFIG_ERROR,
@@ -72,9 +65,8 @@ export function updateDatasetError(dataset, exception) {
   }
 }
 
-export function selectScheduler(dataset, scheduler) {
+export function datasetSaveAll() {
   return {
-    type: DATASET_SELECT_SCHEDULER,
-    dataset, scheduler
+    type: DATASET_CONFIG_SAVE,
   }
 }
