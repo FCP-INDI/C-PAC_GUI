@@ -60,8 +60,10 @@ import {cpacpyConfig} from './cpacpy.default'
 const selectSaga = (callback) => select((state) => callback(state.cpacpy))
 
 function* init() {
-  const scheduler = yield selectSaga(selectCurrentScheduler())
-  yield put(cpacpyDetect(scheduler.get('id'), true, true))
+  const schedulers = yield selectSaga(selectSchedulers())
+  for(let scheduler of schedulers) {
+    yield put(cpacpyDetect(scheduler.get('id'), true, true))
+  }
 }
 
 function* loadSuccess() {
