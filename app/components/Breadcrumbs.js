@@ -100,6 +100,13 @@ class Breadcrumbs extends Component {
           <div className={classes.crumbs}>
             { crumbs }
           </div>
+          <CpacpySchedulerSelector
+            buttonProps={{
+              variant: 'contained',
+              className: classes.selectorButton,
+            }}
+            onSelect={this.handleScheduler}
+          />
         </Toolbar>
       </AppBar>
     )
