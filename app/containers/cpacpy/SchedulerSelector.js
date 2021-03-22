@@ -355,8 +355,8 @@ class CpacpySchedulerSelector extends Component {
                           inputRef={this.portRef}
                         />
                       </Grid>
-                      <Grid item xs={2} >
-                        <Button onClick={this.handleConnectionTest}>
+                      <Grid item xs={2} style={{"alignSelf": "center"}}>
+                        <Button onClick={this.handleConnectionTest} variant="contained">
                           {
                             newIP + ':' + newPort !== testingScheduler.get('address') ? null :
                               <BulletIcon className={clsx(
@@ -365,14 +365,17 @@ class CpacpySchedulerSelector extends Component {
                               testingScheduler.get('success')? classes.online : (testingScheduler.get('detecting') ? classes.unknown : classes.offline)
                               )}/>
                           }
-                          Test
+                          {
+                            newIP + ':' + newPort !== testingScheduler.get('address') ? "Test Connection" :
+                              (testingScheduler.get('success')? "Connected" : (testingScheduler.get('detecting') ? "Detecting" : "Offline"))
+                          }
                         </Button>
                       </Grid>
-                      <Grid item xs={2} >
+                      <Grid item xs={2} style={{"alignSelf": "center"}}>
                         <Button variant="contained"
                                 color="secondary"
                                 onClick={this.handleAddBackend}>
-                          Add
+                          Add Scheduler
                         </Button>
                       </Grid>
                     </Grid>
