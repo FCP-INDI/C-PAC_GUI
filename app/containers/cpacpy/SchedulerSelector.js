@@ -186,7 +186,7 @@ class CpacpySchedulerSelector extends Component {
   }
 
   state = {
-    fullSelector: true,
+    fullSelector: false,
     selector: false,
     selectorAnchor: null,
     newName: "",
@@ -291,6 +291,7 @@ class CpacpySchedulerSelector extends Component {
     }
 
     const scheduler = schedulers.find((s) => s.get('id') == selectedScheduler)
+    const ifBeforeTest = newIP + ':' + newPort !== testingScheduler.get('address')
 
     return (
       <>
@@ -369,7 +370,7 @@ class CpacpySchedulerSelector extends Component {
                       <Grid item xs={12} md={4} className={classes.buttons}>
                         <Button onClick={this.handleConnectionTest} variant="contained">
                           {
-                            newIP + ':' + newPort !== testingScheduler.get('address') ? null :
+                            ifBeforeTest ? null :
                               <BulletIcon className={clsx(
                               classes.bullet,
                               testingScheduler.get('detecting') ? classes.detecting : null,
@@ -377,7 +378,7 @@ class CpacpySchedulerSelector extends Component {
                               )}/>
                           }
                           {
-                            newIP + ':' + newPort !== testingScheduler.get('address') ? "Test Connection" :
+                            ifBeforeTest ? "Test Connection" :
                               (testingScheduler.get('success')? "Connected" : (testingScheduler.get('detecting') ? "Detecting" : "Offline"))
                           }
                           {
@@ -389,6 +390,7 @@ class CpacpySchedulerSelector extends Component {
                         </Button>
                         <Button variant="contained"
                                 color="secondary"
+                                disabled={!(!ifBeforeTest && testingScheduler.get('success')) }
                                 onClick={this.handleAddBackend}>
                           Add Scheduler
                         </Button>
