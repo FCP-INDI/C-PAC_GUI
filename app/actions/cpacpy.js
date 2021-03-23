@@ -243,3 +243,10 @@ export function test(name, ip, port) {
     name, ip, port
   }
 }
+
+export function testFailed(error) {
+  return {
+    type: CPACPY_SCHEDULER_TEST_TEMP_CONNECTION_FAILED,
+    error
+  }
+}

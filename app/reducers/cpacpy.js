@@ -31,7 +31,7 @@ const initialState = fromJS({
   // id for the latest used scheduler
   latestScheduler: 'local',
 
-  testingScheduler: {address: null, success: false, detecting: false},
+  testingScheduler: {address: null, success: false, detecting: false, error: null},
 })
 
 export const selectSchedulers =
@@ -139,13 +139,18 @@ export default function (state = initialState, action) {
       return state.setIn(['testingScheduler'], fromJS(
         {address: action.ip + ':' + action.port,
         detecting: true,
-        success: false,}))
+        success: false,
+        error: null}))
 
     case CPACPY_SCHEDULER_TEST_TEMP_CONNECTION_SUCCESS:
-      return state.setIn(['testingScheduler', 'detecting'], false).setIn(['testingScheduler', 'success'], true)
+      return state.setIn(['testingScheduler', 'detecting'], false)
+        .setIn(['testingScheduler', 'success'], true)
+        .setIn(['testingScheduler', 'error'], null)
 
     case CPACPY_SCHEDULER_TEST_TEMP_CONNECTION_FAILED:
-      return state.setIn(['testingScheduler', 'detecting'], false).setIn(['testingScheduler', 'success'], false)
+      return state.setIn(['testingScheduler', 'detecting'], false)
+        .setIn(['testingScheduler', 'success'], false)
+        .setIn(['testingScheduler', 'error'], action.error)
 
     case CPACPY_CONFIG_LOAD_SUCCESS:
       return fromJS(action.config)

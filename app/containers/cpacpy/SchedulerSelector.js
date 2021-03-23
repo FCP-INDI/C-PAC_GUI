@@ -16,6 +16,7 @@ import Box from 'components/Box'
 import {default as FlexBox} from '@material-ui/core/Box'
 import Typography from '@material-ui/core/Typography'
 import Tooltip from '@material-ui/core/Tooltip'
+import Alert from '@material-ui/lab/Alert'
 
 
 import {
@@ -399,6 +400,12 @@ class CpacpySchedulerSelector extends Component {
                   </Grid>
                 </Grid>
               </Paper>
+              {
+                !ifBeforeTest && testingScheduler.get('error') !== null ?
+                  <Alert severity="warning">
+                    {testingScheduler.get('error')}
+                  </Alert> : null
+              }
             </Box>
           </Paper>
         </Modal>

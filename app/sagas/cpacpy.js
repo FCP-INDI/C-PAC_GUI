@@ -46,6 +46,7 @@ import {
   connectSendCallbackCall as cpacpyConnectSendCallbackCall,
   callSuccess as cpacpyCallSuccess,
   callError as cpacpyCallError,
+  testFailed as cpacpyTestFailed,
 } from '../actions/cpacpy'
 
 import {
@@ -255,8 +256,11 @@ function* test({ ip, port }) {
     if (response.api === 'cpacpy') {
       yield put({ type: CPACPY_SCHEDULER_TEST_TEMP_CONNECTION_SUCCESS })
     }
+    else {
+      yield put(cpacpyTestFailed("The address and port are occupied by other services. "))
+    }
   } catch (error) {
-    yield put({ type: CPACPY_SCHEDULER_TEST_TEMP_CONNECTION_FAILED, error })
+    yield put(cpacpyTestFailed(error.message))
   }
 }
 
