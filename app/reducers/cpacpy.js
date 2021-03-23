@@ -21,6 +21,9 @@ import {
 
   CPACPY_CONFIG_LOAD_SUCCESS,
 } from '../actions/cpacpy'
+
+import { generateId } from './utils'
+
 const initialState = fromJS({
   schedulers: [
     { id: 'local', name: 'Local', version: 'unknown', backends: [], address: scheduler.local, polling: false, detecting: false, online: null, connected: false, connect: { callbacks: {} } },
@@ -118,7 +121,9 @@ export default function (state = initialState, action) {
       const name = action.payload.newName
       const IP = action.payload.newIP
       const port = action.payload.newPort
-      const newObj = fromJS({ id: name,
+      const newId = generateId(name, state.get('schedulers'))
+
+      const newObj = fromJS({ id: newId,
           name: name,
           version: 'unknown',
           backends: [],
@@ -128,7 +133,7 @@ export default function (state = initialState, action) {
           online: null,
           connected: false,
           connect: { callbacks: {} } })
-      return state.update('schedulers', scheduler => scheduler.push(newObj)).setIn(['latestScheduler'], name)
+      return state.update('schedulers', scheduler => scheduler.push(newObj)).setIn(['latestScheduler'], newId)
 
     case CPACPY_SCHEDULER_TEST_TEMP_CONNECTION:
       return state.setIn(['testingScheduler'], fromJS(
