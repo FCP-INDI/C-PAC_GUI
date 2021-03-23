@@ -13,6 +13,8 @@ import {
   DATASET_SELECT_SCHEDULER,
 } from '../actions/dataset'
 
+import { generateId } from './utils'
+
 const initialState = fromJS({
   datasets: [],
 })
@@ -79,20 +81,9 @@ export default function (state = initialState, action) {
 
     case DATASET_SETTINGS_CREATE: {
       const { dataset: { name, configuration } } = action
-      let id = cpac.utils.slugify(name);
-      let i = state.get('datasets').findIndex((d) => d.get('id') === id)
-      let c = null;
-      if (i !== -1) {
-        c = 0;
-        while (i > -1) {
-          c++;
-          i = state.get('datasets').findIndex((d) => d.get('id') === `${id}-${c}`);
-        }
-      }
-
+      const id = generateId(name, state.get('datasets'))
       const version = Object.keys(cpac.data_settings.template.versions)[0]
 
-      id = c !== null ? `${id}-${c}` : id;
       const dataset = fromJS(cpac.data_settings.template)
         .set('id', id)
         .set('name', name)
