@@ -7,7 +7,7 @@ export const cpacpyConfig = fromJS({
   ],
   // id for the latest used scheduler
   latestScheduler: 'local',
-  
-  testingScheduler: {address: null, success: false, detecting: false}
+
+  testingScheduler: {address: null, success: false, detecting: false, error: null}
 })
 
