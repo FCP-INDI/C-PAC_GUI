@@ -20,6 +20,21 @@ export const CPACPY_SCHEDULER_DETECT = 'CPACPY_SCHEDULER_DETECT'
 export const CPACPY_SCHEDULER_ONLINE = 'CPACPY_SCHEDULER_ONLINE'
 export const CPACPY_SCHEDULER_OFFLINE = 'CPACPY_SCHEDULER_OFFLINE'
 
+export const CPACPY_SCHEDULER_ADDNEW = 'CPACPY_SCHEDULER_ADDNEW'
+export const CPACPY_SCHEDULER_TEST_TEMP_CONNECTION = 'CPACPY_SCHEDULER_TEST_TEMP_CONNECTION'
+export const CPACPY_SCHEDULER_TEST_TEMP_CONNECTION_SUCCESS = 'CPACPY_SCHEDULER_TEST_TEMP_CONNECTION_SUCCESS'
+export const CPACPY_SCHEDULER_TEST_TEMP_CONNECTION_FAILED = 'CPACPY_SCHEDULER_TEST_TEMP_CONNECTION_FAILED'
+
+export const CPACPY_CONFIG_LOAD = 'CPACPY_CONFIG_LOAD'
+export const CPACPY_CONFIG_LOAD_SUCCESS = 'CPACPY_CONFIG_LOAD_SUCCESS'
+export const CPACPY_CONFIG_LOAD_ERROR = 'CPACPY_CONFIG_LOAD_ERROR'
+export const CPACPY_CONFIG_SAVE = 'CPACPY_CONFIG_SAVE'
+export const CPACPY_CONFIG_SAVE_SUCCESS = 'CPACPY_CONFIG_SAVE_SUCCESS'
+export const CPACPY_CONFIG_SAVE_ERROR = 'CPACPY_CONFIG_SAVE_ERROR'
+export const CPACPY_CONFIG_CLEAR = 'CPACPY_CONFIG_CLEAR'
+export const CPACPY_CONFIG_CLEAR_SUCCESS = 'CPACPY_CONFIG_CLEAR_SUCCESS'
+export const CPACPY_CONFIG_CLEAR_ERROR = 'CPACPY_CONFIG_CLEAR_ERROR'
+
 export function init() {
   return {
     type: CPACPY_INIT,
@@ -179,7 +194,7 @@ export function fetchResults(scheduler, schedule, result, { success, error }, { 
           if (disposition && disposition.indexOf('attachment') !== -1) {
             const filenameRegex = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/;
             const matches = filenameRegex.exec(disposition);
-            if (matches != null && matches[1]) { 
+            if (matches != null && matches[1]) {
               name = matches[1].replace(/['"]/g, '');
             }
           }
@@ -212,5 +227,26 @@ export function offline(scheduler) {
   return {
     type: CPACPY_SCHEDULER_OFFLINE,
     scheduler
+  }
+}
+
+export function addNew(name, ip, port) {
+  return {
+    type: CPACPY_SCHEDULER_ADDNEW,
+    payload: {newName: name, newIP: ip, newPort: port},
+  }
+}
+
+export function test(name, ip, port) {
+  return {
+    type: CPACPY_SCHEDULER_TEST_TEMP_CONNECTION,
+    name, ip, port
+  }
+}
+
+export function testFailed(error) {
+  return {
+    type: CPACPY_SCHEDULER_TEST_TEMP_CONNECTION_FAILED,
+    error
   }
 }

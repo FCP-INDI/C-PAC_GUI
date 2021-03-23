@@ -53,7 +53,9 @@ export { default as SchedulerLocalIcon } from '@material-ui/icons/Laptop'
 export { default as SchedulerApiIcon } from '@material-ui/icons/SettingsRemote'
 export { default as SchedulerSshIcon } from '@material-ui/icons/Link'
 
-export const SchedulerBackendDockerIcon = (props) => 
+export { default as SchedulerConnectionRetryIcon } from '@material-ui/icons/Refresh'
+
+export const SchedulerBackendDockerIcon = (props) =>
 <SvgIcon viewBox="0 0 40 40" {...props}>
   <path d="M 10 5 L 10 10 L 15 10 L 15 5 Z M 17.5 5 L 17.5 10 L 22.5 10 L 22.5 5 Z M 29.496094 11.679688 L 28.480469 12.425781
     C 28.480469 12.425781 27.632812 13.050781 26.792969 14.023438 C 25.949219 14.996094 25 16.378906 25 18.125 C 25 19.351562
@@ -72,7 +74,7 @@ export const SchedulerBackendDockerIcon = (props) =>
     C 16.941406 27.5 17.5 26.941406 17.5 26.25 C 17.5 25.558594 16.941406 25 16.25 25 Z M 16.25 25 "/>
 </SvgIcon>
 
-export const SchedulerBackendSingularityIcon = (props) => 
+export const SchedulerBackendSingularityIcon = (props) =>
 <SvgIcon viewBox="0 0 40 40" {...props}>
   <path d="M 21.448 5.285 C 22.419 5.285 23.403 5.333 24.4 5.426 C 25.396 5.52 26.424 5.653 27.483 5.828 C 28.542 6.002 29.519 6.201
     30.417 6.426 C 31.314 6.65 32.135 6.905 32.883 7.191 L 29.744 16.178 C 28.76 14.858 27.664 13.834 26.455 13.105 C 25.247 12.376
@@ -127,7 +129,7 @@ export const ExecutionCurrentStatusIcon = ({ status, ...props }) => {
 
 import SvgIcon from '@material-ui/core/SvgIcon';
 
-export const LoadingIcon = (props) => 
+export const LoadingIcon = (props) =>
 <SvgIcon viewBox="0 0 40 40" {...props}>
   <path opacity="0.2" fill="#000" d="M20.201,5.169c-8.254,0-14.946,6.692-14.946,14.946c0,8.255,6.692,14.946,14.946,14.946
     s14.946-6.691,14.946-14.946C35.146,11.861,28.455,5.169,20.201,5.169z M20.201,31.749c-6.425,0-11.634-5.208-11.634-11.634

@@ -42,7 +42,21 @@ abide2.views = [
   }
 ]
 
+const abide3_short = JSON.parse(JSON.stringify(cpac.data_settings.template))
+const abide3_shortVersion = Object.keys(abide3_short.versions)[0]
+abide3_short.id = 'abide3_short'
+abide3_short.name = 'ABIDE III SHORT'
+abide3_short.versions[abide3_shortVersion].configuration.options.base = 's3://fcp-indi/data/Projects/CORR/RawDataBIDS/NKI_TRT/'
+abide3_short.views = [
+  {
+    id: 'default',
+    name: 'All',
+    query: 'true',
+  }
+]
+
 export const datasets = [
   abide,
   abide2,
+  abide3_short,
 ]

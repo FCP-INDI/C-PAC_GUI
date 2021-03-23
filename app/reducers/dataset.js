@@ -10,7 +10,10 @@ import {
   DATASET_GENERATE_DATA_CONFIG_ERROR,
   DATASET_GENERATE_DATA_CONFIG_SCHEDULED,
   DATASET_GENERATE_DATA_CONFIG_FETCHED,
+  DATASET_SELECT_SCHEDULER,
 } from '../actions/dataset'
+
+import { generateId } from './utils'
 
 const initialState = fromJS({
   datasets: [],
@@ -42,7 +45,7 @@ export default function (state = initialState, action) {
 
       return state
         .setIn(['datasets', i, 'loading'], true)
-        .setIn(['datasets', i, 'error'], null)
+        .removeIn(['datasets', i, 'error'])
     }
     
     case DATASET_GENERATE_DATA_CONFIG_SUCCESS: {
@@ -52,14 +55,19 @@ export default function (state = initialState, action) {
       return state
         .setIn(['datasets', i, 'data'], fromJS(config))
         .setIn(['datasets', i, 'loading'], false)
+        .removeIn(['datasets', i, 'error'])
     }
 
     case DATASET_GENERATE_DATA_CONFIG_ERROR: {
       const { dataset: { id }, exception } = action
       const i = state.get('datasets').findIndex((d) => d.get('id') === id)
+      let errorMessage = exception.message
+      if (!errorMessage) {
+        errorMessage = 'general exception'
+      }
 
       return state
-        .setIn(['datasets', i, 'error'], exception.message)
+        .setIn(['datasets', i, 'error'], errorMessage)
         .setIn(['datasets', i, 'loading'], false)
     }
 
@@ -73,24 +81,13 @@ export default function (state = initialState, action) {
 
     case DATASET_SETTINGS_CREATE: {
       const { dataset: { name, configuration } } = action
-      let id = cpac.utils.slugify(name);
-      let i = state.get('datasets').findIndex((d) => d.get('id') === id)
-      let c = null;
-      if (i !== -1) {
-        c = 0;
-        while (i > -1) {
-          c++;
-          i = state.get('datasets').findIndex((d) => d.get('id') === `${id}-${c}`);
-        }
-      }
-
+      const id = generateId(name, state.get('datasets'))
       const version = Object.keys(cpac.data_settings.template.versions)[0]
 
-      id = c !== null ? `${id}-${c}` : id;
       const dataset = fromJS(cpac.data_settings.template)
         .set('id', id)
         .set('name', name)
-        .mergeIn(['versions', version, 'configuration'], fromJS(configuration))
+        .mergeDeepIn(['versions', version, 'configuration'], fromJS(configuration))
 
       return state
         .updateIn(['datasets'], datasets => datasets.push(dataset))
@@ -103,9 +100,9 @@ export default function (state = initialState, action) {
 
       return state
         .setIn(['datasets', i, 'name'], name)
-        .mergeIn(['datasets', i, 'versions', version, 'configuration'], fromJS(configuration))
+        .mergeDeepIn(['datasets', i, 'versions', version, 'configuration'], fromJS(configuration))
     }
-    
+
     default:
       return state
   }

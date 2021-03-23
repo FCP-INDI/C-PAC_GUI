@@ -14,17 +14,31 @@ import {
   CPACPY_SCHEDULER_ONLINE,
   CPACPY_SCHEDULER_OFFLINE,
   CPACPY_SCHEDULER_CONNECT_SEND_CALLBACK,
+  CPACPY_SCHEDULER_ADDNEW,
+  CPACPY_SCHEDULER_TEST_TEMP_CONNECTION,
+  CPACPY_SCHEDULER_TEST_TEMP_CONNECTION_SUCCESS,
+  CPACPY_SCHEDULER_TEST_TEMP_CONNECTION_FAILED,
+
+  CPACPY_CONFIG_LOAD_SUCCESS,
 } from '../actions/cpacpy'
+
+import { generateId } from './utils'
 
 const initialState = fromJS({
   schedulers: [
     { id: 'local', name: 'Local', version: 'unknown', backends: [], address: scheduler.local, polling: false, detecting: false, online: null, connected: false, connect: { callbacks: {} } },
   ],
-  scheduler: 'local',
+  // id for the latest used scheduler
+  latestScheduler: 'local',
+
+  testingScheduler: {address: null, success: false, detecting: false, error: null},
 })
 
 export const selectSchedulers =
   () => (state) => state.get('schedulers')
+
+export const getTestingScheduler =
+  () => (state) => state.get('testingScheduler')
 
 export const selectScheduler =
   (scheduler) =>
@@ -32,9 +46,9 @@ export const selectScheduler =
       state.get('schedulers').find((s) => s.get('id') == scheduler)
 
 export const selectCurrentScheduler =
-  () => 
+  () =>
     (state) =>
-      selectScheduler(state.get('scheduler'))(state)
+      selectScheduler(state.get('latestScheduler'))(state)
 
 export const selectSchedulerBackend =
   (scheduler, backend) =>
@@ -42,10 +56,10 @@ export const selectSchedulerBackend =
       selectScheduler(scheduler)(state)
         .get('backends')
         .find((b) => b.get('id') == backend)
-  
+
 export const selectSchedulerConnectCallback =
-  (scheduler, callbackId) => 
-    (state) => 
+  (scheduler, callbackId) =>
+    (state) =>
       selectScheduler(scheduler)(state).getIn(['connect', 'callbacks', callbackId])
 
 
@@ -66,7 +80,7 @@ export default function (state = initialState, action) {
       return state
 
     case CPACPY_SCHEDULER_SCHEDULER:
-      return state.setIn(['scheduler'], id)
+      return state.setIn(['latestScheduler'], id)
 
     case CPACPY_SCHEDULER_DETECT:
       return state.setIn(['schedulers', i, 'detecting'], true)
@@ -88,7 +102,7 @@ export default function (state = initialState, action) {
       return state
         .setIn(['schedulers', i, 'online'], action.type == CPACPY_SCHEDULER_ONLINE)
         .setIn(['schedulers', i, 'detecting'], false)
-      
+
     case CPACPY_SCHEDULER_CONNECT_SEND_CALLBACK:
       const { callbackId, callbackAction } = action
       const callbackPath = [
@@ -102,7 +116,46 @@ export default function (state = initialState, action) {
       let callbacks = state.getIn(callbackPath, List())
       callbacks = callbacks.push(callbackAction)
       return state.setIn(callbackPath, callbacks)
-        
+
+    case CPACPY_SCHEDULER_ADDNEW:
+      const name = action.payload.newName
+      const IP = action.payload.newIP
+      const port = action.payload.newPort
+      const newId = generateId(name, state.get('schedulers'))
+
+      const newObj = fromJS({ id: newId,
+          name: name,
+          version: 'unknown',
+          backends: [],
+          address: IP + ':' + port,
+          polling: false,
+          detecting: false,
+          online: null,
+          connected: false,
+          connect: { callbacks: {} } })
+      return state.update('schedulers', scheduler => scheduler.push(newObj)).setIn(['latestScheduler'], newId)
+
+    case CPACPY_SCHEDULER_TEST_TEMP_CONNECTION:
+      return state.setIn(['testingScheduler'], fromJS(
+        {address: action.ip + ':' + action.port,
+        detecting: true,
+        success: false,
+        error: null}))
+
+    case CPACPY_SCHEDULER_TEST_TEMP_CONNECTION_SUCCESS:
+      return state.setIn(['testingScheduler', 'detecting'], false)
+        .setIn(['testingScheduler', 'success'], true)
+        .setIn(['testingScheduler', 'error'], null)
+
+    case CPACPY_SCHEDULER_TEST_TEMP_CONNECTION_FAILED:
+      return state.setIn(['testingScheduler', 'detecting'], false)
+        .setIn(['testingScheduler', 'success'], false)
+        .setIn(['testingScheduler', 'error'], action.error)
+
+    case CPACPY_CONFIG_LOAD_SUCCESS:
+      return fromJS(action.config)
+
+
     default:
       return state
   }

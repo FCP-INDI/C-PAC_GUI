@@ -39,6 +39,7 @@ class Breadcrumbs extends Component {
 
   static mapStateToProps = (state, { execution }) => {
     return {
+      configLoaded: !!(state.main && state.main.get('config')),
     }
   }
   
@@ -93,7 +94,6 @@ class Breadcrumbs extends Component {
           </Button>
         )
     }
-
     return (
       <AppBar position="static" color="default" className={classes.bread}>
         <Toolbar>
@@ -107,7 +107,6 @@ class Breadcrumbs extends Component {
             }}
             onSelect={this.handleScheduler}
           />
-
         </Toolbar>
       </AppBar>
     )

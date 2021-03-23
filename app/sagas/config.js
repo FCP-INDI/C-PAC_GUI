@@ -21,6 +21,11 @@ import {
 } from '../actions/execution'
 
 import {
+  CPACPY_CONFIG_CLEAR,
+  CPACPY_CONFIG_LOAD, CPACPY_CONFIG_LOAD_SUCCESS,
+} from '../actions/cpacpy'
+
+import {
   PIPELINE_NAME_UPDATE,
   PIPELINE_DUPLICATE,
   PIPELINE_VERSION_DIRTY_UPDATE,
@@ -79,12 +84,10 @@ function* loadConfig () {
     localState.version = VERSION
     localStorage.setItem('state', JSON.stringify(localState))
   }
-
+  yield put({type: CPACPY_CONFIG_LOAD})
   yield put({ type: DATASET_CONFIG_LOAD })
   yield put({ type: EXECUTION_CONFIG_LOAD })
   yield put(configLoaded(localState))
-
-  yield put(cpacpyInit())
 }
 
 function* saveConfig() {

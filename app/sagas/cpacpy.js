@@ -4,7 +4,7 @@ import { all, delay, select, call, cancelled, put, race, take, takeEvery } from 
 import uuid from 'uuid/v4'
 
 import { scheduler } from 'consts'
-import { fetch, websocketChannel, scheduler as schedulerMatch } from './utils'
+import {fetch, websocketChannel, scheduler as schedulerMatch, configLocalState} from './utils'
 
 import {
   CPACPY_INIT,
@@ -19,6 +19,20 @@ import {
   CPACPY_SCHEDULER_CONNECT_SEND,
   CPACPY_SCHEDULER_CONNECT_SEND_CALLBACK,
   CPACPY_SCHEDULER_CALL,
+  CPACPY_SCHEDULER_ADDNEW,
+  CPACPY_SCHEDULER_TEST_TEMP_CONNECTION,
+  CPACPY_SCHEDULER_TEST_TEMP_CONNECTION_SUCCESS,
+  CPACPY_SCHEDULER_TEST_TEMP_CONNECTION_FAILED,
+
+  CPACPY_CONFIG_LOAD,
+  CPACPY_CONFIG_CLEAR,
+  CPACPY_CONFIG_SAVE,
+  CPACPY_CONFIG_LOAD_SUCCESS,
+  CPACPY_CONFIG_LOAD_ERROR,
+  CPACPY_CONFIG_CLEAR_SUCCESS,
+  CPACPY_CONFIG_CLEAR_ERROR,
+  CPACPY_CONFIG_SAVE_SUCCESS,
+  CPACPY_CONFIG_SAVE_ERROR,
 
   init as cpacpyInit,
   detect as cpacpyDetect,
@@ -32,6 +46,7 @@ import {
   connectSendCallbackCall as cpacpyConnectSendCallbackCall,
   callSuccess as cpacpyCallSuccess,
   callError as cpacpyCallError,
+  testFailed as cpacpyTestFailed,
 } from '../actions/cpacpy'
 
 import {
@@ -41,13 +56,22 @@ import {
   selectSchedulerConnectCallback,
 } from '../reducers/cpacpy'
 
+import {cpacpyConfig} from './cpacpy.default'
+
 const selectSaga = (callback) => select((state) => callback(state.cpacpy))
 
 function* init() {
-  const scheduler = yield selectSaga(selectCurrentScheduler())
-  yield put(cpacpyDetect(scheduler.get('id'), true, true))
+  const schedulers = yield selectSaga(selectSchedulers())
+  for(let scheduler of schedulers) {
+    yield put(cpacpyDetect(scheduler.get('id'), true, true))
+  }
 }
 
+function* loadSuccess() {
+  yield put(cpacpyInit())
+}
+
+// TODO
 function* detect({ scheduler: id, poll=true, current=false }) {
   const scheduler = yield selectSaga(selectScheduler(id))
   if (scheduler.get('online')) {
@@ -126,7 +150,7 @@ function* receiverListener(scheduler, channel) {
 
     if (message && message.__cpacpy_message_id) {
       const { data } = message
-      
+
       let callbacks = yield selectSaga(
         selectSchedulerConnectCallback(scheduler.get('id'), message.__cpacpy_message_id)
       )
@@ -149,9 +173,10 @@ function* receiverListener(scheduler, channel) {
   }
 }
 
+// TODO: websocket to keep connect
 function* connect({ scheduler: id }) {
   const scheduler = yield selectSaga(selectScheduler(id))
-  const ws = new WebSocket(`ws://${scheduler.get('address')}/schedule/connect`) 
+  const ws = new WebSocket(`ws://${scheduler.get('address')}/schedule/connect`)
 
   const channel = yield call(
     websocketChannel,
@@ -182,23 +207,23 @@ function* callScheduler({
   response: { success, error },
   headers = {}
 }) {
-
   const scheduler = yield selectSaga(selectScheduler(id))
+  const url = `http://${scheduler.get('address')}${endpoint}`
 
   const success_return = (data, headers) =>
     success instanceof Function ?
       success(data, headers) :
       cpacpyCallSuccess(scheduler, success, data, headers)
 
-  const error_return = (exception, headers) =>
+  const error_return = (exception) =>
     error instanceof Function ?
-      error(exception, headers) :
-      cpacpyCallError(scheduler, error, exception, headers)
+      error(exception) :
+      cpacpyCallError(scheduler, error, exception)
 
   try {
     const { response, error, headers: resHeaders } = yield call(
       fetch,
-      `http://${scheduler.get('address')}${endpoint}`,
+      url,
       {
         method,
         body: data === null ? null : JSON.stringify(data),
@@ -213,17 +238,53 @@ function* callScheduler({
     yield put(success_return(response, resHeaders))
   } catch (exception) {
     console.log(exception)
-    yield put(error_return(exception, resHeaders))
+    yield put(error_return(exception))
+  }
+}
+
+function* addNew() {
+  yield put({type: CPACPY_CONFIG_SAVE})
+}
+
+function* test({ ip, port }) {
+  try {
+    const { response, error } = yield call(
+      fetch,
+      `http://` + ip + `:` + port,
+      { method: 'GET' }
+    )
+    if (response.api === 'cpacpy') {
+      yield put({ type: CPACPY_SCHEDULER_TEST_TEMP_CONNECTION_SUCCESS })
+    }
+    else {
+      yield put(cpacpyTestFailed("The address and port are occupied by other services. "))
+    }
+  } catch (error) {
+    yield put(cpacpyTestFailed(error.message))
   }
 }
 
 export default function* configSaga() {
   yield all([
+    ...configLocalState('cpacpy', cpacpyConfig, {
+      load: CPACPY_CONFIG_LOAD,
+      save: CPACPY_CONFIG_SAVE,
+      clear: CPACPY_CONFIG_CLEAR,
+      loadSuccess: CPACPY_CONFIG_LOAD_SUCCESS,
+      loadError: CPACPY_CONFIG_LOAD_ERROR,
+      saveSuccess: CPACPY_CONFIG_SAVE_SUCCESS,
+      saveError: CPACPY_CONFIG_SAVE_ERROR,
+      clearSuccess: CPACPY_CONFIG_CLEAR_SUCCESS,
+      clearError: CPACPY_CONFIG_CLEAR_ERROR,
+    }),
     takeEvery(CPACPY_INIT, init),
+    takeEvery(CPACPY_CONFIG_LOAD_SUCCESS, loadSuccess),
     takeEvery(CPACPY_SCHEDULER_DETECT, detect),
     takeEvery(CPACPY_SCHEDULER_POLLING, polling),
     takeEvery(CPACPY_SCHEDULER_CONNECT, connect),
     takeEvery(CPACPY_SCHEDULER_CONNECT_CANCEL, offline),
     takeEvery(CPACPY_SCHEDULER_CALL, callScheduler),
+    takeEvery(CPACPY_SCHEDULER_ADDNEW, addNew),
+    takeEvery(CPACPY_SCHEDULER_TEST_TEMP_CONNECTION, test),
   ])
 }

@@ -60,14 +60,16 @@ class DatasetCard extends Component {
   render() {
     const { classes, raised = false, dataset } = this.props
 
-    const labels = {
-      bids: 'BIDS',
-      custom: 'Custom'
-    }
-
     const versions = dataset.get('versions')
     const version = `${versions.keySeq().map(i => +i).max()}`
     const configuration = dataset.getIn(['versions', version, 'configuration'])
+
+    const labels = {
+      bids: 'BIDS',
+      custom: 'Custom',
+      upload: 'From File',
+      fetch: 'From URL',
+    }
 
     return (
       <Card className={classes.card} raised={raised}>

@@ -21,6 +21,7 @@ import {
   DATASET_GENERATE_DATA_CONFIG_SCHEDULED,
   DATASET_GENERATE_DATA_CONFIG_FINISHED,
   DATASET_GENERATE_DATA_CONFIG_FETCHED,
+  DATASET_GENERATE_DATA_CONFIG_URL,
 } from '../actions/dataset'
 
 import {
@@ -30,7 +31,7 @@ import {
 } from '../actions/cpacpy'
 
 import {
-  selectCurrentScheduler,
+  selectCurrentScheduler, selectScheduler,
 } from '../reducers/cpacpy'
 
 import {
@@ -43,7 +44,7 @@ import {
 
 import {
   selectSaga as selectSagaFunc,
-  configLocalState,
+  configLocalState, fetch,
 } from './utils'
 
 const selectSaga = selectSagaFunc('dataset')
@@ -71,6 +72,7 @@ function* generateDataConfig({ dataset: { id, version }, scheduler }) {
     }
   ))
 }
+
 
 function* generateDataConfigWatch({ dataset, scheduler, schedule }) {
   yield put(cpacpyConnectSendWatch(
@@ -125,6 +127,32 @@ function* updateDataset() {
   yield put({ type: DATASET_CONFIG_SAVE })
 }
 
+function* generateDataConfigUrlFetch({ dataset: { id }, url }) {
+  try {
+    const { response, error, headers: resHeaders } = yield call(
+      fetch,
+      url,
+      {
+        method: 'GET',
+        mode: 'cors',
+        cache: 'no-cache',
+      }
+    )
+
+    yield put({
+      type: DATASET_GENERATE_DATA_CONFIG_FETCHED,
+      dataset: { id },
+      data: response,
+    })
+  } catch (exception) {
+    yield put({
+      type: DATASET_GENERATE_DATA_CONFIG_ERROR,
+      dataset: { id },
+      exception: exception
+    })
+  }
+}
+
 export default function* configSaga() {
   yield all([
     ...configLocalState('dataset', { datasets }, {
@@ -144,5 +172,6 @@ export default function* configSaga() {
     takeEvery(DATASET_GENERATE_DATA_CONFIG_FETCHED, generateDataConfigResult),
     takeEvery(DATASET_SETTINGS_CREATE, updateDataset),
     takeEvery(DATASET_SETTINGS_UPDATE, updateDataset),
+    takeEvery(DATASET_GENERATE_DATA_CONFIG_URL, generateDataConfigUrlFetch),
   ])
 }
