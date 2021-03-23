@@ -87,7 +87,7 @@ export default function (state = initialState, action) {
       const dataset = fromJS(cpac.data_settings.template)
         .set('id', id)
         .set('name', name)
-        .mergeIn(['versions', version, 'configuration'], fromJS(configuration))
+        .mergeDeepIn(['versions', version, 'configuration'], fromJS(configuration))
 
       return state
         .updateIn(['datasets'], datasets => datasets.push(dataset))
@@ -100,7 +100,7 @@ export default function (state = initialState, action) {
 
       return state
         .setIn(['datasets', i, 'name'], name)
-        .mergeIn(['datasets', i, 'versions', version, 'configuration'], fromJS(configuration))
+        .mergeDeepIn(['datasets', i, 'versions', version, 'configuration'], fromJS(configuration))
     }
 
     default:
