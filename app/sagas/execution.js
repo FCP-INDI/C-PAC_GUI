@@ -86,7 +86,8 @@ function* preprocessDataset({ execution: executionId }) {
         execution: executionId,
         exception
       }),
-    }
+    },
+    execution.getIn(['scheduler', 'profile']),
   ))
 }
 

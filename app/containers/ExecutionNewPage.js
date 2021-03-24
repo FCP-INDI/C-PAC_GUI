@@ -140,7 +140,7 @@ class ExecutionNewPage extends Component {
     activeStep: 0,
     dataset: { id: null, view: 'default' },
     pipeline: { id: null },
-    scheduler: { id: null, backend: null },
+    scheduler: { id: null, backend: null, profile: {corePerPipeline: 1, memPerPipeline: 1, parallelPipeline: 1 }},
     datasetScheduler: null,
   }
 
@@ -212,6 +212,10 @@ class ExecutionNewPage extends Component {
           const pipeline = pipelines.find((d) => d.get('id') == value)
           const version = `${pipeline.get('versions').keySeq().map(i => +i).max()}`
           state = state.setIn(['pipeline', 'version'], version)
+        }
+
+        if (statePath[0] === 'scheduler' && statePath[1] === 'profile') {
+          state = state.setIn(statePath, value)
         }
 
         this.setState(state.toJS())
@@ -495,6 +499,42 @@ class ExecutionNewPage extends Component {
                         )) :
                         null
                     }
+                  </TextField>
+                </Grid>
+              </Grid>
+              <Grid container>
+                <Grid item xs={12}>
+                  <TextField
+                    label="Number of cores per pipeline"
+                    fullWidth margin="normal" variant="outlined"
+                    disabled={this.state.scheduler.id === null || !scheduler.get('online')}
+                    value={this.state.scheduler.profile.corePerPipeline || ''}
+                    onChange={this.handleChange(['scheduler', 'profile', 'corePerPipeline'])}
+                  >
+                  </TextField>
+                </Grid>
+              </Grid>
+              <Grid container>
+                <Grid item xs={12}>
+                  <TextField
+                    label="Amount of memories per pipeline (MB)"
+                    fullWidth margin="normal" variant="outlined"
+                    disabled={this.state.scheduler.id === null || !scheduler.get('online')}
+                    value={this.state.scheduler.profile.memPerPipeline || ''}
+                    onChange={this.handleChange(['scheduler', 'profile', 'memPerPipeline'])}
+                  >
+                  </TextField>
+                </Grid>
+              </Grid>
+              <Grid container>
+                <Grid item xs={12}>
+                  <TextField
+                    label="Number of pipelines in parallel"
+                    fullWidth margin="normal" variant="outlined"
+                    disabled={this.state.scheduler.id === null || !scheduler.get('online')}
+                    value={this.state.scheduler.profile.parallelPipeline || ''}
+                    onChange={this.handleChange(['scheduler', 'profile', 'parallelPipeline'])}
+                  >
                   </TextField>
                 </Grid>
               </Grid>
