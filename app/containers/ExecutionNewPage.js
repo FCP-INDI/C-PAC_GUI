@@ -55,6 +55,7 @@ import {
   DatasetSiteIcon,
   DatasetSessionIcon,
   SchedulerIcon,
+  SchedulerParamIcon,
   NextIcon,
   PreviousIcon,
 } from '../components/icons'
@@ -342,6 +343,7 @@ class ExecutionNewPage extends Component {
     const view = dataset && this.state.dataset.view ? dataset.get('views').find((v) => v.get('id') == this.state.dataset.view) : null
     const scheduler = this.state.scheduler.id ? schedulers.find((s) => s.get('id') == this.state.scheduler.id) : null
     const backend = scheduler && this.state.scheduler.backend ? scheduler.get('backends').find((b) => b.get('id') == this.state.scheduler.backend) : null
+    const schedulerProfile = this.state.scheduler.profile
 
     return (
       <>
@@ -544,7 +546,7 @@ class ExecutionNewPage extends Component {
             <StepLabel>Summary</StepLabel>
             <StepContent>
               <Grid container>
-                <Grid item xs={12} sm={4} className={classes.summaryCard}>
+                <Grid item xs={12} sm={6} className={classes.summaryCard}>
                   <FormGroup>
                     <FormLabel>
                       <Avatar><PipelineIcon /></Avatar>
@@ -584,7 +586,7 @@ class ExecutionNewPage extends Component {
                     }
                   </FormGroup>
                 </Grid>
-                <Grid item xs={12} sm={4} className={classes.summaryCard}>
+                <Grid item xs={12} sm={6} className={classes.summaryCard}>
                   <FormGroup>
                     <FormLabel>
                       <Avatar><DatasetIcon /></Avatar>
@@ -593,21 +595,21 @@ class ExecutionNewPage extends Component {
                     {
                       summary.dataset && (
                         <List>
-                          { summary.dataset.sites > 0 && 
+                          { summary.dataset.sites > 0 &&
                           <ListItem disableGutters>
                             <ListItemIcon>
                               <DatasetSiteIcon />
                             </ListItemIcon>
                             <ListItemText primary={`${summary.dataset.sites} site${summary.dataset.sites != 1 ? 's' : ''}`} />
                           </ListItem> }
-                          { summary.dataset.subjects > 0 && 
+                          { summary.dataset.subjects > 0 &&
                           <ListItem disableGutters>
                             <ListItemIcon>
                               <DatasetSubjectIcon />
                             </ListItemIcon>
                             <ListItemText primary={`${summary.dataset.subjects} subject${summary.dataset.subjects != 1 ? 's' : ''}` } />
                           </ListItem> }
-                          { summary.dataset.sessions > 0 && 
+                          { summary.dataset.sessions > 0 &&
                           <ListItem disableGutters>
                             <ListItemIcon>
                               <DatasetSessionIcon />
@@ -619,7 +621,7 @@ class ExecutionNewPage extends Component {
                     }
                   </FormGroup>
                 </Grid>
-                <Grid item xs={12} sm={4} className={classes.summaryCard}>
+                <Grid item xs={12} sm={6} className={classes.summaryCard}>
                   <FormGroup>
                     <FormLabel>
                       <Avatar><SchedulerIcon /></Avatar>
@@ -639,6 +641,38 @@ class ExecutionNewPage extends Component {
                               {backend && <ExecutionCurrentBackendIcon fontSize="small" backend={backend.get('backend')} />}
                             </ListItemIcon>
                             <ListItemText primary={backend && backend.get('id')} />
+                          </ListItem>
+                        </List>
+                      )
+                    }
+                  </FormGroup>
+                </Grid>
+                <Grid item xs={12} sm={6} className={classes.summaryCard}>
+                  <FormGroup>
+                    <FormLabel>
+                      <Avatar><SchedulerIcon /></Avatar>
+                      <Typography>Scheduler Parameters</Typography>
+                    </FormLabel>
+                    {
+                      summary.scheduler && (
+                        <List>
+                          <ListItem disableGutters>
+                            <ListItemIcon>
+                              <SchedulerParamIcon />
+                            </ListItemIcon>
+                            <ListItemText primary={schedulerProfile.corePerPipeline + ' core / pipeline'} />
+                          </ListItem>
+                          <ListItem disableGutters>
+                            <ListItemIcon>
+                              <SchedulerParamIcon />
+                            </ListItemIcon>
+                            <ListItemText primary={schedulerProfile.memPerPipeline + ' GB / pipeline'} />
+                          </ListItem>
+                          <ListItem disableGutters>
+                            <ListItemIcon>
+                              <SchedulerParamIcon />
+                            </ListItemIcon>
+                            <ListItemText primary={schedulerProfile.parallelPipeline + ' parallel pipeline(s)'} />
                           </ListItem>
                         </List>
                       )
