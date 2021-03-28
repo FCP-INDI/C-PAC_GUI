@@ -114,6 +114,7 @@ export { default as SchedulerAwsIcon } from '@material-ui/icons/Cloud'
 export { default as SchedulerLocalIcon } from '@material-ui/icons/Laptop'
 export { default as SchedulerApiIcon } from '@material-ui/icons/SettingsRemote'
 export { default as SchedulerSshIcon } from '@material-ui/icons/Link'
+export { default as SchedulerParamIcon } from '@material-ui/icons/Code'
 
 export { default as SchedulerConnectionRetryIcon } from '@material-ui/icons/Refresh'
 
