@@ -148,6 +148,7 @@ class ExecutionNewPageSummary extends Component {
   render() {
     const { classes, executions, schedulers } = this.props
     const { pipelineId, datasetId, schedulerId, executionId, datasetViewId, schedulerDetails=null } = this.props
+    const { normalPage=true } = this.props
 
     const scheduler = schedulerId ? schedulers.find((s) => s.get('id') === schedulerId) : null
     const currentSchedulerInfo = schedulerDetails === null? executions.find((execution) => execution.get('id') === executionId).get('scheduler') : fromJS(schedulerDetails)
@@ -157,7 +158,7 @@ class ExecutionNewPageSummary extends Component {
     return (
       <>
       <Grid container>
-          <Grid item xs={12} sm={6} className={classes.summaryCard}>
+          <Grid item xs={12} sm={6} md={normalPage? 3 : 6} className={classes.summaryCard}>
             <FormGroup>
               <FormLabel>
                 <Avatar><PipelineIcon /></Avatar>
@@ -197,7 +198,7 @@ class ExecutionNewPageSummary extends Component {
               }
             </FormGroup>
           </Grid>
-          <Grid item xs={12} sm={6} className={classes.summaryCard}>
+          <Grid item xs={12} sm={6} md={normalPage? 3 : 6} className={classes.summaryCard}>
             <FormGroup>
               <FormLabel>
                 <Avatar><DatasetIcon /></Avatar>
@@ -232,7 +233,7 @@ class ExecutionNewPageSummary extends Component {
               }
             </FormGroup>
           </Grid>
-          <Grid item xs={12} sm={6} className={classes.summaryCard}>
+          <Grid item xs={12} sm={6} md={normalPage? 3 : 6} className={classes.summaryCard}>
             <FormGroup>
               <FormLabel>
                 <Avatar><SchedulerIcon /></Avatar>
@@ -258,7 +259,7 @@ class ExecutionNewPageSummary extends Component {
               }
             </FormGroup>
           </Grid>
-          <Grid item xs={12} sm={6} className={classes.summaryCard}>
+          <Grid item xs={12} sm={6} md={normalPage? 3 : 6} className={classes.summaryCard}>
             <FormGroup>
               <FormLabel>
                 <Avatar><SchedulerIcon /></Avatar>
