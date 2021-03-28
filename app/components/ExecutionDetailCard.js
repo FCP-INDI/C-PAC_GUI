@@ -166,6 +166,7 @@ class ExecutionDetailCard extends Component {
                 executionId = {e.getIn(['id'])}
                 schedulerDetails = {e.getIn(['scheduler'])}
                 datasetViewId = {e.getIn(['dataset', 'view'])}
+                normalPage = {true}
               />
             </FlexBox>
           </Grid>

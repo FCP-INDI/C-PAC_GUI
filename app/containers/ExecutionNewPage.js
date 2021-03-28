@@ -555,6 +555,7 @@ class ExecutionNewPage extends Component {
                 executionId = {this.state.execution}
                 schedulerDetails = {this.state.scheduler}
                 datasetViewId = {this.state.dataset.view}
+                normalPage = {false}
               />
             </StepContent>
           </Step>
