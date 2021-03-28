@@ -272,19 +272,19 @@ class ExecutionNewPageSummary extends Component {
                       <ListItemIcon>
                         <SchedulerParamIcon />
                       </ListItemIcon>
-                      <ListItemText primary={schedulerProfile.corePerPipeline + ' core / pipeline'} />
+                      <ListItemText primary={schedulerProfile.get('corePerPipeline') + ' core / pipeline'} />
                     </ListItem>
                     <ListItem disableGutters>
                       <ListItemIcon>
                         <SchedulerParamIcon />
                       </ListItemIcon>
-                      <ListItemText primary={schedulerProfile.memPerPipeline + ' GB / pipeline'} />
+                      <ListItemText primary={schedulerProfile.get('memPerPipeline') + ' GB / pipeline'} />
                     </ListItem>
                     <ListItem disableGutters>
                       <ListItemIcon>
                         <SchedulerParamIcon />
                       </ListItemIcon>
-                      <ListItemText primary={schedulerProfile.parallelPipeline + ' parallel pipeline(s)'} />
+                      <ListItemText primary={schedulerProfile.get('parallelPipeline') + ' parallel pipeline(s)'} />
                     </ListItem>
                   </List>
                 )
