@@ -38,6 +38,7 @@ import {
 } from '../components/icons'
 
 import cpac from '@internal/c-pac'
+import {fromJS} from "immutable";
 
 class ExecutionNewPageSummary extends Component {
   static styles = theme => ({
@@ -70,7 +71,7 @@ class ExecutionNewPageSummary extends Component {
 
   static mapDispatchToProps = {}
 
-  computeSummaries = (pipelineId) => (datasetId) => (schedulerId) => {
+  computeSummaries(pipelineId, datasetId, schedulerId, datasetViewId='default') {
     const { schedulers, datasets, pipelines } = this.props
 
     const summaries = {}
@@ -114,10 +115,11 @@ class ExecutionNewPageSummary extends Component {
       const dirty = versions.has('0') || !dataset.hasIn(['data', 'sets'])
       const versionId = `${versions.keySeq().map(i => +i).max()}`
       const version = versions.get(versionId)
+      const datasetView = datasetViewId
 
       let datasetSummary = {}
       if (!dirty) {
-        const dataConfig = cpac.data_config.parse(cpac.data_config.dump(dataset.toJS(), version, this.state.dataset.view))
+        const dataConfig = cpac.data_config.parse(cpac.data_config.dump(dataset.toJS(), version, datasetView))
 
         datasetSummary = {
           sessions: Math.max(dataConfig.unique_ids.length, 1),
@@ -145,13 +147,13 @@ class ExecutionNewPageSummary extends Component {
 
   render() {
     const { classes, executions, schedulers } = this.props
-    const { pipelineId, datasetId, schedulerId, executionId } = this.props
+    const { pipelineId, datasetId, schedulerId, executionId, datasetViewId, schedulerDetails=null } = this.props
 
     const scheduler = schedulerId ? schedulers.find((s) => s.get('id') === schedulerId) : null
-    const currentSchedulerInfo = executions.find((execution) => execution.get('id') === executionId).get('scheduler')
+    const currentSchedulerInfo = schedulerDetails === null? executions.find((execution) => execution.get('id') === executionId).get('scheduler') : fromJS(schedulerDetails)
     const backend = scheduler && currentSchedulerInfo.get('backend') ? scheduler.get('backends').find((b) => b.get('id') === currentSchedulerInfo.get('backend')) : null
     const schedulerProfile = currentSchedulerInfo.get('profile')
-    const summary = this.computeSummaries(pipelineId, datasetId, schedulerId)
+    const summary = this.computeSummaries(pipelineId, datasetId, schedulerId, datasetViewId)
     return (
       <>
       <Grid container>

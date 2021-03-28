@@ -4,7 +4,7 @@ import { withRouter, Link } from 'react-router-dom'
 
 import { withStyles, lighten } from '@material-ui/core/styles'
 import { fromJS, isImmutable } from 'immutable'
-
+import uuid from 'uuid/v4'
 import Badge from '@material-ui/core/Badge'
 import Chip from '@material-ui/core/Chip'
 import Grid from '@material-ui/core/Grid'
@@ -63,6 +63,7 @@ import {
 import Modal from '../components/Modal'
 import Content from '../components/Content'
 import Box from '../components/Box'
+import { default as SummaryCard} from '../components/ExecutionNewPageSummary'
 
 import CpacpySchedulerSelector from './cpacpy/SchedulerSelector'
 
@@ -143,6 +144,7 @@ class ExecutionNewPage extends Component {
     pipeline: { id: null },
     scheduler: { id: null, backend: null, profile: {corePerPipeline: 1, memPerPipeline: 1, parallelPipeline: 1 }},
     datasetScheduler: null,
+    execution: null
   }
 
   constructor(props) {
@@ -165,6 +167,7 @@ class ExecutionNewPage extends Component {
       }
     }
     this.state.datasetScheduler = this.props.scheduler.get('id')
+    this.state.execution = uuid()
   }
 
   static mapStateToProps = (state, props) => ({
@@ -249,8 +252,8 @@ class ExecutionNewPage extends Component {
   }
 
   handlePreprocessDataset = () => {
-    const { dataset, pipeline, scheduler, note } = this.state
-    this.props.preprocessDataset(scheduler, dataset, pipeline, note)
+    const { execution, dataset, pipeline, scheduler, note } = this.state
+    this.props.preprocessDataset(execution, scheduler, dataset, pipeline, note)
     this.props.onSchedule && this.props.onSchedule()
   }
 
@@ -545,148 +548,14 @@ class ExecutionNewPage extends Component {
           <Step key="summary" completed={completed.pipeline && completed.dataset && completed.scheduler}>
             <StepLabel>Summary</StepLabel>
             <StepContent>
-              <Grid container>
-                <Grid item xs={12} sm={6} className={classes.summaryCard}>
-                  <FormGroup>
-                    <FormLabel>
-                      <Avatar><PipelineIcon /></Avatar>
-                      <Typography>Pipeline</Typography>
-                    </FormLabel>
-                    {
-                      summary.pipeline && (
-                        <List>
-                          <ListItem disableGutters>
-                            <ListItemIcon>
-                              <PipelineStepIcon />
-                            </ListItemIcon>
-                            <ListItemText primary={`Anatomical`} />
-                          </ListItem>
-                          <ListItem disableGutters>
-                            <ListItemIcon>
-                              <PipelineStepIcon classes={{
-                                root: summary.pipeline.functional ? classes.featEnabled : classes.featDisabled
-                              }} />
-                            </ListItemIcon>
-                            <ListItemText classes={{
-                                root: summary.pipeline.functional ? classes.featEnabled : classes.featDisabled
-                              }}  primary={`Functional`} />
-                          </ListItem>
-                          <ListItem disableGutters>
-                            <ListItemIcon>
-                              <PipelineStepIcon classes={{
-                              root: summary.pipeline.derivatives ? classes.featEnabled : classes.featDisabled
-                            }}  />
-                            </ListItemIcon>
-                            <ListItemText classes={{
-                              root: summary.pipeline.derivatives ? classes.featEnabled : classes.featDisabled
-                            }}  primary={`${summary.pipeline.derivatives} derivative${summary.pipeline.derivatives != 1 ? 's' : ''}`} />
-                          </ListItem>
-                        </List>
-                      )
-                    }
-                  </FormGroup>
-                </Grid>
-                <Grid item xs={12} sm={6} className={classes.summaryCard}>
-                  <FormGroup>
-                    <FormLabel>
-                      <Avatar><DatasetIcon /></Avatar>
-                      <Typography>Dataset</Typography>
-                    </FormLabel>
-                    {
-                      summary.dataset && (
-                        <List>
-                          { summary.dataset.sites > 0 &&
-                          <ListItem disableGutters>
-                            <ListItemIcon>
-                              <DatasetSiteIcon />
-                            </ListItemIcon>
-                            <ListItemText primary={`${summary.dataset.sites} site${summary.dataset.sites != 1 ? 's' : ''}`} />
-                          </ListItem> }
-                          { summary.dataset.subjects > 0 &&
-                          <ListItem disableGutters>
-                            <ListItemIcon>
-                              <DatasetSubjectIcon />
-                            </ListItemIcon>
-                            <ListItemText primary={`${summary.dataset.subjects} subject${summary.dataset.subjects != 1 ? 's' : ''}` } />
-                          </ListItem> }
-                          { summary.dataset.sessions > 0 &&
-                          <ListItem disableGutters>
-                            <ListItemIcon>
-                              <DatasetSessionIcon />
-                            </ListItemIcon>
-                            <ListItemText primary={`${summary.dataset.sessions} session${summary.dataset.sessions != 1 ? 's' : ''}`} />
-                          </ListItem> }
-                        </List>
-                      )
-                    }
-                  </FormGroup>
-                </Grid>
-                <Grid item xs={12} sm={6} className={classes.summaryCard}>
-                  <FormGroup>
-                    <FormLabel>
-                      <Avatar><SchedulerIcon /></Avatar>
-                      <Typography>Scheduler</Typography>
-                    </FormLabel>
-                    {
-                      summary.scheduler && (
-                        <List>
-                          <ListItem disableGutters>
-                            <ListItemIcon>
-                              <SchedulerIcon />
-                            </ListItemIcon>
-                            <ListItemText primary={scheduler.get('name')} />
-                          </ListItem>
-                          <ListItem disableGutters>
-                            <ListItemIcon>
-                              {backend && <ExecutionCurrentBackendIcon fontSize="small" backend={backend.get('backend')} />}
-                            </ListItemIcon>
-                            <ListItemText primary={backend && backend.get('id')} />
-                          </ListItem>
-                        </List>
-                      )
-                    }
-                  </FormGroup>
-                </Grid>
-                <Grid item xs={12} sm={6} className={classes.summaryCard}>
-                  <FormGroup>
-                    <FormLabel>
-                      <Avatar><SchedulerIcon /></Avatar>
-                      <Typography>Scheduler Parameters</Typography>
-                    </FormLabel>
-                    {
-                      summary.scheduler && (
-                        <List>
-                          <ListItem disableGutters>
-                            <ListItemIcon>
-                              <SchedulerParamIcon />
-                            </ListItemIcon>
-                            <ListItemText primary={schedulerProfile.corePerPipeline + ' core / pipeline'} />
-                          </ListItem>
-                          <ListItem disableGutters>
-                            <ListItemIcon>
-                              <SchedulerParamIcon />
-                            </ListItemIcon>
-                            <ListItemText primary={schedulerProfile.memPerPipeline + ' GB / pipeline'} />
-                          </ListItem>
-                          <ListItem disableGutters>
-                            <ListItemIcon>
-                              <SchedulerParamIcon />
-                            </ListItemIcon>
-                            <ListItemText primary={schedulerProfile.parallelPipeline + ' parallel pipeline(s)'} />
-                          </ListItem>
-                        </List>
-                      )
-                    }
-                  </FormGroup>
-                </Grid>
-                <Grid item xs={12}>
-                  <TextField
-                    label="Note / Description"
-                    fullWidth margin="normal" variant="outlined"
-                    value={this.state.note || ''}
-                    onChange={this.handleChange(['note'])} />
-                </Grid>
-              </Grid>
+              <SummaryCard
+                pipelineId = {this.state.pipeline.id}
+                datasetId = {this.state.dataset.id}
+                schedulerId = {this.state.scheduler.id}
+                executionId = {this.state.execution}
+                schedulerDetails = {this.state.scheduler}
+                datasetViewId = {this.state.dataset.view}
+              />
             </StepContent>
           </Step>
         </Stepper>
