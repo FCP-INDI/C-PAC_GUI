@@ -34,6 +34,7 @@ import Content from './Content'
 import Box from './Box'
 import Table from './Table'
 import ExecutionNodesGraph from './ExecutionNodesGraph'
+import { default as SummaryCard} from './ExecutionNewPageSummary'
 
 import { PipelineChip, DatasetChip, SchedulerChip } from './chips'
 
@@ -154,6 +155,18 @@ class ExecutionDetailCard extends Component {
                   <DatasetChip dataset={e.getIn(['dataset', 'id'])} version={e.getIn(['dataset', 'version'])} />
                 </Grid>
               </Grid>
+            </FlexBox>
+          </Grid>
+          <Grid item xs={12}>
+            <FlexBox className={classes.content}>
+              <SummaryCard
+                pipelineId = {e.getIn(['pipeline', 'id'])}
+                datasetId = {e.getIn(['dataset', 'id'])}
+                schedulerId = {e.getIn(['scheduler', 'id'])}
+                executionId = {e.getIn(['id'])}
+                schedulerDetails = {e.getIn(['scheduler'])}
+                datasetViewId = {e.getIn(['dataset', 'view'])}
+              />
             </FlexBox>
           </Grid>
           <Grid item xs={12} md={6}>
