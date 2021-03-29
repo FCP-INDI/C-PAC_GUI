@@ -257,96 +257,18 @@ class ExecutionNewPage extends Component {
     this.props.onSchedule && this.props.onSchedule()
   }
 
-  computeSummaries = () => {
-    const { schedulers, datasets, pipelines } = this.props
-
-    const summaries = {}
-    if (this.state.pipeline.id) {
-      const pipeline = pipelines.find((d) => d.get('id') == this.state.pipeline.id)
-      const versions = pipeline.get('versions')
-      const dirty = versions.has('0')
-      const versionId = `${versions.keySeq().map(i => +i).max()}`
-      const version = versions.get(versionId)
-      const anatomical = version.getIn(['configuration', 'anatomical', 'enabled'])
-      const functional = version.getIn(['configuration', 'functional', 'enabled'])
-      let derivatives = version.getIn(['configuration', 'derivatives', 'enabled'])
-      if (derivatives) {
-        derivatives = version.getIn(['configuration', 'derivatives']).reduce(
-          (total, value) => {
-            // Ignore root flag 'enabled' under derivatives
-            if (value.get) {
-              return total + (value.get('enabled') ? 1 : 0)
-            }
-            return total
-          },
-          0
-        )
-        derivatives = derivatives ? derivatives : false
-      } else {
-        derivatives = 0
-      }
-
-      summaries.pipeline = {
-        version,
-        dirty,
-        anatomical,
-        functional,
-        derivatives,
-      }
-    }
-
-    if (this.state.dataset.id) {
-      const dataset = datasets.find((d) => d.get('id') == this.state.dataset.id)
-      const versions = dataset.get('versions')
-      const dirty = versions.has('0') || !dataset.hasIn(['data', 'sets'])
-      const versionId = `${versions.keySeq().map(i => +i).max()}`
-      const version = versions.get(versionId)
-
-      let datasetSummary = {}
-      if (!dirty) {
-        const dataConfig = cpac.data_config.parse(cpac.data_config.dump(dataset.toJS(), version, this.state.dataset.view))
-
-        datasetSummary = {
-          sessions: Math.max(dataConfig.unique_ids.length, 1),
-          subjects: Math.max(dataConfig.subject_ids.length, 1),
-          sites: Math.max(dataConfig.sites.length, 1),
-        }
-      }
-
-      summaries.dataset = {
-        version,
-        dirty,
-        ...datasetSummary,
-      }
-    }
-
-    if (this.state.scheduler.id) {
-      const scheduler = schedulers.find((d) => d.get('id') == this.state.scheduler.id)
-      summaries.scheduler = {
-        online: scheduler.get('online'),
-      }
-    }
-
-    return summaries
-  }
-
   render() {
     const { classes, executions, schedulers, datasets, pipelines, parameters } = this.props
     const { activeStep } = this.state
     const steps = ['pipeline', 'dataset', 'scheduler', 'summary']
-    const summary = this.computeSummaries()
+    const dataset = this.state.dataset.id ? datasets.find((d) => d.get('id') == this.state.dataset.id) : null
+    const scheduler = this.state.scheduler.id ? schedulers.find((s) => s.get('id') == this.state.scheduler.id) : null
+    const dirty = dataset?.get('versions').has('0') || !dataset?.hasIn(['data', 'sets'])
     const completed = {
       pipeline: !!this.state.pipeline.id,
-      dataset: !!(this.state.dataset.id && !summary.dataset?.dirty),
+      dataset: !!(this.state.dataset.id && !dirty),
       scheduler: !!(this.state.scheduler.id && this.state.scheduler.backend),
     }
-
-    const pipeline = this.state.pipeline.id ? pipelines.find((s) => s.get('id') == this.state.pipeline.id) : null
-    const dataset = this.state.dataset.id ? datasets.find((d) => d.get('id') == this.state.dataset.id) : null
-    const view = dataset && this.state.dataset.view ? dataset.get('views').find((v) => v.get('id') == this.state.dataset.view) : null
-    const scheduler = this.state.scheduler.id ? schedulers.find((s) => s.get('id') == this.state.scheduler.id) : null
-    const backend = scheduler && this.state.scheduler.backend ? scheduler.get('backends').find((b) => b.get('id') == this.state.scheduler.backend) : null
-    const schedulerProfile = this.state.scheduler.profile
 
     return (
       <>
@@ -425,7 +347,7 @@ class ExecutionNewPage extends Component {
                 </Grid>
 
                 {
-                (dataset && summary.dataset?.dirty) ? (
+                (dataset && dirty) ? (
                   <Grid item xs={12}>
                     <Alert
                       severity="warning"
