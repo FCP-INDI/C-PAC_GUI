@@ -124,7 +124,7 @@ class ExecutionDetailCard extends Component {
   }
 
   render() {
-    const { classes, execution: e, actions = true, onClickSchedule, selectedSchedule } = this.props
+    const { classes, execution: e, actions = true, onClickSchedule, selectedSchedule, showSummaryCard = false }  = this.props
 
     return (
       <Paper key={e.get('id')} className={classes.paper} elevation={3}>
@@ -157,19 +157,22 @@ class ExecutionDetailCard extends Component {
               </Grid>
             </FlexBox>
           </Grid>
-          <Grid item xs={12}>
-            <FlexBox className={classes.content}>
-              <SummaryCard
-                pipelineId = {e.getIn(['pipeline', 'id'])}
-                datasetId = {e.getIn(['dataset', 'id'])}
-                schedulerId = {e.getIn(['scheduler', 'id'])}
-                executionId = {e.getIn(['id'])}
-                schedulerDetails = {e.getIn(['scheduler'])}
-                datasetViewId = {e.getIn(['dataset', 'view'])}
-                normalPage = {true}
-              />
-            </FlexBox>
-          </Grid>
+          {
+            showSummaryCard === true ?
+              <Grid item xs={12}>
+                <FlexBox className={classes.content}>
+                  <SummaryCard
+                    pipelineId = {e.getIn(['pipeline', 'id'])}
+                    datasetId = {e.getIn(['dataset', 'id'])}
+                    schedulerId = {e.getIn(['scheduler', 'id'])}
+                    executionId = {e.getIn(['id'])}
+                    schedulerDetails = {e.getIn(['scheduler'])}
+                    datasetViewId = {e.getIn(['dataset', 'view'])}
+                    normalPage = {true}
+                  />
+                </FlexBox>
+              </Grid> : null
+          }
           <Grid item xs={12} md={6}>
             <ExecutionNodesGraph
               onClickSchedule={onClickSchedule}
