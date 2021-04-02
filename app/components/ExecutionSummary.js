@@ -40,7 +40,7 @@ import {
 import cpac from '@internal/c-pac'
 import {fromJS} from "immutable";
 
-class ExecutionNewPageSummary extends Component {
+class ExecutionSummary extends Component {
   static styles = theme => ({
     summaryCard: {
       display: 'flex',
@@ -298,5 +298,5 @@ class ExecutionNewPageSummary extends Component {
 }
 
 
-export default connect(ExecutionNewPageSummary.mapStateToProps, ExecutionNewPageSummary.mapDispatchToProps)
-(withRouter(withStyles(ExecutionNewPageSummary.styles)(ExecutionNewPageSummary)))
+export default connect(ExecutionSummary.mapStateToProps, ExecutionSummary.mapDispatchToProps)
+(withRouter(withStyles(ExecutionSummary.styles)(ExecutionSummary)))

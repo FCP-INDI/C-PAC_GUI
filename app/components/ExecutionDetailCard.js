@@ -34,7 +34,7 @@ import Content from './Content'
 import Box from './Box'
 import Table from './Table'
 import ExecutionNodesGraph from './ExecutionNodesGraph'
-import { default as SummaryCard} from './ExecutionNewPageSummary'
+import SummaryCard from './ExecutionSummary'
 
 import { PipelineChip, DatasetChip, SchedulerChip } from './chips'
 

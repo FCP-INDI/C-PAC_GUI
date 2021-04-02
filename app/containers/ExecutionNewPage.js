@@ -63,7 +63,7 @@ import {
 import Modal from '../components/Modal'
 import Content from '../components/Content'
 import Box from '../components/Box'
-import { default as SummaryCard} from '../components/ExecutionNewPageSummary'
+import SummaryCard from '../components/ExecutionSummary'
 
 import CpacpySchedulerSelector from './cpacpy/SchedulerSelector'
 
