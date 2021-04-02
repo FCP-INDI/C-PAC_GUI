@@ -73,6 +73,7 @@ function* preprocessDataset({ execution: executionId }) {
     scheduler.get('id'),
     cpac.data_config.dump(dataset.toJS(), execution.getIn(['dataset', 'version']), execution.getIn(['dataset', 'view'])),
     cpac.pipeline.dump(pipeline.toJS(), execution.getIn(['dataset', 'version'])),
+    execution.getIn(['scheduler', 'profile']),
     {
       success: (data) => ({
         type: EXECUTION_PREPROCESS_DATASET_SCHEDULED,
@@ -86,7 +87,7 @@ function* preprocessDataset({ execution: executionId }) {
         execution: executionId,
         exception
       }),
-    }
+    },
   ))
 }
 

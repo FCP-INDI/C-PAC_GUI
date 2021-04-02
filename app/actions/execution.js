@@ -26,8 +26,8 @@ export const EXECUTION_PREPROCESS_DATASET_PROCESSING_ERROR = 'EXECUTION_PREPROCE
 export const EXECUTION_PREPROCESS_DATASET_FINISHED = 'EXECUTION_PREPROCESS_DATASET_FINISHED'
 export const EXECUTION_PREPROCESS_DATASET_FETCHED = 'EXECUTION_PREPROCESS_DATASET_FETCHED'
 
-export function preprocessDataset(scheduler, dataset, pipeline, note=null) {
-  const execution = uuid()
+export function preprocessDataset(execution, scheduler, dataset, pipeline, note=null) {
+  // const execution = uuid()
   return {
     type: EXECUTION_PREPROCESS_DATASET,
     execution, scheduler, dataset, pipeline, note

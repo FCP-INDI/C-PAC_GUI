@@ -156,7 +156,7 @@ class ExecutionsPage extends Component {
             executions &&
             executions
               .sortBy((e) => e.get('id'))
-              .map(e => <ExecutionDetailCard key={e.get('id')} execution={e.get('id')} />)
+              .map(e => <ExecutionDetailCard key={e.get('id')} execution={e.get('id')} showSummaryCard={false}/>)
           }
         </Box>
       </>

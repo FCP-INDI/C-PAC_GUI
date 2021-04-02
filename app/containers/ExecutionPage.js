@@ -224,6 +224,7 @@ class ExecutionPage extends Component {
                   actions={false}
                   onClickSchedule={this.handleOpenSchedule}
                   selectedSchedule={schedule && schedule.get('id')}
+                  showSummaryCard={true}
                 />
                 <Paper className={classes.paper} elevation={3}>
                   {

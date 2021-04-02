@@ -4,7 +4,7 @@ import { withRouter, Link } from 'react-router-dom'
 
 import { withStyles, lighten } from '@material-ui/core/styles'
 import { fromJS, isImmutable } from 'immutable'
-
+import uuid from 'uuid/v4'
 import Badge from '@material-ui/core/Badge'
 import Chip from '@material-ui/core/Chip'
 import Grid from '@material-ui/core/Grid'
@@ -55,6 +55,7 @@ import {
   DatasetSiteIcon,
   DatasetSessionIcon,
   SchedulerIcon,
+  SchedulerParamIcon,
   NextIcon,
   PreviousIcon,
 } from '../components/icons'
@@ -62,6 +63,7 @@ import {
 import Modal from '../components/Modal'
 import Content from '../components/Content'
 import Box from '../components/Box'
+import SummaryCard from '../components/ExecutionSummary'
 
 import CpacpySchedulerSelector from './cpacpy/SchedulerSelector'
 
@@ -140,8 +142,9 @@ class ExecutionNewPage extends Component {
     activeStep: 0,
     dataset: { id: null, view: 'default' },
     pipeline: { id: null },
-    scheduler: { id: null, backend: null },
+    scheduler: { id: null, backend: null, profile: {corePerPipeline: 1, memPerPipeline: 1, parallelPipeline: 1 }},
     datasetScheduler: null,
+    execution: null
   }
 
   constructor(props) {
@@ -164,6 +167,7 @@ class ExecutionNewPage extends Component {
       }
     }
     this.state.datasetScheduler = this.props.scheduler.get('id')
+    this.state.execution = uuid()
   }
 
   static mapStateToProps = (state, props) => ({
@@ -214,6 +218,10 @@ class ExecutionNewPage extends Component {
           state = state.setIn(['pipeline', 'version'], version)
         }
 
+        if (statePath[0] === 'scheduler' && statePath[1] === 'profile') {
+          state = state.setIn(statePath, value)
+        }
+
         this.setState(state.toJS())
       }
 
@@ -244,100 +252,23 @@ class ExecutionNewPage extends Component {
   }
 
   handlePreprocessDataset = () => {
-    const { dataset, pipeline, scheduler, note } = this.state
-    this.props.preprocessDataset(scheduler, dataset, pipeline, note)
+    const { execution, dataset, pipeline, scheduler, note } = this.state
+    this.props.preprocessDataset(execution, scheduler, dataset, pipeline, note)
     this.props.onSchedule && this.props.onSchedule()
-  }
-
-  computeSummaries = () => {
-    const { schedulers, datasets, pipelines } = this.props
-
-    const summaries = {}
-    if (this.state.pipeline.id) {
-      const pipeline = pipelines.find((d) => d.get('id') == this.state.pipeline.id)
-      const versions = pipeline.get('versions')
-      const dirty = versions.has('0')
-      const versionId = `${versions.keySeq().map(i => +i).max()}`
-      const version = versions.get(versionId)
-      const anatomical = version.getIn(['configuration', 'anatomical', 'enabled'])
-      const functional = version.getIn(['configuration', 'functional', 'enabled'])
-      let derivatives = version.getIn(['configuration', 'derivatives', 'enabled'])
-      if (derivatives) {
-        derivatives = version.getIn(['configuration', 'derivatives']).reduce(
-          (total, value) => {
-            // Ignore root flag 'enabled' under derivatives
-            if (value.get) {
-              return total + (value.get('enabled') ? 1 : 0)
-            }
-            return total
-          },
-          0
-        )
-        derivatives = derivatives ? derivatives : false
-      } else {
-        derivatives = 0
-      }
-
-      summaries.pipeline = {
-        version,
-        dirty,
-        anatomical,
-        functional,
-        derivatives,
-      }
-    }
-
-    if (this.state.dataset.id) {
-      const dataset = datasets.find((d) => d.get('id') == this.state.dataset.id)
-      const versions = dataset.get('versions')
-      const dirty = versions.has('0') || !dataset.hasIn(['data', 'sets'])
-      const versionId = `${versions.keySeq().map(i => +i).max()}`
-      const version = versions.get(versionId)
-
-      let datasetSummary = {}
-      if (!dirty) {
-        const dataConfig = cpac.data_config.parse(cpac.data_config.dump(dataset.toJS(), version, this.state.dataset.view))
-
-        datasetSummary = {
-          sessions: Math.max(dataConfig.unique_ids.length, 1),
-          subjects: Math.max(dataConfig.subject_ids.length, 1),
-          sites: Math.max(dataConfig.sites.length, 1),
-        }
-      }
-
-      summaries.dataset = {
-        version,
-        dirty,
-        ...datasetSummary,
-      }
-    }
-
-    if (this.state.scheduler.id) {
-      const scheduler = schedulers.find((d) => d.get('id') == this.state.scheduler.id)
-      summaries.scheduler = {
-        online: scheduler.get('online'),
-      }
-    }
-
-    return summaries
   }
 
   render() {
     const { classes, executions, schedulers, datasets, pipelines, parameters } = this.props
     const { activeStep } = this.state
     const steps = ['pipeline', 'dataset', 'scheduler', 'summary']
-    const summary = this.computeSummaries()
+    const dataset = this.state.dataset.id ? datasets.find((d) => d.get('id') == this.state.dataset.id) : null
+    const scheduler = this.state.scheduler.id ? schedulers.find((s) => s.get('id') == this.state.scheduler.id) : null
+    const dirty = dataset?.get('versions').has('0') || !dataset?.hasIn(['data', 'sets'])
     const completed = {
       pipeline: !!this.state.pipeline.id,
-      dataset: !!(this.state.dataset.id && !summary.dataset?.dirty),
+      dataset: !!(this.state.dataset.id && !dirty),
       scheduler: !!(this.state.scheduler.id && this.state.scheduler.backend),
     }
-
-    const pipeline = this.state.pipeline.id ? pipelines.find((s) => s.get('id') == this.state.pipeline.id) : null
-    const dataset = this.state.dataset.id ? datasets.find((d) => d.get('id') == this.state.dataset.id) : null
-    const view = dataset && this.state.dataset.view ? dataset.get('views').find((v) => v.get('id') == this.state.dataset.view) : null
-    const scheduler = this.state.scheduler.id ? schedulers.find((s) => s.get('id') == this.state.scheduler.id) : null
-    const backend = scheduler && this.state.scheduler.backend ? scheduler.get('backends').find((b) => b.get('id') == this.state.scheduler.backend) : null
 
     return (
       <>
@@ -416,7 +347,7 @@ class ExecutionNewPage extends Component {
                 </Grid>
 
                 {
-                (dataset && summary.dataset?.dirty) ? (
+                (dataset && dirty) ? (
                   <Grid item xs={12}>
                     <Alert
                       severity="warning"
@@ -498,121 +429,56 @@ class ExecutionNewPage extends Component {
                   </TextField>
                 </Grid>
               </Grid>
+              <Grid container>
+                <Grid item xs={12}>
+                  <TextField
+                    label="Number of cores per pipeline"
+                    fullWidth margin="normal" variant="outlined"
+                    disabled={this.state.scheduler.id === null || !scheduler.get('online')}
+                    value={this.state.scheduler.profile.corePerPipeline || ''}
+                    onChange={this.handleChange(['scheduler', 'profile', 'corePerPipeline'])}
+                  >
+                  </TextField>
+                </Grid>
+              </Grid>
+              <Grid container>
+                <Grid item xs={12}>
+                  <TextField
+                    label="Amount of memories per pipeline (MB)"
+                    fullWidth margin="normal" variant="outlined"
+                    disabled={this.state.scheduler.id === null || !scheduler.get('online')}
+                    value={this.state.scheduler.profile.memPerPipeline || ''}
+                    onChange={this.handleChange(['scheduler', 'profile', 'memPerPipeline'])}
+                  >
+                  </TextField>
+                </Grid>
+              </Grid>
+              <Grid container>
+                <Grid item xs={12}>
+                  <TextField
+                    label="Number of pipelines in parallel"
+                    fullWidth margin="normal" variant="outlined"
+                    disabled={this.state.scheduler.id === null || !scheduler.get('online')}
+                    value={this.state.scheduler.profile.parallelPipeline || ''}
+                    onChange={this.handleChange(['scheduler', 'profile', 'parallelPipeline'])}
+                  >
+                  </TextField>
+                </Grid>
+              </Grid>
             </StepContent>
           </Step>
           <Step key="summary" completed={completed.pipeline && completed.dataset && completed.scheduler}>
             <StepLabel>Summary</StepLabel>
             <StepContent>
-              <Grid container>
-                <Grid item xs={12} sm={4} className={classes.summaryCard}>
-                  <FormGroup>
-                    <FormLabel>
-                      <Avatar><PipelineIcon /></Avatar>
-                      <Typography>Pipeline</Typography>
-                    </FormLabel>
-                    {
-                      summary.pipeline && (
-                        <List>
-                          <ListItem disableGutters>
-                            <ListItemIcon>
-                              <PipelineStepIcon />
-                            </ListItemIcon>
-                            <ListItemText primary={`Anatomical`} />
-                          </ListItem>
-                          <ListItem disableGutters>
-                            <ListItemIcon>
-                              <PipelineStepIcon classes={{
-                                root: summary.pipeline.functional ? classes.featEnabled : classes.featDisabled
-                              }} />
-                            </ListItemIcon>
-                            <ListItemText classes={{
-                                root: summary.pipeline.functional ? classes.featEnabled : classes.featDisabled
-                              }}  primary={`Functional`} />
-                          </ListItem>
-                          <ListItem disableGutters>
-                            <ListItemIcon>
-                              <PipelineStepIcon classes={{
-                              root: summary.pipeline.derivatives ? classes.featEnabled : classes.featDisabled
-                            }}  />
-                            </ListItemIcon>
-                            <ListItemText classes={{
-                              root: summary.pipeline.derivatives ? classes.featEnabled : classes.featDisabled
-                            }}  primary={`${summary.pipeline.derivatives} derivative${summary.pipeline.derivatives != 1 ? 's' : ''}`} />
-                          </ListItem>
-                        </List>
-                      )
-                    }
-                  </FormGroup>
-                </Grid>
-                <Grid item xs={12} sm={4} className={classes.summaryCard}>
-                  <FormGroup>
-                    <FormLabel>
-                      <Avatar><DatasetIcon /></Avatar>
-                      <Typography>Dataset</Typography>
-                    </FormLabel>
-                    {
-                      summary.dataset && (
-                        <List>
-                          { summary.dataset.sites > 0 && 
-                          <ListItem disableGutters>
-                            <ListItemIcon>
-                              <DatasetSiteIcon />
-                            </ListItemIcon>
-                            <ListItemText primary={`${summary.dataset.sites} site${summary.dataset.sites != 1 ? 's' : ''}`} />
-                          </ListItem> }
-                          { summary.dataset.subjects > 0 && 
-                          <ListItem disableGutters>
-                            <ListItemIcon>
-                              <DatasetSubjectIcon />
-                            </ListItemIcon>
-                            <ListItemText primary={`${summary.dataset.subjects} subject${summary.dataset.subjects != 1 ? 's' : ''}` } />
-                          </ListItem> }
-                          { summary.dataset.sessions > 0 && 
-                          <ListItem disableGutters>
-                            <ListItemIcon>
-                              <DatasetSessionIcon />
-                            </ListItemIcon>
-                            <ListItemText primary={`${summary.dataset.sessions} session${summary.dataset.sessions != 1 ? 's' : ''}`} />
-                          </ListItem> }
-                        </List>
-                      )
-                    }
-                  </FormGroup>
-                </Grid>
-                <Grid item xs={12} sm={4} className={classes.summaryCard}>
-                  <FormGroup>
-                    <FormLabel>
-                      <Avatar><SchedulerIcon /></Avatar>
-                      <Typography>Scheduler</Typography>
-                    </FormLabel>
-                    {
-                      summary.scheduler && (
-                        <List>
-                          <ListItem disableGutters>
-                            <ListItemIcon>
-                              <SchedulerIcon />
-                            </ListItemIcon>
-                            <ListItemText primary={scheduler.get('name')} />
-                          </ListItem>
-                          <ListItem disableGutters>
-                            <ListItemIcon>
-                              {backend && <ExecutionCurrentBackendIcon fontSize="small" backend={backend.get('backend')} />}
-                            </ListItemIcon>
-                            <ListItemText primary={backend && backend.get('id')} />
-                          </ListItem>
-                        </List>
-                      )
-                    }
-                  </FormGroup>
-                </Grid>
-                <Grid item xs={12}>
-                  <TextField
-                    label="Note / Description"
-                    fullWidth margin="normal" variant="outlined"
-                    value={this.state.note || ''}
-                    onChange={this.handleChange(['note'])} />
-                </Grid>
-              </Grid>
+              <SummaryCard
+                pipelineId = {this.state.pipeline.id}
+                datasetId = {this.state.dataset.id}
+                schedulerId = {this.state.scheduler.id}
+                executionId = {this.state.execution}
+                schedulerDetails = {this.state.scheduler}
+                datasetViewId = {this.state.dataset.view}
+                normalPage = {false}
+              />
             </StepContent>
           </Step>
         </Stepper>
