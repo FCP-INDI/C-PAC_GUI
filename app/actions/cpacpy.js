@@ -168,7 +168,7 @@ export function scheduleDataSettings(scheduler, dataSettings, { success, error }
   )
 }
 
-export function schedulePipeline(scheduler, dataConfig, pipeline, { success, error }, profile= {}){
+export function schedulePipeline(scheduler, dataConfig, pipeline, profile, { success, error }){
   return schedule(
     scheduler,
     {
