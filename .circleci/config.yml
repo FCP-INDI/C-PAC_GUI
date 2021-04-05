@@ -39,7 +39,7 @@ jobs:
 
   build-linux:
     docker:
-      - image: circleci/node:11.12.0
+      - image: cimg/node:current
     environment:
       BASH_ENV: ".circleci/bashrc"
     steps:
@@ -59,7 +59,7 @@ jobs:
 
   build-web:
     docker:
-      - image: circleci/node:11.12.0
+      - image: cimg/node:current
     environment:
       BASH_ENV: ".circleci/bashrc"
     steps:
@@ -84,7 +84,7 @@ jobs:
 
   deploy-releases:
     docker:
-      - image: circleci/node:11.12.0
+      - image: cimg/node:current
     environment:
       BASH_ENV: ".circleci/bashrc"
     steps:
@@ -141,7 +141,7 @@ jobs:
 
   deploy-web:
     docker:
-      - image: circleci/node:11.12.0
+      - image: cimg/node:current
     environment:
       BASH_ENV: ".circleci/bashrc"
     steps:
