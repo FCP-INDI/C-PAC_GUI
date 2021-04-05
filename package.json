@@ -147,7 +147,7 @@
     "@material-ui/lab": "^4.0.0-alpha.21",
     "clsx": "^1.0.4",
     "connected-react-router": "^6.5.2",
-    "devtron": "^1.4.0",
+    "devtron": "shnizzedy/devtron#security_updates",
     "electron-args": "^0.1.0",
     "electron-debug": "^2.0.0",
     "electron-simple-publisher": "^0.6.1",
