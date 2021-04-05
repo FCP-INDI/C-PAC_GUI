@@ -27,15 +27,15 @@ import IconButton from '@material-ui/core/IconButton';
 import Slide from '@material-ui/core/Slide';
 import Switch from '@material-ui/core/Switch';
 
-import Help from 'components/Help'
-import ItWentWrong from 'containers/ItWentWrong'
+import Help from 'components/Help';
+import ItWentWrong from 'containers/ItWentWrong';
 // import TheodoreList from 'containers/TheodoreList'
 
-import theme from '../theme'
+import theme from '../theme';
 import '../app.global.css';
 
-import { MuiThemeProvider } from '@material-ui/core/styles'
-import MathJax from 'react-mathjax'
+import { MuiThemeProvider } from '@material-ui/core/styles';
+import MathJax from 'react-mathjax';
 
 import {
   HomeIcon,
@@ -51,7 +51,7 @@ import {
   FeedbackIcon,
 } from 'components/icons';
 
-import Logo from 'resources/logo.png'
+import Logo from 'resources/logo.png';
 
 
 let ErrorBoundary = ({ children }) => children

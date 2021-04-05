@@ -15,7 +15,7 @@ const smp = new SpeedMeasurePlugin();
 
 const target = process.env.TARGET == 'browser' ? 'web' : 'electron-renderer'
 
-const config = merge.smart(baseConfig, {
+const config = merge(baseConfig, {
   target,
 
   entry: path.join(__dirname, '../app/index.js'),
@@ -107,5 +107,5 @@ const config = merge.smart(baseConfig, {
   ],
 });
 
-export default smp.wrap(config);
-// export default config;
+// export default smp.wrap(config);  # https://github.com/stephencookdev/speed-measure-webpack-plugin/issues/167
+export default config;
