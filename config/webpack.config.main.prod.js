@@ -6,7 +6,7 @@ import baseConfig from './webpack.config.base'
 
 const dist = path.resolve(process.cwd(), 'app', 'dist')
 
-const config = merge.smart(baseConfig, {
+const config = merge(baseConfig, {
   // devtool: 'cheap-module-eval-source-map',
 
   target: 'electron-main',
@@ -24,7 +24,7 @@ const config = merge.smart(baseConfig, {
 
   // optimization: {
   //   minimize: false,
-  //   noEmitOnErrors: true,
+  //   emitOnErrors: false,
   //   removeAvailableModules: false,
   //   removeEmptyChunks: false,
   //   splitChunks: false,

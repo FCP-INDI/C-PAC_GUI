@@ -6,7 +6,7 @@ import { dependencies } from '../package.json';
 
 const dist = path.resolve(process.cwd(), 'app', 'dist', 'dll');
 
-export default merge.smart(baseConfig, {
+export default merge(baseConfig, {
   context: process.cwd(),
 
   devtool: 'eval',
@@ -61,9 +61,14 @@ export default merge.smart(baseConfig, {
       {
         test: /\.jsx?$/,
         exclude: /node_modules/,
-        use: {
-          loader: 'babel-loader'
-        }
+        use: [
+          {
+            loader: 'babel-loader'
+          },
+          {
+            loader: 'eslint-loader'
+          }
+        ]
       },
       {
         test: /\.css$/,

@@ -34,18 +34,18 @@ export const configureStore = (initialState) => {
 
   let sagaTask = sagaMiddleware.run(rootSaga)
 
-  if (module.hot) {
-    module.hot.accept('../reducers', () =>
-      store.replaceReducer(require('../reducers')))
+  // if (module.hot) {
+  //   module.hot.accept('../reducers', () =>
+  //     store.replaceReducer(require('../reducers')))
 
-    module.hot.accept('../sagas', () => {
-      const getNewSagas = require('../sagas');
-      sagaTask.cancel()
-      sagaTask.done.then(() => {
-        sagaTask = sagaMiddleware.run(getNewSagas.default)
-      })
-    })
-  }
+  //   module.hot.accept('../sagas', () => {
+  //     const getNewSagas = require('../sagas');
+  //     sagaTask.cancel()
+  //     sagaTask.done.then(() => {
+  //       sagaTask = sagaMiddleware.run(getNewSagas.default)
+  //     })
+  //   })
+  // }
 
   return store
 }

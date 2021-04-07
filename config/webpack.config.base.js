@@ -12,17 +12,19 @@ export default {
       {
         test: /\.(js|jsx)$/,
         exclude: /node_modules/,
-        use: {
-          loader: 'babel-loader',
-          options: {
-            babelrc: true,
-            babelrcRoots: [
-              '..',
-              './app'
-            ],
-            cacheDirectory: true,
+        use: [
+          {
+            loader: 'babel-loader',
+            options: {
+              babelrc: true,
+              babelrcRoots: [
+                '..',
+                './app'
+              ],
+              cacheDirectory: true,
+            }
           }
-        }
+        ]
       },
       {
         test: /\.(yml|yaml)$/,
@@ -43,10 +45,7 @@ export default {
       path.join(__dirname, '..', 'c-pac'),
       path.join(__dirname, '..', 'app'),
       'node_modules',
-    ],
-    alias: {
-      'react-dom': '@hot-loader/react-dom'
-    }
+    ]
   },
 
   plugins: [
@@ -58,7 +57,5 @@ export default {
     new webpack.NormalModuleReplacementPlugin(/.*\.platform$/, function(resource) {
       resource.request = resource.request.replace(/platform$/, target);
     }),
-
-    new webpack.NamedModulesPlugin(),
   ],
 };
