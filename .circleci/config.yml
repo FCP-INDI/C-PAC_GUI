@@ -120,7 +120,7 @@ jobs:
             cd -
 
             git tag "${TAG}"
-            git push --tags
+            git push origin "${TAG}" -f
 
             if [ "${CIRCLE_BRANCH}" == "master" ]; then
               github-release release -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} --tag "${VERSION}" --name "${VERSION}" ${RELEASE_OPTS}
