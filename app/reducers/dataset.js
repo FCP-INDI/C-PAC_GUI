@@ -52,11 +52,16 @@ export default function (state = initialState, action) {
       const { dataset: { id }, config } = action
       const i = state.get('datasets').findIndex((d) => d.get('id') === id)
 
-      return state
+      state = state
         .setIn(['datasets', i, 'data'], fromJS(config))
         .setIn(['datasets', i, 'loading'], false)
-        .setIn(['datasets', i, 'views'], fromJS([{ id: 'default', name: 'All', query: 'true', }]))
         .removeIn(['datasets', i, 'error'])
+
+      if (!state.hasIn(['datasets', i, 'views'])) {
+        state = state.setIn(['datasets', i, 'views'], fromJS([{ id: 'default', name: 'All', query: 'true', }]))
+      }
+
+      return state
     }
 
     case DATASET_GENERATE_DATA_CONFIG_ERROR: {
