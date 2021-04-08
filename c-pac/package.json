@@ -6,7 +6,8 @@
   "dependencies": {
     "deepmerge": "^3.2.0",
     "js-yaml": "^3.13.1",
-    "semver": "^6.0.0"
+    "semver": "^6.0.0",
+    "webpack": "^5.30.0"
   },
   "devDependencies": {
     "@babel/core": "^7.1.2",

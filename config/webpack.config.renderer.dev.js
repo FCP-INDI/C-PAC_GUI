@@ -7,6 +7,7 @@ import { spawn, execSync } from 'child_process';
 import HtmlWebpackPlugin from 'html-webpack-plugin'
 
 import baseConfig from './webpack.config.base';
+import MiniCssExtractPlugin from 'mini-css-extract-plugin';
 
 const port = process.env.PORT || 1212;
 const publicPath = `http://localhost:${port}`;
@@ -21,18 +22,16 @@ if (!(fs.existsSync(dll) && fs.existsSync(manifest))) {
   execSync('yarn run build-dll');
 }
 
-const SpeedMeasurePlugin = require("speed-measure-webpack-plugin");
-const smp = new SpeedMeasurePlugin();
+// const SpeedMeasurePlugin = require("speed-measure-webpack-plugin");
+// const smp = new SpeedMeasurePlugin();
 
-const config = merge.smart(baseConfig, {
-  devtool: 'cheap-module-eval-source-map',
+const config = merge(baseConfig, {
+  devtool: 'eval-cheap-module-source-map',
 
   target,
 
   entry: [
-    'react-hot-loader/patch',
     `webpack-dev-server/client?${publicPath}`,
-    'webpack/hot/only-dev-server',
     path.join(__dirname, '../app/index.js'),
   ],
 
@@ -45,10 +44,9 @@ const config = merge.smart(baseConfig, {
 
   optimization: {
     minimize: false,
-    noEmitOnErrors: true,
+    emitOnErrors: false,
     removeAvailableModules: false,
     removeEmptyChunks: false,
-    splitChunks: false,
   },
 
   module: {
@@ -56,7 +54,7 @@ const config = merge.smart(baseConfig, {
       {
         test: /\.css$/,
         use: [
-          'style-loader',
+          MiniCssExtractPlugin.loader,
           {
             loader: 'css-loader',
             options: {
@@ -139,10 +137,14 @@ const config = merge.smart(baseConfig, {
       cache: true,
       minify: false,
     }),
+
+    new MiniCssExtractPlugin({
+      filename: '[name].[hash].css',
+      chunkFilename: '[id].[hash].css',
+    }),
   ],
 
   node: {
-    fs: 'empty',
     __dirname: false,
     __filename: false
   },

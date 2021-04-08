@@ -33,7 +33,7 @@ header#root-header a {
   opacity: 1.0;
 }
 
-header#root-header img {
+header#root-header img, header#root-header a img {
   max-height: 50px;
   box-shadow: #232c39;
 }

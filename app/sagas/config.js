@@ -13,6 +13,7 @@ import {
 } from '../actions/main'
 
 import {
+  PIPELINE_DELETE,
   PIPELINE_NAME_UPDATE,
   PIPELINE_DUPLICATE,
   PIPELINE_VERSION_DIRTY_UPDATE,
@@ -226,6 +227,7 @@ export default function* configSaga () {
     takeEvery(PIPELINE_VERSION_DIRTY_UPDATE, saveConfig),
     takeEvery(PIPELINE_VERSION_DIRTY_SAVE, saveConfig),
     takeEvery(PIPELINE_DUPLICATE, saveConfig),
+    takeEvery(PIPELINE_DELETE, saveConfig),
 
     takeEvery(CONFIG_CLEAR, clearConfig),
   ])

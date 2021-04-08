@@ -22,8 +22,8 @@ jobs:
             curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.34.0/install.sh | bash -s -- --no-use
             echo 'export NVM_DIR=$HOME/.nvm' >> $BASH_ENV
             echo 'source $NVM_DIR/nvm.sh' >> $BASH_ENV
-            echo 'nvm install v11.12.0' >> $BASH_ENV
-            echo 'nvm alias default v11.12.0' >> $BASH_ENV
+            echo 'nvm install v15.13.0' >> $BASH_ENV
+            echo 'nvm alias default v15.13.0' >> $BASH_ENV
       - run:
           command: yarn && yarn run link
       - run:
@@ -39,7 +39,7 @@ jobs:
 
   build-linux:
     docker:
-      - image: circleci/node:11.12.0
+      - image: cimg/node:current
     environment:
       BASH_ENV: ".circleci/bashrc"
     steps:
@@ -59,7 +59,7 @@ jobs:
 
   build-web:
     docker:
-      - image: circleci/node:11.12.0
+      - image: cimg/node:current
     environment:
       BASH_ENV: ".circleci/bashrc"
     steps:
@@ -84,7 +84,7 @@ jobs:
 
   deploy-releases:
     docker:
-      - image: circleci/node:11.12.0
+      - image: cimg/node:current
     environment:
       BASH_ENV: ".circleci/bashrc"
     steps:
@@ -99,6 +99,7 @@ jobs:
             sudo mv /home/circleci/bin/linux/amd64/github-release /usr/local/bin
             rm -Rf /home/circleci/bin/linux
             chmod a+x /usr/local/bin/github-release
+      - add_ssh_keys
       - run:
           name: Deploy releases
           command: |
@@ -112,36 +113,36 @@ jobs:
 
             git tag --delete "${TAG}" || true
             git push --delete origin "${TAG}" || true
-            github-release delete -u FCP-INDI -r C-PAC_GUI --tag "${TAG}" || true
+            github-release delete -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} --tag "${TAG}" || true
 
             cd /tmp/workspace/dist-web-browser
             zip -r /tmp/c-pac_gui-${VERSION_TAG}-browser.zip .
             cd -
 
             git tag "${TAG}"
-            git push --tags
+            git push origin "${TAG}" -f
 
             if [ "${CIRCLE_BRANCH}" == "master" ]; then
-              github-release release -u FCP-INDI -r C-PAC_GUI --tag "${VERSION}" --name "${VERSION}" ${RELEASE_OPTS}
-              github-release upload -u FCP-INDI -r C-PAC_GUI --tag "${VERSION}" --name "c-pac_gui-${VERSION}-linux-amd64.deb" --file /tmp/workspace/dist-linux/c-pac_gui_*_amd64.deb
-              github-release upload -u FCP-INDI -r C-PAC_GUI --tag "${VERSION}" --name "c-pac_gui-${VERSION}-linux-amd64.snap" --file /tmp/workspace/dist-linux/c-pac_gui_*_amd64.snap
-              github-release upload -u FCP-INDI -r C-PAC_GUI --tag "${VERSION}" --name "c-pac_gui-${VERSION}-linux-amd64.tar.gz" --file /tmp/workspace/dist-linux/c-pac_gui-*.tar.gz
-              github-release upload -u FCP-INDI -r C-PAC_GUI --tag "${VERSION}" --name "c-pac_gui-${VERSION}-osx-amd64.dmg" --file /tmp/workspace/dist-macos/C-PAC-*.dmg
-              github-release upload -u FCP-INDI -r C-PAC_GUI --tag "${VERSION}" --name "c-pac_gui-${VERSION}-osx-amd64.zip" --file /tmp/workspace/dist-macos/C-PAC-*-mac.zip
-              github-release upload -u FCP-INDI -r C-PAC_GUI --tag "${VERSION}" --name "c-pac_gui-${VERSION}-browser.zip" --file /tmp/c-pac_gui-*-browser.zip
+              github-release release -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} --tag "${VERSION}" --name "${VERSION}" ${RELEASE_OPTS}
+              github-release upload -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} --tag "${VERSION}" --name "c-pac_gui-${VERSION}-linux-amd64.deb" --file /tmp/workspace/dist-linux/c-pac_gui_*_amd64.deb
+              github-release upload -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} --tag "${VERSION}" --name "c-pac_gui-${VERSION}-linux-amd64.snap" --file /tmp/workspace/dist-linux/c-pac_gui_*_amd64.snap
+              github-release upload -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} --tag "${VERSION}" --name "c-pac_gui-${VERSION}-linux-amd64.tar.gz" --file /tmp/workspace/dist-linux/c-pac_gui-*.tar.gz
+              github-release upload -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} --tag "${VERSION}" --name "c-pac_gui-${VERSION}-osx-amd64.dmg" --file /tmp/workspace/dist-macos/C-PAC-*.dmg
+              github-release upload -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} --tag "${VERSION}" --name "c-pac_gui-${VERSION}-osx-amd64.zip" --file /tmp/workspace/dist-macos/C-PAC-*-mac.zip
+              github-release upload -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} --tag "${VERSION}" --name "c-pac_gui-${VERSION}-browser.zip" --file /tmp/c-pac_gui-*-browser.zip
             fi
             
-            github-release release -u FCP-INDI -r C-PAC_GUI --tag "${TAG}" --name "${TAG}" ${RELEASE_OPTS}
-            github-release upload -u FCP-INDI -r C-PAC_GUI --tag "${TAG}" --name "c-pac_gui-${TAG}-linux-amd64.deb" --file /tmp/workspace/dist-linux/c-pac_gui_*_amd64.deb
-            github-release upload -u FCP-INDI -r C-PAC_GUI --tag "${TAG}" --name "c-pac_gui-${TAG}-linux-amd64.snap" --file /tmp/workspace/dist-linux/c-pac_gui_*_amd64.snap
-            github-release upload -u FCP-INDI -r C-PAC_GUI --tag "${TAG}" --name "c-pac_gui-${TAG}-linux-amd64.tar.gz" --file /tmp/workspace/dist-linux/c-pac_gui-*.tar.gz
-            github-release upload -u FCP-INDI -r C-PAC_GUI --tag "${TAG}" --name "c-pac_gui-${TAG}-osx-amd64.dmg" --file /tmp/workspace/dist-macos/C-PAC-*.dmg
-            github-release upload -u FCP-INDI -r C-PAC_GUI --tag "${TAG}" --name "c-pac_gui-${TAG}-osx-amd64.zip" --file /tmp/workspace/dist-macos/C-PAC-*-mac.zip
-            github-release upload -u FCP-INDI -r C-PAC_GUI --tag "${TAG}" --name "c-pac_gui-${TAG}-browser.zip" --file /tmp/c-pac_gui-*-browser.zip
+            github-release release -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} --tag "${TAG}" --name "${TAG}" ${RELEASE_OPTS}
+            github-release upload -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} --tag "${TAG}" --name "c-pac_gui-${TAG}-linux-amd64.deb" --file /tmp/workspace/dist-linux/c-pac_gui_*_amd64.deb
+            github-release upload -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} --tag "${TAG}" --name "c-pac_gui-${TAG}-linux-amd64.snap" --file /tmp/workspace/dist-linux/c-pac_gui_*_amd64.snap
+            github-release upload -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} --tag "${TAG}" --name "c-pac_gui-${TAG}-linux-amd64.tar.gz" --file /tmp/workspace/dist-linux/c-pac_gui-*.tar.gz
+            github-release upload -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} --tag "${TAG}" --name "c-pac_gui-${TAG}-osx-amd64.dmg" --file /tmp/workspace/dist-macos/C-PAC-*.dmg
+            github-release upload -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} --tag "${TAG}" --name "c-pac_gui-${TAG}-osx-amd64.zip" --file /tmp/workspace/dist-macos/C-PAC-*-mac.zip
+            github-release upload -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} --tag "${TAG}" --name "c-pac_gui-${TAG}-browser.zip" --file /tmp/c-pac_gui-*-browser.zip
 
   deploy-web:
     docker:
-      - image: circleci/node:11.12.0
+      - image: cimg/node:current
     environment:
       BASH_ENV: ".circleci/bashrc"
     steps:
@@ -153,13 +154,14 @@ jobs:
           command: |
             git config --global user.email "ci-build@fcp-indi.github.com"
             git config --global user.name "ci-build"
+      - add_ssh_keys
       - run:
           name: Deploy web-version
           command: |
             VERSION=v`jq -r '.version' package.json`
             TAG=$([ "${CIRCLE_BRANCH}" == "master" ] && echo "latest" || echo "nightly")
             
-            git clone --single-branch --branch gh-pages git@github.com:FCP-INDI/C-PAC_GUI.git /tmp/repo
+            git clone --single-branch --branch gh-pages git@github.com:${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}.git /tmp/repo
             cd /tmp/repo
 
             if [ "${CIRCLE_BRANCH}" == "master" ]; then
