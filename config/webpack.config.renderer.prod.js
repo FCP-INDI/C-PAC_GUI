@@ -10,8 +10,8 @@ import baseConfig from './webpack.config.base';
 
 const dist = path.resolve(process.cwd(), 'app', 'dist');
 
-const SpeedMeasurePlugin = require("speed-measure-webpack-plugin");
-const smp = new SpeedMeasurePlugin();
+// const SpeedMeasurePlugin = require("speed-measure-webpack-plugin");
+// const smp = new SpeedMeasurePlugin();
 
 const target = process.env.TARGET == 'browser' ? 'web' : 'electron-renderer'
 

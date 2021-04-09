@@ -82,7 +82,9 @@ class PipelineCard extends Component {
 
     const version = versions.get(versionId)
 
-    const functional = version.getIn(['configuration', 'functional', 'enabled'])
+    const anatomical = version.getIn(['configuration', 'anatomical', 'enabled']) || false
+
+    const functional = version.getIn(['configuration', 'functional', 'enabled']) || false
 
     let derivatives = version.getIn(['configuration', 'derivatives', 'enabled'])
     if (derivatives) {
@@ -117,9 +119,13 @@ class PipelineCard extends Component {
           <List>
             <ListItem>
               <ListItemIcon>
-                <PipelineStepIcon />
+                <PipelineStepIcon classes={{
+                  root: anatomical ? classes.featEnabled : classes.featDisabled
+                }} />
               </ListItemIcon>
-              <ListItemText primary={`Anatomical`} />
+              <ListItemText classes={{
+                  root: anatomical ? classes.featEnabled : classes.featDisabled
+                }}  primary={`Anatomical`} />
             </ListItem>
             <ListItem>
               <ListItemIcon>
