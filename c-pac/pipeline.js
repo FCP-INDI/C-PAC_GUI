@@ -186,7 +186,6 @@ function clone(obj) {
 }
 
 export function normalize(pipeline) {
-  pipeline = pipeline ? pipeline : {};
 
   if (pipeline.id == 'default') {
     return clone(template)

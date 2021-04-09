@@ -196,7 +196,7 @@ function* loadConfig (action) {
 
   if (initialState.pipelines) {
     initialState.pipelines = initialState.pipelines.map(cpac.pipeline.normalize)
-    initialState.pipelines.push({'id': 'manual', 'name': '1.8 manual', 'versions': {1: {'version': '1.8.0', 'configuration': cpac.pipeline.newTemplate}}});  // temporary
+    initialState.pipelines.push({'id': 'manual', 'name': '1.8 manual', 'versions': {1: {'version': '1.8.0', 'configuration': {...Object.values(initialState.pipelines[0].versions)[0].configuration, ...cpac.pipeline.newTemplate}}}});  // temporary
     localStorage.setItem('state', JSON.stringify(initialState))
   }
 

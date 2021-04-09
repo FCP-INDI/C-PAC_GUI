@@ -37,7 +37,6 @@ import Switch from '@material-ui/core/Switch';
 
 import Collapse from '@material-ui/core/Collapse';
 
-
 class PipelineEditor extends Component {
 
   static styles = theme => ({
@@ -91,6 +90,11 @@ class PipelineEditor extends Component {
           textColor="primary"
           centered
         >
+          {
+            configuration.map((entry, k) => (
+              <Tab label={k} />
+            ))
+          }
           <Tab label="General" />
           <Tab label="Anatomical" />
           { configuration.getIn(["anatomical", "enabled"]) ?
