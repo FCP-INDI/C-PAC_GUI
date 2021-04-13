@@ -91,41 +91,27 @@ class PipelineEditor extends Component {
           centered
         >
           {
-            configuration.map((entry, k) => (
-              <Tab label={k} />
+            configuration.keySeq().toJS().map((k) => (
+              <Tab label={k.replace('_', ' ')} value={k} />
             ))
           }
-          <Tab label="General" />
-          <Tab label="Anatomical" />
-          { configuration.getIn(["anatomical", "enabled"]) ?
-          <Tab label={(
-            <React.Fragment>
-              <Switch
-                name="functional.enabled"
-                checked={configuration.getIn(["functional", "enabled"])}
-                onClick={disable}
-                onChange={this.handleStateChange}
-                color="primary"
-              />
-              Functional
-            </React.Fragment>
-          )} classes={{
-            wrapper: classes.tabWrap
-          }} />
-          : null }
-          { configuration.getIn(["longitudinal", "enabled"]) ?
-          <Tab label="Longitudinal" />
-          : null }
-          { configuration.getIn(["derivatives", "enabled"]) ?
-          <Tab label="Derivatives" />
-          : null }
         </Tabs>
 
-        <Collapse in={tab === 0}><GeneralPage configuration={configuration} onChange={onChange} /></Collapse>
-        <Collapse in={tab === 1}><AnatomicalPage configuration={configuration} onChange={onChange} /></Collapse>
-        <Collapse in={tab === 2}><FunctionalPage configuration={configuration} onChange={onChange} /></Collapse>
-        <Collapse in={tab === 3}><LongitudinalPage configuration={configuration} onChange={onChange} /></Collapse>
-        <Collapse in={tab === 4}><DerivativesPage configuration={configuration} onChange={onChange} /></Collapse>
+        {
+          configuration.entrySeq().map((entry) => {
+          switch(entry[0]){
+            case 'general':
+              return (
+                <Collapse in={tab === entry[0]}><GeneralPage configuration={configuration} onChange={onChange} /></Collapse>  // TODO SSOT
+              )
+              break;
+            default:
+              return (
+                <Collapse in={tab === entry[0]}><div>No form yet for {entry[0].replace('_', ' ')}</div></Collapse>
+              )
+          }
+        })
+        }
       </React.Fragment>
     );
   }
