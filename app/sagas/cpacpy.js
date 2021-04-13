@@ -63,7 +63,7 @@ const selectSaga = (callback) => select((state) => callback(state.cpacpy))
 function* init() {
   const schedulers = yield selectSaga(selectSchedulers())
   for(let scheduler of schedulers) {
-    yield put(cpacpyDetect(scheduler.get('id'), true, true))
+    yield put(cpacpyDetect(scheduler.get('id'), scheduler.get('authKey'), true, true))
   }
 }
 
@@ -72,7 +72,7 @@ function* loadSuccess() {
 }
 
 // TODO
-function* detect({ scheduler: id, poll=true, current=false }) {
+function* detect({ scheduler: id, authKey=null, poll=true, current=false }) {
   const scheduler = yield selectSaga(selectScheduler(id))
   if (scheduler.get('online')) {
     yield put(cpacpySchedulerOnline(id))
@@ -83,10 +83,16 @@ function* detect({ scheduler: id, poll=true, current=false }) {
     const { response, error } = yield call(
       fetch,
       `http://${scheduler.get('address')}`,
-      { method: 'GET' }
+      {
+        method: 'POST',
+        body: JSON.stringify({'authKey': authKey})}
     )
 
     if (response.api === 'cpacpy') {
+      if (response.authKeyError) {
+        throw Error("Wrong auth key for a valid cpacpy connection. ")
+      }
+
       yield put(cpacpySchedulerInfo(id, {
         version: response.version,
         backends: response.backends,
@@ -112,7 +118,8 @@ function *offline({ scheduler }) {
 // @TODO make sure pooling is happening just once for each scheduler
 function* pollingBackground(scheduler) {
   yield delay(10000)
-  yield put(cpacpyDetect(scheduler))
+  const schedulerDetail = yield selectSaga(selectScheduler(scheduler))
+  yield put(cpacpyDetect(scheduler, schedulerDetail.get('authKey')))
 }
 
 function* polling({ scheduler, current }) {
@@ -246,15 +253,20 @@ function* addNew() {
   yield put({type: CPACPY_CONFIG_SAVE})
 }
 
-function* test({ ip, port }) {
+function* test({ ip, port, authKey }) {
   try {
     const { response, error } = yield call(
       fetch,
       `http://` + ip + `:` + port,
-      { method: 'GET' }
+      { method: 'POST', body: JSON.stringify({'authKey': authKey})}
     )
     if (response.api === 'cpacpy') {
-      yield put({ type: CPACPY_SCHEDULER_TEST_TEMP_CONNECTION_SUCCESS })
+      if (response.authKeyError) {
+        yield put(cpacpyTestFailed("Invalid AuthKey"))
+      }
+      else {
+        yield put({ type: CPACPY_SCHEDULER_TEST_TEMP_CONNECTION_SUCCESS })
+      }
     }
     else {
       yield put(cpacpyTestFailed("The address and port are occupied by other services. "))

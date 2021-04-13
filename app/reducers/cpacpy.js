@@ -26,7 +26,7 @@ import { generateId } from './utils'
 
 const initialState = fromJS({
   schedulers: [
-    { id: 'local', name: 'Local', version: 'unknown', backends: [], address: scheduler.local, polling: false, detecting: false, online: null, connected: false, connect: { callbacks: {} } },
+    // { id: 'local', name: 'Local', version: 'unknown', backends: [], address: scheduler.local, polling: false, detecting: false, online: null, connected: false, connect: { callbacks: {} } },
   ],
   // id for the latest used scheduler
   latestScheduler: 'local',
@@ -122,6 +122,7 @@ export default function (state = initialState, action) {
       const IP = action.payload.newIP
       const port = action.payload.newPort
       const newId = generateId(name, state.get('schedulers'))
+      const authKey = action.payload.newAuthKey
 
       const newObj = fromJS({ id: newId,
           name: name,
@@ -132,7 +133,8 @@ export default function (state = initialState, action) {
           detecting: false,
           online: null,
           connected: false,
-          connect: { callbacks: {} } })
+          connect: { callbacks: {} },
+          authKey: authKey})
       return state.update('schedulers', scheduler => scheduler.push(newObj)).setIn(['latestScheduler'], newId)
 
     case CPACPY_SCHEDULER_TEST_TEMP_CONNECTION:
