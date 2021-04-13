@@ -47,10 +47,10 @@ export function selectCurrentScheduler(scheduler) {
   }
 }
 
-export function detect(scheduler, poll=true, current=false) {
+export function detect(scheduler, authKey='', poll=true, current=false) {
   return {
     type: CPACPY_SCHEDULER_DETECT,
-    scheduler, poll, current,
+    scheduler, authKey, poll, current,
   }
 }
 
@@ -231,17 +231,17 @@ export function offline(scheduler) {
   }
 }
 
-export function addNew(name, ip, port) {
+export function addNew(name, ip, port, authKey) {
   return {
     type: CPACPY_SCHEDULER_ADDNEW,
-    payload: {newName: name, newIP: ip, newPort: port},
+    payload: {newName: name, newIP: ip, newPort: port, newAuthKey: authKey},
   }
 }
 
-export function test(name, ip, port) {
+export function test(name, ip, port, authKey) {
   return {
     type: CPACPY_SCHEDULER_TEST_TEMP_CONNECTION,
-    name, ip, port
+    name, ip, port, authKey
   }
 }
 
