@@ -29,6 +29,7 @@ import {
   FunctionalPage,
   LongitudinalPage,
   DerivativesPage,
+  PipelinePart
 } from 'containers/pipeline/parts'
 
 import Button from '@material-ui/core/Button';
@@ -105,9 +106,28 @@ class PipelineEditor extends Component {
                 <Collapse in={tab === entry[0]}><GeneralPage configuration={configuration} onChange={onChange} /></Collapse>  // TODO SSOT
               )
               break;
+            case 'anatomical':
+              return (
+                <Collapse in={tab === entry[0]}><AnatomicalPage configuration={configuration} onChange={onChange} /></Collapse>  // TODO SSOT
+              )
+            case 'functional':
+              return (
+                <Collapse in={tab === entry[0]}><FunctionalPage configuration={configuration} onChange={onChange} /></Collapse>  // TODO SSOT
+              )
+            case 'derivatives':
+              return (
+                <Collapse in={tab === entry[0]}><DerivativesPage configuration={configuration} onChange={onChange} /></Collapse>  // TODO SSOT
+              )
+            case 'longitudinal':
+              return (
+                <Collapse in={tab === entry[0]}><LongitudinalPage configuration={configuration} onChange={onChange} /></Collapse>  // TODO SSOT
+              )
             default:
               return (
-                <Collapse in={tab === entry[0]}><div>No form yet for {entry[0].replace('_', ' ')}</div></Collapse>
+                <Collapse in={tab === entry[0]}>
+                  <div>No form yet for {entry[0].replace('_', ' ')}</div>
+                  <PipelinePart configuration={entry[1]} onChange={onChange} />
+                </Collapse>
               )
           }
         })
