@@ -163,7 +163,6 @@ class CpacpySchedulerSelector extends Component {
   });
 
   static mapStateToProps = ({cpacpy: state}, props) => {
-    console.log("m5")
     if (!state || !state.get('schedulers') || state.get('schedulers').size < 1) {
       return {
         schedulers: fromJS([]),
