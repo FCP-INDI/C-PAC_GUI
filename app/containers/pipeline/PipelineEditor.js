@@ -51,7 +51,7 @@ class PipelineEditor extends Component {
   });
 
   state = {
-    tab: 0,
+    tab: 'general',
   };
 
   handleTabChange = (event, tab) => {
@@ -103,29 +103,28 @@ class PipelineEditor extends Component {
           switch(entry[0]){
             case 'general':
               return (
-                <Collapse in={tab === entry[0]}><GeneralPage configuration={configuration} onChange={onChange} /></Collapse>  // TODO SSOT
+                <Collapse key={entry[0]} in={tab === entry[0]}><GeneralPage configuration={configuration} onChange={onChange} /></Collapse>  // TODO SSOT
               )
               break;
             case 'anatomical':
               return (
-                <Collapse in={tab === entry[0]}><AnatomicalPage configuration={configuration} onChange={onChange} /></Collapse>  // TODO SSOT
+                <Collapse key={entry[0]} in={tab === entry[0]}><AnatomicalPage configuration={configuration} onChange={onChange} /></Collapse>  // TODO SSOT
               )
             case 'functional':
               return (
-                <Collapse in={tab === entry[0]}><FunctionalPage configuration={configuration} onChange={onChange} /></Collapse>  // TODO SSOT
+                <Collapse key={entry[0]} in={tab === entry[0]}><FunctionalPage configuration={configuration} onChange={onChange} /></Collapse>  // TODO SSOT
               )
             case 'derivatives':
               return (
-                <Collapse in={tab === entry[0]}><DerivativesPage configuration={configuration} onChange={onChange} /></Collapse>  // TODO SSOT
+                <Collapse key={entry[0]} in={tab === entry[0]}><DerivativesPage configuration={configuration} onChange={onChange} /></Collapse>  // TODO SSOT
               )
             case 'longitudinal':
               return (
-                <Collapse in={tab === entry[0]}><LongitudinalPage configuration={configuration} onChange={onChange} /></Collapse>  // TODO SSOT
+                <Collapse key={entry[0]} in={tab === entry[0]}><LongitudinalPage configuration={configuration} onChange={onChange} /></Collapse>  // TODO SSOT
               )
             default:
               return (
-                <Collapse in={tab === entry[0]}>
-                  <div>No form yet for {entry[0].replace('_', ' ')}</div>
+                <Collapse key={entry[0]} in={tab === entry[0]}>
                   <PipelinePart configuration={entry[1]} onChange={onChange} />
                 </Collapse>
               )
