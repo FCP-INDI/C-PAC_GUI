@@ -8,6 +8,7 @@ import Header, { HeaderText, HeaderAvatar, HeaderTools } from '../../components/
 import Grid from '@material-ui/core/Grid';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
+import TabScrollButton from '@material-ui/core/TabScrollButton';
 import Paper from '@material-ui/core/Paper';
 
 import {
@@ -40,6 +41,13 @@ import Collapse from '@material-ui/core/Collapse';
 
 class PipelineEditor extends Component {
 
+  constructor(props) {
+    super(props);
+    this.state = {
+      tab: [...props.configuration.keySeq()][0],  // first tab
+    };
+  }
+
   static styles = theme => ({
     content: {
       padding: 20,
@@ -50,9 +58,9 @@ class PipelineEditor extends Component {
     }
   });
 
-  state = {
-    tab: 'general',
-  };
+  // state = {
+  //   tab: 'general',
+  // };
 
   handleTabChange = (event, tab) => {
     this.setState({ tab });
@@ -89,7 +97,7 @@ class PipelineEditor extends Component {
           onChange={this.handleTabChange}
           indicatorColor="primary"
           textColor="primary"
-          centered
+          variant="scrollable"
         >
           {
             configuration.keySeq().toJS().map((k) => (
