@@ -24,14 +24,7 @@ import {
   SubjectIcon,
 } from 'components/icons';
 
-import {
-  GeneralPage,
-  AnatomicalPage,
-  FunctionalPage,
-  LongitudinalPage,
-  DerivativesPage,
-  PipelinePart
-} from 'containers/pipeline/parts'
+import { PipelinePart } from 'containers/pipeline/parts';
 
 import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton'
@@ -57,10 +50,6 @@ class PipelineEditor extends Component {
       flexDirection: 'row'
     }
   });
-
-  // state = {
-  //   tab: 'general',
-  // };
 
   handleTabChange = (event, tab) => {
     this.setState({ tab });
@@ -91,7 +80,7 @@ class PipelineEditor extends Component {
     }
 
     return (
-      <React.Fragment>
+      <>
         <Tabs
           value={tab}
           onChange={this.handleTabChange}
@@ -101,45 +90,19 @@ class PipelineEditor extends Component {
         >
           {
             configuration.keySeq().toJS().map((k) => (
-              <Tab label={k.replace('_', ' ')} value={k} />
+              <Tab label={k.replace('_', ' ')} value={k} key={`tabtab-${k}`} />
             ))
           }
         </Tabs>
 
         {
-          configuration.entrySeq().map((entry) => {
-          switch(entry[0]){
-            case 'general':
-              return (
-                <Collapse key={entry[0]} in={tab === entry[0]}><GeneralPage configuration={configuration} onChange={onChange} /></Collapse>  // TODO SSOT
-              )
-              break;
-            case 'anatomical':
-              return (
-                <Collapse key={entry[0]} in={tab === entry[0]}><AnatomicalPage configuration={configuration} onChange={onChange} /></Collapse>  // TODO SSOT
-              )
-            case 'functional':
-              return (
-                <Collapse key={entry[0]} in={tab === entry[0]}><FunctionalPage configuration={configuration} onChange={onChange} /></Collapse>  // TODO SSOT
-              )
-            case 'derivatives':
-              return (
-                <Collapse key={entry[0]} in={tab === entry[0]}><DerivativesPage configuration={configuration} onChange={onChange} /></Collapse>  // TODO SSOT
-              )
-            case 'longitudinal':
-              return (
-                <Collapse key={entry[0]} in={tab === entry[0]}><LongitudinalPage configuration={configuration} onChange={onChange} /></Collapse>  // TODO SSOT
-              )
-            default:
-              return (
-                <Collapse key={entry[0]} in={tab === entry[0]}>
-                  <PipelinePart configuration={entry[1]} onChange={onChange} parents={[entry[0]]} />
-                </Collapse>
-              )
+          configuration.entrySeq().map((entry) => (
+            <Collapse key={entry[0]} in={tab === entry[0]}>
+              <PipelinePart configuration={entry[1]} onChange={onChange} parents={[entry[0]]} />
+            </Collapse>
+          ))
           }
-        })
-        }
-      </React.Fragment>
+      </>
     );
   }
 }

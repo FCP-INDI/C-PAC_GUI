@@ -4,169 +4,170 @@ import deepmerge from 'deepmerge'
 
 import { default as defaultTemplate } from './resources/pipeline/config'
 import yamlTemplate, { raw } from './resources/pipeline/yaml'
+import { default as newTemplateRaw } from './resources/pipeline/default_pipeline.yml' 
 
 const template = parse(raw)
 template.name = 'Default'
 
-const newTemplateRaw = `%YAML 1.1
----
-# CPAC Pipeline Configuration YAML file
-# Version 1.8.0
-#
-# http://fcp-indi.github.io for more info.
-#
-# Tip: This file can be edited manually with a text editor for quick modifications.
+// const newTemplateRaw = `%YAML 1.1
+// ---
+// # CPAC Pipeline Configuration YAML file
+// # Version 1.8.0
+// #
+// # http://fcp-indi.github.io for more info.
+// #
+// # Tip: This file can be edited manually with a text editor for quick modifications.
 
-pipeline_setup:
+// pipeline_setup:
 
-  # Name for this pipeline configuration - useful for identification.
-  pipeline_name: cpac-default-pipeline
+//   # Name for this pipeline configuration - useful for identification.
+//   pipeline_name: cpac-default-pipeline
 
-  output_directory:
+//   output_directory:
 
-    # Directory where C-PAC should write out processed data, logs, and crash reports.
-    # - If running in a container (Singularity/Docker), you can simply set this to an arbitrary
-    #   name like '/output', and then map (-B/-v) your desired output directory to that label.
-    # - If running outside a container, this should be a full path to a directory.
-    path: /output
+//     # Directory where C-PAC should write out processed data, logs, and crash reports.
+//     # - If running in a container (Singularity/Docker), you can simply set this to an arbitrary
+//     #   name like '/output', and then map (-B/-v) your desired output directory to that label.
+//     # - If running outside a container, this should be a full path to a directory.
+//     path: /output
 
-    # (Optional) Path to a BIDS-Derivatives directory that already has outputs.
-    #   - This option is intended to ingress already-existing resources from an output
-    #     directory without writing new outputs back into the same directory.
-    #   - If provided, C-PAC will ingress the already-computed outputs from this directory and
-    #     continue the pipeline from where they leave off.
-    #   - If left as 'None', C-PAC will ingress any already-computed outputs from the
-    #     output directory you provide above in 'path' instead, the default behavior.
-    source_outputs_dir: None
+//     # (Optional) Path to a BIDS-Derivatives directory that already has outputs.
+//     #   - This option is intended to ingress already-existing resources from an output
+//     #     directory without writing new outputs back into the same directory.
+//     #   - If provided, C-PAC will ingress the already-computed outputs from this directory and
+//     #     continue the pipeline from where they leave off.
+//     #   - If left as 'None', C-PAC will ingress any already-computed outputs from the
+//     #     output directory you provide above in 'path' instead, the default behavior.
+//     source_outputs_dir: None
 
-    # Set to True to make C-PAC ingress the outputs from the primary output directory if they
-    # exist, even if a source_outputs_dir is provided
-    #   - Setting to False will pull from source_outputs_dir every time, over-writing any
-    #     calculated outputs in the main output directory
-    #   - C-PAC will still pull from source_outputs_dir if the main output directory is
-    #     empty, however
-    pull_source_once: True
+//     # Set to True to make C-PAC ingress the outputs from the primary output directory if they
+//     # exist, even if a source_outputs_dir is provided
+//     #   - Setting to False will pull from source_outputs_dir every time, over-writing any
+//     #     calculated outputs in the main output directory
+//     #   - C-PAC will still pull from source_outputs_dir if the main output directory is
+//     #     empty, however
+//     pull_source_once: True
 
-    # Include extra versions and intermediate steps of functional preprocessing in the output directory.
-    write_func_outputs: False
+//     # Include extra versions and intermediate steps of functional preprocessing in the output directory.
+//     write_func_outputs: False
 
-    # Include extra outputs in the output directory that may be of interest when more information is needed.
-    write_debugging_outputs: False
+//     # Include extra outputs in the output directory that may be of interest when more information is needed.
+//     write_debugging_outputs: False
 
-    # Output directory format and structure.
-    # Options: default, ndmg
-    output_tree: "default"
+//     # Output directory format and structure.
+//     # Options: default, ndmg
+//     output_tree: "default"
 
-    # Generate quality control pages containing preprocessing and derivative outputs.
-    generate_quality_control_images: True
+//     # Generate quality control pages containing preprocessing and derivative outputs.
+//     generate_quality_control_images: True
 
-  working_directory:
+//   working_directory:
 
-    # Directory where C-PAC should store temporary and intermediate files.
-    # - This directory must be saved if you wish to re-run your pipeline from where you left off (if not completed).
-    # - NOTE: As it stores all intermediate files, this directory can grow to become very
-    #   large, especially for data with a large amount of TRs.
-    # - If running in a container (Singularity/Docker), you can simply set this to an arbitrary
-    #   name like '/work', and then map (-B/-v) your desired output directory to that label.
-    # - If running outside a container, this should be a full path to a directory.
-    # - This can be written to '/tmp' if you do not intend to save your working directory.
-    path: /tmp
+//     # Directory where C-PAC should store temporary and intermediate files.
+//     # - This directory must be saved if you wish to re-run your pipeline from where you left off (if not completed).
+//     # - NOTE: As it stores all intermediate files, this directory can grow to become very
+//     #   large, especially for data with a large amount of TRs.
+//     # - If running in a container (Singularity/Docker), you can simply set this to an arbitrary
+//     #   name like '/work', and then map (-B/-v) your desired output directory to that label.
+//     # - If running outside a container, this should be a full path to a directory.
+//     # - This can be written to '/tmp' if you do not intend to save your working directory.
+//     path: /tmp
 
-    # Deletes the contents of the Working Directory after running.
-    # This saves disk space, but any additional preprocessing or analysis will have to be completely re-run.
-    remove_working_dir: True
+//     # Deletes the contents of the Working Directory after running.
+//     # This saves disk space, but any additional preprocessing or analysis will have to be completely re-run.
+//     remove_working_dir: True
 
-  log_directory:
+//   log_directory:
 
-    # Whether to write log details of the pipeline run to the logging files.
-    run_logging: True
+//     # Whether to write log details of the pipeline run to the logging files.
+//     run_logging: True
 
-    path: /logs
+//     path: /logs
 
-  crash_log_directory:
+//   crash_log_directory:
 
-    # Directory where CPAC should write crash logs.
-    path: /crash
+//     # Directory where CPAC should write crash logs.
+//     path: /crash
 
-  system_config:
+//   system_config:
 
-    # Select Off if you intend to run CPAC on a single machine.
-    # If set to On, CPAC will attempt to submit jobs through the job scheduler / resource manager selected below.
-    on_grid:
+//     # Select Off if you intend to run CPAC on a single machine.
+//     # If set to On, CPAC will attempt to submit jobs through the job scheduler / resource manager selected below.
+//     on_grid:
 
-      run: Off
+//       run: Off
 
-      # Sun Grid Engine (SGE), Portable Batch System (PBS), or Simple Linux Utility for Resource Management (SLURM).
-      # Only applies if you are running on a grid or compute cluster.
-      resource_manager: SGE
+//       # Sun Grid Engine (SGE), Portable Batch System (PBS), or Simple Linux Utility for Resource Management (SLURM).
+//       # Only applies if you are running on a grid or compute cluster.
+//       resource_manager: SGE
 
-      SGE:
-        # SGE Parallel Environment to use when running CPAC.
-        # Only applies when you are running on a grid or compute cluster using SGE.
-        parallel_environment:  mpi_smp
+//       SGE:
+//         # SGE Parallel Environment to use when running CPAC.
+//         # Only applies when you are running on a grid or compute cluster using SGE.
+//         parallel_environment:  mpi_smp
 
-        # SGE Queue to use when running CPAC.
-        # Only applies when you are running on a grid or compute cluster using SGE.
-        queue:  all.q
+//         # SGE Queue to use when running CPAC.
+//         # Only applies when you are running on a grid or compute cluster using SGE.
+//         queue:  all.q
 
-    # The maximum amount of memory each participant's workflow can allocate.
-    # Use this to place an upper bound of memory usage.
-    # - Warning: 'Memory Per Participant' multiplied by 'Number of Participants to Run Simultaneously'
-    #   must not be more than the total amount of RAM.
-    # - Conversely, using too little RAM can impede the speed of a pipeline run.
-    # - It is recommended that you set this to a value that when multiplied by
-    #   'Number of Participants to Run Simultaneously' is as much RAM you can safely allocate.
-    maximum_memory_per_participant: 1
+//     # The maximum amount of memory each participant's workflow can allocate.
+//     # Use this to place an upper bound of memory usage.
+//     # - Warning: 'Memory Per Participant' multiplied by 'Number of Participants to Run Simultaneously'
+//     #   must not be more than the total amount of RAM.
+//     # - Conversely, using too little RAM can impede the speed of a pipeline run.
+//     # - It is recommended that you set this to a value that when multiplied by
+//     #   'Number of Participants to Run Simultaneously' is as much RAM you can safely allocate.
+//     maximum_memory_per_participant: 1
 
-    # The maximum amount of cores (on a single machine) or slots on a node (on a cluster/grid)
-    # to allocate per participant.
-    # - Setting this above 1 will parallelize each participant's workflow where possible.
-    #   If you wish to dedicate multiple cores to ANTS-based anatomical registration (below),
-    #   this value must be equal or higher than the amount of cores provided to ANTS.
-    # - The maximum number of cores your run can possibly employ will be this setting multiplied
-    #   by the number of participants set to run in parallel (the 'Number of Participants to Run
-    #   Simultaneously' setting).
-    max_cores_per_participant: 1
+//     # The maximum amount of cores (on a single machine) or slots on a node (on a cluster/grid)
+//     # to allocate per participant.
+//     # - Setting this above 1 will parallelize each participant's workflow where possible.
+//     #   If you wish to dedicate multiple cores to ANTS-based anatomical registration (below),
+//     #   this value must be equal or higher than the amount of cores provided to ANTS.
+//     # - The maximum number of cores your run can possibly employ will be this setting multiplied
+//     #   by the number of participants set to run in parallel (the 'Number of Participants to Run
+//     #   Simultaneously' setting).
+//     max_cores_per_participant: 1
 
-    # The number of cores to allocate to ANTS-based anatomical registration per participant.
-    # - Multiple cores can greatly speed up this preprocessing step.
-    # - This number cannot be greater than the number of cores per participant.
-    num_ants_threads: 1
+//     # The number of cores to allocate to ANTS-based anatomical registration per participant.
+//     # - Multiple cores can greatly speed up this preprocessing step.
+//     # - This number cannot be greater than the number of cores per participant.
+//     num_ants_threads: 1
 
-    # The number of cores to allocate to processes that use OpenMP.
-    num_OMP_threads: 1
+//     # The number of cores to allocate to processes that use OpenMP.
+//     num_OMP_threads: 1
 
-    # The number of participant workflows to run at the same time.
-    # - The maximum number of cores your run can possibly employ will be this setting
-    #   multiplied by the number of cores dedicated to each participant (the 'Maximum Number of Cores Per Participant' setting).
-    num_participants_at_once: 1
+//     # The number of participant workflows to run at the same time.
+//     # - The maximum number of cores your run can possibly employ will be this setting
+//     #   multiplied by the number of cores dedicated to each participant (the 'Maximum Number of Cores Per Participant' setting).
+//     num_participants_at_once: 1
 
-    # Full path to the FSL version to be used by CPAC.
-    # If you have specified an FSL path in your .bashrc file, this path will be set automatically.
-    FSLDIR:  /usr/share/fsl/5.0
+//     # Full path to the FSL version to be used by CPAC.
+//     # If you have specified an FSL path in your .bashrc file, this path will be set automatically.
+//     FSLDIR:  /usr/share/fsl/5.0
 
-  Amazon-AWS:
+//   Amazon-AWS:
 
-    # If setting the 'Output Directory' to an S3 bucket, insert the path to your AWS credentials file here.
-    aws_output_bucket_credentials:
+//     # If setting the 'Output Directory' to an S3 bucket, insert the path to your AWS credentials file here.
+//     aws_output_bucket_credentials:
 
-    # Enable server-side 256-AES encryption on data to the S3 bucket
-    s3_encryption: False
+//     # Enable server-side 256-AES encryption on data to the S3 bucket
+//     s3_encryption: False
 
-  Debugging:
+//   Debugging:
 
-    # Verbose developer messages.
-    verbose: Off
+//     # Verbose developer messages.
+//     verbose: Off
 
 
-# PREPROCESSING
-# -------------
-surface_analysis:
+// # PREPROCESSING
+// # -------------
+// surface_analysis:
 
-  # Will run Freesurfer for surface-based analysis. Will output traditional Freesurfer derivatives.
-  # If you wish to employ Freesurfer outputs for brain masking or tissue segmentation in the voxel-based pipeline,
-  # select those 'Freesurfer-' labeled options further below in anatomical_preproc.
-  run_freesurfer: Off`
+//   # Will run Freesurfer for surface-based analysis. Will output traditional Freesurfer derivatives.
+//   # If you wish to employ Freesurfer outputs for brain masking or tissue segmentation in the voxel-based pipeline,
+//   # select those 'Freesurfer-' labeled options further below in anatomical_preproc.
+//   run_freesurfer: false`
 
 const newTemplate = yaml.safeLoad(newTemplateRaw)
 
