@@ -43,17 +43,14 @@ function formatLabel(label) {
 }
 
 
-function returnComponent(obj, classes={}, onChange=undefined, parents=[]) {
+function returnComponent(obj, classes={}, onChange=undefined, parents=[], level=1) {
   switch (Immutable.Map.isMap(obj)) {
     case true:
       return (
         <>
-        { console.log(obj) }
         { obj.entrySeq().map((entry) => {
-          console.log(Object.fromEntries([[entry[0], typeof(entry[1])]]))
           switch (Immutable.Map.isMap(entry[1])) {
             case true:
-              parents.push(entry[0])
               return (
                 <ExpansionPanel expanded>
                   <ExpansionPanelSummary disabled>
@@ -63,7 +60,7 @@ function returnComponent(obj, classes={}, onChange=undefined, parents=[]) {
                   </ExpansionPanelSummary>
                   <ExpansionPanelDetails>
                   <Grid container>
-                    { returnComponent(entry[1], classes, onChange, parents) }
+                    { returnComponent(entry[1], classes, onChange, parents=[...parents.slice(0, level), entry[0]], level + 1) }
                   </Grid>
                   </ExpansionPanelDetails>
                 </ExpansionPanel>
@@ -71,6 +68,7 @@ function returnComponent(obj, classes={}, onChange=undefined, parents=[]) {
             case false:
               const regex = new RegExp(`^\s*{entry[0]}`);
               const label = formatLabel(entry[0]);
+              const name = [...parents, entry[0]].join('.');
               switch (typeof(entry[1])) {
                 case 'boolean':
                   return (
@@ -83,7 +81,7 @@ function returnComponent(obj, classes={}, onChange=undefined, parents=[]) {
                         >
                           <FormControlLabelled label={label}>
                             <Switch
-                              name={[entry[0]].join('.')}
+                              name={name}
                               checked={entry[1]}
                               onChange={onChange}
                               color="primary"
@@ -104,7 +102,7 @@ function returnComponent(obj, classes={}, onChange=undefined, parents=[]) {
                           fullWidth >
                           <TextField
                             label={label} fullWidth margin="normal" variant="outlined"
-                            name={[entry[0]].join('.')}
+                            name={name}
                             value={entry[1]}
                             onChange={onChange}
                           />
@@ -123,7 +121,7 @@ function returnComponent(obj, classes={}, onChange=undefined, parents=[]) {
                           fullWidth >
                           <TextField
                             label={label} fullWidth margin="normal" variant="outlined"
-                            name={[entry[0]].join('.')}
+                            name={name}
                             type='number'
                             value={entry[1]}
                             onChange={onChange}
@@ -136,7 +134,6 @@ function returnComponent(obj, classes={}, onChange=undefined, parents=[]) {
             default:
               return (
                 <>{ entry[1] }</>
-                // <>key {k} : value {v}</>
               )
           }
         } ) }
@@ -145,7 +142,6 @@ function returnComponent(obj, classes={}, onChange=undefined, parents=[]) {
     default:
       return (
         <></>
-        // <div>{ typeof(obj) }<br/>{ obj }</div>
       )
   }
 }
@@ -161,12 +157,11 @@ class PipelinePart extends Component {
   });
 
   render() {
-    const { classes, configuration, onChange } = this.props
+    const { classes, configuration, onChange, parents } = this.props
 
     return (
       <React.Fragment>
-        {/* <div>{ JSON.stringify(configuration, null, 2) }</div> */}
-        { returnComponent(configuration, classes, onChange) }
+        { returnComponent(configuration, classes, onChange, parents) }
       </React.Fragment>
     )
   }

@@ -125,7 +125,7 @@ class PipelineEditor extends Component {
             default:
               return (
                 <Collapse key={entry[0]} in={tab === entry[0]}>
-                  <PipelinePart configuration={entry[1]} onChange={onChange} />
+                  <PipelinePart configuration={entry[1]} onChange={onChange} parents={[entry[0]]} />
                 </Collapse>
               )
           }
