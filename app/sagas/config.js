@@ -177,13 +177,13 @@ function* loadConfig (action) {
 
   let initialState = null
   try {
-    initialState = JSON.parse(localStorage.getItem('state'))
+    initialState = JSON.parse(localStorage.getItem("state"))
   } catch (e) {
   }
 
   if (!initialState) {
     initialState = config
-    localStorage.setItem('state', JSON.stringify(config))
+    localStorage.setItem("state", JSON.stringify(config))
     console.log("Using initial state")
   } else {
     console.log("Using local state")
@@ -191,18 +191,33 @@ function* loadConfig (action) {
 
   if (!initialState.executions) {
     initialState.executions = []
-    localStorage.setItem('state', JSON.stringify(initialState))
+    localStorage.setItem("state", JSON.stringify(initialState))
   }
 
   if (initialState.pipelines) {
-    initialState.pipelines = initialState.pipelines.map(cpac.pipeline.normalize)
-    initialState.pipelines.push({'id': 'manual', 'name': '1.8 manual', 'versions': {1: {'version': '1.8.0', 'configuration': {...Object.values(initialState.pipelines[0].versions)[0].configuration, ...cpac.pipeline.newTemplate}}}});  // temporary
-    localStorage.setItem('state', JSON.stringify(initialState))
+    initialState.pipelines = initialState.pipelines.map(cpac.pipeline.normalize);
+    if (!initialState.pipelines.map(i => i.id).includes("default 1.8")) {
+      initialState.pipelines.push({
+        "id": "default",
+        "name": "Default",
+        "versions": {
+          1_8: {
+            "version": "1.8.0",
+            "configuration": {
+              ...Object.values(initialState.pipelines[0].versions)[0].configuration,
+              ...(cpac.pipeline.newTemplate)
+            }
+          }
+        }
+      });
+    };
+    initialState.pipelines = initialState.pipelines.slice(1,);
+    localStorage.setItem("state", JSON.stringify(initialState));
   }
 
   if (!initialState.version) {
     initialState.version = VERSION
-    localStorage.setItem('state', JSON.stringify(initialState))
+    localStorage.setItem("state", JSON.stringify(initialState))
   }
 
   yield put(configLoaded(initialState))
@@ -210,12 +225,12 @@ function* loadConfig (action) {
 
 function* saveConfig() {
   const config = yield select((state) => state.main.getIn(['config']));
-  localStorage.setItem('state', JSON.stringify(config.toJS()))
+  localStorage.setItem("state", JSON.stringify(config.toJS()))
   yield put(configSaved())
 }
 
 function* clearConfig(config) {
-  localStorage.removeItem('state')
+  localStorage.removeItem("state")
   yield put(configCleared(config))
 }
 
