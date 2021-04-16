@@ -23,6 +23,7 @@ import {
   CPACPY_SCHEDULER_TEST_TEMP_CONNECTION,
   CPACPY_SCHEDULER_TEST_TEMP_CONNECTION_SUCCESS,
   CPACPY_SCHEDULER_TEST_TEMP_CONNECTION_FAILED,
+  CPACPY_SCHEDULER_DELETE,
 
   CPACPY_CONFIG_LOAD,
   CPACPY_CONFIG_CLEAR,
@@ -276,6 +277,10 @@ function* test({ ip, port, authKey }) {
   }
 }
 
+function* deleteScheduler() {
+  yield put({type: CPACPY_CONFIG_SAVE})
+}
+
 export default function* configSaga() {
   yield all([
     ...configLocalState('cpacpy', cpacpyConfig, {
@@ -298,5 +303,6 @@ export default function* configSaga() {
     takeEvery(CPACPY_SCHEDULER_CALL, callScheduler),
     takeEvery(CPACPY_SCHEDULER_ADDNEW, addNew),
     takeEvery(CPACPY_SCHEDULER_TEST_TEMP_CONNECTION, test),
+    takeEvery(CPACPY_SCHEDULER_DELETE, deleteScheduler),
   ])
 }

@@ -33,6 +33,7 @@ import {
   addNew as cpacpyAddNew,
   selectCurrentScheduler as setCurrentScheduler,
   test as cpacpyTestConnection,
+  deleteScheduler as cpacpyDeleteScheduler,
 } from 'actions/cpacpy'
 
 import {
@@ -184,6 +185,7 @@ class CpacpySchedulerSelector extends Component {
     addNew: cpacpyAddNew,
     setCurrent: setCurrentScheduler,
     testConnection: cpacpyTestConnection,
+    deleteScheduler: cpacpyDeleteScheduler,
   }
 
   state = {
@@ -288,6 +290,12 @@ class CpacpySchedulerSelector extends Component {
     this.props.testConnection(newName, newIP, newPort, newAuthKey)
   }
 
+  handleDeletion (e, schedulerId){
+    e.stopPropagation()
+    e.preventDefault()
+    this.props.deleteScheduler(schedulerId)
+  }
+
   render() {
     const {classes, schedulers, watch, stop, buttonProps: {className: buttonClassName, ...buttonProps},
       buttonMenuProps, popoverProps, testingScheduler} = this.props
@@ -328,7 +336,7 @@ class CpacpySchedulerSelector extends Component {
                               {s.get('name')}
                             </Typography>
                           </Grid>
-                          <Grid item xs={6}>
+                          <Grid item xs={5}>
                             {
                               s.get('backends')
                                 .map(
@@ -340,6 +348,11 @@ class CpacpySchedulerSelector extends Component {
                                     />
                                 )
                             }
+                          </Grid>
+                          <Grid item xs={1}>
+                            <Button onClick={(e) => this.handleDeletion(e, s.get('id'))}>
+                              <DeleteIcon/>
+                            </Button>
                           </Grid>
                         </Grid>
                       </Grid>

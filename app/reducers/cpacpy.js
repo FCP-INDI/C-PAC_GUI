@@ -18,6 +18,7 @@ import {
   CPACPY_SCHEDULER_TEST_TEMP_CONNECTION,
   CPACPY_SCHEDULER_TEST_TEMP_CONNECTION_SUCCESS,
   CPACPY_SCHEDULER_TEST_TEMP_CONNECTION_FAILED,
+  CPACPY_SCHEDULER_DELETE,
 
   CPACPY_CONFIG_LOAD_SUCCESS,
 } from '../actions/cpacpy'
@@ -157,6 +158,9 @@ export default function (state = initialState, action) {
     case CPACPY_CONFIG_LOAD_SUCCESS:
       return fromJS(action.config)
 
+    case CPACPY_SCHEDULER_DELETE:
+      const idx = state.get('schedulers').findIndex((s) => s.get('id') === action.id)
+      return state.set('schedulers', state.get('schedulers').remove(idx))
 
     default:
       return state
