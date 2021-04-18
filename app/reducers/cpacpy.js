@@ -32,7 +32,7 @@ const initialState = fromJS({
   // id for the latest used scheduler
   latestScheduler: 'local',
 
-  testingScheduler: {address: null, success: false, detecting: false, error: null},
+  testingScheduler: {address: null, success: false, detecting: false, error: null, authKey: null},
 })
 
 export const selectSchedulers =
@@ -143,6 +143,7 @@ export default function (state = initialState, action) {
         {address: action.ip + ':' + action.port,
         detecting: true,
         success: false,
+        authKey: action.authKey,
         error: null}))
 
     case CPACPY_SCHEDULER_TEST_TEMP_CONNECTION_SUCCESS:

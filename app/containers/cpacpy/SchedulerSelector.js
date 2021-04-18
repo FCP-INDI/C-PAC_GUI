@@ -23,6 +23,7 @@ import {
   BulletIcon,
   SchedulerIcon,
   SchedulerConnectionRetryIcon,
+  DeleteIcon,
 } from 'components/icons'
 
 import {BackendChip} from 'components/chips'
@@ -300,14 +301,14 @@ class CpacpySchedulerSelector extends Component {
     const {classes, schedulers, watch, stop, buttonProps: {className: buttonClassName, ...buttonProps},
       buttonMenuProps, popoverProps, testingScheduler} = this.props
     const {selector, selectorAnchor, fullSelector, scheduler: selectedScheduler} = this.state
-    const {newIP, newPort} = this.state
+    const {newIP, newPort, newAuthKey} = this.state
 
     if (!schedulers) {
       return null
     }
 
     const scheduler = schedulers.find((s) => s.get('id') == selectedScheduler)
-    const ifBeforeTest = newIP + ':' + newPort !== testingScheduler.get('address')
+    const ifBeforeTest = newIP + ':' + newPort + ':' + newAuthKey !== testingScheduler.get('address') + ':' + testingScheduler.get('authKey')
 
     return (
       <>

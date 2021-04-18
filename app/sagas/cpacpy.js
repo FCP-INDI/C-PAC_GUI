@@ -86,7 +86,8 @@ function* detect({ scheduler: id, authKey=null, poll=true, current=false }) {
       `http://${scheduler.get('address')}`,
       {
         method: 'POST',
-        body: JSON.stringify({'authKey': authKey})}
+        body: JSON.stringify({'authKey': authKey})
+      }
     )
 
     if (response.api === 'cpacpy') {
@@ -209,7 +210,7 @@ function* connect({ scheduler: id }) {
 
 function* callScheduler({
   scheduler: id,
-  method='GET',
+  method='POST',
   endpoint,
   data,
   response: { success, error },
@@ -217,6 +218,10 @@ function* callScheduler({
 }) {
   const scheduler = yield selectSaga(selectScheduler(id))
   const url = `http://${scheduler.get('address')}${endpoint}`
+  console.log("m1", scheduler)
+  if (method === 'POST') {
+    data === null ? data = {'authKey': scheduler.get('authKey')} : data['authKey'] = scheduler.get('authKey')
+  }
 
   const success_return = (data, headers) =>
     success instanceof Function ?
@@ -243,6 +248,9 @@ function* callScheduler({
       }
     )
 
+    if (response.authKeyError) {
+      throw new Error("Invalid AuthKey")
+    }
     yield put(success_return(response, resHeaders))
   } catch (exception) {
     console.log(exception)

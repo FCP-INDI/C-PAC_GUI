@@ -133,7 +133,7 @@ function* generateDataConfigUrlFetch({ dataset: { id }, url }) {
       fetch,
       url,
       {
-        method: 'GET',
+        method: 'POST',
         mode: 'cors',
         cache: 'no-cache',
       }
