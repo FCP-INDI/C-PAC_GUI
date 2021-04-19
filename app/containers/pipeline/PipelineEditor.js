@@ -90,14 +90,14 @@ class PipelineEditor extends Component {
         >
           {
             configuration.keySeq().toJS().map((k) => (
-              <Tab label={k.replace('_', ' ')} value={k} key={`tabtab-${k}`} />
+              <Tab label={k.split("_").join(" ")} value={k} key={`tabtab-${k}`} />
             ))
           }
         </Tabs>
 
         {
-          configuration.entrySeq().map((entry) => (
-            <Collapse key={entry[0]} in={tab === entry[0]}>
+          configuration.entrySeq().map((entry, i) => (
+            <Collapse key={`${entry[0]}-${i}`} in={tab === entry[0]}>
               <PipelinePart configuration={entry[1]} onChange={onChange} parents={[entry[0]]} />
             </Collapse>
           ))
