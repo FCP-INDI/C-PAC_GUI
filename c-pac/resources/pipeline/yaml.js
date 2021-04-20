@@ -1,7 +1,6 @@
 import yaml from 'js-yaml'
 
 import raw from './pipeline_config_template.yml'
-export { raw }
 
 let rawTemplate = ''
 let emptyLines = ''
@@ -66,3 +65,44 @@ export default (config) => {
 
   // return replacements(yaml, configYamled, environment)
 }
+
+
+const loadYaml = (yamlString) => {
+  let yamlJS = yaml.load(yamlString);
+  return updateBooleansToJSON(yamlJS);
+};
+
+
+const updateBooleansToJSON = (yamlObj) => {
+  if (yamlObj != null) {
+    switch (typeof(yamlObj)) {
+      case 'object':
+        return Object.assign({}, ...Object.entries(yamlObj).map(entry => {
+          let returnObj = {};
+          returnObj[entry[0]] = updateBooleansToJSON(entry[1])
+          return returnObj;
+        }));
+      case 'array':
+        return yamlObj.map(item => updateBooleans(item));
+      case 'string':
+        switch (yamlObj) {
+          case 'On':
+          case 'on':
+          case 'true':
+          case 'True':
+            return true;
+          case 'Off':
+          case 'off':
+          case 'false':
+          case 'False':
+            return false;
+          default:
+            return yamlObj;
+        };
+    };
+  }
+  return yamlObj;
+}
+
+
+export { raw, loadYaml }

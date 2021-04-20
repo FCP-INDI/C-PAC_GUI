@@ -1,15 +1,15 @@
-import yaml from 'js-yaml'
-import semver from 'semver'
-import deepmerge from 'deepmerge'
+import yaml from 'js-yaml';
+import semver from 'semver';
+import deepmerge from 'deepmerge';
 
-import { default as defaultTemplate } from './resources/pipeline/config'
-import yamlTemplate, { raw } from './resources/pipeline/yaml'
-import { default as newTemplateRaw } from './resources/pipeline/default_pipeline.yml' 
+import { default as defaultTemplate } from './resources/pipeline/config';
+import yamlTemplate, { raw, loadYaml } from './resources/pipeline/yaml';
+import { default as newTemplateRaw } from './resources/pipeline/default_pipeline.yml';
 
 const template = parse(raw)
 template.name = 'Default'
 
-const newTemplate = yaml.safeLoad(newTemplateRaw)
+const newTemplate = loadYaml(newTemplateRaw);
 
 export { yamlTemplate, template, raw as rawTemplate, newTemplate }
 
