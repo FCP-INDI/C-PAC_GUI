@@ -105,12 +105,36 @@ reGenerateOutputs :  False
 runSymbolicLinks :  [1]
 
 
+# PREPROCESSING
+# -------------
+surface_analysis:
+
+  # Will run Freesurfer for surface-based analysis. Will output traditional Freesurfer derivatives.
+  # If you wish to employ Freesurfer outputs for brain masking or tissue segmentation in the voxel-based pipeline,
+  # select those 'Freesurfer-' labeled options further below in anatomical_preproc.
+  run_freesurfer: Off
+
+
 # Non-local means filtering / Denoise image
 non_local_means_filtering: False
 
 
 # N4 bias field correction
 n4_bias_field_correction: False
+
+
+# ACPC Alignment
+acpc_align: False
+
+
+# ACPC size of brain in z-dimension in mm. 
+# Default: 150mm for human data. 
+acpc_brainsize: 150
+
+
+# ACPC aligned template
+acpc_template_skull: $FSLDIR/data/standard/MNI152_T1_1mm.nii.gz
+acpc_template_brain: None
 
 
 # Disables skull-stripping on the anatomical inputs if they are already skull-stripped outside of C-PAC. Set this to On if your input images are already skull-stripped.

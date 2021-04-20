@@ -259,8 +259,14 @@ export function parse(content) {
   c.general.environment.outputs.organized = config.runSymbolicLinks.includes(1)
   c.general.environment.outputs.remove_working = config.removeWorkingDir
 
+  c.anatomical.surface.enabled = config.surface_analysis['run_freesurfer']
+
   c.anatomical.preprocessing.methods.nlmf.enabled = config.non_local_means_filtering
   c.anatomical.preprocessing.methods.n4.enabled = config.n4_bias_field_correction
+  c.anatomical.preprocessing.methods.acpc_align.enabled = config.acpc_align
+  c.anatomical.preprocessing.methods.acpc_align.acpc_brainsize = config.acpc_brainsize
+  c.anatomical.preprocessing.methods.acpc_align.acpc_template_skull = config.acpc_template_skull
+  c.anatomical.preprocessing.methods.acpc_align.acpc_template_brain = config.acpc_template_brain
 
   c.anatomical.skull_stripping.enabled = config.already_skullstripped.includes(0)
 
@@ -941,8 +947,16 @@ export function dump(pipeline, version='0') {
   config.reGenerateOutputs = c.general.environment.outputs.regenerate
   config.runSymbolicLinks = [c.general.environment.outputs.organized ? 1 : 0]
 
+  config.surface_analysis = [
+    { 'run_freesurfer': c.anatomical.surface.enabled },
+  ]
+
   config.non_local_means_filtering = c.anatomical.preprocessing.methods.nlmf.enabled
   config.n4_bias_field_correction = c.anatomical.preprocessing.methods.n4.enabled
+  config.acpc_align = c.anatomical.preprocessing.methods.acpc_align.enabled 
+  config.acpc_brainsize =   parseInt(c.anatomical.preprocessing.methods.acpc_align.acpc_brainsize)
+  config.acpc_template_skull = c.anatomical.preprocessing.methods.acpc_align.acpc_template_skull
+  config.acpc_template_brain = c.anatomical.preprocessing.methods.acpc_align.acpc_template_brain
 
   config.already_skullstripped = [c.anatomical.skull_stripping.enabled ? 0 : 1]
   config.skullstrip_option = []
