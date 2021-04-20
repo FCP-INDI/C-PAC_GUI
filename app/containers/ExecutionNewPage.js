@@ -166,7 +166,7 @@ class ExecutionNewPage extends Component {
         this.state.scheduler = { id: scheduler, backend: backend }
       }
     }
-    this.state.datasetScheduler = this.props.scheduler.get('id')
+    this.state.datasetScheduler = this.props.schedulers.size > 0 ? this.props.scheduler.get('id') : null
     this.state.execution = uuid()
   }
 
@@ -264,6 +264,9 @@ class ExecutionNewPage extends Component {
     const dataset = this.state.dataset.id ? datasets.find((d) => d.get('id') == this.state.dataset.id) : null
     const scheduler = this.state.scheduler.id ? schedulers.find((s) => s.get('id') == this.state.scheduler.id) : null
     const dirty = dataset?.get('versions').has('0') || !dataset?.hasIn(['data', 'sets'])
+    const versions = dataset? dataset.get('versions') : null
+    const versionId = versions ? `${versions.keySeq().map(i => +i).max()}` : null
+    const datasetVersion = versions? versions.get(versionId) : null
     const completed = {
       pipeline: !!this.state.pipeline.id,
       dataset: !!(this.state.dataset.id && !dirty),
@@ -349,29 +352,35 @@ class ExecutionNewPage extends Component {
                 {
                 (dataset && dirty) ? (
                   <Grid item xs={12}>
-                    <Alert
-                      severity="warning"
-                      style={{ margin: '0 -10px' }}
-                      action={
-                      <>
-                        <Button
-                          disabled={dataset.get('loading')} variant="contained"
-                          color="inherit" size="small" onClick={this.handleGenerateDataConfig}
-                          style={{ paddingTop: 8, paddingBottom: 8 }}
-                        >
-                          Build Dataset on
-                          <CpacpySchedulerSelector buttonProps={{
-                              style: { marginLeft: 10 },
-                              variant: 'outlined',
-                            }}
-                            onSelect={this.handleDatabaseScheduler}
-                          />
-                        </Button>
-                        { dataset.get('loading') && <LinearProgress style={{ marginTop: -4, borderRadius: '0 0 4px 4px' }} /> }
-                      </>
-                    }>
-                      This dataset needs to be build in order to run.
-                    </Alert>
+                    {datasetVersion.getIn(['configuration', 'format']) === 'upload' || datasetVersion.getIn(['configuration', 'format']) === 'fetch' ?
+                      <Alert
+                        severity="warning"
+                        style={{ margin: '0 -10px' }}>Invalid dataset: please upload or fetch the dataset first.</Alert> :
+                      <Alert
+                        severity="warning"
+                        style={{ margin: '0 -10px' }}
+                        action={
+                          <>
+                            <Button
+                              disabled={dataset.get('loading')} variant="contained"
+                              color="inherit" size="small" onClick={this.handleGenerateDataConfig}
+                              style={{ paddingTop: 8, paddingBottom: 8 }}
+                            >
+                              Build Dataset on
+                              <CpacpySchedulerSelector buttonProps={{
+                                style: { marginLeft: 10 },
+                                variant: 'outlined',
+                              }}
+                                                       onSelect={this.handleDatabaseScheduler}
+                              />
+                            </Button>
+                            { dataset.get('loading') && <LinearProgress style={{ marginTop: -4, borderRadius: '0 0 4px 4px' }} /> }
+                          </>
+                        }>
+                        This dataset needs to be build in order to run.
+                      </Alert>
+                    }
+
                   </Grid>
                 ) : (
                   this.state.buildingDataset === this.state.dataset.id && (
