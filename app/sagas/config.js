@@ -205,7 +205,7 @@ function* loadConfig (action) {
             "version": "1.8.0",
             "configuration": {
               ...Object.values(initialState.pipelines[0].versions)[0].configuration,
-              ...(cpac.pipeline.newTemplate)
+              ...cpac.pipeline.newTemplate
             }
           }
         }
@@ -237,14 +237,12 @@ function* clearConfig(config) {
 export default function* configSaga () {
   yield all([
     takeEvery(CONFIG_LOAD, loadConfig),
-
     takeEvery(CONFIG_SAVE, saveConfig),
     takeEvery(PIPELINE_NAME_UPDATE, saveConfig),
     takeEvery(PIPELINE_VERSION_DIRTY_UPDATE, saveConfig),
     takeEvery(PIPELINE_VERSION_DIRTY_SAVE, saveConfig),
     takeEvery(PIPELINE_DUPLICATE, saveConfig),
     takeEvery(PIPELINE_DELETE, saveConfig),
-
     takeEvery(CONFIG_CLEAR, clearConfig),
   ])
 }

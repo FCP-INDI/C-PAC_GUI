@@ -24,7 +24,7 @@ import {
   SubjectIcon,
 } from 'components/icons';
 
-import { PipelinePart } from 'containers/pipeline/parts';
+import { formatLabel, PipelinePart } from 'containers/pipeline/parts';
 
 import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton'
@@ -90,7 +90,7 @@ class PipelineEditor extends Component {
         >
           {
             configuration.keySeq().toJS().map((k) => (
-              <Tab label={k.split("_").join(" ")} value={k} key={`tabtab-${k}`} />
+              <Tab label={formatLabel(k)} value={k} key={`tabtab-${k}`} />
             ))
           }
         </Tabs>
@@ -101,7 +101,7 @@ class PipelineEditor extends Component {
               <PipelinePart configuration={entry[1]} onChange={onChange} parents={[entry[0]]} />
             </Collapse>
           ))
-          }
+        }
       </>
     );
   }
