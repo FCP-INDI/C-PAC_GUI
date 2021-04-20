@@ -57,7 +57,7 @@ export default function (state = initialState, action) {
         .setIn(['datasets', i, 'loading'], false)
         .removeIn(['datasets', i, 'error'])
 
-      if (!state.hasIn(['datasets', i, 'views'])) {
+      if (state.getIn(['datasets', i, 'views']).size < 1) {
         state = state.setIn(['datasets', i, 'views'], fromJS([{ id: 'default', name: 'All', query: 'true', }]))
       }
 
