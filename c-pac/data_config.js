@@ -36,13 +36,15 @@ export function parse(content) {
   const subject_ids = []
   const unique_ids = []
   const sets = {}
+  let cnt = 0
   for(let set of subjectSets) {
+    cnt += 1
     const { anat, func, site, subject_id, unique_id=null } = set
     if (!(subject_id in sets)) {
       sets[subject_id] = {}
     }
-    sets[subject_id][unique_id] = { 
-      anatomical: anat, functionals: func, site 
+    sets[subject_id][unique_id] = {
+      anatomical: anat, functionals: func, site
     }
     sites.push(site)
     series.push(...Object.keys(func))
@@ -56,6 +58,7 @@ export function parse(content) {
     series: [...new Set(series)],
     unique_ids: [...new Set(unique_ids)],
     subject_ids: [...new Set(subject_ids)],
+    subjectNum: cnt,
   }
 }
 
