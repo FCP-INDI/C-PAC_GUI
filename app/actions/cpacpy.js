@@ -109,7 +109,7 @@ export function connectSendWatch(scheduler, schedule, { action, error }) {
     message: {
       type: 'watch',
       schedule,
-      watchers: ['Spawn', 'Start', 'End', 'Status', 'Result']
+      watchers: ['Spawn', 'Start', 'End', 'Status', 'Result', 'Log']
     }
   }
 }
