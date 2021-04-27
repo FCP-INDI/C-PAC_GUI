@@ -128,6 +128,7 @@ class ExecutionPage extends Component {
   state = {
     openedLog: null,
     inputsSelected: null,
+    nodeSelected: null,
   }
 
   handleTabChange = (event, operation) => {
@@ -140,6 +141,10 @@ class ExecutionPage extends Component {
     const { execution, operation } = this.props
     this.setState({ openedLog: null })
     this.props.history.push(`/executions/${execution.get('id')}/${s.get('id')}/${operation || 'logs'}`)
+  }
+
+  handleOpenNode = (node) => {
+    this.setState({nodeSelected: node})
   }
 
   handleOpenLog = (log) => (event, isExpanded) => {
@@ -157,8 +162,7 @@ class ExecutionPage extends Component {
   render() {
     const { classes, execution, operation } = this.props;
     let { schedule } = this.props;
-    const { openedLog, inputsSelected } = this.state;
-
+    const { openedLog, inputsSelected, nodeSelected } = this.state;
     if (!execution) {
       return null;
     }
@@ -247,6 +251,7 @@ class ExecutionPage extends Component {
                           <Tab label={ schedule.get('name') } disabled />
                           <Tab label="Logs" value="logs" />
                           <Tab label="Crashes" value="crashes" />
+                          <Tab label="nodes" value="nodes" />
                         </Tabs>
                         <Collapse in={operation === "logs"}>
                           {
@@ -367,6 +372,31 @@ class ExecutionPage extends Component {
                               </Timeline>
                             )
                           }
+                        </Collapse>
+                        <Collapse in={operation === "nodes"}>
+                          <Grid container spacing={5}>
+                            <Grid item xs={4}>
+                              <ExecutionNodesGraph
+                                onClickSchedule={this.handleOpenNode}
+                                selectedSchedule={schedule && schedule.get('id')}
+                                style={{flexGrow: 1}}
+                                nodes = {
+                                  schedule.get('nodes') ? schedule.get('nodes').valueSeq() : fromJS([])
+                                } />
+                            </Grid>
+                            <Grid item xs={8}>
+                              {
+                                nodeSelected && nodeSelected.entrySeq().map(([ key, value ]) => (
+                                  <Typography key={key} className={classes.nodeInfo}>
+                                    <>
+                                      <strong>{ key }</strong>:
+                                      { value ? value : 'unknown' }
+                                    </>
+                                  </Typography>
+                                ))
+                              }
+                            </Grid>
+                          </Grid>
                         </Collapse>
                       </>
                     )

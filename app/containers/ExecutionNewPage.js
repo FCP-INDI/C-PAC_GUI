@@ -206,9 +206,17 @@ class ExecutionNewPage extends Component {
           if (!view) {
             state = state.setIn(['dataset', 'view'], 'default')
           }
-
           const version = `${dataset.get('versions').keySeq().map(i => +i).max()}`
           state = state.setIn(['dataset', 'version'], version)
+        }
+
+        if (statePath[0] === 'dataset' && statePath[1] === 'view') {
+          const { datasets } = this.props
+          const dataset = datasets.find((d) => d.get('id') === this.state.dataset.id)
+          const version = `${dataset.get('versions').keySeq().map(i => +i).max()}`
+          const dataConfig = cpac.data_config.parse(cpac.data_config.dump(dataset.toJS(), version, value))
+          const subjectNum = Math.max(dataConfig.subject_ids.length, 1)
+          state = state.setIn(['dataset', 'subjectNum'], subjectNum)
         }
 
         if (statePath[0] === 'pipeline' && statePath[1] === 'id') {
@@ -371,7 +379,7 @@ class ExecutionNewPage extends Component {
                                 style: { marginLeft: 10 },
                                 variant: 'outlined',
                               }}
-                                                       onSelect={this.handleDatabaseScheduler}
+                                onSelect={this.handleDatabaseScheduler}
                               />
                             </Button>
                             { dataset.get('loading') && <LinearProgress style={{ marginTop: -4, borderRadius: '0 0 4px 4px' }} /> }

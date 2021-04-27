@@ -125,6 +125,7 @@ class ExecutionDetailCard extends Component {
 
   render() {
     const { classes, execution: e, actions = true, onClickSchedule, selectedSchedule, showSummaryCard = false }  = this.props
+    const subjectCnt = e && e.getIn(['dataset', 'subjectNum'])
 
     return (
       <Paper key={e.get('id')} className={classes.paper} elevation={3}>
@@ -174,16 +175,22 @@ class ExecutionDetailCard extends Component {
               </Grid> : null
           }
           <Grid item xs={12} md={6}>
-            <ExecutionNodesGraph
-              onClickSchedule={onClickSchedule}
-              selectedSchedule={selectedSchedule}
-              style={{flexGrow: 1}}
-              nodes={
-                e.get('schedules') ?
-                  e.get('schedules').valueSeq().filter((s) => s.get('parent')) :
-                  fromJS([])
-              }
-            />
+            {
+              e.get('schedules') ? (e.get('schedules').size < subjectCnt * 0.95 ?
+                  'Ready schedule: ' + Math.floor(e.get('schedules').size * 100.0 / subjectCnt) + '%' :
+                  <ExecutionNodesGraph
+                    onClickSchedule={onClickSchedule}
+                    selectedSchedule={selectedSchedule}
+                    style={{flexGrow: 1}}
+                    nodes={
+                      e.get('schedules') ?
+                        e.get('schedules').valueSeq().filter((s) => s.get('parent')) :
+                        fromJS([])
+                    }
+                  />
+              ) : null
+            }
+
           </Grid>
           { actions &&
           <Grid item xs={12}>

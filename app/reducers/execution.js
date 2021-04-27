@@ -53,7 +53,7 @@ export default function (state = initialState, action) {
         status: 'unknown',
         scheduler: { id: scheduler.id, backend: scheduler.backend, profile: scheduler.profile },
         pipeline: { id: pipeline.id, version: pipeline.version },
-        dataset: { id: dataset.id, version: dataset.version, view: dataset.view },
+        dataset: { id: dataset.id, version: dataset.version, view: dataset.view, subjectNum: dataset.subjectNum },
       })
 
       return state.updateIn(['executions'], executions => executions.push(execution))
@@ -105,7 +105,8 @@ export default function (state = initialState, action) {
       const i = state.get('executions').findIndex((e) => e.get('id') === action.execution)
       return state.setIn(['executions', i, 'schedules', action.schedule, 'nodes', action.nodeId], fromJS(
         {
-          'status': action.runtimeResults.runtime_mem_gb ? 'success' : 'start',
+          'id': action.nodeId,
+          'status': action.runtimeResults.runtime_mem_gb ? 'success' : 'running',
           'start': action.runtimeResults.start,
           'finish': action.runtimeResults.finish,
           'runtime_mem_gb': action.runtimeResults.runtime_mem_gb,
@@ -126,9 +127,6 @@ export default function (state = initialState, action) {
       const i = state.get('executions').findIndex((e) => e.get('id') === execution)
       const resultByType = ['executions', i, 'schedules', schedule, 'results', 'crashes', key]
       return state.setIn(resultByType, fromJS({ ...crash, name, at: timestamp, _cache: true }))
-        .updateIn(['executions', i, 'schedules', schedule, 'nodes'],
-            item => item.map(kv => kv.set('status', kv.get('status') === 'success' ? 'success' : 'failure')))
-
     }
 
     case EXECUTION_PREPROCESS_DATASET_PROCESSING_FINISHED: {
@@ -136,7 +134,7 @@ export default function (state = initialState, action) {
       const i = state.get('executions').findIndex((e) => e.get('id') === execution)
       return state.setIn(['executions', i, 'schedules', schedule, 'status'], status)
         .updateIn(['executions', i, 'schedules', schedule, 'nodes'],
-          item => item.map(kv => kv.set('status', kv.get('status') === 'start' ? 'success' : kv.get('status'))))
+          item => item.map(kv => kv.set('status', kv.get('status') === 'success' ? 'success' : 'unknown')))
     }
 
     case EXECUTION_PREPROCESS_DATASET_FINISHED: {
