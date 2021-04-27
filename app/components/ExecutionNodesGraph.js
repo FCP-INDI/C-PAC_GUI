@@ -165,12 +165,12 @@ class ExecutionNodesGraph extends Component {
               classes[`tooltipPlacement${capitalize(placementInner.split('-')[0])}`],
             )}
           >
-            { node && node.get('name') }
+            { node && 'name' in node ? node.get('name') : node.get('id')}
             <span className={clsx(classes.arrowPos, classes.arrow)} />
           </div>
           )}
         </Popper>
-        
+
         <div className={classes.container} ref={this.gridRef} onMouseOver={this.handleEnter} onMouseMove={this.handleEnter} onMouseOut={this.handleClose}>
           {
             nodes
