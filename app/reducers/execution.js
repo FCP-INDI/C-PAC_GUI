@@ -1,4 +1,4 @@
-import { fromJS, isImmutable, List } from 'immutable'
+import { fromJS, isImmutable, List, Map } from 'immutable'
 
 import {
   EXECUTION_CONFIG_LOAD_SUCCESS,
@@ -103,16 +103,18 @@ export default function (state = initialState, action) {
 
     case EXECUTION_PREPROCESS_DATASET_PROCESSING_NODELOG: {
       const i = state.get('executions').findIndex((e) => e.get('id') === action.execution)
-      return state.setIn(['executions', i, 'schedules', action.schedule, 'nodes', action.nodeId], fromJS(
-        {
-          'id': action.nodeId,
-          'status': action.runtimeResults.runtime_mem_gb ? 'success' : 'running',
-          'start': action.runtimeResults.start,
-          'finish': action.runtimeResults.finish,
-          'runtime_mem_gb': action.runtimeResults.runtime_mem_gb,
-          'runtime_threads': action.runtimeResults.runtime_threads,
-        }
-      ))
+      let nodeInfos = Map()
+      for (let nodeInfo of action.runtimeResults) {
+        nodeInfos = nodeInfos.set(nodeInfo.message.id, fromJS({
+          'id': nodeInfo.message.id,
+          'start': nodeInfo.message.start,
+          'finish': nodeInfo.message.finish,
+          'runtime_mem_gb': nodeInfo.message.runtime_memory_gb,
+          'runtime_threads': nodeInfo.message.runtime_threads,
+          'status': nodeInfo.message.runtime_memory_gb ? 'success' : 'running',
+        }))
+      }
+      return state.mergeIn(['executions', i, 'schedules', action.schedule, 'nodes'], nodeInfos)
     }
 
     case EXECUTION_PREPROCESS_DATASET_PROCESSING_LOG: {
