@@ -107,7 +107,7 @@ export function configLocalState(key, initialState = {}, {
       localState = versionedInitialState
       localStorage.setItem(key, JSON.stringify(localState))
     }
-    
+
     localState = Immutable.fromJS(localState)
 
     const cache = yield caches.open('cpac')
@@ -149,7 +149,7 @@ export function configLocalState(key, initialState = {}, {
         config = config.setIn(k, Immutable.fromJS({ _cache: k }))
         cacheCount++
       }
-      
+
       localStorage.setItem(key, JSON.stringify(config.toJS()))
       yield put({ type: saveSuccess, config })
     } catch (error) {

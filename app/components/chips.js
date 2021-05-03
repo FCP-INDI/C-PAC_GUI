@@ -154,7 +154,9 @@ class SchedulerChip extends Component {
 
   render() {
     const { scheduler, backend, classes } = this.props
-
+    if (!scheduler) {
+      return null
+    }
     if (backend) {
       return (
         <Badge
@@ -184,7 +186,7 @@ class SchedulerChip extends Component {
   }
 }
 
-const ConnectedSchedulerChip = 
+const ConnectedSchedulerChip =
   connect(SchedulerChip.mapStateToProps, SchedulerChip.mapDispatchToProps)
     (withStyles(SchedulerChip.styles)
       (SchedulerChip))
@@ -213,6 +215,9 @@ class SchedulerBackendChip extends Component {
 
   render() {
     const { scheduler, backend, classes } = this.props
+    if (!scheduler) {
+      return null
+    }
     if (backend) {
       return (
         <Badge
@@ -242,7 +247,7 @@ class SchedulerBackendChip extends Component {
   }
 }
 
-const ConnectedSchedulerBackendChip = 
+const ConnectedSchedulerBackendChip =
   connect(SchedulerBackendChip.mapStateToProps, SchedulerBackendChip.mapDispatchToProps)
     (withStyles(SchedulerBackendChip.styles)
       (SchedulerBackendChip))
@@ -283,7 +288,7 @@ class BackendChip extends Component {
   }
 }
 
-const ConnectedBackendChip = 
+const ConnectedBackendChip =
   connect(BackendChip.mapStateToProps, BackendChip.mapDispatchToProps)
     (withStyles(BackendChip.styles)
       (BackendChip))
