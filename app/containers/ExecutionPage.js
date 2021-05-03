@@ -121,7 +121,7 @@ class ExecutionPage extends Component {
       schedule,
     }
   }
-  
+
   static mapDispatchToProps = {
   }
 
@@ -136,7 +136,7 @@ class ExecutionPage extends Component {
     this.setState({ openedLog: null })
     this.props.history.push(`/executions/${execution.get('id')}/${schedule}/${operation}`)
   };
-  
+
   handleOpenSchedule = (s) => {
     const { execution, operation } = this.props
     this.setState({ openedLog: null })
@@ -191,7 +191,7 @@ class ExecutionPage extends Component {
               .map(([ key, value ]) => (
                 <Typography key={key} className={classes.nodeInfo}>
                   <>
-                    <strong>{ key }</strong>: 
+                    <strong>{ key }</strong>:
                     { value && value.toJS ? JSON.stringify(value.toJS()) : value }
                   </>
                 </Typography>
@@ -201,7 +201,7 @@ class ExecutionPage extends Component {
             inputsSelected && inputsSelected.get('function_str') &&
             (
               <>
-                <strong>function_str</strong>: 
+                <strong>function_str</strong>:
                 {
                   inputsSelected.get('function_str').indexOf('\n') > -1 ? (
                     <SyntaxHighlighter
@@ -342,7 +342,7 @@ class ExecutionPage extends Component {
                                               Execution directory: { crash.getIn(['node', 'directory']) }
                                             </Typography>
                                             <Button
-                                              color="secondary" variant="contained" 
+                                              color="secondary" variant="contained"
                                               onClick={
                                                 this.handleOpenInputsModal(
                                                   crash
@@ -376,13 +376,17 @@ class ExecutionPage extends Component {
                         <Collapse in={operation === "nodes"}>
                           <Grid container spacing={5}>
                             <Grid item xs={4}>
-                              <ExecutionNodesGraph
-                                onClickSchedule={this.handleOpenNode}
-                                selectedSchedule={schedule && schedule.get('id')}
-                                style={{flexGrow: 1}}
-                                nodes = {
-                                  schedule.get('nodes') ? schedule.get('nodes').valueSeq() : fromJS([])
-                                } />
+                              {
+                                schedule.get('nodes') && schedule.get('nodes').size > 0 ?
+                                  <ExecutionNodesGraph
+                                    onClickSchedule={this.handleOpenNode}
+                                    selectedSchedule={schedule && schedule.get('id')}
+                                    style={{flexGrow: 1}}
+                                    nodes = {
+                                      schedule.get('nodes') ? schedule.get('nodes').valueSeq() : fromJS([])
+                                    } /> : null
+                              }
+
                             </Grid>
                             <Grid item xs={8}>
                               {
