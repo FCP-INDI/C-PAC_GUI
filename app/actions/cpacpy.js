@@ -185,7 +185,7 @@ export function schedulePipeline(scheduler, dataConfig, pipeline, profile, { suc
 export function fetchResults(scheduler, schedule, result, { success, error }, { start, end } = { start: 0, end: null }) {
   return call(
     scheduler,
-    'POST',
+    'GET',
     `/schedule/${schedule}/result/${result}`,
     null,
     {
