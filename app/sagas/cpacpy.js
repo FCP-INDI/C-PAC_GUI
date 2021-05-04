@@ -72,7 +72,6 @@ function* loadSuccess() {
   yield put(cpacpyInit())
 }
 
-// TODO
 function* detect({ scheduler: id, authKey=null, poll=true, current=false }) {
   const scheduler = yield selectSaga(selectScheduler(id))
   if (scheduler.get('online')) {
@@ -85,8 +84,7 @@ function* detect({ scheduler: id, authKey=null, poll=true, current=false }) {
       fetch,
       `http://${scheduler.get('address')}`,
       {
-        method: 'POST',
-        body: JSON.stringify({'authKey': authKey})
+        headers: { 'Authorization': `Bearer ${authKey}` }
       }
     )
 
@@ -117,7 +115,6 @@ function *offline({ scheduler }) {
   yield put(cpacpySchedulerOffline(scheduler))
 }
 
-// @TODO make sure pooling is happening just once for each scheduler
 function* pollingBackground(scheduler) {
   yield delay(10000)
   const schedulerDetail = yield selectSaga(selectScheduler(scheduler))
@@ -182,7 +179,6 @@ function* receiverListener(scheduler, channel) {
   }
 }
 
-// TODO: websocket to keep connect
 function* connect({ scheduler: id }) {
   const scheduler = yield selectSaga(selectScheduler(id))
   const ws = new WebSocket(`ws://${scheduler.get('address')}/schedule/connect`)
@@ -210,7 +206,7 @@ function* connect({ scheduler: id }) {
 
 function* callScheduler({
   scheduler: id,
-  method='POST',
+  method='GET',
   endpoint,
   data,
   response: { success, error },
@@ -218,10 +214,8 @@ function* callScheduler({
 }) {
   const scheduler = yield selectSaga(selectScheduler(id))
   const url = `http://${scheduler.get('address')}${endpoint}`
-  console.log("m1", scheduler)
-  if (method === 'POST') {
-    data === null ? data = {'authKey': scheduler.get('authKey')} : data['authKey'] = scheduler.get('authKey')
-  }
+
+  const authKey = scheduler.get('authKey');
 
   const success_return = (data, headers) =>
     success instanceof Function ?
@@ -243,6 +237,7 @@ function* callScheduler({
         headers: {
           'Accept': 'application/json',
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${authKey}`,
           ...headers,
         }
       }
@@ -267,7 +262,7 @@ function* test({ ip, port, authKey }) {
     const { response, error } = yield call(
       fetch,
       `http://` + ip + `:` + port,
-      { method: 'POST', body: JSON.stringify({'authKey': authKey})}
+      { headers: { 'Authorization': `Bearer ${authKey}` } }
     )
     if (response.api === 'cpacpy') {
       if (response.authKeyError) {
