@@ -110,20 +110,19 @@ export function configLocalState(key, initialState = {}, {
 
     localState = Immutable.fromJS(localState)
 
-    const cache = yield caches.open('cpac')
+    // const cache = yield caches.open('cpac')
+    // for (let k of traverseState(localState, (o) => o instanceof Immutable.Map && o.get('_cache'))) {
+    //   const cacheKey = localState.getIn(k).get('_cache')
+    //   const reqKey = new Request(requestKey(cacheKey))
+    //   const value = yield cache.match(reqKey, {
+    //     ignoreVary: true,
+    //     ignoreMethod: true,
+    //     ignoreSearch: true
+    //   });
 
-    for (let k of traverseState(localState, (o) => o instanceof Immutable.Map && o.get('_cache'))) {
-      const cacheKey = localState.getIn(k).get('_cache')
-      const reqKey = new Request(requestKey(cacheKey))
-      const value = yield cache.match(reqKey, {
-        ignoreVary: true,
-        ignoreMethod: true,
-        ignoreSearch: true
-      });
-
-      const data = yield value.json()
-      localState = localState.setIn(k, Immutable.fromJS(data))
-    }
+    //   const data = yield value.json()
+    //   localState = localState.setIn(k, Immutable.fromJS(data))
+    // }
 
     if (postLoad) {
       localState = postLoad(localState)
@@ -134,10 +133,9 @@ export function configLocalState(key, initialState = {}, {
 
   function* saveLocalState() {
     try {
-      const cache = yield caches.open('cpac')
-
       let config = yield select((state) => state[key]);
 
+<<<<<<< HEAD
       let cacheCount = 0
       for (let k of traverseState(config, (o) => o instanceof Immutable.Map && o.get('_cache'))) {
         const reqKey = new Request(requestKey(k))
@@ -150,6 +148,21 @@ export function configLocalState(key, initialState = {}, {
         cacheCount++
       }
 
+=======
+      // const cache = yield caches.open('cpac')
+      // let cacheCount = 0
+      // for (let k of traverseState(config, (o) => o instanceof Immutable.Map && o.get('_cache'))) {
+      //   const reqKey = new Request(requestKey(k))
+      //   const value = new Response(
+      //     JSON.stringify(config.getIn(k)),
+      //     { headers: { 'Content-Type': 'application/json' } }
+      //   );
+      //   yield cache.put(reqKey, value);
+      //   config = config.setIn(k, Immutable.fromJS({ _cache: k }))
+      //   cacheCount++
+      // }
+      
+>>>>>>> 0934beb (fix: use headers instead of post)
       localStorage.setItem(key, JSON.stringify(config.toJS()))
       yield put({ type: saveSuccess, config })
     } catch (error) {
