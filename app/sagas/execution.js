@@ -123,14 +123,7 @@ function* preprocessDatasetProcessingScheduleWatch({ scheduler, execution, sched
           }
           case 'Log': {
             const schedule = data.message.schedule
-            // const runtimeResults =
-            //   {
-            //     'start': 'start' in data.message.content ? data.message.content.start : null,
-            //     'finish': 'finish' in data.message.content ? data.message.content.finish : null,
-            //     'runtime_mem_gb': 'runtime_memory_gb' in data.message.content ? data.message.content.runtime_memory_gb : null,
-            //     'runtime_threads': 'runtime_threads' in data.message.content ? data.message.content.runtime_threads : null,
-            //   }
-            const runtimeResults = data.message.content.info ? data.message.content.info : null
+            const runtimeResults = data.message.content ? data.message.content : null
             return {
               type: EXECUTION_PREPROCESS_DATASET_PROCESSING_NODELOG,
               execution, schedule, runtimeResults,
