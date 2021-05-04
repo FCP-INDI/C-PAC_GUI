@@ -105,13 +105,13 @@ export default function (state = initialState, action) {
       const i = state.get('executions').findIndex((e) => e.get('id') === action.execution)
       let nodeInfos = Map()
       for (let nodeInfo of action.runtimeResults) {
-        nodeInfos = nodeInfos.set(nodeInfo.message.id, fromJS({
-          'id': nodeInfo.message.id,
-          'start': nodeInfo.message.start,
-          'finish': nodeInfo.message.finish,
-          'runtime_mem_gb': nodeInfo.message.runtime_memory_gb,
-          'runtime_threads': nodeInfo.message.runtime_threads,
-          'status': nodeInfo.message.runtime_memory_gb ? 'success' : 'running',
+        nodeInfos = nodeInfos.set(nodeInfo.data.message.content.id, fromJS({
+          'id': nodeInfo.data.message.content.id,
+          'start': nodeInfo.data.message.content.start,
+          'finish': nodeInfo.data.message.content.finish,
+          'runtime_mem_gb': nodeInfo.data.message.content.runtime_memory_gb,
+          'runtime_threads': nodeInfo.data.message.content.runtime_threads,
+          'status': nodeInfo.data.message.content.runtime_memory_gb ? 'success' : 'running',
         }))
       }
       return state.mergeIn(['executions', i, 'schedules', action.schedule, 'nodes'], nodeInfos)
