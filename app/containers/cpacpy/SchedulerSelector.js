@@ -175,7 +175,7 @@ class CpacpySchedulerSelector extends Component {
 
     return {
       schedulers: selectSchedulers()(state),
-      scheduler: props.scheduler || selectCurrentScheduler()(state).get('id'),
+      scheduler: props.scheduler || selectCurrentScheduler()(state) ? selectCurrentScheduler()(state).get('id') : null,
       testingScheduler: getTestingScheduler()(state),
     }
   }

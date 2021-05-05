@@ -161,7 +161,10 @@ export default function (state = initialState, action) {
 
     case CPACPY_SCHEDULER_DELETE:
       const idx = state.get('schedulers').findIndex((s) => s.get('id') === action.id)
-      return state.set('schedulers', state.get('schedulers').remove(idx))
+      const nextState = state.set('schedulers', state.get('schedulers').remove(idx))
+      const numSchedulers = nextState.get('schedulers').size
+      const nextLatestScheduler = numSchedulers > 0 ? state.getIn(['schedulers', numSchedulers - 1, 'id']) : ''
+      return nextState.setIn(['latestScheduler'], nextLatestScheduler)
 
     default:
       return state
