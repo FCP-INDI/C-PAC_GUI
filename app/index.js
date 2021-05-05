@@ -11,7 +11,7 @@ import keyIn from './utils/keyIn'
 Immutable.Map.prototype.subset = function (keys) {
   return this.filter(keyIn(...keys))
 }
-
+// localStorage.clear()
 const store = configureStore();
 
 const render = Component => {
