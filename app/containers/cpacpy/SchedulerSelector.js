@@ -298,6 +298,9 @@ class CpacpySchedulerSelector extends Component {
   }
 
   render() {
+    if (this.state.scheduler != this.props.scheduler) {
+      this.setState({scheduler:this.props.scheduler, schedulers:this.props.schedulers})
+    }
     const {classes, schedulers, watch, stop, buttonProps: {className: buttonClassName, ...buttonProps},
       buttonMenuProps, popoverProps, testingScheduler} = this.props
     const {selector, selectorAnchor, fullSelector, scheduler: selectedScheduler} = this.state
