@@ -152,6 +152,7 @@ class ExecutionNewPage extends Component {
     const p = props.parameters
     if (props.scheduler && props.scheduler.get('online')) {
       this.state.scheduler.id = props.scheduler.get('id')
+      this.state.scheduler.backend = props.scheduler.getIn(['backends']).size > 0 && props.scheduler.getIn(['backends', 0, 'id'])
     }
     if (p) {
       if (p.dataset) {
@@ -228,6 +229,12 @@ class ExecutionNewPage extends Component {
 
         if (statePath[0] === 'scheduler' && statePath[1] === 'profile') {
           state = state.setIn(statePath, value)
+        }
+
+        if (statePath[0] === 'scheduler' && statePath[1] === 'id') {
+          const { scheduler } = this.props
+          const backendId = scheduler.get('backends').size > 0 && scheduler.getIn(['backends', 0, 'id'])
+          state = state.setIn(['scheduler', 'backend'], backendId)
         }
 
         this.setState(state.toJS())
@@ -406,7 +413,7 @@ class ExecutionNewPage extends Component {
             <StepLabel>Select your scheduler</StepLabel>
             <StepContent>
               <Grid container>
-                <Grid item xs={6} md={8} style={{ display: 'flex' }}>
+                <Grid item xs={12} md={12} style={{ display: 'flex' }} border={1}>
                   <FormControl margin="normal" fullWidth>
                     <CpacpySchedulerSelector
                       buttonProps={{
@@ -418,33 +425,33 @@ class ExecutionNewPage extends Component {
                     />
                   </FormControl>
                 </Grid>
-                <Grid item xs={6} md={4}>
-                  <TextField
-                    select
-                    label="Backend"
-                    fullWidth margin="normal" variant="outlined"
-                    disabled={this.state.scheduler.id === null || !scheduler.get('online')}
-                    value={this.state.scheduler.backend || ''}
-                    onChange={this.handleChange(['scheduler', 'backend'])}
-                    className={classes.backend}
-                  >
-                    {
-                      this.state.scheduler.id !== null ?
-                      schedulers
-                        .find((s) => s.get('id') == this.state.scheduler.id)
-                        .get('backends')
-                        .map((b) => (
-                          <MenuItem key={ b.get('id') } value={ b.get('id') }>
-                            <ListItemIcon>
-                              <ExecutionCurrentBackendIcon fontSize="inherit" backend={ b.get('backend') } />
-                            </ListItemIcon>
-                            <ListItemText primary={ b.get('id') } />
-                          </MenuItem>
-                        )) :
-                        null
-                    }
-                  </TextField>
-                </Grid>
+                {/*<Grid item xs={6} md={4}>*/}
+                {/*  <TextField*/}
+                {/*    select*/}
+                {/*    label="Backend"*/}
+                {/*    fullWidth margin="normal" variant="outlined"*/}
+                {/*    disabled={this.state.scheduler.id === null || !scheduler.get('online')}*/}
+                {/*    value={this.state.scheduler.backend || ''}*/}
+                {/*    onChange={this.handleChange(['scheduler', 'backend'])}*/}
+                {/*    className={classes.backend}*/}
+                {/*  >*/}
+                {/*    {*/}
+                {/*      this.state.scheduler.id !== null ?*/}
+                {/*      schedulers*/}
+                {/*        .find((s) => s.get('id') == this.state.scheduler.id)*/}
+                {/*        .get('backends')*/}
+                {/*        .map((b) => (*/}
+                {/*          <MenuItem key={ b.get('id') } value={ b.get('id') }>*/}
+                {/*            <ListItemIcon>*/}
+                {/*              <ExecutionCurrentBackendIcon fontSize="inherit" backend={ b.get('backend') } />*/}
+                {/*            </ListItemIcon>*/}
+                {/*            <ListItemText primary={ b.get('id') } />*/}
+                {/*          </MenuItem>*/}
+                {/*        )) :*/}
+                {/*        null*/}
+                {/*    }*/}
+                {/*  </TextField>*/}
+                {/*</Grid>*/}
               </Grid>
               <Grid container>
                 <Grid item xs={12}>
