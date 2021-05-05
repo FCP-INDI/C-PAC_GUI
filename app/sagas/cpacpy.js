@@ -255,6 +255,8 @@ function* callScheduler({
 
 function* addNew() {
   yield put({type: CPACPY_CONFIG_SAVE})
+  const scheduler = yield selectSaga(selectCurrentScheduler())
+  yield put(cpacpyDetect(scheduler.get('id'), scheduler.get('authKey'), true, true))
 }
 
 function* test({ ip, port, authKey }) {
