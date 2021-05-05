@@ -167,7 +167,7 @@ class ExecutionNewPage extends Component {
         this.state.scheduler = { id: scheduler, backend: backend }
       }
     }
-    this.state.datasetScheduler = this.props.schedulers.size > 0 ? this.props.scheduler.get('id') : null
+    this.state.datasetScheduler = this.props.schedulers.size > 0 && this.props.scheduler ? this.props.scheduler.get('id') : null
     this.state.execution = uuid()
   }
 
