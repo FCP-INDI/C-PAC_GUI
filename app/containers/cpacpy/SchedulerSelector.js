@@ -330,7 +330,7 @@ class CpacpySchedulerSelector extends Component {
               }}
             >
               {
-                schedulers.map((s) => (
+                schedulers.size > 0 && schedulers.map((s) => (
                   <Paper key={s.get('id')} elevation={3} className={classes.scheduler}>
                     <Grid container spacing={0}>
                       <Grid item xs={12} className={classes.description}>

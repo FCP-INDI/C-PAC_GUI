@@ -152,7 +152,7 @@ class ExecutionNewPage extends Component {
     const p = props.parameters
     if (props.scheduler && props.scheduler.get('online')) {
       this.state.scheduler.id = props.scheduler.get('id')
-      this.state.scheduler.backend = props.scheduler.getIn(['backends']).size > 0 && props.scheduler.getIn(['backends', 0, 'id'])
+      this.state.scheduler.backend = props.scheduler.getIn(['backends']).size > 0 && props.scheduler.getIn(['backends', 0])
     }
     if (p) {
       if (p.dataset) {
@@ -233,8 +233,8 @@ class ExecutionNewPage extends Component {
 
         if (statePath[0] === 'scheduler' && statePath[1] === 'id') {
           const { scheduler } = this.props
-          const backendId = scheduler.get('backends').size > 0 && scheduler.getIn(['backends', 0, 'id'])
-          state = state.setIn(['scheduler', 'backend'], backendId)
+          const backend = scheduler.get('backends').size > 0 && scheduler.getIn(['backends', 0])
+          state = state.setIn(['scheduler', 'backend'], backend)
         }
 
         this.setState(state.toJS())

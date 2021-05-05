@@ -165,7 +165,7 @@ class ExecutionNodesGraph extends Component {
               classes[`tooltipPlacement${capitalize(placementInner.split('-')[0])}`],
             )}
           >
-            { node && 'name' in node ? node.get('name') : node.get('id')}
+            { node ? (node && 'name' in node ? node.get('name') : node.get('id')) : null}
             <span className={clsx(classes.arrowPos, classes.arrow)} />
           </div>
           )}
