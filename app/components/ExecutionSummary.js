@@ -139,6 +139,7 @@ class ExecutionSummary extends Component {
       const scheduler = schedulers.find((d) => d.get('id') === schedulerId)
       summaries.scheduler = {
         online: scheduler ? scheduler.get('online') : false,
+        name: scheduler ? scheduler.get('name') : schedulerId
       }
     }
 
@@ -152,7 +153,7 @@ class ExecutionSummary extends Component {
 
     const scheduler = schedulerId ? schedulers.find((s) => s.get('id') === schedulerId) : null
     const currentSchedulerInfo = schedulerDetails === null? executions.find((execution) => execution.get('id') === executionId).get('scheduler') : fromJS(schedulerDetails)
-    const backend = scheduler && currentSchedulerInfo && currentSchedulerInfo.get('backend') ? scheduler.get('backends').find((b) => b.get('id') === currentSchedulerInfo.get('backend')) : null
+    const backend = fromJS(currentSchedulerInfo && currentSchedulerInfo.get('backend') ? currentSchedulerInfo.get('backend') : null)
     const schedulerProfile = currentSchedulerInfo ? currentSchedulerInfo.get('profile') : null
     const summary = this.computeSummaries(pipelineId, datasetId, schedulerId, datasetViewId)
     return (
@@ -246,7 +247,7 @@ class ExecutionSummary extends Component {
                       <ListItemIcon>
                         <SchedulerIcon />
                       </ListItemIcon>
-                      <ListItemText primary={scheduler.get('name')} />
+                      <ListItemText primary={summary.scheduler.name} />
                     </ListItem>
                     <ListItem disableGutters>
                       <ListItemIcon>

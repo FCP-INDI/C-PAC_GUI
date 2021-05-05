@@ -138,6 +138,7 @@ class SchedulerChip extends Component {
   static mapStateToProps = (state, props) => {
     const { scheduler } = props
     return {
+      schedulerId: scheduler,
       scheduler: selectScheduler(scheduler)(state.cpacpy)
     }
   }
@@ -153,8 +154,8 @@ class SchedulerChip extends Component {
 
 
   render() {
-    const { scheduler, backend, classes } = this.props
-    if (!scheduler) {
+    const { scheduler, backend, classes, schedulerId } = this.props
+    if (!schedulerId) {
       return null
     }
     if (backend) {
@@ -169,7 +170,7 @@ class SchedulerChip extends Component {
         >
           <Chip
             icon={<SchedulerIcon />}
-            label={scheduler.get('name')}
+            label={scheduler ? scheduler.get('name') : schedulerId}
             color="primary"
           />
         </Badge>
@@ -178,7 +179,7 @@ class SchedulerChip extends Component {
       return (
         <Chip
           icon={<SchedulerIcon />}
-          label={scheduler.get('name')}
+          label={scheduler ? scheduler.get('name') : schedulerId}
           color="primary"
         />
       )
