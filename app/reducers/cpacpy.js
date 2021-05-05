@@ -100,9 +100,15 @@ export default function (state = initialState, action) {
 
     case CPACPY_SCHEDULER_ONLINE:
     case CPACPY_SCHEDULER_OFFLINE:
-      return state
-        .setIn(['schedulers', i, 'online'], action.type == CPACPY_SCHEDULER_ONLINE)
-        .setIn(['schedulers', i, 'detecting'], false)
+      if (i >= 0) {
+        return state
+          .setIn(['schedulers', i, 'online'], action.type == CPACPY_SCHEDULER_ONLINE)
+          .setIn(['schedulers', i, 'detecting'], false)
+      }
+      else {
+        return state
+      }
+
 
     case CPACPY_SCHEDULER_CONNECT_SEND_CALLBACK:
       const { callbackId, callbackAction } = action
