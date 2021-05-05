@@ -142,7 +142,7 @@ class ExecutionNewPage extends Component {
     activeStep: 0,
     dataset: { id: null, view: 'default' },
     pipeline: { id: null },
-    scheduler: { id: null, backend: null, profile: {corePerPipeline: 1, memPerPipeline: 1, parallelPipeline: 1 }},
+    scheduler: { id: null, backend: null, profile: {corePerPipeline: 8, memPerPipeline: 16, parallelPipeline: 1 }},
     datasetScheduler: null,
     execution: null
   }
@@ -468,7 +468,7 @@ class ExecutionNewPage extends Component {
               <Grid container>
                 <Grid item xs={12}>
                   <TextField
-                    label="Amount of memories per pipeline (MB)"
+                    label="Max memory per pipeline (GB)"
                     fullWidth margin="normal" variant="outlined"
                     disabled={this.state.scheduler.id === null || !scheduler.get('online')}
                     value={this.state.scheduler.profile.memPerPipeline || ''}
