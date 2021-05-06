@@ -167,7 +167,13 @@ export default function (state = initialState, action) {
 
     case CPACPY_SCHEDULER_DELETE:
       const idx = state.get('schedulers').findIndex((s) => s.get('id') === action.id)
-      const nextState = state.set('schedulers', state.get('schedulers').remove(idx))
+      const deleteScheduler = state.getIn(['schedulers', idx])
+      const testingScheduler = state.get('testingScheduler')
+      let nextState = state.set('schedulers', state.get('schedulers').remove(idx))
+      if (testingScheduler.get('authKey') === deleteScheduler.get('authKey')) {
+        nextState = nextState.set('testingScheduler', fromJS({address: null,
+          success: false, detecting: false, error: null, authKey: null}))
+      }
       const numSchedulers = nextState.get('schedulers').size
       const nextLatestScheduler = numSchedulers > 0 ? state.getIn(['schedulers', numSchedulers - 1, 'id']) : ''
       return nextState.setIn(['latestScheduler'], nextLatestScheduler)
