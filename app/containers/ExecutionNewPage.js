@@ -267,7 +267,16 @@ class ExecutionNewPage extends Component {
   }
 
   handlePreprocessDataset = () => {
-    const { execution, dataset, pipeline, scheduler, note } = this.state
+    const { execution, pipeline, scheduler, note } = this.state
+    const { datasets } = this.props
+    let { dataset } = this.state
+    if (!this.state.dataset.subjectNum) {
+      const storeDataset = datasets.find((d) => d.get('id') === this.state.dataset.id)
+      const version = `${storeDataset.get('versions').keySeq().map(i => +i).max()}`
+      const dataConfig = cpac.data_config.parse(cpac.data_config.dump(storeDataset.toJS(), version, this.state.dataset.view))
+      const subjectNum = Math.max(dataConfig.subject_ids.length, 1)
+      dataset.subjectNum = subjectNum
+    }
     this.props.preprocessDataset(execution, scheduler, dataset, pipeline, note)
     this.props.onSchedule && this.props.onSchedule()
   }
