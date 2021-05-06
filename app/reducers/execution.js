@@ -108,13 +108,17 @@ export default function (state = initialState, action) {
         nodeInfos = nodeInfos.set(nodeInfo.data.message.content.id, fromJS({
           'id': nodeInfo.data.message.content.id,
           'start': nodeInfo.data.message.content.start,
-          'finish': nodeInfo.data.message.content.finish,
+          'finish': nodeInfo.data.message.content.end,
           'runtime_mem_gb': nodeInfo.data.message.content.runtime_memory_gb,
           'runtime_threads': nodeInfo.data.message.content.runtime_threads,
           'status': nodeInfo.data.message.content.runtime_memory_gb ? 'success' : 'running',
         }))
       }
-      return state.mergeIn(['executions', i, 'schedules', action.schedule, 'nodes'], nodeInfos)
+      let nextState = state
+      if (state.getIn(['executions', i, 'schedules', action.schedule, 'status']) === 'unknown') {
+        nextState = state.setIn(['executions', i, 'schedules', action.schedule, 'status'], 'running')
+      }
+      return nextState.mergeIn(['executions', i, 'schedules', action.schedule, 'nodes'], nodeInfos)
     }
 
     case EXECUTION_PREPROCESS_DATASET_PROCESSING_LOG: {
