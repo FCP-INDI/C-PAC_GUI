@@ -139,7 +139,7 @@ class ExecutionPage extends Component {
 
   handleOpenSchedule = (s) => {
     const { execution, operation } = this.props
-    this.setState({ openedLog: null })
+    this.setState({ openedLog: null, nodeSelected: null })
     this.props.history.push(`/executions/${execution.get('id')}/${s.get('id')}/${operation || 'logs'}`)
   }
 
