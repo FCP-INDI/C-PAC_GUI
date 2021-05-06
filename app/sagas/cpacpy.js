@@ -118,7 +118,9 @@ function *offline({ scheduler }) {
 function* pollingBackground(scheduler) {
   yield delay(10000)
   const schedulerDetail = yield selectSaga(selectScheduler(scheduler))
-  yield put(cpacpyDetect(scheduler, schedulerDetail.get('authKey')))
+  if (schedulerDetail){
+    yield put(cpacpyDetect(scheduler, schedulerDetail.get('authKey')))
+  }
 }
 
 function* polling({ scheduler, current }) {
