@@ -115,7 +115,7 @@ export default function (state = initialState, action) {
         }))
       }
       let nextState = state
-      if (state.getIn(['executions', i, 'schedules', action.schedule, 'status']) === 'unknown') {
+      if (state.getIn(['executions', i, 'schedules', action.schedule, 'status']) === 'unknown' || !state.getIn(['executions', i, 'schedules', action.schedule, 'status'])) {
         nextState = state.setIn(['executions', i, 'schedules', action.schedule, 'status'], 'running')
       }
       return nextState.mergeIn(['executions', i, 'schedules', action.schedule, 'nodes'], nodeInfos)
