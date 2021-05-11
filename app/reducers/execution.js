@@ -51,9 +51,9 @@ export default function (state = initialState, action) {
         start: new Date().getTime(),
         finish: null,
         status: 'unknown',
-        scheduler: { id: scheduler.id, backend: scheduler.backend, profile: scheduler.profile },
-        pipeline: { id: pipeline.id, version: pipeline.version },
-        dataset: { id: dataset.id, version: dataset.version, view: dataset.view, subjectNum: dataset.subjectNum },
+        scheduler: scheduler,
+        pipeline: pipeline,
+        dataset: dataset,
       })
 
       return state.updateIn(['executions'], executions => executions.push(execution))
