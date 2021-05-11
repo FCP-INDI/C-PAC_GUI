@@ -150,10 +150,6 @@ class ExecutionNewPage extends Component {
   constructor(props) {
     super(props);
     const p = props.parameters
-    if (props.scheduler && props.scheduler.get('online')) {
-      this.state.scheduler.id = props.scheduler.get('id')
-      this.state.scheduler.backend = props.scheduler.getIn(['backends']).size > 0 && props.scheduler.getIn(['backends', 0])
-    }
     if (p) {
       if (p.dataset) {
         const [dataset, view] = p.dataset.split(':')
@@ -164,7 +160,8 @@ class ExecutionNewPage extends Component {
       }
       if (p.scheduler) {
         const [scheduler, backend] = p.scheduler.split(':')
-        this.state.scheduler = { id: scheduler, backend: backend }
+        const name = this.props.schedulers.find(s => s.get('id') === scheduler).get('name')
+        this.state.scheduler = { id: scheduler, backend: backend, name }
       }
     }
     this.state.datasetScheduler = this.props.schedulers.size > 0 && this.props.scheduler ? this.props.scheduler.get('id') : null
@@ -208,7 +205,11 @@ class ExecutionNewPage extends Component {
             state = state.setIn(['dataset', 'view'], 'default')
           }
           const version = `${dataset.get('versions').keySeq().map(i => +i).max()}`
+          const versionDetail = dataset.getIn(['versions', version])
+          const dirty = dataset.get('versions').has('0') || !dataset.hasIn(['data', 'sets'])
           state = state.setIn(['dataset', 'version'], version)
+            .setIn(['dataset', 'versionDetail'], versionDetail)
+            .setIn(['dataset', 'dirty'], dirty)
         }
 
         if (statePath[0] === 'dataset' && statePath[1] === 'view') {
@@ -217,14 +218,43 @@ class ExecutionNewPage extends Component {
           const version = `${dataset.get('versions').keySeq().map(i => +i).max()}`
           const dataConfig = cpac.data_config.parse(cpac.data_config.dump(dataset.toJS(), version, value))
           const subjectNum = Math.max(dataConfig.subject_ids.length, 1)
-          state = state.setIn(['dataset', 'subjectNum'], subjectNum)
+          const sessions = Math.max(dataConfig.unique_ids.length, 1)
+          const sites = Math.max(dataConfig.sites.length, 1)
+          state = state.setIn(['dataset', 'subjects'], subjectNum)
+            .setIn(['dataset', 'sessions'], sessions)
+            .setIn(['dataset', 'sites'], sites)
         }
 
         if (statePath[0] === 'pipeline' && statePath[1] === 'id') {
           const { pipelines } = this.props
           const pipeline = pipelines.find((d) => d.get('id') == value)
-          const version = `${pipeline.get('versions').keySeq().map(i => +i).max()}`
-          state = state.setIn(['pipeline', 'version'], version)
+          const versionId = `${pipeline.get('versions').keySeq().map(i => +i).max()}`
+          const version = pipeline.get('versions').get(versionId)
+          const dirty = pipeline.get('versions').has('0')
+          const anatomical = version.getIn(['configuration', 'anatomical', 'enabled'])
+          const functional = version.getIn(['configuration', 'functional', 'enabled'])
+          let derivatives = version.getIn(['configuration', 'derivatives', 'enabled'])
+          if (derivatives) {
+            derivatives = version.getIn(['configuration', 'derivatives']).reduce(
+              (total, value) => {
+                // Ignore root flag 'enabled' under derivatives
+                if (value.get) {
+                  return total + (value.get('enabled') ? 1 : 0)
+                }
+                return total
+              },
+              0
+            )
+            derivatives = derivatives ? derivatives : false
+          } else {
+            derivatives = 0
+          }
+          state = state.setIn(['pipeline', 'version'], versionId)
+            .setIn(['pipeline', 'versionDetail'], version)
+            .setIn(['pipeline', 'dirty'], dirty)
+            .setIn(['pipeline', 'anatomical'], anatomical)
+            .setIn(['pipeline', 'functional'], functional)
+            .setIn(['pipeline', 'derivatives'], derivatives)
         }
 
         if (statePath[0] === 'scheduler' && statePath[1] === 'profile') {
@@ -234,7 +264,9 @@ class ExecutionNewPage extends Component {
         if (statePath[0] === 'scheduler' && statePath[1] === 'id') {
           const { scheduler } = this.props
           const backend = scheduler.get('backends').size > 0 && scheduler.getIn(['backends', 0])
+          const name = scheduler.get('name')
           state = state.setIn(['scheduler', 'backend'], backend)
+            .setIn(['scheduler', 'name'], name)
         }
 
         this.setState(state.toJS())
