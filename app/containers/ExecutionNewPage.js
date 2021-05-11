@@ -434,33 +434,6 @@ class ExecutionNewPage extends Component {
                     />
                   </FormControl>
                 </Grid>
-                {/*<Grid item xs={6} md={4}>*/}
-                {/*  <TextField*/}
-                {/*    select*/}
-                {/*    label="Backend"*/}
-                {/*    fullWidth margin="normal" variant="outlined"*/}
-                {/*    disabled={this.state.scheduler.id === null || !scheduler.get('online')}*/}
-                {/*    value={this.state.scheduler.backend || ''}*/}
-                {/*    onChange={this.handleChange(['scheduler', 'backend'])}*/}
-                {/*    className={classes.backend}*/}
-                {/*  >*/}
-                {/*    {*/}
-                {/*      this.state.scheduler.id !== null ?*/}
-                {/*      schedulers*/}
-                {/*        .find((s) => s.get('id') == this.state.scheduler.id)*/}
-                {/*        .get('backends')*/}
-                {/*        .map((b) => (*/}
-                {/*          <MenuItem key={ b.get('id') } value={ b.get('id') }>*/}
-                {/*            <ListItemIcon>*/}
-                {/*              <ExecutionCurrentBackendIcon fontSize="inherit" backend={ b.get('backend') } />*/}
-                {/*            </ListItemIcon>*/}
-                {/*            <ListItemText primary={ b.get('id') } />*/}
-                {/*          </MenuItem>*/}
-                {/*        )) :*/}
-                {/*        null*/}
-                {/*    }*/}
-                {/*  </TextField>*/}
-                {/*</Grid>*/}
               </Grid>
               <Grid container>
                 <Grid item xs={12}>

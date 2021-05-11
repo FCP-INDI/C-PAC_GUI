@@ -138,7 +138,6 @@ class ExecutionSummary extends Component {
     if (schedulerId) {
       const scheduler = schedulers.find((d) => d.get('id') === schedulerId)
       summaries.scheduler = {
-        online: scheduler ? scheduler.get('online') : false,
         name: scheduler ? scheduler.get('name') : schedulerId
       }
     }
