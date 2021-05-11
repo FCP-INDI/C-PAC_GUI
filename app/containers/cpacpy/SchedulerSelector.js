@@ -17,7 +17,6 @@ import {default as FlexBox} from '@material-ui/core/Box'
 import Typography from '@material-ui/core/Typography'
 import Tooltip from '@material-ui/core/Tooltip'
 import Alert from '@material-ui/lab/Alert'
-import EditIcon from '@material-ui/icons/Edit';
 
 
 import {
@@ -488,14 +487,15 @@ class CpacpySchedulerSelector extends Component {
           )}
           onClick={scheduler && schedulers.size > 0 ? this.toggleSelector : this.handleManage}
           {...buttonProps}
-        > {
+        > {scheduler && schedulers.size > 0 ? <span>Select&nbsp;&nbsp;</span> : null}
+          {
           scheduler && schedulers.size > 0 ? <BulletIcon className={clsx(
             classes.bullet,
             (scheduler.get('detecting') || scheduler.get('polling')) ? classes.detecting : null,
             scheduler.get('online') === null ? classes.unknown : (scheduler.get('online') ? classes.online : classes.offline)
           )}/> : null
         }
-          {(scheduler && schedulers.size > 0 ? scheduler.get('name') : 'Schedulers')} <EditIcon/>
+          {scheduler && schedulers.size > 0 ? scheduler.get('name') : 'Manage Schedulers'}
         </ButtonBase>
       </>
     )
