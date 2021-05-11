@@ -162,6 +162,9 @@ class CpacpySchedulerSelector extends Component {
       '50%': {strokeWidth: 10, strokeOpacity: 0.5},
       '100%': {strokeWidth: 0, strokeOpacity: 0},
     },
+    close: {
+      cursor:'pointer', float:'right', marginTop: '0px', width: '20px',
+    },
   });
 
   static mapStateToProps = ({cpacpy: state}, props) => {
@@ -323,7 +326,7 @@ class CpacpySchedulerSelector extends Component {
         >
           <Paper className={classes.paper}>
             <Box
-              title="Schedulers"
+              title={<div>Schedulers<Button className={classes.close} onClick={this.handleFullClose}>x</Button></div>}
               avatar={<SchedulerIcon/>}
               classes={{
                 content: classes.content
