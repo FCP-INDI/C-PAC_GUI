@@ -181,6 +181,16 @@ class ExecutionNewPage extends Component {
     generateDataConfig,
   }
 
+  calDataset = (dataset, version, view, state) => {
+    const dataConfig = cpac.data_config.parse(cpac.data_config.dump(dataset.toJS(), version, view))
+    const subjectNum = Math.max(dataConfig.subject_ids.length, 1)
+    const sessions = Math.max(dataConfig.unique_ids.length, 1)
+    const sites = Math.max(dataConfig.sites.length, 1)
+    return state.setIn(['dataset', 'subjects'], subjectNum)
+      .setIn(['dataset', 'sessions'], sessions)
+      .setIn(['dataset', 'sites'], sites)
+  }
+
   handleChange =
     (statePath, value=null) =>
       (e) => {
@@ -205,24 +215,19 @@ class ExecutionNewPage extends Component {
             state = state.setIn(['dataset', 'view'], 'default')
           }
           const version = `${dataset.get('versions').keySeq().map(i => +i).max()}`
-          const versionDetail = dataset.getIn(['versions', version])
+          const versionDetails = dataset.getIn(['versions', version])
           const dirty = dataset.get('versions').has('0') || !dataset.hasIn(['data', 'sets'])
           state = state.setIn(['dataset', 'version'], version)
-            .setIn(['dataset', 'versionDetail'], versionDetail)
+            .setIn(['dataset', 'versionDetails'], versionDetails)
             .setIn(['dataset', 'dirty'], dirty)
+          state = this.calDataset(dataset, version, state.getIn(['dataset', 'view']), state)
         }
 
         if (statePath[0] === 'dataset' && statePath[1] === 'view') {
           const { datasets } = this.props
           const dataset = datasets.find((d) => d.get('id') === this.state.dataset.id)
           const version = `${dataset.get('versions').keySeq().map(i => +i).max()}`
-          const dataConfig = cpac.data_config.parse(cpac.data_config.dump(dataset.toJS(), version, value))
-          const subjectNum = Math.max(dataConfig.subject_ids.length, 1)
-          const sessions = Math.max(dataConfig.unique_ids.length, 1)
-          const sites = Math.max(dataConfig.sites.length, 1)
-          state = state.setIn(['dataset', 'subjects'], subjectNum)
-            .setIn(['dataset', 'sessions'], sessions)
-            .setIn(['dataset', 'sites'], sites)
+          state = this.calDataset(dataset, version, value, state)
         }
 
         if (statePath[0] === 'pipeline' && statePath[1] === 'id') {
@@ -314,19 +319,36 @@ class ExecutionNewPage extends Component {
   }
 
   render() {
-    const { classes, executions, schedulers, datasets, pipelines, parameters } = this.props
+    const { classes, schedulers, datasets, pipelines, } = this.props
     const { activeStep } = this.state
     const steps = ['pipeline', 'dataset', 'scheduler', 'summary']
     const dataset = this.state.dataset.id ? datasets.find((d) => d.get('id') == this.state.dataset.id) : null
     const scheduler = this.state.scheduler.id ? schedulers.find((s) => s.get('id') == this.state.scheduler.id) : null
-    const dirty = dataset?.get('versions').has('0') || !dataset?.hasIn(['data', 'sets'])
-    const versions = dataset? dataset.get('versions') : null
-    const versionId = versions ? `${versions.keySeq().map(i => +i).max()}` : null
-    const datasetVersion = versions? versions.get(versionId) : null
+    const dirty = this.state.dataset.dirty || !dataset?.hasIn(['data', 'sets'])
+    const datasetVersion = this.state.dataset.versionDetails
     const completed = {
       pipeline: !!this.state.pipeline.id,
       dataset: !!(this.state.dataset.id && !dirty),
       scheduler: !!(this.state.scheduler.id && this.state.scheduler.backend),
+    }
+    const summary = {
+      pipeline: {
+        functional: this.state.pipeline.functional,
+        derivatives: this.state.pipeline.derivatives,
+      },
+      dataset: {
+        sites: this.state.dataset.sites,
+        subjects: this.state.dataset.subjects,
+        sessions: this.state.dataset.sessions,
+      },
+      scheduler: {
+        name: this.state.scheduler.name,
+        backend: this.state.scheduler.backend ? {
+          id: this.state.scheduler.backend.id,
+          backend: this.state.scheduler.backend.backend,
+        } : null,
+        schedulerProfile: this.state.scheduler.profile,
+      }
     }
 
     return (
@@ -509,12 +531,7 @@ class ExecutionNewPage extends Component {
             <StepLabel>Summary</StepLabel>
             <StepContent>
               <SummaryCard
-                pipelineId = {this.state.pipeline.id}
-                datasetId = {this.state.dataset.id}
-                schedulerId = {this.state.scheduler.id}
-                executionId = {this.state.execution}
-                schedulerDetails = {this.state.scheduler}
-                datasetViewId = {this.state.dataset.view}
+                summary = {summary}
                 normalPage = {false}
               />
             </StepContent>
