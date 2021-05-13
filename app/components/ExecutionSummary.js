@@ -192,19 +192,19 @@ class ExecutionSummary extends Component {
                       <ListItemIcon>
                         <SchedulerParamIcon />
                       </ListItemIcon>
-                      <ListItemText primary={summary.scheduler.schedulerProfile.corePerPipeline + ' core / pipeline'} />
+                      <ListItemText primary={summary.scheduler.profile.corePerPipeline + ' core / pipeline'} />
                     </ListItem>
                     <ListItem disableGutters>
                       <ListItemIcon>
                         <SchedulerParamIcon />
                       </ListItemIcon>
-                      <ListItemText primary={summary.scheduler.schedulerProfile.memPerPipeline + ' GB / pipeline'} />
+                      <ListItemText primary={summary.scheduler.profile.memPerPipeline + ' GB / pipeline'} />
                     </ListItem>
                     <ListItem disableGutters>
                       <ListItemIcon>
                         <SchedulerParamIcon />
                       </ListItemIcon>
-                      <ListItemText primary={summary.scheduler.schedulerProfile.parallelPipeline + ' parallel pipeline(s)'} />
+                      <ListItemText primary={summary.scheduler.profile.parallelPipeline + ' parallel pipeline(s)'} />
                     </ListItem>
                   </List>
                 )

@@ -25,6 +25,8 @@ import {
 import ExecutionNodesGraph from './ExecutionNodesGraph'
 import SummaryCard from './ExecutionSummary'
 
+import { getExecutionSummary } from '../reducers/execution'
+
 import { PipelineChip, DatasetChip, SchedulerChip } from './chips'
 import format from '../utils/format'
 
@@ -87,6 +89,7 @@ class ExecutionDetailCard extends Component {
   static mapStateToProps = (state, { execution }) => {
     return {
       execution: state.execution.get('executions').find((e) => e.get('id') == execution),
+      summary: getExecutionSummary(execution)(state.execution)
     }
   }
   
@@ -101,29 +104,7 @@ class ExecutionDetailCard extends Component {
   render() {
     const { classes, execution: e, actions = true, onClickSchedule, selectedSchedule, showSummaryCard = false }  = this.props
     const subjectCnt = e && e.getIn(['dataset', 'subjectNum'])
-    const summary = {
-      pipeline: {
-        functional: this.props.execution.getIn(['pipeline', 'functional']),
-        derivatives: this.props.execution.getIn(['pipeline', 'derivatives']),
-      },
-      dataset: {
-        sites: this.props.execution.getIn(['dataset', 'sites']),
-        subjects: this.props.execution.getIn(['dataset', 'subjects']),
-        sessions: this.props.execution.getIn(['dataset', 'sessions']),
-      },
-      scheduler: {
-        name: this.props.execution.getIn(['scheduler', 'name']),
-        backend: {
-          id: this.props.execution.getIn(['scheduler', 'backend', 'id']),
-          backend: this.props.execution.getIn(['scheduler', 'backend', 'backend']),
-        },
-        schedulerProfile: {
-          corePerPipeline: this.props.execution.getIn(['scheduler', 'schedulerProfile', 'corePerPipeline']),
-          memPerPipeline: this.props.execution.getIn(['scheduler', 'schedulerProfile', 'memPerPipeline']),
-          parallelPipeline: this.props.execution.getIn(['scheduler', 'schedulerProfile', 'parallelPipeline'])
-        },
-      }
-    }
+    const summary = this.props.summary
 
     return (
       <Paper key={e.get('id')} className={classes.paper} elevation={3}>
