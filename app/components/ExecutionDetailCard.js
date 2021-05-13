@@ -6,17 +6,9 @@ import { withStyles, lighten } from '@material-ui/core/styles'
 import { fromJS, isImmutable } from 'immutable'
 import clsx from 'clsx'
 
-import Badge from '@material-ui/core/Badge'
-import Chip from '@material-ui/core/Chip'
 import Grid from '@material-ui/core/Grid'
-import Tabs from '@material-ui/core/Tabs'
-import Tab from '@material-ui/core/Tab'
 import Paper from '@material-ui/core/Paper'
 import Button from '@material-ui/core/Button'
-import TextField from '@material-ui/core/TextField'
-import IconButton from '@material-ui/core/IconButton'
-import Select from '@material-ui/core/Select'
-import MenuItem from '@material-ui/core/MenuItem'
 import Tooltip from 'components/Tooltip'
 import Typography from '@material-ui/core/Typography'
 import Avatar from '@material-ui/core/Avatar'
@@ -30,27 +22,10 @@ import {
   ExecutionCrashIcon,
 } from './icons'
 
-import Content from './Content'
-import Box from './Box'
-import Table from './Table'
 import ExecutionNodesGraph from './ExecutionNodesGraph'
 import SummaryCard from './ExecutionSummary'
 
 import { PipelineChip, DatasetChip, SchedulerChip } from './chips'
-
-import {
-  preprocessDataset,
-} from '../actions/execution'
-
-import {
-  selectDatasets,
-} from '../reducers/dataset'
-
-import {
-  selectSchedulers,
-  selectCurrentScheduler,
-} from '../reducers/cpacpy'
-
 import format from '../utils/format'
 
 const getColor = (theme, status) => ({
@@ -126,6 +101,29 @@ class ExecutionDetailCard extends Component {
   render() {
     const { classes, execution: e, actions = true, onClickSchedule, selectedSchedule, showSummaryCard = false }  = this.props
     const subjectCnt = e && e.getIn(['dataset', 'subjectNum'])
+    const summary = {
+      pipeline: {
+        functional: this.props.execution.getIn(['pipeline', 'functional']),
+        derivatives: this.props.execution.getIn(['pipeline', 'derivatives']),
+      },
+      dataset: {
+        sites: this.props.execution.getIn(['dataset', 'sites']),
+        subjects: this.props.execution.getIn(['dataset', 'subjects']),
+        sessions: this.props.execution.getIn(['dataset', 'sessions']),
+      },
+      scheduler: {
+        name: this.props.execution.getIn(['scheduler', 'name']),
+        backend: {
+          id: this.props.execution.getIn(['scheduler', 'backend', 'id']),
+          backend: this.props.execution.getIn(['scheduler', 'backend', 'backend']),
+        },
+        schedulerProfile: {
+          corePerPipeline: this.props.execution.getIn(['scheduler', 'schedulerProfile', 'corePerPipeline']),
+          memPerPipeline: this.props.execution.getIn(['scheduler', 'schedulerProfile', 'memPerPipeline']),
+          parallelPipeline: this.props.execution.getIn(['scheduler', 'schedulerProfile', 'parallelPipeline'])
+        },
+      }
+    }
 
     return (
       <Paper key={e.get('id')} className={classes.paper} elevation={3}>
@@ -163,12 +161,7 @@ class ExecutionDetailCard extends Component {
               <Grid item xs={12}>
                 <FlexBox className={classes.content}>
                   <SummaryCard
-                    pipelineId = {e.getIn(['pipeline', 'id'])}
-                    datasetId = {e.getIn(['dataset', 'id'])}
-                    schedulerId = {e.getIn(['scheduler', 'id'])}
-                    executionId = {e.getIn(['id'])}
-                    schedulerDetails = {e.getIn(['scheduler'])}
-                    datasetViewId = {e.getIn(['dataset', 'view'])}
+                    summary = {summary}
                     normalPage = {true}
                   />
                 </FlexBox>
