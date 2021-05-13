@@ -126,7 +126,7 @@ class ExecutionDetailCard extends Component {
               </Grid>
               <Grid container className={classes.chips} justify="center">
                 <Grid item xs={4} lg={3} xl={2}>
-                  <SchedulerChip scheduler={e.getIn(['scheduler', 'id'])} backend={e.getIn(['scheduler', 'backend', 'backend'])} />
+                  <SchedulerChip name={e.getIn(['scheduler', 'name'])} backend={e.getIn(['scheduler', 'backend', 'backend'])} />
                 </Grid>
                 <Grid item xs={4} lg={3} xl={2}>
                   <PipelineChip pipeline={e.getIn(['pipeline', 'id'])} version={e.getIn(['pipeline', 'version'])} />
