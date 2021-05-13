@@ -28,6 +28,33 @@ export const selectExecution =
 export const selectSchedule =
   (execution, schedule) => (state) => selectExecution(execution)(state).getIn(['schedules', schedule])
 
+export const getExecutionSummary = (execution) => (state) => {
+  const e = state.getIn(['executions']).find((e) => e.get('id') === execution)
+  const summary = e ? {
+    pipeline: {
+      functional: e.getIn(['pipeline', 'functional']),
+      derivatives: e.getIn(['pipeline', 'derivatives']),
+    },
+    dataset: {
+      sites: e.getIn(['dataset', 'sites']),
+      subjects: e.getIn(['dataset', 'subjects']),
+      sessions: e.getIn(['dataset', 'sessions']),
+    },
+    scheduler: {
+      name: e.getIn(['scheduler', 'name']),
+      backend: {
+        id: e.getIn(['scheduler', 'backend', 'id']),
+        backend: e.getIn(['scheduler', 'backend', 'backend']),
+      },
+      profile: {
+        corePerPipeline: e.getIn(['scheduler', 'profile', 'corePerPipeline']),
+        memPerPipeline: e.getIn(['scheduler', 'profile', 'memPerPipeline']),
+        parallelPipeline: e.getIn(['scheduler', 'profile', 'parallelPipeline'])
+      },
+    }
+  } : null
+  return summary
+}
 
 export default function (state = initialState, action) {
   if (!state) {

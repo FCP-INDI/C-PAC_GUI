@@ -347,7 +347,7 @@ class ExecutionNewPage extends Component {
           id: this.state.scheduler.backend.id,
           backend: this.state.scheduler.backend.backend,
         } : null,
-        schedulerProfile: this.state.scheduler.profile,
+        profile: this.state.scheduler.profile,
       }
     }
 
