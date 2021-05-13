@@ -154,8 +154,8 @@ class SchedulerChip extends Component {
 
 
   render() {
-    const { scheduler, backend, classes, schedulerId } = this.props
-    if (!schedulerId) {
+    const { name: scheduler, backend } = this.props
+    if (!scheduler) {
       return null
     }
     if (backend) {
@@ -170,7 +170,7 @@ class SchedulerChip extends Component {
         >
           <Chip
             icon={<SchedulerIcon />}
-            label={scheduler ? scheduler.get('name') : schedulerId}
+            label={ scheduler }
             color="primary"
           />
         </Badge>
@@ -179,7 +179,7 @@ class SchedulerChip extends Component {
       return (
         <Chip
           icon={<SchedulerIcon />}
-          label={scheduler ? scheduler.get('name') : schedulerId}
+          label={ scheduler }
           color="primary"
         />
       )
