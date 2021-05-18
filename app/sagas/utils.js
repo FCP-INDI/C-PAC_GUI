@@ -3,7 +3,23 @@ import { fetch as realFetch } from 'whatwg-fetch'
 import { select, put, takeEvery, call } from 'redux-saga/effects'
 import Immutable from 'immutable'
 import { default as LZString } from '../../tools/lz-string'
-import { updateItem as dbSave, getItem as dbGet, clearItem as dbClear } from './db'
+import { Dexie } from 'dexie'
+
+const db = new Dexie('idxedDB')
+db.version(1).stores({cpac: "key,value"})
+
+
+export async function dbUpdate(key, value) {
+  await db.cpac.put({key: key, value: value})
+}
+
+export async function dbGet(key) {
+  return db.cpac.where({key: key}).first(val => val ? val.value : null);
+}
+
+export async function dbClear() {
+  await db.cpac.where('key').anyOf('*').delete()
+}
 
 export const selectSaga = (key) => (callback) => select((state) => callback(state[key]))
 
@@ -103,10 +119,9 @@ export function configLocalState(key, initialState = {}, {
     try {
       const response = yield call(dbGet, key)
       localState = response ? JSON.parse(LZString.decompress(response)) : null
-      console.log("m4", localState)
       if (!localState) {
         localState = versionedInitialState
-        yield dbSave(key, LZString.compress(JSON.stringify(localState))).catch(e => throw e)
+        yield dbUpdate(key, LZString.compress(JSON.stringify(localState))).catch(e => throw e)
       }
       localState = Immutable.fromJS(localState)
       if (postLoad) {
@@ -164,6 +179,7 @@ export function configLocalState(key, initialState = {}, {
       //   cacheCount++
       // }
 <<<<<<< HEAD
+<<<<<<< HEAD
       
 <<<<<<< HEAD
 >>>>>>> 0934beb (fix: use headers instead of post)
@@ -175,6 +191,9 @@ export function configLocalState(key, initialState = {}, {
       console.log("m2", key, config)
       yield dbSave(key, LZString.compress(JSON.stringify(config.toJS())))
 >>>>>>> 7da7d3c (tmp: indexedDB solution with dexie.js)
+=======
+      yield dbUpdate(key, LZString.compress(JSON.stringify(config.toJS())))
+>>>>>>> 8250f46 (Feature: indexedDB as localStorage (1/2))
       yield put({ type: saveSuccess, config })
     } catch (error) {
       yield put({ type: saveError, error })
