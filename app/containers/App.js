@@ -47,7 +47,7 @@ import '../app.global.css';
 import CpacpySchedulerSelector from 'containers/cpacpy/SchedulerSelector'
 import Breadcrumbs from 'components/Breadcrumbs'
 
-import { configLoad } from '../actions/main'
+import { configLoad, configClear } from '../actions/main'
 import { selectCurrentScheduler } from '../actions/cpacpy'
 
 import theme from '../theme'
@@ -125,6 +125,7 @@ class App extends React.Component {
   static mapDispatchToProps = {
     configLoad,
     selectCurrentScheduler,
+    configClear,
   }
 
   static mapStateToProps = (state) => ({
@@ -145,7 +146,7 @@ class App extends React.Component {
   }
 
   handleWipe = (e) => {
-    localStorage.clear()
+    this.props.configClear()
     window.location.href = '/'
   }
 
