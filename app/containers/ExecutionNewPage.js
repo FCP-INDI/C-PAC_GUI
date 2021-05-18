@@ -199,9 +199,16 @@ class ExecutionNewPage extends Component {
         if (value === null) {
           value = e.target.value
         }
+        const ifChange = state.getIn(statePath) !== value
         state = state.setIn(statePath, value)
 
         if (statePath[0] === 'dataset' && statePath[1] === 'id') {
+          if (ifChange) {
+            state = state.removeIn(['dataset', 'view'])
+              .removeIn(['dataset', 'subjects'])
+              .removeIn(['dataset', 'sessions'])
+              .removeIn(['dataset', 'sites'])
+          }
           const { datasets } = this.props
           const dataset = datasets.find((d) => d.get('id') == value)
           const view = 
@@ -216,11 +223,14 @@ class ExecutionNewPage extends Component {
           }
           const version = `${dataset.get('versions').keySeq().map(i => +i).max()}`
           const versionDetails = dataset.getIn(['versions', version])
+
           const dirty = dataset.get('versions').has('0') || !dataset.hasIn(['data', 'sets'])
           state = state.setIn(['dataset', 'version'], version)
             .setIn(['dataset', 'versionDetails'], versionDetails)
             .setIn(['dataset', 'dirty'], dirty)
-          state = this.calDataset(dataset, version, state.getIn(['dataset', 'view']), state)
+          if (dataset.hasIn(['data', 'sets'])) {
+            state = this.calDataset(dataset, version, state.getIn(['dataset', 'view']), state)
+          }
         }
 
         if (statePath[0] === 'dataset' && statePath[1] === 'view') {
@@ -324,7 +334,10 @@ class ExecutionNewPage extends Component {
     const steps = ['pipeline', 'dataset', 'scheduler', 'summary']
     const dataset = this.state.dataset.id ? datasets.find((d) => d.get('id') == this.state.dataset.id) : null
     const scheduler = this.state.scheduler.id ? schedulers.find((s) => s.get('id') == this.state.scheduler.id) : null
-    const dirty = this.state.dataset.dirty || !dataset?.hasIn(['data', 'sets'])
+    const dirty = !dataset?.hasIn(['data', 'sets'])
+    if (dirty !== this.state.dataset.dirty ) {
+      this.setState(fromJS(this.state).setIn(['dataset', 'dirty'], dirty).toJS())
+    }
     const datasetVersion = this.state.dataset.versionDetails
     const completed = {
       pipeline: !!this.state.pipeline.id,
@@ -430,7 +443,7 @@ class ExecutionNewPage extends Component {
                 {
                 (dataset && dirty) ? (
                   <Grid item xs={12}>
-                    {datasetVersion.getIn(['configuration', 'format']) === 'upload' || datasetVersion.getIn(['configuration', 'format']) === 'fetch' ?
+                    {datasetVersion.configuration.format === 'upload' || datasetVersion.configuration.format === 'fetch' ?
                       <Alert
                         severity="warning"
                         style={{ margin: '0 -10px' }}>Invalid dataset: please upload or fetch the dataset first.</Alert> :
