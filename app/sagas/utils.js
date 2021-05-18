@@ -1,8 +1,9 @@
 import { eventChannel } from 'redux-saga'
 import { fetch as realFetch } from 'whatwg-fetch'
-import { select, put, takeEvery } from 'redux-saga/effects'
+import { select, put, takeEvery, call } from 'redux-saga/effects'
 import Immutable from 'immutable'
 import { default as LZString } from '../../tools/lz-string'
+import { updateItem as dbSave, getItem as dbGet, clearItem as dbClear } from './db'
 
 export const selectSaga = (key) => (callback) => select((state) => callback(state[key]))
 
@@ -100,16 +101,21 @@ export function configLocalState(key, initialState = {}, {
 
     let localState = null
     try {
-      localState = JSON.parse(LZString.decompress(localStorage.getItem(key)))
-    } catch (e) {
+      const response = yield call(dbGet, key)
+      localState = response ? JSON.parse(LZString.decompress(response)) : null
+      console.log("m4", localState)
+      if (!localState) {
+        localState = versionedInitialState
+        yield dbSave(key, LZString.compress(JSON.stringify(localState))).catch(e => throw e)
+      }
+      localState = Immutable.fromJS(localState)
+      if (postLoad) {
+        localState = postLoad(localState)
+      }
+      yield put({ type: loadSuccess, config: localState })
+    } catch (error) {
+      yield put({type: loadError, error})
     }
-
-    if (!localState) {
-      localState = versionedInitialState
-      localStorage.setItem(key, LZString.compress(JSON.stringify(localState)))
-    }
-
-    localState = Immutable.fromJS(localState)
 
     // const cache = yield caches.open('cpac')
     // for (let k of traverseState(localState, (o) => o instanceof Immutable.Map && o.get('_cache'))) {
@@ -125,11 +131,6 @@ export function configLocalState(key, initialState = {}, {
     //   localState = localState.setIn(k, Immutable.fromJS(data))
     // }
 
-    if (postLoad) {
-      localState = postLoad(localState)
-    }
-
-    yield put({ type: loadSuccess, config: localState })
   }
 
   function* saveLocalState() {
@@ -162,6 +163,7 @@ export function configLocalState(key, initialState = {}, {
       //   config = config.setIn(k, Immutable.fromJS({ _cache: k }))
       //   cacheCount++
       // }
+<<<<<<< HEAD
       
 <<<<<<< HEAD
 >>>>>>> 0934beb (fix: use headers instead of post)
@@ -169,6 +171,10 @@ export function configLocalState(key, initialState = {}, {
 =======
       localStorage.setItem(key, LZString.compress(JSON.stringify(config.toJS())))
 >>>>>>> 10b7018 (Fix: lzstring for localstorage)
+=======
+      console.log("m2", key, config)
+      yield dbSave(key, LZString.compress(JSON.stringify(config.toJS())))
+>>>>>>> 7da7d3c (tmp: indexedDB solution with dexie.js)
       yield put({ type: saveSuccess, config })
     } catch (error) {
       yield put({ type: saveError, error })
@@ -177,7 +183,7 @@ export function configLocalState(key, initialState = {}, {
 
   function* clearLocalState(config) {
     try {
-      localStorage.removeItem(key)
+      yield dbClear()
       yield put({ type: clearSuccess })
     } catch (error) {
       yield put({ type: clearError, error })

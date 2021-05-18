@@ -203,7 +203,8 @@
     "source-map-support": "^0.5.3",
     "uuid": "^3.3.2",
     "whatwg-fetch": "^3.0.0",
-    "yarn": "^1.22.0"
+    "yarn": "^1.22.0",
+    "dexie": "^3.0.3"
   },
   "devEngines": {
     "node": ">=7.x",
