@@ -2,6 +2,7 @@ import { eventChannel } from 'redux-saga'
 import { fetch as realFetch } from 'whatwg-fetch'
 import { select, put, takeEvery } from 'redux-saga/effects'
 import Immutable from 'immutable'
+import { default as LZString } from '../../tools/lz-string'
 
 export const selectSaga = (key) => (callback) => select((state) => callback(state[key]))
 
@@ -99,13 +100,13 @@ export function configLocalState(key, initialState = {}, {
 
     let localState = null
     try {
-      localState = JSON.parse(localStorage.getItem(key))
+      localState = JSON.parse(LZString.decompress(localStorage.getItem(key)))
     } catch (e) {
     }
 
     if (!localState) {
       localState = versionedInitialState
-      localStorage.setItem(key, JSON.stringify(localState))
+      localStorage.setItem(key, LZString.compress(JSON.stringify(localState)))
     }
 
     localState = Immutable.fromJS(localState)
@@ -162,8 +163,12 @@ export function configLocalState(key, initialState = {}, {
       //   cacheCount++
       // }
       
+<<<<<<< HEAD
 >>>>>>> 0934beb (fix: use headers instead of post)
       localStorage.setItem(key, JSON.stringify(config.toJS()))
+=======
+      localStorage.setItem(key, LZString.compress(JSON.stringify(config.toJS())))
+>>>>>>> 10b7018 (Fix: lzstring for localstorage)
       yield put({ type: saveSuccess, config })
     } catch (error) {
       yield put({ type: saveError, error })
