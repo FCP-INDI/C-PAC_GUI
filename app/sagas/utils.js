@@ -17,8 +17,13 @@ export async function dbGet(key) {
   return db.cpac.where({key: key}).first(val => val ? val.value : null);
 }
 
-export async function dbClear() {
-  await db.cpac.where('key').anyOf('*').delete()
+export async function dbClear(key=null) {
+  if (key){
+    await db.cpac.where('key').anyOf(key).delete()
+  }
+  else {
+    await db.cpac.clear()
+  }
 }
 
 export const selectSaga = (key) => (callback) => select((state) => callback(state[key]))
@@ -171,9 +176,9 @@ export function configLocalState(key, initialState = {}, {
     }
   }
 
-  function* clearLocalState(config) {
+  function* clearLocalState(key=null) {
     try {
-      yield dbClear()
+      yield dbClear(key)
       yield put({ type: clearSuccess })
     } catch (error) {
       yield put({ type: clearError, error })

@@ -1,5 +1,5 @@
 import { delay } from 'redux-saga'
-import { all, select, put, takeEvery } from 'redux-saga/effects'
+import { all, select, put, takeEvery, call } from 'redux-saga/effects'
 import {
   CONFIG_LOAD,
   configLoading,
@@ -38,6 +38,8 @@ import {
 } from '../actions/cpacpy'
 
 import cpac from '@internal/c-pac'
+
+import {dbClear} from './utils'
 
 function* loadConfig () {
   yield put(configLoading())
@@ -97,8 +99,13 @@ function* saveConfig() {
 }
 
 function* clearConfig(config) {
-  localStorage.removeItem('state')
-  yield put(configCleared(config))
+  try {
+    yield call(dbClear)
+    yield put(configCleared(config))
+  }catch (e) {
+    throw e
+  }
+
 }
 
 export default function* configSaga () {
