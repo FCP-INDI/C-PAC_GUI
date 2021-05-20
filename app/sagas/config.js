@@ -1,5 +1,5 @@
 import { delay } from 'redux-saga'
-import { all, select, put, takeEvery } from 'redux-saga/effects'
+import { all, select, put, takeEvery, call } from 'redux-saga/effects'
 import {
   CONFIG_LOAD,
   configLoading,
@@ -73,6 +73,8 @@ function* loadConfig (action) {
 >>>>>>> f2a1340 (theo data-config generation! and some other stuff)
 =======
 import cpac from '@internal/c-pac'
+
+import {dbClear} from './utils'
 
 function* loadConfig () {
   yield put(configLoading())
@@ -358,8 +360,13 @@ function* saveConfig() {
 }
 
 function* clearConfig(config) {
-  localStorage.removeItem('state')
-  yield put(configCleared(config))
+  try {
+    yield call(dbClear)
+    yield put(configCleared(config))
+  }catch (e) {
+    throw e
+  }
+
 }
 
 export default function* configSaga() {
