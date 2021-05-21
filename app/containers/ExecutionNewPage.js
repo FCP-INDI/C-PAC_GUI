@@ -335,8 +335,9 @@ class ExecutionNewPage extends Component {
     const dataset = this.state.dataset.id ? datasets.find((d) => d.get('id') == this.state.dataset.id) : null
     const scheduler = this.state.scheduler.id ? schedulers.find((s) => s.get('id') == this.state.scheduler.id) : null
     const dirty = !dataset?.hasIn(['data', 'sets'])
-    if (dirty !== this.state.dataset.dirty ) {
-      this.setState(fromJS(this.state).setIn(['dataset', 'dirty'], dirty).toJS())
+    if (dataset && dirty !== this.state.dataset.dirty ) {
+      const version = `${dataset.get('versions').keySeq().map(i => +i).max()}`
+      this.setState(fromJS(this.calDataset(dataset, version, 'default', fromJS(this.state))).setIn(['dataset', 'dirty'], dirty).toJS())
     }
     const datasetVersion = this.state.dataset.versionDetails
     const completed = {
