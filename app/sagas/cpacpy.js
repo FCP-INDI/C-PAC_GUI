@@ -23,6 +23,7 @@ import {
   CPACPY_SCHEDULER_TEST_TEMP_CONNECTION,
   CPACPY_SCHEDULER_TEST_TEMP_CONNECTION_SUCCESS,
   CPACPY_SCHEDULER_TEST_TEMP_CONNECTION_FAILED,
+  CPACPY_SCHEDULER_DELETE,
 
   CPACPY_CONFIG_LOAD,
   CPACPY_CONFIG_CLEAR,
@@ -63,7 +64,7 @@ const selectSaga = (callback) => select((state) => callback(state.cpacpy))
 function* init() {
   const schedulers = yield selectSaga(selectSchedulers())
   for(let scheduler of schedulers) {
-    yield put(cpacpyDetect(scheduler.get('id'), true, true))
+    yield put(cpacpyDetect(scheduler.get('id'), scheduler.get('authKey'), true, true))
   }
 }
 
@@ -71,8 +72,7 @@ function* loadSuccess() {
   yield put(cpacpyInit())
 }
 
-// TODO
-function* detect({ scheduler: id, poll=true, current=false }) {
+function* detect({ scheduler: id, authKey=null, poll=true, current=false }) {
   const scheduler = yield selectSaga(selectScheduler(id))
   if (scheduler.get('online')) {
     yield put(cpacpySchedulerOnline(id))
@@ -83,10 +83,16 @@ function* detect({ scheduler: id, poll=true, current=false }) {
     const { response, error } = yield call(
       fetch,
       `http://${scheduler.get('address')}`,
-      { method: 'GET' }
+      {
+        headers: { 'Authorization': `Bearer ${authKey}` }
+      }
     )
 
     if (response.api === 'cpacpy') {
+      if (response.authKeyError) {
+        throw Error("Wrong auth key for a valid cpacpy connection. ")
+      }
+
       yield put(cpacpySchedulerInfo(id, {
         version: response.version,
         backends: response.backends,
@@ -109,10 +115,12 @@ function *offline({ scheduler }) {
   yield put(cpacpySchedulerOffline(scheduler))
 }
 
-// @TODO make sure pooling is happening just once for each scheduler
 function* pollingBackground(scheduler) {
   yield delay(10000)
-  yield put(cpacpyDetect(scheduler))
+  const schedulerDetail = yield selectSaga(selectScheduler(scheduler))
+  if (schedulerDetail){
+    yield put(cpacpyDetect(scheduler, schedulerDetail.get('authKey')))
+  }
 }
 
 function* polling({ scheduler, current }) {
@@ -173,7 +181,6 @@ function* receiverListener(scheduler, channel) {
   }
 }
 
-// TODO: websocket to keep connect
 function* connect({ scheduler: id }) {
   const scheduler = yield selectSaga(selectScheduler(id))
   const ws = new WebSocket(`ws://${scheduler.get('address')}/schedule/connect`)
@@ -210,6 +217,8 @@ function* callScheduler({
   const scheduler = yield selectSaga(selectScheduler(id))
   const url = `http://${scheduler.get('address')}${endpoint}`
 
+  const authKey = scheduler.get('authKey');
+
   const success_return = (data, headers) =>
     success instanceof Function ?
       success(data, headers) :
@@ -230,11 +239,15 @@ function* callScheduler({
         headers: {
           'Accept': 'application/json',
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${authKey}`,
           ...headers,
         }
       }
     )
 
+    if (response.authKeyError) {
+      throw new Error("Invalid AuthKey")
+    }
     yield put(success_return(response, resHeaders))
   } catch (exception) {
     console.log(exception)
@@ -244,17 +257,24 @@ function* callScheduler({
 
 function* addNew() {
   yield put({type: CPACPY_CONFIG_SAVE})
+  const scheduler = yield selectSaga(selectCurrentScheduler())
+  yield put(cpacpyDetect(scheduler.get('id'), scheduler.get('authKey'), true, true))
 }
 
-function* test({ ip, port }) {
+function* test({ ip, port, authKey }) {
   try {
     const { response, error } = yield call(
       fetch,
       `http://` + ip + `:` + port,
-      { method: 'GET' }
+      { headers: { 'Authorization': `Bearer ${authKey}` } }
     )
     if (response.api === 'cpacpy') {
-      yield put({ type: CPACPY_SCHEDULER_TEST_TEMP_CONNECTION_SUCCESS })
+      if (response.authKeyError) {
+        yield put(cpacpyTestFailed("Invalid AuthKey"))
+      }
+      else {
+        yield put({ type: CPACPY_SCHEDULER_TEST_TEMP_CONNECTION_SUCCESS })
+      }
     }
     else {
       yield put(cpacpyTestFailed("The address and port are occupied by other services. "))
@@ -262,6 +282,10 @@ function* test({ ip, port }) {
   } catch (error) {
     yield put(cpacpyTestFailed(error.message))
   }
+}
+
+function* deleteScheduler() {
+  yield put({type: CPACPY_CONFIG_SAVE})
 }
 
 export default function* configSaga() {
@@ -286,5 +310,6 @@ export default function* configSaga() {
     takeEvery(CPACPY_SCHEDULER_CALL, callScheduler),
     takeEvery(CPACPY_SCHEDULER_ADDNEW, addNew),
     takeEvery(CPACPY_SCHEDULER_TEST_TEMP_CONNECTION, test),
+    takeEvery(CPACPY_SCHEDULER_DELETE, deleteScheduler),
   ])
 }

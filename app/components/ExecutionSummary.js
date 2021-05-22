@@ -71,90 +71,10 @@ class ExecutionSummary extends Component {
 
   static mapDispatchToProps = {}
 
-  computeSummaries(pipelineId, datasetId, schedulerId, datasetViewId='default') {
-    const { schedulers, datasets, pipelines } = this.props
-
-    const summaries = {}
-    if (pipelineId) {
-      const pipeline = pipelines.find((d) => d.get('id') === pipelineId)
-      const versions = pipeline.get('versions')
-      const dirty = versions.has('0')
-      const versionId = `${versions.keySeq().map(i => +i).max()}`
-      const version = versions.get(versionId)
-      const anatomical = version.getIn(['configuration', 'anatomical', 'enabled'])
-      const functional = version.getIn(['configuration', 'functional', 'enabled'])
-      let derivatives = version.getIn(['configuration', 'derivatives', 'enabled'])
-      if (derivatives) {
-        derivatives = version.getIn(['configuration', 'derivatives']).reduce(
-          (total, value) => {
-            // Ignore root flag 'enabled' under derivatives
-            if (value.get) {
-              return total + (value.get('enabled') ? 1 : 0)
-            }
-            return total
-          },
-          0
-        )
-        derivatives = derivatives ? derivatives : false
-      } else {
-        derivatives = 0
-      }
-
-      summaries.pipeline = {
-        version,
-        dirty,
-        anatomical,
-        functional,
-        derivatives,
-      }
-    }
-
-    if (datasetId) {
-      const dataset = datasets.find((d) => d.get('id') === datasetId)
-      const versions = dataset.get('versions')
-      const dirty = versions.has('0') || !dataset.hasIn(['data', 'sets'])
-      const versionId = `${versions.keySeq().map(i => +i).max()}`
-      const version = versions.get(versionId)
-      const datasetView = datasetViewId ? datasetViewId : 'default'
-
-      let datasetSummary = {}
-      if (!dirty) {
-        const dataConfig = cpac.data_config.parse(cpac.data_config.dump(dataset.toJS(), version, datasetView))
-
-        datasetSummary = {
-          sessions: Math.max(dataConfig.unique_ids.length, 1),
-          subjects: Math.max(dataConfig.subject_ids.length, 1),
-          sites: Math.max(dataConfig.sites.length, 1),
-        }
-      }
-
-      summaries.dataset = {
-        version,
-        dirty,
-        ...datasetSummary,
-      }
-    }
-
-    if (schedulerId) {
-      const scheduler = schedulers.find((d) => d.get('id') === schedulerId)
-      summaries.scheduler = {
-        online: scheduler.get('online'),
-      }
-    }
-
-    return summaries
-  }
-
   render() {
-    const { classes, executions, schedulers } = this.props
-    const { pipelineId, datasetId, schedulerId, executionId, datasetViewId, schedulerDetails=null } = this.props
+    const { classes, summary } = this.props
     const { normalPage=true } = this.props
 
-    const scheduler = schedulerId ? schedulers.find((s) => s.get('id') === schedulerId) : null
-    const currentSchedulerInfo = schedulerDetails === null? executions.find((execution) => execution.get('id') === executionId).get('scheduler') : fromJS(schedulerDetails)
-    const backend = scheduler && currentSchedulerInfo && currentSchedulerInfo.get('backend') ? scheduler.get('backends').find((b) => b.get('id') === currentSchedulerInfo.get('backend')) : null
-    const schedulerProfile = currentSchedulerInfo ? currentSchedulerInfo.get('profile') : null
-    const summary = this.computeSummaries(pipelineId, datasetId, schedulerId, datasetViewId)
     return (
       <>
       <Grid container>
@@ -246,13 +166,13 @@ class ExecutionSummary extends Component {
                       <ListItemIcon>
                         <SchedulerIcon />
                       </ListItemIcon>
-                      <ListItemText primary={scheduler.get('name')} />
+                      <ListItemText primary={summary.scheduler.name} />
                     </ListItem>
                     <ListItem disableGutters>
                       <ListItemIcon>
-                        {backend && <ExecutionCurrentBackendIcon fontSize="small" backend={backend.get('backend')} />}
+                        {summary.scheduler.backend && <ExecutionCurrentBackendIcon fontSize="small" backend={summary.scheduler.backend.backend} />}
                       </ListItemIcon>
-                      <ListItemText primary={backend && backend.get('id')} />
+                      <ListItemText primary={summary.scheduler.backend && summary.scheduler.backend.id} />
                     </ListItem>
                   </List>
                 )
@@ -272,19 +192,19 @@ class ExecutionSummary extends Component {
                       <ListItemIcon>
                         <SchedulerParamIcon />
                       </ListItemIcon>
-                      <ListItemText primary={schedulerProfile.get('corePerPipeline') + ' core / pipeline'} />
+                      <ListItemText primary={summary.scheduler.profile.corePerPipeline + ' core / pipeline'} />
                     </ListItem>
                     <ListItem disableGutters>
                       <ListItemIcon>
                         <SchedulerParamIcon />
                       </ListItemIcon>
-                      <ListItemText primary={schedulerProfile.get('memPerPipeline') + ' GB / pipeline'} />
+                      <ListItemText primary={summary.scheduler.profile.memPerPipeline + ' GB / pipeline'} />
                     </ListItem>
                     <ListItem disableGutters>
                       <ListItemIcon>
                         <SchedulerParamIcon />
                       </ListItemIcon>
-                      <ListItemText primary={schedulerProfile.get('parallelPipeline') + ' parallel pipeline(s)'} />
+                      <ListItemText primary={summary.scheduler.profile.parallelPipeline + ' parallel pipeline(s)'} />
                     </ListItem>
                   </List>
                 )

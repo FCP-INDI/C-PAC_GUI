@@ -1,7 +1,30 @@
 import { eventChannel } from 'redux-saga'
 import { fetch as realFetch } from 'whatwg-fetch'
-import { select, put, takeEvery } from 'redux-saga/effects'
+import { select, put, takeEvery, call } from 'redux-saga/effects'
 import Immutable from 'immutable'
+import { default as LZString } from '../../tools/lz-string'
+import { Dexie } from 'dexie'
+
+const db = new Dexie('idxedDB')
+db.version(1).stores({cpac: "key,value"})
+
+
+export async function dbUpdate(key, value) {
+  await db.cpac.put({key: key, value: value})
+}
+
+export async function dbGet(key) {
+  return db.cpac.where({key: key}).first(val => val ? val.value : null);
+}
+
+export async function dbClear(key=null) {
+  if (key){
+    await db.cpac.where('key').anyOf(key).delete()
+  }
+  else {
+    await db.cpac.clear()
+  }
+}
 
 export const selectSaga = (key) => (callback) => select((state) => callback(state[key]))
 
@@ -99,67 +122,63 @@ export function configLocalState(key, initialState = {}, {
 
     let localState = null
     try {
-      localState = JSON.parse(localStorage.getItem(key))
-    } catch (e) {
+      const response = yield call(dbGet, key)
+      localState = response ? JSON.parse(LZString.decompress(response)) : null
+      if (!localState) {
+        localState = versionedInitialState
+        yield dbUpdate(key, LZString.compress(JSON.stringify(localState))).catch(e => throw e)
+      }
+      localState = Immutable.fromJS(localState)
+      if (postLoad) {
+        localState = postLoad(localState)
+      }
+      yield put({ type: loadSuccess, config: localState })
+    } catch (error) {
+      yield put({type: loadError, error})
     }
 
-    if (!localState) {
-      localState = versionedInitialState
-      localStorage.setItem(key, JSON.stringify(localState))
-    }
-    
-    localState = Immutable.fromJS(localState)
+    // const cache = yield caches.open('cpac')
+    // for (let k of traverseState(localState, (o) => o instanceof Immutable.Map && o.get('_cache'))) {
+    //   const cacheKey = localState.getIn(k).get('_cache')
+    //   const reqKey = new Request(requestKey(cacheKey))
+    //   const value = yield cache.match(reqKey, {
+    //     ignoreVary: true,
+    //     ignoreMethod: true,
+    //     ignoreSearch: true
+    //   });
 
-    const cache = yield caches.open('cpac')
+    //   const data = yield value.json()
+    //   localState = localState.setIn(k, Immutable.fromJS(data))
+    // }
 
-    for (let k of traverseState(localState, (o) => o instanceof Immutable.Map && o.get('_cache'))) {
-      const cacheKey = localState.getIn(k).get('_cache')
-      const reqKey = new Request(requestKey(cacheKey))
-      const value = yield cache.match(reqKey, {
-        ignoreVary: true,
-        ignoreMethod: true,
-        ignoreSearch: true
-      });
-
-      const data = yield value.json()
-      localState = localState.setIn(k, Immutable.fromJS(data))
-    }
-
-    if (postLoad) {
-      localState = postLoad(localState)
-    }
-
-    yield put({ type: loadSuccess, config: localState })
   }
 
   function* saveLocalState() {
     try {
-      const cache = yield caches.open('cpac')
-
       let config = yield select((state) => state[key]);
 
-      let cacheCount = 0
-      for (let k of traverseState(config, (o) => o instanceof Immutable.Map && o.get('_cache'))) {
-        const reqKey = new Request(requestKey(k))
-        const value = new Response(
-          JSON.stringify(config.getIn(k)),
-          { headers: { 'Content-Type': 'application/json' } }
-        );
-        yield cache.put(reqKey, value);
-        config = config.setIn(k, Immutable.fromJS({ _cache: k }))
-        cacheCount++
-      }
-      
-      localStorage.setItem(key, JSON.stringify(config.toJS()))
+      // const cache = yield caches.open('cpac')
+      // let cacheCount = 0
+      // for (let k of traverseState(config, (o) => o instanceof Immutable.Map && o.get('_cache'))) {
+      //   const reqKey = new Request(requestKey(k))
+      //   const value = new Response(
+      //     JSON.stringify(config.getIn(k)),
+      //     { headers: { 'Content-Type': 'application/json' } }
+      //   );
+      //   yield cache.put(reqKey, value);
+      //   config = config.setIn(k, Immutable.fromJS({ _cache: k }))
+      //   cacheCount++
+      // }
+      yield dbUpdate(key, LZString.compress(JSON.stringify(config.toJS())))
       yield put({ type: saveSuccess, config })
     } catch (error) {
       yield put({ type: saveError, error })
     }
   }
 
-  function* clearLocalState(config) {
+  function* clearLocalState(key=null) {
     try {
-      localStorage.removeItem(key)
+      yield dbClear(key)
       yield put({ type: clearSuccess })
     } catch (error) {
       yield put({ type: clearError, error })

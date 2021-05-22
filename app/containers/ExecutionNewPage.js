@@ -142,7 +142,7 @@ class ExecutionNewPage extends Component {
     activeStep: 0,
     dataset: { id: null, view: 'default' },
     pipeline: { id: null },
-    scheduler: { id: null, backend: null, profile: {corePerPipeline: 1, memPerPipeline: 1, parallelPipeline: 1 }},
+    scheduler: { id: null, backend: null, profile: {corePerPipeline: 8, memPerPipeline: 16, parallelPipeline: 1 }},
     datasetScheduler: null,
     execution: null
   }
@@ -150,9 +150,6 @@ class ExecutionNewPage extends Component {
   constructor(props) {
     super(props);
     const p = props.parameters
-    if (props.scheduler && props.scheduler.get('online')) {
-      this.state.scheduler.id = props.scheduler.get('id')
-    }
     if (p) {
       if (p.dataset) {
         const [dataset, view] = p.dataset.split(':')
@@ -163,10 +160,11 @@ class ExecutionNewPage extends Component {
       }
       if (p.scheduler) {
         const [scheduler, backend] = p.scheduler.split(':')
-        this.state.scheduler = { id: scheduler, backend: backend }
+        const name = this.props.schedulers.find(s => s.get('id') === scheduler).get('name')
+        this.state.scheduler = { id: scheduler, backend: backend, name }
       }
     }
-    this.state.datasetScheduler = this.props.scheduler.get('id')
+    this.state.datasetScheduler = this.props.schedulers.size > 0 && this.props.scheduler ? this.props.scheduler.get('id') : null
     this.state.execution = uuid()
   }
 
@@ -183,6 +181,16 @@ class ExecutionNewPage extends Component {
     generateDataConfig,
   }
 
+  calDataset = (dataset, version, view, state) => {
+    const dataConfig = cpac.data_config.parse(cpac.data_config.dump(dataset.toJS(), version, view))
+    const subjectNum = Math.max(dataConfig.subject_ids.length, 1)
+    const sessions = Math.max(dataConfig.unique_ids.length, 1)
+    const sites = Math.max(dataConfig.sites.length, 1)
+    return state.setIn(['dataset', 'subjects'], subjectNum)
+      .setIn(['dataset', 'sessions'], sessions)
+      .setIn(['dataset', 'sites'], sites)
+  }
+
   handleChange =
     (statePath, value=null) =>
       (e) => {
@@ -191,9 +199,16 @@ class ExecutionNewPage extends Component {
         if (value === null) {
           value = e.target.value
         }
+        const ifChange = state.getIn(statePath) !== value
         state = state.setIn(statePath, value)
 
         if (statePath[0] === 'dataset' && statePath[1] === 'id') {
+          if (ifChange) {
+            state = state.removeIn(['dataset', 'view'])
+              .removeIn(['dataset', 'subjects'])
+              .removeIn(['dataset', 'sessions'])
+              .removeIn(['dataset', 'sites'])
+          }
           const { datasets } = this.props
           const dataset = datasets.find((d) => d.get('id') == value)
           const view = 
@@ -206,20 +221,67 @@ class ExecutionNewPage extends Component {
           if (!view) {
             state = state.setIn(['dataset', 'view'], 'default')
           }
-
           const version = `${dataset.get('versions').keySeq().map(i => +i).max()}`
+          const versionDetails = dataset.getIn(['versions', version])
+
+          const dirty = dataset.get('versions').has('0') || !dataset.hasIn(['data', 'sets'])
           state = state.setIn(['dataset', 'version'], version)
+            .setIn(['dataset', 'versionDetails'], versionDetails)
+            .setIn(['dataset', 'dirty'], dirty)
+          if (dataset.hasIn(['data', 'sets'])) {
+            state = this.calDataset(dataset, version, state.getIn(['dataset', 'view']), state)
+          }
+        }
+
+        if (statePath[0] === 'dataset' && statePath[1] === 'view') {
+          const { datasets } = this.props
+          const dataset = datasets.find((d) => d.get('id') === this.state.dataset.id)
+          const version = `${dataset.get('versions').keySeq().map(i => +i).max()}`
+          state = this.calDataset(dataset, version, value, state)
         }
 
         if (statePath[0] === 'pipeline' && statePath[1] === 'id') {
           const { pipelines } = this.props
           const pipeline = pipelines.find((d) => d.get('id') == value)
-          const version = `${pipeline.get('versions').keySeq().map(i => +i).max()}`
-          state = state.setIn(['pipeline', 'version'], version)
+          const versionId = `${pipeline.get('versions').keySeq().map(i => +i).max()}`
+          const version = pipeline.get('versions').get(versionId)
+          const dirty = pipeline.get('versions').has('0')
+          const anatomical = version.getIn(['configuration', 'anatomical', 'enabled'])
+          const functional = version.getIn(['configuration', 'functional', 'enabled'])
+          let derivatives = version.getIn(['configuration', 'derivatives', 'enabled'])
+          if (derivatives) {
+            derivatives = version.getIn(['configuration', 'derivatives']).reduce(
+              (total, value) => {
+                // Ignore root flag 'enabled' under derivatives
+                if (value.get) {
+                  return total + (value.get('enabled') ? 1 : 0)
+                }
+                return total
+              },
+              0
+            )
+            derivatives = derivatives ? derivatives : false
+          } else {
+            derivatives = 0
+          }
+          state = state.setIn(['pipeline', 'version'], versionId)
+            .setIn(['pipeline', 'versionDetail'], version)
+            .setIn(['pipeline', 'dirty'], dirty)
+            .setIn(['pipeline', 'anatomical'], anatomical)
+            .setIn(['pipeline', 'functional'], functional)
+            .setIn(['pipeline', 'derivatives'], derivatives)
         }
 
         if (statePath[0] === 'scheduler' && statePath[1] === 'profile') {
           state = state.setIn(statePath, value)
+        }
+
+        if (statePath[0] === 'scheduler' && statePath[1] === 'id') {
+          const { scheduler } = this.props
+          const backend = scheduler.get('backends').size > 0 && scheduler.getIn(['backends', 0])
+          const name = scheduler.get('name')
+          state = state.setIn(['scheduler', 'backend'], backend)
+            .setIn(['scheduler', 'name'], name)
         }
 
         this.setState(state.toJS())
@@ -252,22 +314,55 @@ class ExecutionNewPage extends Component {
   }
 
   handlePreprocessDataset = () => {
-    const { execution, dataset, pipeline, scheduler, note } = this.state
+    const { execution, pipeline, scheduler, note } = this.state
+    const { datasets } = this.props
+    let { dataset } = this.state
+    if (!this.state.dataset.subjectNum) {
+      const storeDataset = datasets.find((d) => d.get('id') === this.state.dataset.id)
+      const version = `${storeDataset.get('versions').keySeq().map(i => +i).max()}`
+      const dataConfig = cpac.data_config.parse(cpac.data_config.dump(storeDataset.toJS(), version, this.state.dataset.view))
+      const subjectNum = Math.max(dataConfig.subject_ids.length, 1)
+      dataset.subjectNum = subjectNum
+    }
     this.props.preprocessDataset(execution, scheduler, dataset, pipeline, note)
     this.props.onSchedule && this.props.onSchedule()
   }
 
   render() {
-    const { classes, executions, schedulers, datasets, pipelines, parameters } = this.props
+    const { classes, schedulers, datasets, pipelines, } = this.props
     const { activeStep } = this.state
     const steps = ['pipeline', 'dataset', 'scheduler', 'summary']
     const dataset = this.state.dataset.id ? datasets.find((d) => d.get('id') == this.state.dataset.id) : null
     const scheduler = this.state.scheduler.id ? schedulers.find((s) => s.get('id') == this.state.scheduler.id) : null
-    const dirty = dataset?.get('versions').has('0') || !dataset?.hasIn(['data', 'sets'])
+    const dirty = !dataset?.hasIn(['data', 'sets'])
+    if (dataset && dirty !== this.state.dataset.dirty ) {
+      const version = `${dataset.get('versions').keySeq().map(i => +i).max()}`
+      this.setState(fromJS(this.calDataset(dataset, version, 'default', fromJS(this.state))).setIn(['dataset', 'dirty'], dirty).toJS())
+    }
+    const datasetVersion = this.state.dataset.versionDetails
     const completed = {
       pipeline: !!this.state.pipeline.id,
       dataset: !!(this.state.dataset.id && !dirty),
       scheduler: !!(this.state.scheduler.id && this.state.scheduler.backend),
+    }
+    const summary = {
+      pipeline: {
+        functional: this.state.pipeline.functional,
+        derivatives: this.state.pipeline.derivatives,
+      },
+      dataset: {
+        sites: this.state.dataset.sites,
+        subjects: this.state.dataset.subjects,
+        sessions: this.state.dataset.sessions,
+      },
+      scheduler: {
+        name: this.state.scheduler.name,
+        backend: this.state.scheduler.backend ? {
+          id: this.state.scheduler.backend.id,
+          backend: this.state.scheduler.backend.backend,
+        } : null,
+        profile: this.state.scheduler.profile,
+      }
     }
 
     return (
@@ -349,29 +444,35 @@ class ExecutionNewPage extends Component {
                 {
                 (dataset && dirty) ? (
                   <Grid item xs={12}>
-                    <Alert
-                      severity="warning"
-                      style={{ margin: '0 -10px' }}
-                      action={
-                      <>
-                        <Button
-                          disabled={dataset.get('loading')} variant="contained"
-                          color="inherit" size="small" onClick={this.handleGenerateDataConfig}
-                          style={{ paddingTop: 8, paddingBottom: 8 }}
-                        >
-                          Build Dataset on
-                          <CpacpySchedulerSelector buttonProps={{
-                              style: { marginLeft: 10 },
-                              variant: 'outlined',
-                            }}
-                            onSelect={this.handleDatabaseScheduler}
-                          />
-                        </Button>
-                        { dataset.get('loading') && <LinearProgress style={{ marginTop: -4, borderRadius: '0 0 4px 4px' }} /> }
-                      </>
-                    }>
-                      This dataset needs to be build in order to run.
-                    </Alert>
+                    {datasetVersion.configuration.format === 'upload' || datasetVersion.configuration.format === 'fetch' ?
+                      <Alert
+                        severity="warning"
+                        style={{ margin: '0 -10px' }}>Invalid dataset: please upload or fetch the dataset first.</Alert> :
+                      <Alert
+                        severity="warning"
+                        style={{ margin: '0 -10px' }}
+                        action={
+                          <>
+                            <Button
+                              disabled={dataset.get('loading')} variant="contained"
+                              color="inherit" size="small" onClick={this.handleGenerateDataConfig}
+                              style={{ paddingTop: 8, paddingBottom: 8 }}
+                            >
+                              Build Dataset on
+                              <CpacpySchedulerSelector buttonProps={{
+                                style: { marginLeft: 10 },
+                                variant: 'outlined',
+                              }}
+                                onSelect={this.handleDatabaseScheduler}
+                              />
+                            </Button>
+                            { dataset.get('loading') && <LinearProgress style={{ marginTop: -4, borderRadius: '0 0 4px 4px' }} /> }
+                          </>
+                        }>
+                        This dataset needs to be build in order to run.
+                      </Alert>
+                    }
+
                   </Grid>
                 ) : (
                   this.state.buildingDataset === this.state.dataset.id && (
@@ -389,7 +490,7 @@ class ExecutionNewPage extends Component {
             <StepLabel>Select your scheduler</StepLabel>
             <StepContent>
               <Grid container>
-                <Grid item xs={6} md={8} style={{ display: 'flex' }}>
+                <Grid item xs={12} md={12} style={{ display: 'flex' }} border={1}>
                   <FormControl margin="normal" fullWidth>
                     <CpacpySchedulerSelector
                       buttonProps={{
@@ -400,33 +501,6 @@ class ExecutionNewPage extends Component {
                       onSelect={(scheduler) => this.handleChange(['scheduler', 'id'], scheduler)()}
                     />
                   </FormControl>
-                </Grid>
-                <Grid item xs={6} md={4}>
-                  <TextField
-                    select
-                    label="Backend"
-                    fullWidth margin="normal" variant="outlined"
-                    disabled={this.state.scheduler.id === null || !scheduler.get('online')}
-                    value={this.state.scheduler.backend || ''}
-                    onChange={this.handleChange(['scheduler', 'backend'])}
-                    className={classes.backend}
-                  >
-                    {
-                      this.state.scheduler.id !== null ?
-                      schedulers
-                        .find((s) => s.get('id') == this.state.scheduler.id)
-                        .get('backends')
-                        .map((b) => (
-                          <MenuItem key={ b.get('id') } value={ b.get('id') }>
-                            <ListItemIcon>
-                              <ExecutionCurrentBackendIcon fontSize="inherit" backend={ b.get('backend') } />
-                            </ListItemIcon>
-                            <ListItemText primary={ b.get('id') } />
-                          </MenuItem>
-                        )) :
-                        null
-                    }
-                  </TextField>
                 </Grid>
               </Grid>
               <Grid container>
@@ -444,7 +518,7 @@ class ExecutionNewPage extends Component {
               <Grid container>
                 <Grid item xs={12}>
                   <TextField
-                    label="Amount of memories per pipeline (MB)"
+                    label="Max memory per pipeline (GB)"
                     fullWidth margin="normal" variant="outlined"
                     disabled={this.state.scheduler.id === null || !scheduler.get('online')}
                     value={this.state.scheduler.profile.memPerPipeline || ''}
@@ -471,12 +545,7 @@ class ExecutionNewPage extends Component {
             <StepLabel>Summary</StepLabel>
             <StepContent>
               <SummaryCard
-                pipelineId = {this.state.pipeline.id}
-                datasetId = {this.state.dataset.id}
-                schedulerId = {this.state.scheduler.id}
-                executionId = {this.state.execution}
-                schedulerDetails = {this.state.scheduler}
-                datasetViewId = {this.state.dataset.view}
+                summary = {summary}
                 normalPage = {false}
               />
             </StepContent>

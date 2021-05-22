@@ -24,6 +24,7 @@ export const CPACPY_SCHEDULER_ADDNEW = 'CPACPY_SCHEDULER_ADDNEW'
 export const CPACPY_SCHEDULER_TEST_TEMP_CONNECTION = 'CPACPY_SCHEDULER_TEST_TEMP_CONNECTION'
 export const CPACPY_SCHEDULER_TEST_TEMP_CONNECTION_SUCCESS = 'CPACPY_SCHEDULER_TEST_TEMP_CONNECTION_SUCCESS'
 export const CPACPY_SCHEDULER_TEST_TEMP_CONNECTION_FAILED = 'CPACPY_SCHEDULER_TEST_TEMP_CONNECTION_FAILED'
+export const CPACPY_SCHEDULER_DELETE = 'CPACPY_SCHEDULER_DELETE'
 
 export const CPACPY_CONFIG_LOAD = 'CPACPY_CONFIG_LOAD'
 export const CPACPY_CONFIG_LOAD_SUCCESS = 'CPACPY_CONFIG_LOAD_SUCCESS'
@@ -47,10 +48,10 @@ export function selectCurrentScheduler(scheduler) {
   }
 }
 
-export function detect(scheduler, poll=true, current=false) {
+export function detect(scheduler, authKey='', poll=true, current=false) {
   return {
     type: CPACPY_SCHEDULER_DETECT,
-    scheduler, poll, current,
+    scheduler, authKey, poll, current,
   }
 }
 
@@ -108,7 +109,7 @@ export function connectSendWatch(scheduler, schedule, { action, error }) {
     message: {
       type: 'watch',
       schedule,
-      watchers: ['Spawn', 'Start', 'End', 'Status', 'Result']
+      watchers: ['Spawn', 'Start', 'End', 'Status', 'Result', 'Log']
     }
   }
 }
@@ -231,17 +232,17 @@ export function offline(scheduler) {
   }
 }
 
-export function addNew(name, ip, port) {
+export function addNew(name, ip, port, authKey) {
   return {
     type: CPACPY_SCHEDULER_ADDNEW,
-    payload: {newName: name, newIP: ip, newPort: port},
+    payload: {newName: name, newIP: ip, newPort: port, newAuthKey: authKey},
   }
 }
 
-export function test(name, ip, port) {
+export function test(name, ip, port, authKey) {
   return {
     type: CPACPY_SCHEDULER_TEST_TEMP_CONNECTION,
-    name, ip, port
+    name, ip, port, authKey
   }
 }
 
@@ -249,5 +250,12 @@ export function testFailed(error) {
   return {
     type: CPACPY_SCHEDULER_TEST_TEMP_CONNECTION_FAILED,
     error
+  }
+}
+
+export function deleteScheduler(id) {
+  return  {
+    type: CPACPY_SCHEDULER_DELETE,
+    id,
   }
 }

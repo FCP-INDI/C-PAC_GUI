@@ -34,7 +34,7 @@ export class RouterPage extends Component {
           <Route exact={true} path="/pipelines/:pipeline" component={PipelinePage} />
           <Route exact={true} path="/datasets/:dataset" component={DatasetPage} />
           <Route exact={true} path="/executions/:operation(new)" component={ExecutionsPage} />
-          <Route exact={true} path="/executions/:execution([a-z0-9-]+)/:schedule([a-z0-9-]+)?/:operation(logs|crashes)?" component={ExecutionPage} exact />
+          <Route exact={true} path="/executions/:execution([a-z0-9-]+)/:schedule([a-z0-9-]+)?/:operation(logs|crashes|nodes)?" component={ExecutionPage} exact />
           <Route exact={true} path="/executions" component={ExecutionsPage} />
           <Route exact={true} path="/" component={HomePage} />
         </Switch>

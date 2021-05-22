@@ -23,6 +23,7 @@ import {
   BulletIcon,
   SchedulerIcon,
   SchedulerConnectionRetryIcon,
+  DeleteIcon,
 } from 'components/icons'
 
 import {BackendChip} from 'components/chips'
@@ -33,6 +34,7 @@ import {
   addNew as cpacpyAddNew,
   selectCurrentScheduler as setCurrentScheduler,
   test as cpacpyTestConnection,
+  deleteScheduler as cpacpyDeleteScheduler,
 } from 'actions/cpacpy'
 
 import {
@@ -160,10 +162,13 @@ class CpacpySchedulerSelector extends Component {
       '50%': {strokeWidth: 10, strokeOpacity: 0.5},
       '100%': {strokeWidth: 0, strokeOpacity: 0},
     },
+    close: {
+      cursor:'pointer', float:'right', marginTop: '0px', width: '20px',
+    },
   });
 
   static mapStateToProps = ({cpacpy: state}, props) => {
-    if (!state || !state.get('schedulers')) {
+    if (!state || !state.get('schedulers') || state.get('schedulers').size < 1) {
       return {
         schedulers: fromJS([]),
         scheduler: null,
@@ -173,7 +178,7 @@ class CpacpySchedulerSelector extends Component {
 
     return {
       schedulers: selectSchedulers()(state),
-      scheduler: props.scheduler || selectCurrentScheduler()(state).get('id'),
+      scheduler: props.scheduler || selectCurrentScheduler()(state) ? selectCurrentScheduler()(state).get('id') : null,
       testingScheduler: getTestingScheduler()(state),
     }
   }
@@ -184,6 +189,7 @@ class CpacpySchedulerSelector extends Component {
     addNew: cpacpyAddNew,
     setCurrent: setCurrentScheduler,
     testConnection: cpacpyTestConnection,
+    deleteScheduler: cpacpyDeleteScheduler,
   }
 
   state = {
@@ -193,6 +199,7 @@ class CpacpySchedulerSelector extends Component {
     newName: "",
     newIP: "",
     newPort: "",
+    newAuthKey: "",
   }
 
   constructor(props) {
@@ -201,6 +208,7 @@ class CpacpySchedulerSelector extends Component {
     this.nameRef = React.createRef()
     this.ipRef = React.createRef()
     this.portRef = React.createRef()
+    this.authKeyRef = React.createRef()
   }
 
   toggleSelector = (e) => {
@@ -224,7 +232,7 @@ class CpacpySchedulerSelector extends Component {
   handleFullClose = (e) => {
     e.stopPropagation()
     e.preventDefault()
-    this.setState({newName: '', newIp: '', newPort: ''})
+    this.setState({newName: '', newIp: '', newPort: '', newAuthKey: ''})
     this.setState({fullSelector: false})
   }
 
@@ -233,7 +241,7 @@ class CpacpySchedulerSelector extends Component {
     e.preventDefault()
     this.setState({selector: false, scheduler})
     this.props.setCurrent(scheduler)
-    this.props.detect(scheduler, false)
+    this.props.detect(scheduler, this.props.schedulers.find((s) => s.get('id') === this.props.scheduler).get('authKey'), false)
     this.props.onSelect && this.props.onSelect(scheduler)
   }
 
@@ -254,7 +262,8 @@ class CpacpySchedulerSelector extends Component {
     const newName = this.state.newName
     const newIP = this.state.newIP
     const newPort = this.state.newPort
-    this.props.addNew(newName, newIP, newPort)
+    const newAuthKey = this.state.newAuthKey
+    this.props.addNew(newName, newIP, newPort, newAuthKey)
   }
 
   // When content of a textfield changes, the updated val will be recorded to states.
@@ -267,6 +276,9 @@ class CpacpySchedulerSelector extends Component {
   handleNewPort = (e) => {
     this.setState({newPort: e.target.value})
   }
+  handleNewAuthKey =(e) => {
+    this.setState({newAuthKey: e.target.value})
+  }
 
   handleConnectionTest = (e) => {
     e.stopPropagation()
@@ -278,21 +290,31 @@ class CpacpySchedulerSelector extends Component {
     const newName = this.state.newName
     const newIP = this.state.newIP
     const newPort = this.state.newPort
-    this.props.testConnection(newName, newIP, newPort)
+    const newAuthKey = this.state.newAuthKey
+    this.props.testConnection(newName, newIP, newPort, newAuthKey)
+  }
+
+  handleDeletion (e, schedulerId){
+    e.stopPropagation()
+    e.preventDefault()
+    this.props.deleteScheduler(schedulerId)
   }
 
   render() {
+    if (this.state.scheduler != this.props.scheduler) {
+      this.setState({scheduler:this.props.scheduler, schedulers:this.props.schedulers})
+    }
     const {classes, schedulers, watch, stop, buttonProps: {className: buttonClassName, ...buttonProps},
       buttonMenuProps, popoverProps, testingScheduler} = this.props
     const {selector, selectorAnchor, fullSelector, scheduler: selectedScheduler} = this.state
-    const {newIP, newPort} = this.state
+    const {newIP, newPort, newAuthKey} = this.state
 
     if (!schedulers) {
       return null
     }
 
     const scheduler = schedulers.find((s) => s.get('id') == selectedScheduler)
-    const ifBeforeTest = newIP + ':' + newPort !== testingScheduler.get('address')
+    const ifBeforeTest = newIP + ':' + newPort + ':' + newAuthKey !== testingScheduler.get('address') + ':' + testingScheduler.get('authKey')
 
     return (
       <>
@@ -304,14 +326,14 @@ class CpacpySchedulerSelector extends Component {
         >
           <Paper className={classes.paper}>
             <Box
-              title="Schedulers"
+              title={<div>Schedulers<Button className={classes.close} onClick={this.handleFullClose}>x</Button></div>}
               avatar={<SchedulerIcon/>}
               classes={{
                 content: classes.content
               }}
             >
               {
-                schedulers.map((s) => (
+                schedulers.size > 0 && schedulers.map((s) => (
                   <Paper key={s.get('id')} elevation={3} className={classes.scheduler}>
                     <Grid container spacing={0}>
                       <Grid item xs={12} className={classes.description}>
@@ -321,7 +343,7 @@ class CpacpySchedulerSelector extends Component {
                               {s.get('name')}
                             </Typography>
                           </Grid>
-                          <Grid item xs={6}>
+                          <Grid item xs={5}>
                             {
                               s.get('backends')
                                 .map(
@@ -334,6 +356,11 @@ class CpacpySchedulerSelector extends Component {
                                 )
                             }
                           </Grid>
+                          <Grid item xs={1}>
+                            <Button onClick={(e) => this.handleDeletion(e, s.get('id'))}>
+                              <DeleteIcon/>
+                            </Button>
+                          </Grid>
                         </Grid>
                       </Grid>
                     </Grid>
@@ -344,7 +371,7 @@ class CpacpySchedulerSelector extends Component {
                 <Grid container spacing={0}>
                   <Grid item xs={12} className={classes.description}>
                     <Grid container spacing={1}>
-                      <Grid item xs={12} sm={6} md={3} >
+                      <Grid item xs={12} sm={5} md={5} >
                         <TextField
                           required
                           label="Unique Name" fullWidth margin="normal" variant="outlined"
@@ -352,7 +379,7 @@ class CpacpySchedulerSelector extends Component {
                           inputRef={this.nameRef}
                         />
                       </Grid>
-                      <Grid item xs={8} sm={4} md={3}>
+                      <Grid item xs={8} sm={4} md={4}>
                         <TextField
                           required
                           label="IP Address/URL" fullWidth margin="normal" variant="outlined"
@@ -360,7 +387,7 @@ class CpacpySchedulerSelector extends Component {
                           inputRef={this.ipRef}
                         />
                       </Grid>
-                      <Grid item xs={4} sm={2} md={2}>
+                      <Grid item xs={4} sm={3} md={3}>
                         <TextField
                           required
                           label="Port" fullWidth margin="normal" variant="outlined"
@@ -368,14 +395,24 @@ class CpacpySchedulerSelector extends Component {
                           inputRef={this.portRef}
                         />
                       </Grid>
-                      <Grid item xs={12} md={4} className={classes.buttons}>
+                    </Grid>
+                    <Grid container spacing={1}>
+                      <Grid item xs={12} sm={8} md={8}>
+                        <TextField
+                          required
+                          label="Auth Key" fullWidth margin="normal" variant="outlined"
+                          onChange={this.handleNewAuthKey}
+                          inputRef={this.nameRef}
+                        />
+                      </Grid>
+                      <Grid item xs={12} sm={4} md={4} className={classes.buttons}>
                         <Button onClick={this.handleConnectionTest} variant="contained">
                           {
                             ifBeforeTest ? null :
                               <BulletIcon className={clsx(
-                              classes.bullet,
-                              testingScheduler.get('detecting') ? classes.detecting : null,
-                              testingScheduler.get('success')? classes.online : (testingScheduler.get('detecting') ? classes.unknown : classes.offline)
+                                classes.bullet,
+                                testingScheduler.get('detecting') ? classes.detecting : null,
+                                testingScheduler.get('success')? classes.online : (testingScheduler.get('detecting') ? classes.unknown : classes.offline)
                               )}/>
                           }
                           {
@@ -451,15 +488,17 @@ class CpacpySchedulerSelector extends Component {
             },
             buttonClassName,
           )}
-          onClick={this.toggleSelector}
+          onClick={scheduler && schedulers.size > 0 ? this.toggleSelector : this.handleManage}
           {...buttonProps}
-        >
-          <BulletIcon className={clsx(
+        > {scheduler && schedulers.size > 0 ? <span>Select&nbsp;&nbsp;</span> : null}
+          {
+          scheduler && schedulers.size > 0 ? <BulletIcon className={clsx(
             classes.bullet,
             (scheduler.get('detecting') || scheduler.get('polling')) ? classes.detecting : null,
             scheduler.get('online') === null ? classes.unknown : (scheduler.get('online') ? classes.online : classes.offline)
-          )}/>
-          {scheduler.get('name')}
+          )}/> : null
+        }
+          {scheduler && schedulers.size > 0 ? scheduler.get('name') : 'Manage Schedulers'}
         </ButtonBase>
       </>
     )

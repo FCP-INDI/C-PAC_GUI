@@ -27,6 +27,7 @@ import {
   EXECUTION_PREPROCESS_DATASET_PROCESSING_CRASH_ERROR,
   EXECUTION_PREPROCESS_DATASET_PROCESSING_LOG,
   EXECUTION_PREPROCESS_DATASET_PROCESSING_LOG_ERROR,
+  EXECUTION_PREPROCESS_DATASET_PROCESSING_NODELOG,
   EXECUTION_PREPROCESS_DATASET_PROCESSING_FINISHED,
   EXECUTION_PREPROCESS_DATASET_PROCESSING_ERROR,
   EXECUTION_PREPROCESS_DATASET_FINISHED,
@@ -120,6 +121,15 @@ function* preprocessDatasetProcessingScheduleWatch({ scheduler, execution, sched
               scheduler, execution, schedule: subSchedule, status,
             }
           }
+          case 'Log': {
+            const schedule = data.message.schedule
+            const runtimeResults = data.message.content ? data.message.content : null
+            return {
+              type: EXECUTION_PREPROCESS_DATASET_PROCESSING_NODELOG,
+              execution, schedule, runtimeResults,
+            }
+          }
+
           case 'Result': {
             const subSchedule = data.id
             const { result, timestamp, key} = data.message

@@ -41,8 +41,8 @@ export function parse(content) {
     if (!(subject_id in sets)) {
       sets[subject_id] = {}
     }
-    sets[subject_id][unique_id] = { 
-      anatomical: anat, functionals: func, site 
+    sets[subject_id][unique_id] = {
+      anatomical: anat, functionals: func, site
     }
     sites.push(site)
     series.push(...Object.keys(func))

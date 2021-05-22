@@ -6,17 +6,9 @@ import { withStyles, lighten } from '@material-ui/core/styles'
 import { fromJS, isImmutable } from 'immutable'
 import clsx from 'clsx'
 
-import Badge from '@material-ui/core/Badge'
-import Chip from '@material-ui/core/Chip'
 import Grid from '@material-ui/core/Grid'
-import Tabs from '@material-ui/core/Tabs'
-import Tab from '@material-ui/core/Tab'
 import Paper from '@material-ui/core/Paper'
 import Button from '@material-ui/core/Button'
-import TextField from '@material-ui/core/TextField'
-import IconButton from '@material-ui/core/IconButton'
-import Select from '@material-ui/core/Select'
-import MenuItem from '@material-ui/core/MenuItem'
 import Tooltip from 'components/Tooltip'
 import Typography from '@material-ui/core/Typography'
 import Avatar from '@material-ui/core/Avatar'
@@ -30,27 +22,12 @@ import {
   ExecutionCrashIcon,
 } from './icons'
 
-import Content from './Content'
-import Box from './Box'
-import Table from './Table'
 import ExecutionNodesGraph from './ExecutionNodesGraph'
 import SummaryCard from './ExecutionSummary'
 
+import { getExecutionSummary } from '../reducers/execution'
+
 import { PipelineChip, DatasetChip, SchedulerChip } from './chips'
-
-import {
-  preprocessDataset,
-} from '../actions/execution'
-
-import {
-  selectDatasets,
-} from '../reducers/dataset'
-
-import {
-  selectSchedulers,
-  selectCurrentScheduler,
-} from '../reducers/cpacpy'
-
 import format from '../utils/format'
 
 const getColor = (theme, status) => ({
@@ -112,6 +89,7 @@ class ExecutionDetailCard extends Component {
   static mapStateToProps = (state, { execution }) => {
     return {
       execution: state.execution.get('executions').find((e) => e.get('id') == execution),
+      summary: getExecutionSummary(execution)(state.execution)
     }
   }
   
@@ -125,6 +103,8 @@ class ExecutionDetailCard extends Component {
 
   render() {
     const { classes, execution: e, actions = true, onClickSchedule, selectedSchedule, showSummaryCard = false }  = this.props
+    const subjectCnt = e && e.getIn(['dataset', 'subjectNum'])
+    const summary = this.props.summary
 
     return (
       <Paper key={e.get('id')} className={classes.paper} elevation={3}>
@@ -146,7 +126,7 @@ class ExecutionDetailCard extends Component {
               </Grid>
               <Grid container className={classes.chips} justify="center">
                 <Grid item xs={4} lg={3} xl={2}>
-                  <SchedulerChip scheduler={e.getIn(['scheduler', 'id'])} backend={e.getIn(['scheduler', 'backend'])} />
+                  <SchedulerChip name={e.getIn(['scheduler', 'name'])} backend={e.getIn(['scheduler', 'backend', 'backend'])} />
                 </Grid>
                 <Grid item xs={4} lg={3} xl={2}>
                   <PipelineChip pipeline={e.getIn(['pipeline', 'id'])} version={e.getIn(['pipeline', 'version'])} />
@@ -162,28 +142,29 @@ class ExecutionDetailCard extends Component {
               <Grid item xs={12}>
                 <FlexBox className={classes.content}>
                   <SummaryCard
-                    pipelineId = {e.getIn(['pipeline', 'id'])}
-                    datasetId = {e.getIn(['dataset', 'id'])}
-                    schedulerId = {e.getIn(['scheduler', 'id'])}
-                    executionId = {e.getIn(['id'])}
-                    schedulerDetails = {e.getIn(['scheduler'])}
-                    datasetViewId = {e.getIn(['dataset', 'view'])}
+                    summary = {summary}
                     normalPage = {true}
                   />
                 </FlexBox>
               </Grid> : null
           }
           <Grid item xs={12} md={6}>
-            <ExecutionNodesGraph
-              onClickSchedule={onClickSchedule}
-              selectedSchedule={selectedSchedule}
-              style={{flexGrow: 1}}
-              nodes={
-                e.get('schedules') ?
-                  e.get('schedules').valueSeq().filter((s) => s.get('parent')) :
-                  fromJS([])
-              }
-            />
+            {
+              e.get('schedules') ? (e.get('schedules').size < subjectCnt * 0.95 ?
+                  'Ready schedule: ' + Math.floor(e.get('schedules').size * 100.0 / subjectCnt) + '%' :
+                  <ExecutionNodesGraph
+                    onClickSchedule={onClickSchedule}
+                    selectedSchedule={selectedSchedule}
+                    style={{flexGrow: 1}}
+                    nodes={
+                      e.get('schedules') ?
+                        e.get('schedules').valueSeq().filter((s) => s.get('parent')) :
+                        fromJS([])
+                    }
+                  />
+              ) : null
+            }
+
           </Grid>
           { actions &&
           <Grid item xs={12}>

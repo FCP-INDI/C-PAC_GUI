@@ -202,6 +202,7 @@ class DatasetPage extends Component {
         this.props.updateDatasetError(datasetInfo, e)
       }
       this.props.datasetSaveAll()
+      this.handleUpdateDataset()
     })
     reader.readAsText(f)
     e.target.value = null
@@ -420,6 +421,9 @@ class DatasetPage extends Component {
 
     const fetchWarningStyle = format === 'fetch' && dataset.getIn(['error']) ? {} : {display:'none'}
     const uploadWarningStyle = format === 'upload' && dataset.getIn(['error']) ? {} : {display:'none'}
+    if (format === 'upload' && this.state.uploadFileName !== configuration.getIn(['options', 'base']) && configuration.getIn(['options', 'base'])) {
+      this.setState({uploadFileName: configuration.getIn(['options', 'base'])})
+    }
 
     let errorMessage = 'Last valid results are shown below.'
     columns == null ? errorMessage = '' : errorMessage

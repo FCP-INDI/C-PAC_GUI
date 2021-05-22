@@ -138,6 +138,7 @@ class SchedulerChip extends Component {
   static mapStateToProps = (state, props) => {
     const { scheduler } = props
     return {
+      schedulerId: scheduler,
       scheduler: selectScheduler(scheduler)(state.cpacpy)
     }
   }
@@ -153,8 +154,10 @@ class SchedulerChip extends Component {
 
 
   render() {
-    const { scheduler, backend, classes } = this.props
-
+    const { name: scheduler, backend } = this.props
+    if (!scheduler) {
+      return null
+    }
     if (backend) {
       return (
         <Badge
@@ -167,7 +170,7 @@ class SchedulerChip extends Component {
         >
           <Chip
             icon={<SchedulerIcon />}
-            label={scheduler.get('name')}
+            label={ scheduler }
             color="primary"
           />
         </Badge>
@@ -176,7 +179,7 @@ class SchedulerChip extends Component {
       return (
         <Chip
           icon={<SchedulerIcon />}
-          label={scheduler.get('name')}
+          label={ scheduler }
           color="primary"
         />
       )
@@ -184,7 +187,7 @@ class SchedulerChip extends Component {
   }
 }
 
-const ConnectedSchedulerChip = 
+const ConnectedSchedulerChip =
   connect(SchedulerChip.mapStateToProps, SchedulerChip.mapDispatchToProps)
     (withStyles(SchedulerChip.styles)
       (SchedulerChip))
@@ -213,6 +216,9 @@ class SchedulerBackendChip extends Component {
 
   render() {
     const { scheduler, backend, classes } = this.props
+    if (!scheduler) {
+      return null
+    }
     if (backend) {
       return (
         <Badge
@@ -242,7 +248,7 @@ class SchedulerBackendChip extends Component {
   }
 }
 
-const ConnectedSchedulerBackendChip = 
+const ConnectedSchedulerBackendChip =
   connect(SchedulerBackendChip.mapStateToProps, SchedulerBackendChip.mapDispatchToProps)
     (withStyles(SchedulerBackendChip.styles)
       (SchedulerBackendChip))
@@ -283,7 +289,7 @@ class BackendChip extends Component {
   }
 }
 
-const ConnectedBackendChip = 
+const ConnectedBackendChip =
   connect(BackendChip.mapStateToProps, BackendChip.mapDispatchToProps)
     (withStyles(BackendChip.styles)
       (BackendChip))

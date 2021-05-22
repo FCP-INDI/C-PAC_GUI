@@ -1,4 +1,4 @@
-import { fromJS, isImmutable, List } from 'immutable'
+import { fromJS, isImmutable, List, Map } from 'immutable'
 
 import {
   EXECUTION_CONFIG_LOAD_SUCCESS,
@@ -11,6 +11,7 @@ import {
   EXECUTION_PREPROCESS_DATASET_PROCESSING_LOG,
   EXECUTION_PREPROCESS_DATASET_PROCESSING_FINISHED,
   EXECUTION_PREPROCESS_DATASET_FINISHED,
+  EXECUTION_PREPROCESS_DATASET_PROCESSING_NODELOG,
 } from '../actions/execution'
 
 const initialState = fromJS({
@@ -27,6 +28,33 @@ export const selectExecution =
 export const selectSchedule =
   (execution, schedule) => (state) => selectExecution(execution)(state).getIn(['schedules', schedule])
 
+export const getExecutionSummary = (execution) => (state) => {
+  const e = state.getIn(['executions']).find((e) => e.get('id') === execution)
+  const summary = e ? {
+    pipeline: {
+      functional: e.getIn(['pipeline', 'functional']),
+      derivatives: e.getIn(['pipeline', 'derivatives']),
+    },
+    dataset: {
+      sites: e.getIn(['dataset', 'sites']),
+      subjects: e.getIn(['dataset', 'subjects']),
+      sessions: e.getIn(['dataset', 'sessions']),
+    },
+    scheduler: {
+      name: e.getIn(['scheduler', 'name']),
+      backend: {
+        id: e.getIn(['scheduler', 'backend', 'id']),
+        backend: e.getIn(['scheduler', 'backend', 'backend']),
+      },
+      profile: {
+        corePerPipeline: e.getIn(['scheduler', 'profile', 'corePerPipeline']),
+        memPerPipeline: e.getIn(['scheduler', 'profile', 'memPerPipeline']),
+        parallelPipeline: e.getIn(['scheduler', 'profile', 'parallelPipeline'])
+      },
+    }
+  } : null
+  return summary
+}
 
 export default function (state = initialState, action) {
   if (!state) {
@@ -50,9 +78,9 @@ export default function (state = initialState, action) {
         start: new Date().getTime(),
         finish: null,
         status: 'unknown',
-        scheduler: { id: scheduler.id, backend: scheduler.backend, profile: scheduler.profile },
-        pipeline: { id: pipeline.id, version: pipeline.version },
-        dataset: { id: dataset.id, version: dataset.version, view: dataset.view },
+        scheduler: scheduler,
+        pipeline: pipeline,
+        dataset: dataset,
       })
 
       return state.updateIn(['executions'], executions => executions.push(execution))
@@ -100,6 +128,26 @@ export default function (state = initialState, action) {
       )
     }
 
+    case EXECUTION_PREPROCESS_DATASET_PROCESSING_NODELOG: {
+      const i = state.get('executions').findIndex((e) => e.get('id') === action.execution)
+      let nodeInfos = Map()
+      for (let nodeInfo of action.runtimeResults) {
+        nodeInfos = nodeInfos.set(nodeInfo.data.message.content.id, fromJS({
+          'id': nodeInfo.data.message.content.id,
+          'start': nodeInfo.data.message.content.start,
+          'finish': nodeInfo.data.message.content.end,
+          'runtime_mem_gb': nodeInfo.data.message.content.runtime_memory_gb,
+          'runtime_threads': nodeInfo.data.message.content.runtime_threads,
+          'status': nodeInfo.data.message.content.runtime_memory_gb ? 'success' : 'running',
+        }))
+      }
+      let nextState = state
+      if (state.getIn(['executions', i, 'schedules', action.schedule, 'status']) === 'unknown' || !state.getIn(['executions', i, 'schedules', action.schedule, 'status'])) {
+        nextState = state.setIn(['executions', i, 'schedules', action.schedule, 'status'], 'running')
+      }
+      return nextState.mergeIn(['executions', i, 'schedules', action.schedule, 'nodes'], nodeInfos)
+    }
+
     case EXECUTION_PREPROCESS_DATASET_PROCESSING_LOG: {
       const { execution, schedule, key, log, timestamp, name } = action
       const i = state.get('executions').findIndex((e) => e.get('id') === execution)
@@ -118,6 +166,8 @@ export default function (state = initialState, action) {
       const { execution, schedule, status } = action
       const i = state.get('executions').findIndex((e) => e.get('id') === execution)
       return state.setIn(['executions', i, 'schedules', schedule, 'status'], status)
+        .updateIn(['executions', i, 'schedules', schedule, 'nodes'],
+          item => item.map(kv => kv.set('status', kv.get('status') === 'success' ? 'success' : 'unknown')))
     }
 
     case EXECUTION_PREPROCESS_DATASET_FINISHED: {

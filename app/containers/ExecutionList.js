@@ -16,7 +16,7 @@ class ExecutionList extends Component {
   }
 
   render() {
-    const { classes, executions } = this.props
+    const { classes, executions, version } = this.props
 
     return (
       <>
@@ -35,7 +35,7 @@ class ExecutionList extends Component {
             )
           ) || (
             <Typography variant="subtitle1">
-              No executions so far.
+              {version ? 'No executions so far.' : 'Loading executions... it may take seconds...'}
             </Typography>
           )
         }
@@ -46,6 +46,7 @@ class ExecutionList extends Component {
 
 const mapStateToProps = (state) => ({
   executions: state.execution.getIn(['executions']).map(d => d.subset(['id', 'node', 'status', 'start'])),
+  version: state.execution.get('version'),
 })
 
 const mapDispatchToProps = {
