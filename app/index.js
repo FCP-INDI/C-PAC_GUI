@@ -11,7 +11,7 @@ import keyIn from './utils/keyIn'
 Immutable.Map.prototype.subset = function (keys) {
   return this.filter(keyIn(...keys))
 }
-// localStorage.clear()
+
 if (!('indexedDB' in window)) {
   alert("Limited functionality on current browser. Please switch to Chrome or Firefox. ")
 }
