@@ -73,7 +73,7 @@ function* preprocessDataset({ execution: executionId }) {
   yield put(cpacpySchedulePipeline(
     scheduler.get('id'),
     cpac.data_config.dump(dataset.toJS(), execution.getIn(['dataset', 'version']), execution.getIn(['dataset', 'view'])),
-    cpac.pipeline.dump(pipeline.toJS(), execution.getIn(['dataset', 'version'])),
+    cpac.pipeline.dump(pipeline.toJS(), execution.getIn(['pipeline', 'version'])),
     execution.getIn(['scheduler', 'profile']),
     {
       success: (data) => ({
@@ -162,7 +162,7 @@ function* preprocessDatasetProcessingScheduleFinish({ scheduler, execution: exec
     .get('schedules')
     .valueSeq()
     .every((s) => s.get('status') === 'success' || s.get('status') === 'failure')
-    
+
   if (allStatuses) {
     yield put({
       type: EXECUTION_PREPROCESS_DATASET_FINISHED,
@@ -233,12 +233,12 @@ export default function* configSaga() {
     takeEvery(EXECUTION_PREPROCESS_DATASET_PROCESSING_SCHEDULED, preprocessDatasetProcessingScheduleWatch),
     takeEvery(EXECUTION_PREPROCESS_DATASET_PROCESSING_FINISHED, preprocessDatasetProcessingScheduleFinish),
     takeEvery(
-      (act) => 
+      (act) =>
         act.type === EXECUTION_PREPROCESS_DATASET_PROCESSING_RESULT && act?.result?.type === 'crash',
       preprocessDatasetFetchCrashResult
     ),
     takeEvery(
-      (act) => 
+      (act) =>
         act.type === EXECUTION_PREPROCESS_DATASET_PROCESSING_RESULT && act?.result?.type === 'log',
       preprocessDatasetFetchLogResult
     ),
