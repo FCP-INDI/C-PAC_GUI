@@ -76,6 +76,7 @@ function* detect({ scheduler: id, authKey=null, poll=true, current=false }) {
   const scheduler = yield selectSaga(selectScheduler(id))
   if (scheduler.get('online')) {
     yield put(cpacpySchedulerOnline(id))
+    yield put(cpacpyWatch(id))
     yield put(cpacpyPollCancel(id))
     return
   }
