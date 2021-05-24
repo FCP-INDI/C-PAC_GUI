@@ -2,7 +2,7 @@ import { eventChannel } from 'redux-saga'
 import { fetch as realFetch } from 'whatwg-fetch'
 import { select, put, takeEvery, call } from 'redux-saga/effects'
 import Immutable from 'immutable'
-import { default as LZString } from '../../tools/lz-string'
+import { default as LZString } from '../utils/lz-string'
 import { Dexie } from 'dexie'
 
 const db = new Dexie('idxedDB')
