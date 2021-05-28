@@ -3,9 +3,9 @@ import { withStyles, Typography } from '@material-ui/core';
 import Grid from '@material-ui/core/Grid'
 
 import Paper from '@material-ui/core/Paper';
-import ExpansionPanel from '@material-ui/core/ExpansionPanel';
-import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
-import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
+import Accordion from '@material-ui/core/Accordion';
+import AccordionDetails from '@material-ui/core/AccordionDetails';
+import AccordionSummary from '@material-ui/core/AccordionSummary';
 import MenuItem from '@material-ui/core/MenuItem';
 import TextField from '@material-ui/core/TextField';
 import Switch from '@material-ui/core/Switch';
@@ -86,18 +86,18 @@ function returnComponent(obj, classes={}, onChange=undefined, parents=[], level=
               switch (Immutable.Map.isMap(entry[1])) {
                 case true:
                   return (
-                    <ExpansionPanel key={entry[0]} expanded className={classes.fullWidth}>
-                      <ExpansionPanelSummary disabled>
+                    <Accordion key={entry[0]} expanded className={classes.fullWidth}>
+                      <AccordionSummary disabled>
                         <Typography variant="h6" className={classes.sectionTitle}>
                           { formatLabel(entry[0]) }
                         </Typography>
-                      </ExpansionPanelSummary>
-                      <ExpansionPanelDetails>
+                      </AccordionSummary>
+                      <AccordionDetails>
                       <Grid container>
                         { returnComponent(entry[1], classes, onChange, parents=[...parents.slice(0, level), entry[0]], level + 1) }
                       </Grid>
-                      </ExpansionPanelDetails>
-                    </ExpansionPanel>
+                      </AccordionDetails>
+                    </Accordion>
                   )
                 case false:
                   const regex = new RegExp(`^\s*{entry[0]}`);

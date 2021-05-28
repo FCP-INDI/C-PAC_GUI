@@ -1,5 +1,5 @@
 export default {
-  id: 'default',
+  id: 'default-1.6.0',
   name: 'Default',
   versions: {
     'default': {
