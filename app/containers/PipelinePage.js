@@ -84,7 +84,7 @@ class PipelinePage extends Component {
     }
   }
 
-  componentWillReceiveProps(nextProps) {
+  UNSAFE_componentWillReceiveProps(nextProps) {
     if (!nextProps.pipeline.get('versions').keySeq().equals(this.props.pipeline.get('versions').keySeq())) {
       const pipeline = nextProps.pipeline
       const versions = pipeline.get('versions')
