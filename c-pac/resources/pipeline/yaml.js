@@ -76,7 +76,7 @@ export default (config) => {
  * @returns {(Object|Array)} Returns the YAML contents as JSON.
  */
 const loadYaml = (yamlString) => {
-  let yamlJS = yaml.load(yamlString);
+  let yamlJS = yaml.safeLoad(yamlString);
   return updateBooleansToJSON(yamlJS);
 };
 
@@ -97,13 +97,14 @@ const updateBooleansToJSON = (yamlObj) => {
   if (yamlObj != null) {
     switch (typeof(yamlObj)) {
       case 'object':
+        if (Array.isArray(yamlObj)) {
+          return yamlObj.map(item => updateBooleansToJSON(item));
+        };
         return Object.assign({}, ...Object.entries(yamlObj).map(entry => {
           let returnObj = {};
           returnObj[entry[0]] = updateBooleansToJSON(entry[1])
           return returnObj;
         }));
-      case 'array':
-        return yamlObj.map(item => updateBooleans(item));
       case 'string':
         switch (yamlObj) {
           case 'On':
