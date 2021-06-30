@@ -147,6 +147,7 @@ function returnComponent(obj, classes={}, onChange=undefined, parents=[], level=
                           </ListItemSecondaryAction>
                           </ListItem>)
                         default:
+                          console.warn(`UNHANDLED TYPE: ${typeof(item)}: ${parents}: ${$entry[0]}: ${item}`)
                           return('!!!UNHANDLED TYPE!!!')
                       }
                     } else {
@@ -187,7 +188,7 @@ function returnComponent(obj, classes={}, onChange=undefined, parents=[], level=
                   case false:
                     const regex = new RegExp(`^\s*{entry[0]}`);
                     const label = formatLabel(entry[0]);
-                    const name = [...parents, entry[0]].join('.');
+                    const name = [...parents.slice(0, level), entry[0]].join('.');
                     switch (typeof(entry[1])) {
                       case 'boolean':
                         return (
