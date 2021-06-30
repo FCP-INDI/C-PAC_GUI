@@ -60,10 +60,12 @@ export const formatLabel = (label) => {
     ants: "ANTs",
     freesurfer: "FreeSurfer",
     fsl: "FSL",
+    acpc: "ACPC",
     aroma: "AROMA",
     bet: "BET",
     dir: "Directory",
     epi: "EPI",
+    nlmf: "NLMF",
     roi: "Region of Interest",
     tse: "Timeseries Extraction",
   };  // words with special casing or adjusted spelling
