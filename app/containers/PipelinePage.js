@@ -115,11 +115,6 @@ class PipelinePage extends Component {
 
     let configuration = this.state.configuration;
 
-    // console.log(values.target.name)
-    // console.log(values.target.value)
-    // console.log(values.target.name.split('.'));
-    // console.log(this.state.configuration.getIn(values.target.name.split('.')));
-
     if (values.target) {
       const name = values.target.name;
       const value = values.target.type && values.target.type == "checkbox" ?
@@ -144,6 +139,8 @@ class PipelinePage extends Component {
       this.props.pipeline,
       configuration
     )
+
+    console.log(this.props.pipeline.get('id'));
 
     this.setState({ configuration, dirty: true, version: "0" })
   }

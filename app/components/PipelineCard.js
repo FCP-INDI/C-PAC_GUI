@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import { withRouter, Link } from 'react-router-dom'
 
 import clsx from 'clsx'
-import { withStyles } from '@material-ui/core/styles'
+import { formatMs, withStyles } from '@material-ui/core/styles'
 
 import Grid from '@material-ui/core/Grid'
 
@@ -19,11 +19,13 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 
-import Typography from '@material-ui/core/Typography'
-import Avatar from '@material-ui/core/Avatar'
-import IconButton from '@material-ui/core/IconButton'
-import Button from '@material-ui/core/Button'
-import Tooltip from '@material-ui/core/Tooltip'
+import Typography from '@material-ui/core/Typography';
+import Avatar from '@material-ui/core/Avatar';
+import IconButton from '@material-ui/core/IconButton';
+import Button from '@material-ui/core/Button';
+import Tooltip from '@material-ui/core/Tooltip';
+
+import PipelineStep from './PipelineStep';
 
 import {
   EnvironmentIcon,
@@ -35,12 +37,14 @@ import {
   LaunchIcon,
   SettingsIcon,
   NavigateNextIcon,
+  PlayArrowIcon,
   TimerIcon,
   LogIcon,
   BrainIcon,
   DeleteIcon,
   DuplicateIcon,
-} from './icons'
+} from './icons';
+import { formatLabel } from '../containers/pipeline/parts/PipelinePart'
 
 
 class PipelineCard extends Component {
@@ -81,28 +85,26 @@ class PipelineCard extends Component {
     }
 
     const version = versions.get(versionId)
-
-    const anatomical = version.getIn(['configuration', 'anatomical', 'enabled']) || false
-
-    const functional = version.getIn(['configuration', 'functional', 'enabled']) || false
-
-    let derivatives = version.getIn(['configuration', 'derivatives', 'enabled'])
-    if (derivatives) {
-      derivatives = version.getIn(['configuration', 'derivatives']).reduce(
-        (total, value) => {
-          // Ignore root flag 'enabled' under derivatives
-          if (value.get) {
-            return total + (value.get('enabled') ? 1 : 0)
-          }
-          return total
-        },
-        0
-      )
-
-      derivatives = derivatives ? derivatives : false
-    } else {
-      derivatives = 0
-    }
+    const configuration = version.getIn(['configuration', ]);
+    const cardSteps = ['anatomical_preproc', 'functional_preproc', 'surface_analysis'];
+    let derivatives = [];
+    
+    Object.keys(configuration.toJS()).forEach(step => {
+      let [...stepKeys] = configuration.getIn([step]).keys();
+      if (stepKeys.includes('run')) {
+        const runswitch = configuration.getIn([step, 'run']);
+        if (
+          !cardSteps.includes(step) &&
+          runswitch &&
+          (
+            typeof(runswitch) === 'boolean' ||
+            (Array.isArray(runswitch) && runswitch.includes(true))
+          )
+        ) { derivatives.push(step); }
+      }
+    })
+    derivatives = Array.from(derivatives);
+    derivatives = derivatives ? derivatives.length : 0;
 
     return (
       <Card className={classes.card}>
@@ -117,36 +119,23 @@ class PipelineCard extends Component {
         />
         <CardContent className={classes.info}>
           <List>
-            <ListItem>
-              <ListItemIcon>
-                <PipelineStepIcon classes={{
-                  root: anatomical ? classes.featEnabled : classes.featDisabled
-                }} />
-              </ListItemIcon>
-              <ListItemText classes={{
-                  root: anatomical ? classes.featEnabled : classes.featDisabled
-                }}  primary={`Anatomical`} />
-            </ListItem>
-            <ListItem>
-              <ListItemIcon>
-                <PipelineStepIcon classes={{
-                  root: functional ? classes.featEnabled : classes.featDisabled
-                }} />
-              </ListItemIcon>
-              <ListItemText classes={{
-                  root: functional ? classes.featEnabled : classes.featDisabled
-                }}  primary={`Functional`} />
-            </ListItem>
-            <ListItem>
-              <ListItemIcon>
-                <PipelineStepIcon classes={{
-                root: derivatives ? classes.featEnabled : classes.featDisabled
-              }}  />
-              </ListItemIcon>
-              <ListItemText classes={{
-                root: derivatives ? classes.featEnabled : classes.featDisabled
-              }}  primary={`${derivatives} derivative${derivatives != 1 ? 's' : ''}`} />
-            </ListItem>
+            {cardSteps.map(step =>{
+              const runKey = (step !== 'surface_analysis') ? 'run' : 'run_freesurfer';
+              return (
+                <PipelineStep
+                  {...{classes}}
+                  stepKey={configuration.getIn([step, runKey])}
+                  label={formatLabel(step)}
+                  key={step}
+                />
+              )
+            })}
+            <PipelineStep
+              {...{classes}}
+              stepKey={Boolean(derivatives)}
+              label={`${derivatives} derivative${derivatives === 1 ? '' : 's'}`}
+              key='derivatives'
+            />
           </List>
         </CardContent>
         <CardActions className={classes.actions}>
@@ -166,9 +155,9 @@ class PipelineCard extends Component {
             : null
           }
 
-          <Tooltip title="Edit">
+          <Tooltip title={pipeline.get('id') === 'default' ? 'View' : 'View / Edit'}>
             <IconButton className={classes.expand} onClick={() => this.handleOpen(pipeline.get('id'))}>
-              <NavigateNextIcon />
+              {pipeline.get('id') === 'default' ? <PlayArrowIcon /> : <NavigateNextIcon />}
             </IconButton>
           </Tooltip>
         </CardActions>

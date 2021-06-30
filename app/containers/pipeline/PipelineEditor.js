@@ -37,7 +37,7 @@ class PipelineEditor extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      tab: [...props.configuration.keySeq()][0],  // first tab
+      tab: [...props.configuration.keySeq()][0],
     };
   }
 
@@ -63,10 +63,10 @@ class PipelineEditor extends Component {
       [name, value]
     ]
 
-    if (name == "functional.enabled") {
-      this.setState({ tab: value ? 1 : 0 });
-      props.push(["derivatives.enabled", value])
-    }
+    // if (name == "functional.enabled") {
+    //   this.setState({ tab: value ? 1 : 0 });
+    //   props.push(["derivatives.enabled", value])
+    // }
 
     this.props.onChange(props)
   }
