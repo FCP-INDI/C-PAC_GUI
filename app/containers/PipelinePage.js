@@ -16,6 +16,7 @@ import PipelineEditor from 'containers/pipeline/PipelineEditor';
 import Header, { HeaderText, HeaderAvatar, HeaderTools } from 'components/Header';
 import Content from 'components/Content';
 import Box from 'components/Box';
+import NotFound from 'components/404';
 
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
@@ -112,22 +113,31 @@ class PipelinePage extends Component {
       return
     }
 
-    let configuration = this.state.configuration
+    let configuration = this.state.configuration;
+
+    // console.log(values.target.name)
+    // console.log(values.target.value)
+    // console.log(values.target.name.split('.'));
+    // console.log(this.state.configuration.getIn(values.target.name.split('.')));
 
     if (values.target) {
-      const name = values.target.name
+      const name = values.target.name;
       const value = values.target.type && values.target.type == "checkbox" ?
                       values.target.checked :
-                      values.target.value
-
-      return this.handleChange([[name, fromJS(value)]])
+                      values.target.value;
+      console.log(name);
+      console.log(value);
+      return this.handleChange([[name, fromJS(value)]]);
     }
 
     for (let [key, value] of values) {
       if (typeof key == "string") {
         key = key.split('.')
       }
-      configuration = configuration.setIn(key, isImmutable(value) ? value : fromJS(value))
+      console.log(key);
+      console.log(configuration.getIn(key));
+      configuration = configuration.setIn(key, isImmutable(value) ? value : fromJS(value));
+      console.log(configuration.getIn(key));
     }
 
     this.props.pipelineVersionDirtyUpdate(
@@ -233,8 +243,7 @@ class PipelinePage extends Component {
     const { classes, pipeline } = this.props
 
     if (!pipeline) {
-      // @TODO ASH create a 404 page/component
-      return "404"
+      return <NotFound />
     }
 
     const tools = (

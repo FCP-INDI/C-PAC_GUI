@@ -69,3 +69,8 @@ a:hover {
   text-decoration: none;
   cursor: pointer;
 }
+
+div#image_credit {
+  bottom: 2ex;
+  position: fixed;
+}
