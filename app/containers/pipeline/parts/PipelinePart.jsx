@@ -119,15 +119,13 @@ function returnComponent(obj, classes={}, onChange=undefined, parents=[], level=
                     if (!Immutable.Map.isMap(item)){
                       switch (typeof(item)){
                         case "boolean": // list of On/Off switches
-                          console.log(`boolean: ${parents} ${entry[0]}`);
                           return (
                             <ListItem button key={i}>
                               <OnOffSwitch
+                                {...{label, onChange}}
                                 key={`${entry[0]}-${i}`}
                                 regex={null}
-                                label={label}
                                 checked={item}
-                                onChange={onChange}
                               />
                             </ListItem>
                           )
@@ -149,8 +147,7 @@ function returnComponent(obj, classes={}, onChange=undefined, parents=[], level=
                           </ListItemSecondaryAction>
                           </ListItem>)
                         default:
-                          console.log(`other type: ${typeof(item)}`)
-                          return('OTHER')
+                          return('!!!UNHANDLED TYPE!!!')
                       }
                     } else {
                       <Grid container>
@@ -195,12 +192,9 @@ function returnComponent(obj, classes={}, onChange=undefined, parents=[], level=
                       case 'boolean':
                         return (
                           <OnOffSwitch
+                            {...{regex, label, name, onChange}}
                             key={entry[0]}
-                            regex={regex}
-                            label={label}
-                            name={name}
                             checked={entry[1]}
-                            onChange={onChange}
                           />
                         )
                       case 'string':
