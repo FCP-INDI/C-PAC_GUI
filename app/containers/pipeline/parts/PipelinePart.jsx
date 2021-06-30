@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { withStyles, Typography } from '@material-ui/core';
-import Grid from '@material-ui/core/Grid'
+import Grid from '@material-ui/core/Grid';
 
 import Paper from '@material-ui/core/Paper';
 import Accordion from '@material-ui/core/Accordion';
@@ -32,9 +32,10 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import TableFooter from '@material-ui/core/TableFooter';
 
-import Help from 'components/Help'
-import FormControlLabelled from 'components/FormControlLabelled'
+import FormControlLabelled from 'components/FormControlLabelled';
+import Help from 'components/Help';
 import Immutable from 'immutable';
+import OnOffSwitch from 'components/OnOffSwitch';
 
 import {
   AddIcon,
@@ -48,9 +49,9 @@ import RoiPaths from './RoiPaths';
 class PipelineListPart extends Component {
   render() {
     const { classes, configuration, onChange, parents } = this.props;
-      return (
-        <></>
-      )
+    return (
+      <></>
+    )
   }
 }
 
@@ -115,20 +116,47 @@ function returnComponent(obj, classes={}, onChange=undefined, parents=[], level=
                   </Help>
                   <List className={classes.fullWidth}>
                   {entry[1].map((item, i) => {
-                    return <ListItem button key={i}>
-                    <ListItemText primary={item} className={classes.fullWidth} style={{ padding: '0 115px 0 0'}} />
-                    <ListItemSecondaryAction>
-                      <IconButton onClick={((regi) => () => this.handleEdit(regi))(i)}>
-                        <EditIcon />
-                      </IconButton>
-                      <IconButton onClick={((regi) => () => this.handleDuplicate(regi))(i)}>
-                        <DuplicateIcon />
-                      </IconButton>
-                      <IconButton onClick={((regi) => () => this.handleDelete(regi))(i)}>
-                        <DeleteIcon />
-                      </IconButton>
-                    </ListItemSecondaryAction>
-                    </ListItem>
+                    if (!Immutable.Map.isMap(item)){
+                      switch (typeof(item)){
+                        case "boolean": // list of On/Off switches
+                          console.log(`boolean: ${parents} ${entry[0]}`);
+                          return (
+                            <ListItem button key={i}>
+                              <OnOffSwitch
+                                key={`${entry[0]}-${i}`}
+                                regex={null}
+                                label={label}
+                                checked={item}
+                                onChange={onChange}
+                              />
+                            </ListItem>
+                          )
+                        case "number": // handled same as string
+                        case "string":
+                          return (<ListItem button key={i}>
+                          <ListItemText primary={item} />
+                          {/* <ListItemText primary={item} className={classes.fullWidth} style={{ padding: '0 115px 0 0'}} /> */}
+                          <ListItemSecondaryAction>
+                            <IconButton onClick={((regi) => () => this.handleEdit(regi))(i)}>
+                              <EditIcon />
+                            </IconButton>
+                            <IconButton onClick={((regi) => () => this.handleDuplicate(regi))(i)}>
+                              <DuplicateIcon />
+                            </IconButton>
+                            <IconButton onClick={((regi) => () => this.handleDelete(regi))(i)}>
+                              <DeleteIcon />
+                            </IconButton>
+                          </ListItemSecondaryAction>
+                          </ListItem>)
+                        default:
+                          console.log(`other type: ${typeof(item)}`)
+                          return('OTHER')
+                      }
+                    } else {
+                      <Grid container>
+                          { returnComponent(item, classes, onChange, parents=[...parents.slice(0, level), entry[0]], level + 1) }
+                      </Grid>
+                    }
                   })}
                   <Divider />
                   <ListItem style={{ padding: 10 }}>
@@ -166,24 +194,14 @@ function returnComponent(obj, classes={}, onChange=undefined, parents=[], level=
                     switch (typeof(entry[1])) {
                       case 'boolean':
                         return (
-                          <Grid key={entry[0]} item xs={12}>
-                            <FormGroup row>
-                              <Help
-                                type="pipeline"
-                                regex={regex}
-                                help=""
-                              >
-                                <FormControlLabelled label={label}>
-                                  <Switch
-                                    name={name}
-                                    checked={entry[1]}
-                                    onChange={onChange}
-                                    color="primary"
-                                  />
-                                </FormControlLabelled>
-                              </Help>
-                            </FormGroup>
-                          </Grid>
+                          <OnOffSwitch
+                            key={entry[0]}
+                            regex={regex}
+                            label={label}
+                            name={name}
+                            checked={entry[1]}
+                            onChange={onChange}
+                          />
                         )
                       case 'string':
                         return (
