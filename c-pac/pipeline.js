@@ -1,20 +1,20 @@
 import yaml from 'js-yaml';
 import yamlTemplate, { raw, loadYaml } from './resources/pipeline/yaml';
-import { default as templateRaw } from './resources/pipeline/default_pipeline.yml';
+import { default as rawTemplate } from './resources/pipeline/default_pipeline.yml';
 
-const defaultPipelineUrl = 'https://raw.githubusercontent.com/FCP-INDI/C-PAC/develop/dev/docker_data/default_pipeline.yml'
+const defaultPipelineUrl = 'https://raw.githubusercontent.com/FCP-INDI/C-PAC/master/dev/docker_data/default_pipeline.yml'
 const versionRe = new RegExp('(?<=\# Version:? \s*).*');
 
 let template;
 
-function setVersion(rawTemplate) {
-  const version = versionRe.exec(rawTemplate);
+function setVersion() {
+  const version = versionRe.exec();
   template = {
     "id": "default",
     "name": "Default",
     "versions": {
       0: {
-        "version": version.length ? version[0] : 'unspecified',
+        "version": (version && version.length) ? version[0] : 'unspecified',
         "configuration": loadYaml(rawTemplate)
       }
     }
@@ -22,20 +22,18 @@ function setVersion(rawTemplate) {
   return template;
 }
 
-function getDefaultPipeline(url) {
-  // returns a promise
-  return fetch(defaultPipelineUrl, { mode: "cors" })
-    .then(response => {
-      response.text().then(defaultRaw => {
-        return setVersion(defaultRaw);
-      })
-    }, function(e) {
-      console.error("Default pipeline failed to load! Falling back to local copy (may be out of date)");
-      return setVersion(templateRaw);
-    })
+async function getDefaultPipeline(url) {
+  const defaultPipeline = await fetch(defaultPipelineUrl, { mode: "cors" })
+  .then(response => {
+    return response.text().then(defaultRaw => setVersion(defaultRaw))
+  }, function(e) {
+    console.error("Default pipeline failed to load! Falling back to local copy (may be out of date)");
+    return setVersion(rawTemplate);
+  })
+  return defaultPipeline;
 }
 
-export { getDefaultPipeline, defaultPipelineUrl }
+export { defaultPipelineUrl, getDefaultPipeline, rawTemplate }
 
 function slugify(text) {
   return text.toString().toLowerCase()

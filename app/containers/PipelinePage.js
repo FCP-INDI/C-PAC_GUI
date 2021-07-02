@@ -120,8 +120,6 @@ class PipelinePage extends Component {
       const value = values.target.type && values.target.type == "checkbox" ?
                       values.target.checked :
                       values.target.value;
-      console.log(name);
-      console.log(value);
       return this.handleChange([[name, fromJS(value)]]);
     }
 
@@ -129,18 +127,13 @@ class PipelinePage extends Component {
       if (typeof key == "string") {
         key = key.split('.')
       }
-      console.log(key);
-      console.log(configuration.getIn(key));
       configuration = configuration.setIn(key, isImmutable(value) ? value : fromJS(value));
-      console.log(configuration.getIn(key));
     }
 
     this.props.pipelineVersionDirtyUpdate(
       this.props.pipeline,
       configuration
     )
-
-    console.log(this.props.pipeline.get('id'));
 
     this.setState({ configuration, dirty: true, version: "0" })
   }
