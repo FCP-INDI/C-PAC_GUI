@@ -7,8 +7,8 @@ const versionRe = new RegExp('(?<=\# Version:? \s*).*');
 
 let template;
 
-function setVersion() {
-  const version = versionRe.exec();
+function setVersion(rawTemplate) {
+  const version = versionRe.exec(rawTemplate);
   template = {
     "id": "default",
     "name": "Default",
