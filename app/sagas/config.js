@@ -37,9 +37,7 @@ function* loadConfig (action) {
   let initialState = null;
   
   yield getPipelineDefault().then((template) => {
-  
-    console.log(template);
-    
+
     const config = {
 
       version: VERSION,
@@ -205,7 +203,6 @@ function* loadConfig (action) {
     }
 
     if (initialState.pipelines) {
-      console.log(initialState.pipelines);
       localStorage.setItem("state", JSON.stringify(initialState));
     }
 
