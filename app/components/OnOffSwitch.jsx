@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import FormControl from '@material-ui/core/FormControl';
 import FormControlLabelled from 'components/FormControlLabelled';
 import FormGroup from '@material-ui/core/FormGroup';
@@ -7,7 +7,7 @@ import Help from 'components/Help';
 import Switch from '@material-ui/core/Switch';
 import { withRouter } from 'react-router-dom';
 
-class OnOffSwitch extends Component {
+class OnOffSwitch extends PureComponent {
     render() {
       const { checked, key, label, name, onChange, regex } = this.props;
       switch (regex) {

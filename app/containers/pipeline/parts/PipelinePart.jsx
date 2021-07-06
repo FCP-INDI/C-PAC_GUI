@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, PureComponent } from 'react';
 import { withStyles, Typography } from '@material-ui/core';
 import Grid from '@material-ui/core/Grid';
 
@@ -84,181 +84,7 @@ export const formatLabel = (label) => {
 }
 
 
-function returnComponent(obj, classes={}, onChange=undefined, parents=[], level=1) {
-  switch (Immutable.Map.isMap(obj)) {
-    case true:
-      return (
-        <>
-        { obj.entrySeq().map((entry) => {
-          switch (entry[0]) { // handle objects with custom keys
-            case "tse_roi_paths":
-              return (
-                <RoiPaths key={entry[0]} configKey={entry[0]} config={entry[1]} onChange={onChange} validOptions={["Avg", "Voxel", "SpatialReg", "PearsonCorr", "PartialCorr"]}/>
-              )
-            case "sca_roi_paths":
-              return (
-                <RoiPaths key={entry[0]} configKey={entry[0]} config={entry[1]} onChange={onChange} validOptions={["Avg", "DualReg", "MultReg"]}/>
-              )
-            default: // all others
-              if (Immutable.List.isList(entry[1])) {
-                const regex = new RegExp(`^\s*{entry[0]}`);
-                const label = formatLabel(entry[0]);
-                const name = [...parents, entry[0]].join('.');
-                return (
-                  <Grid key={entry[0]} item xs={12} className={classes.fullWidth}>
-                  <FormGroup row>
-                  <Help
-                    type="pipeline"
-                    regex={regex}
-                    help=""
-                  >
-                    <FormLabel>{label}</FormLabel>
-                  </Help>
-                  <List className={classes.fullWidth}>
-                  {entry[1].map((item, i) => {
-                    if (!Immutable.Map.isMap(item)){
-                      switch (typeof(item)){
-                        case "boolean": // list of On/Off switches
-                          return (
-                            <ListItem button key={i}>
-                              <OnOffSwitch
-                                {...{label, onChange}}
-                                key={`${entry[0]}-${i}`}
-                                regex={null}
-                                checked={item}
-                              />
-                            </ListItem>
-                          )
-                        case "number": // handled same as string
-                        case "string":
-                          return (<ListItem button key={i}>
-                          <ListItemText primary={item} />
-                          {/* <ListItemText primary={item} className={classes.fullWidth} style={{ padding: '0 115px 0 0'}} /> */}
-                          <ListItemSecondaryAction>
-                            <IconButton onClick={((regi) => () => this.handleEdit(regi))(i)}>
-                              <EditIcon />
-                            </IconButton>
-                            <IconButton onClick={((regi) => () => this.handleDuplicate(regi))(i)}>
-                              <DuplicateIcon />
-                            </IconButton>
-                            <IconButton onClick={((regi) => () => this.handleDelete(regi))(i)}>
-                              <DeleteIcon />
-                            </IconButton>
-                          </ListItemSecondaryAction>
-                          </ListItem>)
-                        default:
-                          console.warn(`UNHANDLED TYPE: ${typeof(item)}: ${parents}: ${$entry[0]}: ${item}`)
-                          return('!!!UNHANDLED TYPE!!!')
-                      }
-                    } else {
-                      <Grid container>
-                          { returnComponent(item, classes, onChange, parents=[...parents.slice(0, level), entry[0]], level + 1) }
-                      </Grid>
-                    }
-                  })}
-                  <Divider />
-                  <ListItem style={{ padding: 10 }}>
-                    <ListItemSecondaryAction>
-                      <IconButton onClick={() => this.handleNew()}>
-                        <AddIcon />
-                      </IconButton>
-                    </ListItemSecondaryAction>
-                  </ListItem>
-                  </List>
-                  </FormGroup>
-                  </Grid>
-                )
-              } else {
-                switch (Immutable.Map.isMap(entry[1])) {
-                  case true:
-                    return (
-                      <Accordion key={entry[0]} expanded className={classes.fullWidth}>
-                        <AccordionSummary disabled>
-                          <Typography variant="h6" className={classes.sectionTitle}>
-                            { formatLabel(entry[0]) }
-                          </Typography>
-                        </AccordionSummary>
-                        <AccordionDetails>
-                        <Grid container>
-                          { returnComponent(entry[1], classes, onChange, parents=[...parents.slice(0, level), entry[0]], level + 1) }
-                        </Grid>
-                        </AccordionDetails>
-                      </Accordion>
-                    )
-                  case false:
-                    const regex = new RegExp(`^\s*{entry[0]}`);
-                    const label = formatLabel(entry[0]);
-                    const name = [...parents.slice(0, level), entry[0]].join('.');
-                    switch (typeof(entry[1])) {
-                      case 'boolean':
-                        return (
-                          <OnOffSwitch
-                            {...{regex, label, name, onChange}}
-                            key={entry[0]}
-                            checked={entry[1]}
-                          />
-                        )
-                      case 'string':
-                        return (
-                          <Grid key={entry[0]} item xs={12}>
-                            <FormGroup row>
-                              <Help
-                                type="pipeline"
-                                regex={regex}
-                                help=""
-                                fullWidth >
-                                <TextField
-                                  label={label} fullWidth margin="normal" variant="outlined"
-                                  name={name}
-                                  value={entry[1]}
-                                  onChange={onChange}
-                                />
-                              </Help>
-                            </FormGroup>
-                          </Grid>
-                        )
-                      case 'number':
-                        return (
-                          <Grid key={entry[0]} item xs={12}>
-                            <FormGroup row>
-                              <Help
-                                type="pipeline"
-                                regex={regex}
-                                help=""
-                                fullWidth >
-                                <TextField
-                                  label={label} fullWidth margin="normal" variant="outlined"
-                                  name={name}
-                                  type='number'
-                                  value={entry[1]}
-                                  onChange={onChange}
-                                />
-                              </Help>
-                            </FormGroup>
-                          </Grid>
-                        )
-                      default:
-                        return entry[1]
-                    }
-                  default:
-                    return (
-                      <>{ entry[1] }</>
-                    )
-                }
-              }
-          }
-        } ) }
-        </>
-      )
-    default:
-      return (
-        <></>
-      )
-  }
-}
-
-
-class PipelinePart extends Component {
+class PipelinePart extends PureComponent {
 
   static styles = theme => ({
     fullWidth: {
@@ -271,13 +97,178 @@ class PipelinePart extends Component {
   });
 
   render() {
-    const { classes, configuration, onChange, parents } = this.props;
+    const { classes, configuration, onChange, parents, level } = this.props;
 
-    return (
-      <React.Fragment>
-        { returnComponent(configuration, classes, onChange, parents) }
-      </React.Fragment>
-    )
+    switch (Immutable.Map.isMap(configuration)) {
+      case true:
+        return (
+          <>
+          { configuration.entrySeq().map((entry) => {
+            switch (entry[0]) { // handle objects with custom keys
+              case "tse_roi_paths":
+                return (
+                  <RoiPaths key={entry[0]} configKey={entry[0]} config={entry[1]} onChange={onChange} validOptions={["Avg", "Voxel", "SpatialReg", "PearsonCorr", "PartialCorr"]}/>
+                )
+              case "sca_roi_paths":
+                return (
+                  <RoiPaths key={entry[0]} configKey={entry[0]} config={entry[1]} onChange={onChange} validOptions={["Avg", "DualReg", "MultReg"]}/>
+                )
+              default: // all others
+                if (Immutable.List.isList(entry[1])) {
+                  const regex = new RegExp(`^\s*{entry[0]}`);
+                  const label = formatLabel(entry[0]);
+                  const name = [...parents, entry[0]].join('.');
+                  return (
+                    <Grid key={entry[0]} item xs={12} className={classes.fullWidth}>
+                    <FormGroup row>
+                    <Help
+                      type="pipeline"
+                      regex={regex}
+                      help=""
+                    >
+                      <FormLabel>{label}</FormLabel>
+                    </Help>
+                    <List className={classes.fullWidth}>
+                    {entry[1].map((item, i) => {
+                      if (!Immutable.Map.isMap(item)){
+                        switch (typeof(item)){
+                          case "boolean": // list of On/Off switches
+                            return (
+                              <ListItem button key={i}>
+                                <OnOffSwitch
+                                  {...{label, onChange}}
+                                  key={`${entry[0]}-${i}`}
+                                  regex={null}
+                                  checked={item}
+                                />
+                              </ListItem>
+                            )
+                          case "number": // handled same as string
+                          case "string":
+                            return (<ListItem button key={i}>
+                            <ListItemText primary={item} />
+                            {/* <ListItemText primary={item} className={classes.fullWidth} style={{ padding: '0 115px 0 0'}} /> */}
+                            <ListItemSecondaryAction>
+                              <IconButton onClick={((regi) => () => this.handleEdit(regi))(i)}>
+                                <EditIcon />
+                              </IconButton>
+                              <IconButton onClick={((regi) => () => this.handleDuplicate(regi))(i)}>
+                                <DuplicateIcon />
+                              </IconButton>
+                              <IconButton onClick={((regi) => () => this.handleDelete(regi))(i)}>
+                                <DeleteIcon />
+                              </IconButton>
+                            </ListItemSecondaryAction>
+                            </ListItem>)
+                          default:
+                            console.warn(`UNHANDLED TYPE: ${typeof(item)}: ${parents}: ${$entry[0]}: ${item}`)
+                            return('!!!UNHANDLED TYPE!!!')
+                        }
+                      } else {
+                        <Grid container>
+                          <PipelinePart configuration={item} classes={classes} onChange={onChange} parents={[...parents.slice(0, level), entry[0]]} level={level + 1} />
+                        </Grid>
+                      }
+                    })}
+                    <Divider />
+                    <ListItem style={{ padding: 10 }}>
+                      <ListItemSecondaryAction>
+                        <IconButton onClick={() => this.handleNew()}>
+                          <AddIcon />
+                        </IconButton>
+                      </ListItemSecondaryAction>
+                    </ListItem>
+                    </List>
+                    </FormGroup>
+                    </Grid>
+                  )
+                } else {
+                  switch (Immutable.Map.isMap(entry[1])) {
+                    case true:
+                      return (
+                        <Accordion key={entry[0]} expanded className={classes.fullWidth}>
+                          <AccordionSummary disabled>
+                            <Typography variant="h6" className={classes.sectionTitle}>
+                              { formatLabel(entry[0]) }
+                            </Typography>
+                          </AccordionSummary>
+                          <AccordionDetails>
+                          <Grid container>
+                            <PipelinePart configuration={entry[1]} classes={classes} onChange={onChange} parents={[...parents.slice(0, level), entry[0]]} level={level + 1} />
+                          </Grid>
+                          </AccordionDetails>
+                        </Accordion>
+                      )
+                    case false:
+                      const regex = new RegExp(`^\s*{entry[0]}`);
+                      const label = formatLabel(entry[0]);
+                      const name = [...parents.slice(0, level), entry[0]].join('.');
+                      switch (typeof(entry[1])) {
+                        case 'boolean':
+                          return (
+                            <OnOffSwitch
+                              {...{regex, label, name, onChange}}
+                              key={entry[0]}
+                              checked={entry[1]}
+                            />
+                          )
+                        case 'string':
+                          return (
+                            <Grid key={entry[0]} item xs={12}>
+                              <FormGroup row>
+                                <Help
+                                  type="pipeline"
+                                  regex={regex}
+                                  help=""
+                                  fullWidth >
+                                  <TextField
+                                    label={label} fullWidth margin="normal" variant="outlined"
+                                    name={name}
+                                    value={entry[1]}
+                                    onChange={onChange}
+                                  />
+                                </Help>
+                              </FormGroup>
+                            </Grid>
+                          )
+                        case 'number':
+                          return (
+                            <Grid key={entry[0]} item xs={12}>
+                              <FormGroup row>
+                                <Help
+                                  type="pipeline"
+                                  regex={regex}
+                                  help=""
+                                  fullWidth >
+                                  <TextField
+                                    label={label} fullWidth margin="normal" variant="outlined"
+                                    name={name}
+                                    type='number'
+                                    value={entry[1]}
+                                    onChange={onChange}
+                                  />
+                                </Help>
+                              </FormGroup>
+                            </Grid>
+                          )
+                        default:
+                          return entry[1]
+                      }
+                    default:
+                      return (
+                        <>{ entry[1] }</>
+                      )
+                  }
+                }
+            }
+          } ) }
+          </>
+        )
+      default:
+        return (
+          <></>
+        )
+    }
   }
 }
 

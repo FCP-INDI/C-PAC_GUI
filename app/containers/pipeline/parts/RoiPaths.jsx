@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import { withStyles, Typography } from '@material-ui/core';
 import Grid from '@material-ui/core/Grid'
 
@@ -33,7 +33,7 @@ import Immutable from 'immutable';
 
 import { AddIcon, DeleteIcon } from 'components/icons';
 
-class RoiPaths extends Component {
+class RoiPaths extends PureComponent {
   
     render() {
       const { config, configKey, onChange, validOptions, classes={}, help="", regex="" } = this.props;
