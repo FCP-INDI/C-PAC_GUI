@@ -98,7 +98,7 @@ class PipelineEditor extends Component {
         {
           configuration.entrySeq().map((entry, i) => (
             <Collapse key={`${entry[0]}-${i}`} in={tab === entry[0]}>
-              <PipelinePart configuration={entry[1]} onChange={onChange} parents={[entry[0]]} />
+              <PipelinePart configuration={entry[1]} onChange={onChange} parents={[entry[0]]} level={1} />
             </Collapse>
           ))
         }
