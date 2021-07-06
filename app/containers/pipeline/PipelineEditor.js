@@ -78,7 +78,7 @@ class PipelineEditor extends Component {
     const disable = (event) => {
       event.stopPropagation()
     }
-
+    const entry = configuration.getIn([tab]);
     return (
       <>
         <Tabs
@@ -94,14 +94,9 @@ class PipelineEditor extends Component {
             ))
           }
         </Tabs>
-
-        {
-          configuration.entrySeq().map((entry, i) => (
-            <Collapse key={`${entry[0]}-${i}`} in={tab === entry[0]}>
-              <PipelinePart configuration={entry[1]} onChange={onChange} parents={[entry[0]]} level={1} />
-            </Collapse>
-          ))
-        }
+        <Collapse key={`${tab}-collapse`} in={true}>
+          <PipelinePart configuration={entry} onChange={onChange} parents={[tab]} level={1} />
+        </Collapse>
       </>
     );
   }
