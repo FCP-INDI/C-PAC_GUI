@@ -110,7 +110,6 @@ class PipelinePage extends Component {
   }
 
   changedValue = (key, value) => {
-
     if (typeof key == "string") {
       key = key.split('.')
     }
@@ -123,6 +122,7 @@ class PipelinePage extends Component {
     )
 
     this.setState({ configuration, dirty: true, version: "0" })
+    return(configuration)
   }
 
   handleChangedValue = memoizeOne(this.changedValue);
