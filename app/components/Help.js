@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { PureComponent } from 'react'
 import PropTypes from 'prop-types'
 import { withStyles } from '@material-ui/core/styles'
 import Typography from '@material-ui/core/Typography'
@@ -16,7 +16,7 @@ import {
 } from './icons'
 
 
-class Help extends React.Component {
+class Help extends PureComponent {
   state = {
     open: false,
   }

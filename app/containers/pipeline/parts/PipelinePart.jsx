@@ -107,11 +107,11 @@ class PipelinePart extends PureComponent {
             switch (entry[0]) { // handle objects with custom keys
               case "tse_roi_paths":
                 return (
-                  <RoiPaths key={entry[0]} configKey={entry[0]} config={entry[1]} onChange={onChange} validOptions={["Avg", "Voxel", "SpatialReg", "PearsonCorr", "PartialCorr"]}/>
+                  <RoiPaths key={entry[0]} configKey={entry[0]} parents={parents} config={entry[1]} onChange={onChange} validOptions={["Avg", "Voxel", "SpatialReg", "PearsonCorr", "PartialCorr"]}/>
                 )
               case "sca_roi_paths":
                 return (
-                  <RoiPaths key={entry[0]} configKey={entry[0]} config={entry[1]} onChange={onChange} validOptions={["Avg", "DualReg", "MultReg"]}/>
+                  <RoiPaths key={entry[0]} configKey={entry[0]} parents={parents} config={entry[1]} onChange={onChange} validOptions={["Avg", "DualReg", "MultReg"]}/>
                 )
               default: // all others
                 if (Immutable.List.isList(entry[1])) {

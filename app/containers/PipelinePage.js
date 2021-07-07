@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import memoizeOne from 'memoize-one';
 
 import {
   pipelineVersionDirtyUpdate,
@@ -108,27 +109,13 @@ class PipelinePage extends Component {
     }
   }
 
-  handleChange = (values) => {
-    if (this.state.default) {
-      return
-    }
+  changedValue = (key, value) => {
 
+    if (typeof key == "string") {
+      key = key.split('.')
+    }
     let configuration = this.state.configuration;
-
-    if (values.target) {
-      const name = values.target.name;
-      const value = values.target.type && values.target.type == "checkbox" ?
-                      values.target.checked :
-                      values.target.value;
-      return this.handleChange([[name, fromJS(value)]]);
-    }
-
-    for (let [key, value] of values) {
-      if (typeof key == "string") {
-        key = key.split('.')
-      }
-      configuration = configuration.setIn(key, isImmutable(value) ? value : fromJS(value));
-    }
+    configuration = configuration.setIn(key, isImmutable(value) ? value : fromJS(value));
 
     this.props.pipelineVersionDirtyUpdate(
       this.props.pipeline,
@@ -136,6 +123,23 @@ class PipelinePage extends Component {
     )
 
     this.setState({ configuration, dirty: true, version: "0" })
+  }
+
+  handleChangedValue = memoizeOne(this.changedValue);
+
+  handleChange = (values) => {
+    if (this.state.default) {
+      return
+    }
+
+    if (values.target) {
+      const name = values.target.name;
+      const value = values.target.type && values.target.type == "checkbox" ?
+                      values.target.checked :
+                      values.target.value;
+      return this.handleChangedValue(name, fromJS(value));
+    }
+
   }
 
   handleSave = () => {
