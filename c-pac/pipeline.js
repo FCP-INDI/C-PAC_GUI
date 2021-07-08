@@ -45,7 +45,7 @@ const dump = (configObj, pipelineName, version) => (
 # Pipeline config "${pipelineName}", version GUI-${version}
 # ${Date(Date.now())}
 
-${yaml.dump(configObj)}`)
+${yaml.dump(configObj)}`.replace(/\s*'':.*/gi, ''))
 
 export { defaultPipelineUrl, dump, getDefaultPipeline, rawTemplate }
 
