@@ -96,6 +96,8 @@ export default function main(state, action) {
       const i = state.getIn(['config', 'pipelines'])
                      .findIndex((p) => p.get('id') == id)
 
+      console.log(state.getIn(['config', 'pipelines', i, 'versions']));
+
       if (!state.getIn(['config', 'pipelines', i, 'versions']).has("0")) {
         return state
       }

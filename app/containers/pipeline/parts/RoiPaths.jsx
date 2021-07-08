@@ -56,7 +56,7 @@ class RoiCheckbox extends PureComponent {
     } else {
       newOptionset.delete(option);
     }
-    newOptionset = Array.from(newOptionset).filter(option => option.length).join(',');
+    newOptionset = Array.from(newOptionset).filter(option => option.length).join(', ');
 
     const newEntries = handleChange({
       target: {
