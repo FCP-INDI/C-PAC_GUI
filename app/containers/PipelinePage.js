@@ -58,7 +58,7 @@ class PipelinePage extends Component {
   constructor(props) {
     super(props)
 
-    const pipeline = this.props.pipeline
+    const { pipeline } = this.props;
 
     if (!pipeline) {
       return
@@ -147,7 +147,7 @@ class PipelinePage extends Component {
   };
 
   handleRevert = () => {
-    this.props.pipelineVersionDirtyRevert(this.props.pipeline.get('id'))
+    this.props.pipelineVersionDirtyRevert(this.props.pipeline.get('id'));
   };
 
   handleDownload = () => {

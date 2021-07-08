@@ -5,11 +5,9 @@ import { default as rawTemplate } from './resources/pipeline/default_pipeline.ym
 const defaultPipelineUrl = 'https://raw.githubusercontent.com/FCP-INDI/C-PAC/master/dev/docker_data/default_pipeline.yml'
 const versionRe = new RegExp('(?<=\# Version:? \s*).*');
 
-let template;
-
 function setVersion(rawTemplate) {
   const version = versionRe.exec(rawTemplate);
-  template = {
+  return ({
     "id": "default",
     "name": "Default",
     "versions": {
@@ -18,8 +16,7 @@ function setVersion(rawTemplate) {
         "configuration": loadYaml(rawTemplate)
       }
     }
-  }
-  return template;
+  });
 }
 
 async function getDefaultPipeline(url) {

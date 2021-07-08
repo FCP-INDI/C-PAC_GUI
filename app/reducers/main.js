@@ -23,6 +23,19 @@ import { fromJS } from 'immutable'
 
 import cpac from '@internal/c-pac'
 
+/**
+ * Function to persist C-PAC version tag across updates
+ * @param {!number} i
+ * @param {Map<string, object>} state
+ * @returns {Map<string, object>} Semantic Version of C-PAC for which pipeline config is sytactically specified.
+ */
+const persistVersion = (i, state) => state.getIn([
+  'config', 'pipelines', i, 'versions', Math.max(
+    ...Array.from(state.getIn([
+      'config', 'pipelines', i, 'versions'
+    ]).keySeq()).map(k => parseInt(k))
+  ).toString(), 'version'
+]) || state.getIn(['config', 'defaultVersion']);
 
 export default function main(state, action) {
   if (!state) {
@@ -57,14 +70,13 @@ export default function main(state, action) {
 
     case PIPELINE_VERSION_DIRTY_UPDATE: {
       const { pipeline: id, configuration } = action
-
       const i = state.getIn(['config', 'pipelines'])
-                     .findIndex((p) => p.get('id') == id)
+                     .findIndex((p) => p.get('id') == id);
 
       return state.setIn(
         ['config', 'pipelines', i, 'versions', '0'],
         fromJS({
-          version: '1.6.0',
+          version: persistVersion(i, state),
           configuration
         })
       )
@@ -72,7 +84,6 @@ export default function main(state, action) {
 
     case PIPELINE_VERSION_DIRTY_SAVE: {
       const { pipeline: id } = action
-
       const i = state.getIn(['config', 'pipelines'])
                      .findIndex((p) => p.get('id') == id)
 
@@ -84,7 +95,7 @@ export default function main(state, action) {
         .setIn([
           'config', 'pipelines', i, 'versions', new Date().getTime().toString()
         ], fromJS({
-          version: '1.3.0',
+          version: persistVersion(i, state),
           configuration: state.getIn(['config', 'pipelines', i, 'versions', '0', 'configuration'])
         }))
         .deleteIn(['config', 'pipelines', i, 'versions', '0'])
@@ -95,8 +106,6 @@ export default function main(state, action) {
 
       const i = state.getIn(['config', 'pipelines'])
                      .findIndex((p) => p.get('id') == id)
-
-      console.log(state.getIn(['config', 'pipelines', i, 'versions']));
 
       if (!state.getIn(['config', 'pipelines', i, 'versions']).has("0")) {
         return state

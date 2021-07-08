@@ -197,6 +197,8 @@ function* loadConfig (action) {
       console.log("Using local state")
     }
 
+    initialState.defaultVersion = template.versions[0].version;
+
     if (!initialState.executions) {
       initialState.executions = []
       localStorage.setItem("state", JSON.stringify(initialState))
