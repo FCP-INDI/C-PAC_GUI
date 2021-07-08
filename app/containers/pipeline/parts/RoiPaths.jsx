@@ -122,10 +122,31 @@ class RoiTextField extends PureComponent {
 
 class RoiPaths extends PureComponent {
 
+  sortPaths = (config) => {  // put new mask at end of list;
+    let paths = Array.from(config.keySeq());
+    paths.sort();
+    if (paths.includes('')) {
+      paths = [...paths.slice(1, paths.length), ''];
+    }
+    return paths;
+  }
+
   state = {
-    sortedPaths: this.props.config.keySeq().sort(),  // so the sequence is relatively consistent 
+    sortedPaths: this.sortPaths(this.props.config),  // so the sequence is relatively consistent
     entries: this.props.config
   };
+
+  addMask = (fullKey, config, handleChange) => {
+    const newConfig = config.setIn([""], "");
+    handleChange({
+      target: {
+        name: fullKey,
+        value:newConfig
+      }
+    });
+
+    this.updateState(newConfig);
+  }
 
   removeMask = (fullKey, config, entry, handleChange) => {
     const newConfig = config.delete(entry[0]);
@@ -141,8 +162,8 @@ class RoiPaths extends PureComponent {
 
   updateState = (newConfig) => {
     this.setState({
-      sortedPaths: newConfig.keySeq().sort(),
-      entries: newConfig
+      entries: newConfig,
+      sortedPaths: this.sortPaths(newConfig)
     });
   }
 
@@ -215,15 +236,15 @@ class RoiPaths extends PureComponent {
               )
             }
             </TableBody>
-            <TableFooter>
-              <TableRow >
+            { this.state.sortedPaths.includes('') ? null : (<TableFooter>
+              <TableRow>
                 <TableCell padding="checkbox" colSpan={7} className={classes.footer}>
-                  <Fab aria-label="Add new ROI" onClick={this.addMask}>
+                  <Fab aria-label="Add new ROI" onClick={() => this.addMask(fullKey, config, onChange)}>
                     <AddIcon />
                   </Fab>
                 </TableCell>
               </TableRow>
-            </TableFooter>
+            </TableFooter>) }
           </Table>
         </Paper>
       </Grid>
