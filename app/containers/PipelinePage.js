@@ -151,7 +151,9 @@ class PipelinePage extends Component {
   };
 
   handleDownload = () => {
-    const pipeline = this.props.pipeline
+    const pipeline = this.props.pipeline;
+    const configuration = this.state.configuration;
+    const pipelineName = pipeline.get('name');
     const versions = pipeline.get('versions')
     let version = null
     if (versions.has("0")) {
@@ -161,14 +163,14 @@ class PipelinePage extends Component {
     }
 
     var blob = new Blob(
-      [cpac.pipeline.dump(pipeline.toJS(), version)],
+      [cpac.pipeline.dump(configuration.toJS(), pipelineName, version)],
       { type: "text/yaml;charset=utf-8" }
     );
 
     var anchor = document.createElement('a');
     anchor.href = window.URL.createObjectURL(blob);
     anchor.target = '_blank';
-    anchor.download = pipeline.get('name') + '.yml'
+    anchor.download = pipelineName + '.yml'
     anchor.click();
   }
 

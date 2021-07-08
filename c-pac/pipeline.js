@@ -33,7 +33,21 @@ async function getDefaultPipeline(url) {
   return defaultPipeline;
 }
 
-export { defaultPipelineUrl, getDefaultPipeline, rawTemplate }
+/**
+ * Takes a configuration object, pipeline name string, and version string and returns a YAML string
+ * @param {object} configObj
+ * @param {string} pipelineName
+ * @param {string} version
+ * @returns {string} YAML representation of configObj
+ */
+const dump = (configObj, pipelineName, version) => (
+  `${rawTemplate.split('\n').slice(0, 7).join('\n')}
+# Pipeline config "${pipelineName}", version GUI-${version}
+# ${Date(Date.now())}
+
+${yaml.dump(configObj)}`)
+
+export { defaultPipelineUrl, dump, getDefaultPipeline, rawTemplate }
 
 function slugify(text) {
   return text.toString().toLowerCase()
