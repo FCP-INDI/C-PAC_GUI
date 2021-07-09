@@ -54,7 +54,7 @@ class ROITextField extends CustomTextField {
         onKeyDown={(e) => this.handleKeyDown(e, entry, handleChange, config)}
         onBlur={(e) => this.handleChangedPath(e, entry, handleChange, config)}
         value={this.state.path}
-        helperText=''
+        helperText={helperText}
       />
     )
   }

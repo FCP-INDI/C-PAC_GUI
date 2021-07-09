@@ -265,9 +265,20 @@ class PipelinePart extends PureComponent {
           </>
         )
       default:
-        return (
-          <></>
-        )
+        switch (parents[0]) {
+          case 'FROM':
+            return (
+              <PipelineTextField
+                fullWidth margin="normal" variant="outlined"
+                name={parents.join('.')}
+                value={configuration}
+                onChange={onChange}
+                helperText={'name of a preconfig or in-container path to a custom pipeline config file'}
+              />
+            )
+          default:
+            return <></>
+        }
     }
   }
 }

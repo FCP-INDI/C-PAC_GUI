@@ -90,10 +90,9 @@ class PipelineCard extends Component {
     const configuration = version.getIn(['configuration', ]);
     const cardSteps = ['anatomical_preproc', 'functional_preproc', 'surface_analysis'];
     let derivatives = [];
-    let importedPipeline = null;
     Object.keys(configuration.toJS()).forEach(step => {
       if (step === 'FROM') {
-        importedPipeline = configuration.getIn([step]);
+        configuration.importedPipeline = configuration.getIn([step]);
       } else {
         let [...stepKeys] = configuration.getIn([step]).keys();
         if (stepKeys.includes('run')) {
@@ -112,8 +111,8 @@ class PipelineCard extends Component {
     derivatives = Array.from(derivatives);
     derivatives = derivatives ? derivatives.length : 0;
     let cardSubheader = `C-PAC ${version.get('version')}`;
-    if (importedPipeline != null) {
-      cardSubheader = `FROM '${importedPipeline}' (${cardSubheader})`
+    if (configuration.hasOwnProperty('importedPipeline')) {
+      cardSubheader = `FROM '${configuration.importedPipeline}' (${cardSubheader})`
     }
     return (
       <Card className={classes.card}>
