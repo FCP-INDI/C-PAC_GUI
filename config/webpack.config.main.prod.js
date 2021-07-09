@@ -1,10 +1,9 @@
-import fs from 'fs'
-import path from 'path'
-import merge from 'webpack-merge'
-import webpack from 'webpack'
-import baseConfig from './webpack.config.base'
+import path from 'path';
+import merge from 'webpack-merge';
+import webpack from 'webpack';
+import baseConfig from './webpack.config.base';
 
-const dist = path.resolve(process.cwd(), 'app', 'dist')
+const dist = path.resolve(process.cwd(), 'app', 'dist');
 
 const config = merge(baseConfig, {
   // devtool: 'cheap-module-eval-source-map',
@@ -36,6 +35,6 @@ const config = merge(baseConfig, {
       VERSION: JSON.stringify(process.env.npm_package_version),
     }),
   ],
-})
+});
 
-export default config
+export default config;

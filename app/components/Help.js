@@ -94,6 +94,8 @@ class Help extends PureComponent {
     }
 
     const button = (
+      <></>
+      {/* TODO: fix help
       <IconButton
         aria-label="Help"
         disableRipple
@@ -103,7 +105,7 @@ class Help extends PureComponent {
         style={{ buttonStyle, ...rootStyle }}
         onClick={this.handleOpen}>
         <HelpIcon fontSize="small" />
-      </IconButton>
+      </IconButton> */}
     )
 
     return (
