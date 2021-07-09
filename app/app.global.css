@@ -6,15 +6,17 @@
 
 * {
   -webkit-touch-callout: none; /* iOS Safari */
-    -webkit-user-select: none; /* Safari */
-     -khtml-user-select: none; /* Konqueror HTML */
-       -moz-user-select: none; /* Firefox */
-        -ms-user-select: none; /* Internet Explorer/Edge */
-            user-select: none; /* Non-prefixed version, currently
+  -webkit-user-select: none; /* Safari */
+  -khtml-user-select: none; /* Konqueror HTML */
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* Internet Explorer/Edge */
+  user-select: none; /* Non-prefixed version, currently
                                   supported by Chrome and Opera */
 }
 
-html, body { margin: 0; padding: 0; overflow: hidden; }
+html,
+body {  margin: 0;  padding: 0;  overflow: hidden;
+}
 
 body {
   position: relative;
@@ -30,10 +32,11 @@ header#root-header {
 }
 
 header#root-header a {
-  opacity: 1.0;
+  opacity: 1;
 }
 
-header#root-header img, header#root-header a img {
+header#root-header img,
+header#root-header a img {
   max-height: 50px;
   box-shadow: #232c39;
 }
