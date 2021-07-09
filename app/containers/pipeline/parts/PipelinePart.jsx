@@ -7,7 +7,7 @@ import Accordion from '@material-ui/core/Accordion';
 import AccordionDetails from '@material-ui/core/AccordionDetails';
 import AccordionSummary from '@material-ui/core/AccordionSummary';
 import MenuItem from '@material-ui/core/MenuItem';
-import TextField from '@material-ui/core/TextField';
+import { PipelineTextField } from 'components/TextField';
 import Switch from '@material-ui/core/Switch';
 import InputAdornment from '@material-ui/core/InputAdornment';
 
@@ -221,7 +221,7 @@ class PipelinePart extends PureComponent {
                                   regex={regex}
                                   help=""
                                   fullWidth >
-                                  <TextField
+                                  <PipelineTextField
                                     label={label} fullWidth margin="normal" variant="outlined"
                                     name={name}
                                     value={entry[1]}
@@ -240,7 +240,7 @@ class PipelinePart extends PureComponent {
                                   regex={regex}
                                   help=""
                                   fullWidth >
-                                  <TextField
+                                  <PipelineTextField
                                     label={label} fullWidth margin="normal" variant="outlined"
                                     name={name}
                                     type='number'

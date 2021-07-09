@@ -4,7 +4,7 @@ import Grid from '@material-ui/core/Grid'
 
 import Paper from '@material-ui/core/Paper';
 import MenuItem from '@material-ui/core/MenuItem';
-import TextField from '@material-ui/core/TextField';
+import ROITextField from 'components/TextField';
 import Switch from '@material-ui/core/Switch';
 import Checkbox from '@material-ui/core/Checkbox';
 import InputAdornment from '@material-ui/core/InputAdornment';
@@ -80,41 +80,6 @@ class RoiCheckbox extends PureComponent {
         name={`${fullKey}["${this.state.entry}"]`}
         onChange={(e) => this.handleChangedOption(e, config, option, roiPath, onChange)}
         checked={this.state.checked}
-      />
-    )
-  }
-}
-
-class RoiTextField extends PureComponent {
-
-  state = { path: this.props.entry[0] };
-
-  changePath = (values) => {
-    this.setState({path: values.target.value});
-  }
-
-  handleChangedPath = (values, config, entry, handleChange) => {
-    let newConfig = config.delete(entry[0])
-    newConfig = newConfig.setIn([values.target.value], entry[1])
-    handleChange({
-      target: {
-        name: values.target.name,
-        value: newConfig
-      }
-    })
-  }
-
-  render() {
-    const { config, entry, fullKey, handleChange } = this.props;
-
-    return (
-      <TextField
-        fullWidth={true}
-        name={`${fullKey}`}
-        onChange={(e) => this.changePath(e, config, entry[0])}
-        onBlur={(e) => this.handleChangedPath(e, config, entry, handleChange)}
-        value={this.state.path}
-        helperText=''
       />
     )
   }
@@ -205,7 +170,7 @@ class RoiPaths extends PureComponent {
                       </IconButton>
                     </TableCell>
                     <TableCell>
-                      <RoiTextField
+                      <ROITextField
                         {...{config, entry, fullKey }}
                         handleChange={onChange}
                       />
@@ -253,5 +218,4 @@ class RoiPaths extends PureComponent {
   }
 }
   
-  export default RoiPaths;
-  
+export default RoiPaths;
