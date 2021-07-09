@@ -231,7 +231,11 @@ class PipelinePage extends Component {
         style={{
           cursor: this.state.default ? '' : 'pointer',
         }}
-      >{ pipeline.get('name') + (this.state.dirty ? " *" : "") }</div>
+      >
+        {
+          pipeline.get('name') // TODO: fix dirty/save/revert + (this.state.dirty ? " *" : "")
+        }
+      </div>
     )
   }
 
@@ -250,7 +254,7 @@ class PipelinePage extends Component {
           </IconButton>
         </Tooltip>
 
-        <Tooltip title={this.state.default ? "You cannot change the default template!" : "Save"}>
+        {/* TODO: fix dirty/save/revert <Tooltip title={this.state.default ? "You cannot change the default template!" : "Save"}>
           <span>
             <IconButton disabled={this.state.default} onClick={this.handleSave}>
               <SaveIcon />
@@ -264,7 +268,7 @@ class PipelinePage extends Component {
               <RevertIcon />
             </IconButton>
           </span>
-        </Tooltip>
+        </Tooltip> */}
       </React.Fragment>
     )
 
