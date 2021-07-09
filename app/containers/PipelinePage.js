@@ -81,7 +81,7 @@ class PipelinePage extends Component {
     this.state = {
       dirty,
       version,
-      default: pipeline.get('id') === 'default',
+      default: isADefault(pipeline.get('id')),
       configuration: pipeline.getIn(['versions', version, 'configuration'])
     }
   }
@@ -311,6 +311,15 @@ const mapDispatchToProps = {
 const areStatesEqual = (next, prev) => {
   // TODO review
   return false
+}
+
+/**
+ * Checks if a given pipeline ID is for a default pipeline.
+ * @param {string} pipelineID
+ * @returns {boolean}
+ */
+export const isADefault = (pipelineId) => {
+  return pipelineId.slice(0, 7) === 'default';
 }
 
 export default connect(mapStateToProps, mapDispatchToProps, null, { areStatesEqual })(withStyles(PipelinePage.styles)(PipelinePage));

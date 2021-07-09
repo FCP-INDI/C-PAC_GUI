@@ -202,8 +202,6 @@ function* loadConfig (action) {
         let oldDefault = initialState.pipelines[0];
         oldDefault.id = `default-${oldDefault.versions[0].version}`;
         if (!pipelineIds.includes(oldDefault.id)) {
-          console.log(oldDefault.id);
-          console.log(initialState.pipelines.map((p)=>p.id));
           initialState.pipelines.push(oldDefault);
           initialState.pipelines[0] = template;
         };

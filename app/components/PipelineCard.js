@@ -45,6 +45,7 @@ import {
   DuplicateIcon,
 } from './icons';
 import { formatLabel } from '../containers/pipeline/parts/PipelinePart'
+import { isADefault } from '../containers/PipelinePage'
 
 
 class PipelineCard extends Component {
@@ -78,6 +79,7 @@ class PipelineCard extends Component {
   render() {
     const { classes, pipeline } = this.props
 
+    const pipelineIsADefault = isADefault(pipeline.get('id'));
     let versionId = '0'
     const versions = pipeline.get('versions')
     if (!versions.has("0")) {
@@ -146,7 +148,7 @@ class PipelineCard extends Component {
             </IconButton>
           </Tooltip>
 
-          { pipeline.get('id') != 'default' ?
+          { !pipelineIsADefault ?
             <Tooltip title="Delete">
               <IconButton onClick={() => this.props.onDelete(pipeline.get('id'))}>
                 <DeleteIcon />
@@ -155,9 +157,9 @@ class PipelineCard extends Component {
             : null
           }
 
-          <Tooltip title={pipeline.get('id') === 'default' ? 'View' : 'View / Edit'}>
+          <Tooltip title={pipelineIsADefault ? 'View' : 'View / Edit'}>
             <IconButton className={classes.expand} onClick={() => this.handleOpen(pipeline.get('id'))}>
-              {pipeline.get('id') === 'default' ? <PlayArrowIcon /> : <NavigateNextIcon />}
+              {pipelineIsADefault ? <PlayArrowIcon /> : <NavigateNextIcon />}
             </IconButton>
           </Tooltip>
         </CardActions>
