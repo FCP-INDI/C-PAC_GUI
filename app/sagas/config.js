@@ -26,6 +26,8 @@ import {
 import cpac from '@internal/c-pac';
 import { getDefaultPipeline, defaultPipelineUrl } from '@internal/c-pac/pipeline';
 
+import { fromJS } from 'immutable';
+
 async function getPipelineDefault() {
   const pipelineDefault = await getDefaultPipeline(defaultPipelineUrl);
   return pipelineDefault;
@@ -185,32 +187,44 @@ function* loadConfig (action) {
     }
 
     try {
-      initialState = JSON.parse(localStorage.getItem("state"))
+      initialState = JSON.parse(localStorage.getItem('state'))
     } catch (e) {
     }
 
     if (!initialState) {
-      initialState = config
-      localStorage.setItem("state", JSON.stringify(config))
-      console.log("Using initial state")
+      initialState = config;
+      localStorage.setItem('state', JSON.stringify(config));
+      console.log("Using initial state");
     } else {
-      console.log("Using local state")
+      // Update default if necessary
+      if(!fromJS(template).equals(fromJS(initialState.pipelines[0]))) {
+        const pipelineIds = initialState.pipelines.map((p)=>p.id);
+        let oldDefault = initialState.pipelines[0];
+        oldDefault.id = `default-${oldDefault.versions[0].version}`;
+        if (!pipelineIds.includes(oldDefault.id)) {
+          console.log(oldDefault.id);
+          console.log(initialState.pipelines.map((p)=>p.id));
+          initialState.pipelines.push(oldDefault);
+          initialState.pipelines[0] = template;
+        };
+      };
+      console.log("Using local state");
     }
 
     initialState.defaultVersion = template.versions[0].version;
 
     if (!initialState.executions) {
       initialState.executions = []
-      localStorage.setItem("state", JSON.stringify(initialState))
+      localStorage.setItem('state', JSON.stringify(initialState))
     }
 
     if (initialState.pipelines) {
-      localStorage.setItem("state", JSON.stringify(initialState));
+      localStorage.setItem('state', JSON.stringify(initialState));
     }
 
     if (!initialState.version) {
       initialState.version = VERSION
-      localStorage.setItem("state", JSON.stringify(initialState))
+      localStorage.setItem('state', JSON.stringify(initialState))
     }
   });
 
@@ -219,12 +233,12 @@ function* loadConfig (action) {
 
 function* saveConfig() {
   const config = yield select((state) => state.main.getIn(['config']));
-  localStorage.setItem("state", JSON.stringify(config.toJS()))
+  localStorage.setItem('state', JSON.stringify(config.toJS()));
   yield put(configSaved())
 }
 
 function* clearConfig(config) {
-  localStorage.removeItem("state")
+  localStorage.removeItem('state')
   yield put(configCleared(config))
 }
 
