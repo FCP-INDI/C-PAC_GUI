@@ -34,12 +34,11 @@ import TableFooter from '@material-ui/core/TableFooter';
 
 import FormControlLabelled from 'components/FormControlLabelled';
 import Help from 'components/Help';
-import Immutable from 'immutable';
+import Immutable, { fromJS } from 'immutable';
 import OnOffSwitch from 'components/OnOffSwitch';
 
 import {
   AddIcon,
-  EditIcon,
   DeleteIcon,
   DuplicateIcon
 } from 'components/icons';
@@ -87,6 +86,34 @@ class PipelinePart extends PureComponent {
     },
   });
 
+  handleDelete = (chain, name, i, onChange) => {
+    let newList = this.props.configuration.getIn([chain[chain.length - 1]]).toJS()
+    newList.splice(i, 1);
+    onChange({target: {
+      name,
+      value: fromJS(newList)
+    }});
+  }
+
+  handleNew = (chain, name, onChange) => {
+    let newList = this.props.configuration.getIn([chain[chain.length - 1]]).toJS();
+    switch (typeof(newList[0])) {
+      case 'string':
+        newList.push('');
+        break;
+      case 'boolean':
+        newList.push(false);
+        break;
+      case 'number':
+        newlist.push(0);
+        break;
+    }
+    onChange({target:{
+      name,
+      value: fromJS(newList)
+    }});
+  }
+
   render() {
     const { classes, configuration, onChange, parents, level } = this.props;
 
@@ -108,7 +135,8 @@ class PipelinePart extends PureComponent {
                 if (Immutable.List.isList(entry[1])) {
                   const regex = new RegExp(`^\s*{entry[0]}`);
                   const label = formatLabel(entry[0]);
-                  const name = [...parents, entry[0]].join('.');
+                  const chain = [...parents, entry[0]];
+                  const name = chain.join('.');
                   return (
                     <Grid key={entry[0]} item xs={12} className={classes.fullWidth}>
                     <FormGroup row>
@@ -137,16 +165,21 @@ class PipelinePart extends PureComponent {
                           case "number": // handled same as string
                           case "string":
                             return (<ListItem button key={i}>
-                            <ListItemText primary={item} />
-                            {/* <ListItemText primary={item} className={classes.fullWidth} style={{ padding: '0 115px 0 0'}} /> */}
+                            <PipelineTextField
+                              label={label} fullWidth margin="normal" variant="outlined"
+                              name={`${name}.${i}`}
+                              value={item}
+                              onChange={onChange}
+                            />
                             <ListItemSecondaryAction>
-                              <IconButton onClick={((regi) => () => this.handleEdit(regi))(i)}>
-                                <EditIcon />
-                              </IconButton>
                               <IconButton onClick={((regi) => () => this.handleDuplicate(regi))(i)}>
                                 <DuplicateIcon />
                               </IconButton>
-                              <IconButton onClick={((regi) => () => this.handleDelete(regi))(i)}>
+                              <IconButton onClick={() => {
+                                this.handleDelete(
+                                  chain, name, i, onChange
+                                );
+                              }}>
                                 <DeleteIcon />
                               </IconButton>
                             </ListItemSecondaryAction>
@@ -164,7 +197,9 @@ class PipelinePart extends PureComponent {
                     <Divider />
                     <ListItem style={{ padding: 10 }}>
                       <ListItemSecondaryAction>
-                        <IconButton onClick={() => this.handleNew()}>
+                        <IconButton onClick={() => this.handleNew(
+                          chain, name, onChange
+                        )}>
                           <AddIcon />
                         </IconButton>
                       </ListItemSecondaryAction>

@@ -112,7 +112,7 @@ class PipelinePage extends Component {
   changedValue = (key, value) => {
     if (typeof key == "string") {
       key = key.split('.')
-    }
+    } 
     let configuration = this.state.configuration;
     configuration = configuration.setIn(key, isImmutable(value) ? value : fromJS(value));
 

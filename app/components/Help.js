@@ -94,7 +94,7 @@ class Help extends PureComponent {
     }
 
     const button = (
-      <></>
+      <>
       {/* TODO: fix help
       <IconButton
         aria-label="Help"
@@ -106,6 +106,7 @@ class Help extends PureComponent {
         onClick={this.handleOpen}>
         <HelpIcon fontSize="small" />
       </IconButton> */}
+      </>
     )
 
     return (

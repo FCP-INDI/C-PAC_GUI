@@ -44,7 +44,7 @@ class ROITextField extends CustomTextField {
   state = { path: this.props.entry[0] };
 
   render() {
-    const { config, entry, fullKey, handleChange } = this.props;
+    const { config, entry, fullKey, handleChange, helperText } = this.props;
 
     return (
       <TextField
