@@ -18,7 +18,9 @@ import {
   PIPELINE_DUPLICATE,
   PIPELINE_VERSION_DIRTY_UPDATE,
   PIPELINE_VERSION_DIRTY_SAVE,
-  PIPELINE_DOWNLOAD
+  PIPELINE_DOWNLOAD,
+  PIPELINE_IMPORT_DONE,
+  PIPELINE_IMPORT
 } from '../actions/pipeline'
 
 
@@ -244,6 +246,8 @@ export default function* configSaga () {
   yield all([
     takeEvery(CONFIG_LOAD, loadConfig),
     takeEvery(CONFIG_SAVE, saveConfig),
+    takeEvery(PIPELINE_IMPORT, saveConfig),
+    takeEvery(PIPELINE_IMPORT_DONE, saveConfig),
     takeEvery(PIPELINE_NAME_UPDATE, saveConfig),
     takeEvery(PIPELINE_VERSION_DIRTY_UPDATE, saveConfig),
     takeEvery(PIPELINE_VERSION_DIRTY_SAVE, saveConfig),

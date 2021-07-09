@@ -90,24 +90,31 @@ class PipelineCard extends Component {
     const configuration = version.getIn(['configuration', ]);
     const cardSteps = ['anatomical_preproc', 'functional_preproc', 'surface_analysis'];
     let derivatives = [];
-    
+    let importedPipeline = null;
     Object.keys(configuration.toJS()).forEach(step => {
-      let [...stepKeys] = configuration.getIn([step]).keys();
-      if (stepKeys.includes('run')) {
-        const runswitch = configuration.getIn([step, 'run']);
-        if (
-          !cardSteps.includes(step) &&
-          runswitch &&
-          (
-            typeof(runswitch) === 'boolean' ||
-            (Array.isArray(runswitch) && runswitch.includes(true))
-          )
-        ) { derivatives.push(step); }
+      if (step === 'FROM') {
+        importedPipeline = configuration.getIn([step]);
+      } else {
+        let [...stepKeys] = configuration.getIn([step]).keys();
+        if (stepKeys.includes('run')) {
+          const runswitch = configuration.getIn([step, 'run']);
+          if (
+            !cardSteps.includes(step) &&
+            runswitch &&
+            (
+              typeof(runswitch) === 'boolean' ||
+              (Array.isArray(runswitch) && runswitch.includes(true))
+            )
+          ) { derivatives.push(step); }
+        }
       }
     })
     derivatives = Array.from(derivatives);
     derivatives = derivatives ? derivatives.length : 0;
-
+    let cardSubheader = `C-PAC ${version.get('version')}`;
+    if (importedPipeline != null) {
+      cardSubheader = `FROM '${importedPipeline}' (${cardSubheader})`
+    }
     return (
       <Card className={classes.card}>
         <CardHeader
@@ -117,7 +124,7 @@ class PipelineCard extends Component {
             </Avatar>
           }
           title={pipeline.get('name')}
-          subheader={`C-PAC ${version.get('version')}`}
+          subheader={cardSubheader}
         />
         <CardContent className={classes.info}>
           <List>

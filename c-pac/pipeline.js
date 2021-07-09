@@ -44,7 +44,7 @@ const dump = (configObj, pipelineName, version) => (
 
 ${yaml.dump(configObj)}`.replace(/\s*'':.*/gi, ''))
 
-export { defaultPipelineUrl, dump, getDefaultPipeline, rawTemplate }
+export { defaultPipelineUrl, dump, getDefaultPipeline, rawTemplate, versionRe }
 
 function slugify(text) {
   return text.toString().toLowerCase()
