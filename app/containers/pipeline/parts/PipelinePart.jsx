@@ -1,4 +1,4 @@
-import React, { Component, PureComponent } from 'react';
+import React, { PureComponent } from 'react';
 import { withStyles, Typography } from '@material-ui/core';
 import Grid from '@material-ui/core/Grid';
 
@@ -45,15 +45,6 @@ import {
 } from 'components/icons';
 
 import RoiPaths from './RoiPaths';
-
-class PipelineListPart extends Component {
-  render() {
-    const { classes, configuration, onChange, parents } = this.props;
-    return (
-      <></>
-    )
-  }
-}
 
 export const formatLabel = (label) => {
   const specialCasings = {
