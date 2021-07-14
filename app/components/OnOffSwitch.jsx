@@ -10,6 +10,7 @@ import { withRouter } from 'react-router-dom';
 class OnOffSwitch extends PureComponent {
     render() {
       const { checked, key, label, name, onChange, regex } = this.props;
+
       switch (regex) {
         case null:
           return (
@@ -17,7 +18,7 @@ class OnOffSwitch extends PureComponent {
               <FormGroup row>
                 <FormControl>
                   <Switch
-                    name={label}
+                    name={name}
                     checked={checked}
                     onChange={onChange}
                     color="primary"

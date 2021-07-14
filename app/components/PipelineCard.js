@@ -5,6 +5,8 @@ import { withRouter, Link } from 'react-router-dom'
 import clsx from 'clsx'
 import { formatMs, withStyles } from '@material-ui/core/styles'
 
+import { Map } from 'immutable';
+
 import Grid from '@material-ui/core/Grid'
 
 import Card from '@material-ui/core/Card';
@@ -94,17 +96,22 @@ class PipelineCard extends Component {
       if (step === 'FROM') {
         configuration.importedPipeline = configuration.getIn([step]);
       } else {
-        let [...stepKeys] = configuration.getIn([step]).keys();
-        if (stepKeys.includes('run')) {
-          const runswitch = configuration.getIn([step, 'run']);
-          if (
-            !cardSteps.includes(step) &&
-            runswitch &&
-            (
-              typeof(runswitch) === 'boolean' ||
-              (Array.isArray(runswitch) && runswitch.includes(true))
-            )
-          ) { derivatives.push(step); }
+        const tabStep = configuration.getIn([step]);
+        if (Map.isMap(tabStep)) {
+          let [...stepKeys] = tabStep.keys();
+          if (stepKeys.includes('run')) {
+            const runswitch = configuration.getIn([step, 'run']);
+            if (
+              !cardSteps.includes(step) &&
+              runswitch &&
+              (
+                typeof(runswitch) === 'boolean' ||
+                (Array.isArray(runswitch) && runswitch.includes(true))
+              )
+            ) { derivatives.push(step); }
+          }
+        } else {
+          console.warn(`Tab "${step}" seems to be malformed in pipeline "${pipeline.get('name')}"`);
         }
       }
     })

@@ -17,9 +17,38 @@ import {
   DuplicateIcon
 } from 'components/icons';
 import OnOffSwitch from 'components/OnOffSwitch';
-import PipelinePart, { formatLabel } from './PipelinePart';
+import PipelinePart, { formatLabel } from 'containers/pipeline/parts/PipelinePart';
 import { PipelineTextField } from 'components/TextField';
 
+class OnOffSwitchListItem extends PureComponent {
+
+  render() {
+    const {
+      chain, entry, handleDelete, i, item, label, name, onChange, regex
+    } = this.props;
+    return (
+      <ListItem button key={i}>
+        <OnOffSwitch
+          { ...{ label, onChange } }
+          key={ `${entry[0]}-${i}` }
+          name={`${name}.${i}`}
+          // onChange={(e) => this.togglePair(e, onChange)}
+          regex={ regex }
+          checked={ item }
+        />
+        <ListItemSecondaryAction>
+          <IconButton onClick={() => {
+            handleDelete(
+              chain, name, i, onChange
+            );
+          }}>
+            <DeleteIcon />
+          </IconButton>
+        </ListItemSecondaryAction>
+      </ListItem>
+    )
+  }
+}
 
 class CpacTextListItem extends PureComponent {
 
@@ -69,8 +98,8 @@ class CpacListItem extends PureComponent {
   render() {
 
     const {
-      chain, entry, handleDelete, handleDuplicate, i, item, label, name,
-      onChange, parents
+      chain, classes, entry, handleDelete, handleDuplicate, i, item, label,
+      level, name, onChange, parents
     } = this.props;
     const handlers = {
       handleDelete: handleDelete,
@@ -81,14 +110,12 @@ class CpacListItem extends PureComponent {
       switch (typeof(item)){
         case "boolean": // list of On/Off switches
           return (
-            <ListItem button key={i}>
-              <OnOffSwitch
-                {...{label, onChange}}
-                key={`${entry[0]}-${i}`}
-                regex={null}
-                checked={item}
-              />
-            </ListItem>
+            <OnOffSwitchListItem
+              { ...{
+                chain, entry, handleDelete, i, item, label, name, onChange
+              } }
+              regex={ null }
+            />
           )
         case "number":
           return (
@@ -109,14 +136,16 @@ class CpacListItem extends PureComponent {
           return ('!!!UNHANDLED TYPE!!!')
       }
     } else {
-      <Grid container>
-        <PipelinePart 
-          { ...{ classes, onChange } }
-          configuration={ item }
-          level={ level + 1 }
-          parents={ [...parents.slice(0, level), entry[0]] }
-        />
-      </Grid>
+      return (
+        <Grid container>
+          <PipelinePart 
+            { ...{ classes, onChange } }
+            configuration={ item }
+            level={ level + 1 }
+            parents={ [...parents.slice(0, level), entry[0]] }
+          />
+        </Grid>
+      )
     }
   }
 }
@@ -157,7 +186,7 @@ class CpacList extends PureComponent {
         newList.push('');
         break;
       case 'boolean':
-        newList.push(false);
+        newList.push(!newList[0]);
         break;
       case 'number':
         newList.push(0);
@@ -189,7 +218,8 @@ class CpacList extends PureComponent {
         return (
           <CpacListItem
             { ... {
-              chain, entry, i, item, label, name, onChange
+              chain, classes, entry, i, item, label, level, name, onChange,
+              parents
             } }
             handleDelete={ this.handleDelete }
             handleDuplicate={ this.handleDuplicate }
@@ -197,7 +227,10 @@ class CpacList extends PureComponent {
           />
         )
       }) }
-      { entry[1].includes('') ? null : (<>
+      { (
+        entry[1].includes('') ||
+        (typeof(entry[1].get(0)) == 'boolean' && entry[1].size >= 2)
+      ) ? null : (<>
         <Divider />
         <ListItem style={ { padding: 10 } }>
           <ListItemSecondaryAction>

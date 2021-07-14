@@ -114,6 +114,24 @@ class PipelinePage extends Component {
       key = key.split('.')
     } 
     let configuration = this.state.configuration;
+
+    // Toggle both if there are two entries in a Boolean list
+    if (Array.isArray(key)) {
+      const indexInList = key[key.length - 1];
+      if (
+        typeof(value) === 'boolean' &&
+        !isNaN(indexInList) &&  // make sure the index is a number
+        !(indexInList % 1)
+      ) {  // make sure the index is an integer
+          const listKey = key.slice(0, key.length - 1);
+          let newList = configuration.getIn(listKey).toJS();
+          if (newList.length == 2) {
+            key = listKey;
+            value = newList.map((item) => !item);
+          }
+        }
+    }
+
     configuration = configuration.setIn(key, isImmutable(value) ? value : fromJS(value));
 
     this.props.pipelineVersionDirtyUpdate(

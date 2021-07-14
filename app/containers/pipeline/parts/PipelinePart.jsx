@@ -10,10 +10,10 @@ import FormGroup from '@material-ui/core/FormGroup';
 import MenuItem from '@material-ui/core/MenuItem';
 import { PipelineTextField } from 'components/TextField';
 
-import CpacList from './List';
+import CpacList from 'components/List';
 import Help from 'components/Help';
 import OnOffSwitch from 'components/OnOffSwitch';
-import RoiPaths from './RoiPaths';
+import RoiPaths from 'components/RoiPaths';
 
 export const formatLabel = (label) => {
   const specialCasings = {
