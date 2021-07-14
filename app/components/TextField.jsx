@@ -44,17 +44,16 @@ class ROITextField extends CustomTextField {
   state = { path: this.props.entry[0] };
 
   render() {
-    const { config, entry, fullKey, handleChange, helperText } = this.props;
-
+    const { config, entry, fullKey, handleChange, helperText, value } = this.props;
     return (
       <TextField
-        fullWidth={true}
-        name={`${fullKey}`}
-        onChange={(e) => this.changePath(e)}
-        onKeyDown={(e) => this.handleKeyDown(e, entry, handleChange, config)}
-        onBlur={(e) => this.handleChangedPath(e, entry, handleChange, config)}
-        value={this.state.path}
-        helperText={helperText}
+        fullWidth={ true }
+        name={ `${fullKey}` }
+        onChange={ (e) => this.changePath(e) }
+        onKeyDown={ (e) => this.handleKeyDown(e, entry, handleChange, config) }
+        onBlur={ (e) => this.handleChangedPath(e, entry, handleChange, config) }
+        value={ this.state.path }
+        helperText={ helperText }
       />
     )
   }
@@ -64,16 +63,23 @@ class PipelineTextField extends CustomTextField {
 
   state = { path: this.props.value };
 
+  componentDidUpdate(prevProps) {
+    if (prevProps.value !== this.props.value) {
+      this.setState({ path: this.props.value });
+    }
+  }
+
   render() {
     const { config, onChange } = this.props;
 
     return (
       <TextField
-        {...this.props}
-        value={this.state.path}
-        onChange={(e) => this.changePath(e)}
-        onKeyDown={(e) => this.handleKeyDown(e, this.state.path, onChange)}
-        onBlur={(e) => this.handleChangedPath(e, this.state.path, onChange)}
+        { ...this.props }
+        key={ this.props.value }
+        value={ this.state.path }
+        onChange={ (e) => this.changePath(e) }
+        onKeyDown={ (e) => this.handleKeyDown(e, this.state.path, onChange) }
+        onBlur={ (e) => this.handleChangedPath(e, this.state.path, onChange) }
       />
     )
   }

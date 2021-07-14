@@ -1,48 +1,18 @@
 import React, { PureComponent } from 'react';
+import Immutable from 'immutable';
 import { withStyles, Typography } from '@material-ui/core';
 import Grid from '@material-ui/core/Grid';
 
-import Paper from '@material-ui/core/Paper';
 import Accordion from '@material-ui/core/Accordion';
 import AccordionDetails from '@material-ui/core/AccordionDetails';
 import AccordionSummary from '@material-ui/core/AccordionSummary';
+import FormGroup from '@material-ui/core/FormGroup';
 import MenuItem from '@material-ui/core/MenuItem';
 import { PipelineTextField } from 'components/TextField';
-import Switch from '@material-ui/core/Switch';
-import InputAdornment from '@material-ui/core/InputAdornment';
 
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemText from '@material-ui/core/ListItemText';
-import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
-import Divider from '@material-ui/core/Divider';
-import IconButton from '@material-ui/core/IconButton';
-
-import FormGroup from '@material-ui/core/FormGroup';
-import FormLabel from '@material-ui/core/FormLabel';
-import FormControl from '@material-ui/core/FormControl';
-import FormHelperText from '@material-ui/core/FormHelperText';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import InputLabel from '@material-ui/core/InputLabel';
-
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
-import TableFooter from '@material-ui/core/TableFooter';
-
-import FormControlLabelled from 'components/FormControlLabelled';
+import CpacList from './List';
 import Help from 'components/Help';
-import Immutable, { fromJS } from 'immutable';
 import OnOffSwitch from 'components/OnOffSwitch';
-
-import {
-  AddIcon,
-  DeleteIcon,
-  DuplicateIcon
-} from 'components/icons';
-
 import RoiPaths from './RoiPaths';
 
 export const formatLabel = (label) => {
@@ -73,7 +43,6 @@ export const formatLabel = (label) => {
   }).join(" ");
 }
 
-
 class PipelinePart extends PureComponent {
 
   static styles = theme => ({
@@ -85,34 +54,6 @@ class PipelinePart extends PureComponent {
       paddingLeft: 6,
     },
   });
-
-  handleDelete = (chain, name, i, onChange) => {
-    let newList = this.props.configuration.getIn([chain[chain.length - 1]]).toJS()
-    newList.splice(i, 1);
-    onChange({target: {
-      name,
-      value: fromJS(newList)
-    }});
-  }
-
-  handleNew = (chain, name, onChange) => {
-    let newList = this.props.configuration.getIn([chain[chain.length - 1]]).toJS();
-    switch (typeof(newList[0])) {
-      case 'string':
-        newList.push('');
-        break;
-      case 'boolean':
-        newList.push(false);
-        break;
-      case 'number':
-        newlist.push(0);
-        break;
-    }
-    onChange({target:{
-      name,
-      value: fromJS(newList)
-    }});
-  }
 
   render() {
     const { classes, configuration, onChange, parents, level } = this.props;
@@ -133,80 +74,12 @@ class PipelinePart extends PureComponent {
                 )
               default: // all others
                 if (Immutable.List.isList(entry[1])) {
-                  const regex = new RegExp(`^\s*{entry[0]}`);
-                  const label = formatLabel(entry[0]);
-                  const chain = [...parents, entry[0]];
-                  const name = chain.join('.');
                   return (
-                    <Grid key={entry[0]} item xs={12} className={classes.fullWidth}>
-                    <FormGroup row>
-                    <Help
-                      type="pipeline"
-                      regex={regex}
-                      help=""
-                    >
-                      <FormLabel>{label}</FormLabel>
-                    </Help>
-                    <List className={classes.fullWidth}>
-                    {entry[1].map((item, i) => {
-                      if (!Immutable.Map.isMap(item)){
-                        switch (typeof(item)){
-                          case "boolean": // list of On/Off switches
-                            return (
-                              <ListItem button key={i}>
-                                <OnOffSwitch
-                                  {...{label, onChange}}
-                                  key={`${entry[0]}-${i}`}
-                                  regex={null}
-                                  checked={item}
-                                />
-                              </ListItem>
-                            )
-                          case "number": // handled same as string
-                          case "string":
-                            return (<ListItem button key={i}>
-                            <PipelineTextField
-                              label={label} fullWidth margin="normal" variant="outlined"
-                              name={`${name}.${i}`}
-                              value={item}
-                              onChange={onChange}
-                            />
-                            <ListItemSecondaryAction>
-                              <IconButton onClick={((regi) => () => this.handleDuplicate(regi))(i)}>
-                                <DuplicateIcon />
-                              </IconButton>
-                              <IconButton onClick={() => {
-                                this.handleDelete(
-                                  chain, name, i, onChange
-                                );
-                              }}>
-                                <DeleteIcon />
-                              </IconButton>
-                            </ListItemSecondaryAction>
-                            </ListItem>)
-                          default:
-                            console.warn(`UNHANDLED TYPE: ${typeof(item)}: ${parents}: ${$entry[0]}: ${item}`)
-                            return('!!!UNHANDLED TYPE!!!')
-                        }
-                      } else {
-                        <Grid container>
-                          <PipelinePart configuration={item} classes={classes} onChange={onChange} parents={[...parents.slice(0, level), entry[0]]} level={level + 1} />
-                        </Grid>
-                      }
-                    })}
-                    <Divider />
-                    <ListItem style={{ padding: 10 }}>
-                      <ListItemSecondaryAction>
-                        <IconButton onClick={() => this.handleNew(
-                          chain, name, onChange
-                        )}>
-                          <AddIcon />
-                        </IconButton>
-                      </ListItemSecondaryAction>
-                    </ListItem>
-                    </List>
-                    </FormGroup>
-                    </Grid>
+                    <CpacList { ...{
+                        entry, classes, configuration, level, parents, onChange
+                      } }
+                      key={`list-${entry[0]}`}
+                    />
                   )
                 } else {
                   switch (Immutable.Map.isMap(entry[1])) {
