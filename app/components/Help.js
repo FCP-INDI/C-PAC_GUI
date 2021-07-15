@@ -58,8 +58,8 @@ class Help extends PureComponent {
     let code = ""
 
     if (type && regex){
-      // @TODO include other templates
-      const t = type == "pipeline" ? cpac.pipeline.rawTemplate : ""
+      // @TODO replace this functionality
+      const t = '' // type == "pipeline" ? cpac.pipeline.rawTemplate : ""
       const lines = t.split('\n')
 
       for (matchedLine in lines) {

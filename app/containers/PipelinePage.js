@@ -172,16 +172,19 @@ class PipelinePage extends Component {
     const pipeline = this.props.pipeline;
     const configuration = this.state.configuration;
     const pipelineName = pipeline.get('name');
-    const versions = pipeline.get('versions')
+    const versions = pipeline.get('versions');
     let version = null
     if (versions.has("0")) {
       version = "0"
     } else {
       version = versions.keySeq().max()
     }
+    const cpacVersion = pipeline.getIn(['versions', version, 'version']);
 
     var blob = new Blob(
-      [cpac.pipeline.dump(configuration.toJS(), pipelineName, version)],
+      [cpac.pipeline.dump(
+        configuration.toJS(), pipelineName, version, cpacVersion
+      )],
       { type: "text/yaml;charset=utf-8" }
     );
 

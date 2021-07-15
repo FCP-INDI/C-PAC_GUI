@@ -37,7 +37,7 @@ const persistVersion = (i, state) => state.getIn([
       'config', 'pipelines', i, 'versions'
     ]).keySeq()).map(k => parseInt(k))
   ).toString(), 'version'
-]) || state.getIn(['config', 'defaultVersion']);
+]);
 
 export default function main(state, action) {
   if (!state) {

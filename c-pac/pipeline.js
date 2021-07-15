@@ -1,18 +1,19 @@
 import yaml from 'js-yaml';
 import yamlTemplate, { raw, loadYaml } from './resources/pipeline/yaml';
-import { default as rawTemplate } from './resources/pipeline/default_pipeline.yml';
 
-const defaultPipelineUrl = 'https://raw.githubusercontent.com/FCP-INDI/C-PAC/master/dev/docker_data/default_pipeline.yml'
+const defaultPipelineUrl = 'https://raw.githubusercontent.com/FCP-INDI/C-PAC/master/dev/docker_data/default_pipeline.yml';
 const versionRe = new RegExp('(?<=\# Version:? \s*).*');
 
 function setVersion(rawTemplate) {
-  const version = versionRe.exec(rawTemplate);
+  let version = versionRe.exec(rawTemplate);
+  version = (version && version.length) ? version[0] : 'unspecified';
+  console.log(version);
   return ({
-    "id": "default",
+    "id": `default-${version}`,
     "name": "Default",
     "versions": {
       0: {
-        "version": (version && version.length) ? version[0] : 'unspecified',
+        "version": version,
         "configuration": loadYaml(rawTemplate)
       }
     }
@@ -25,8 +26,7 @@ async function getDefaultPipeline(url) {
     return response.text().then(defaultRaw => setVersion(defaultRaw))
   }, function(e) {
     console.error("Default pipeline failed to load! Falling back to local copy (may be out of date)");
-    return setVersion(rawTemplate);
-  })
+  });
   return defaultPipeline;
 }
 
@@ -37,14 +37,22 @@ async function getDefaultPipeline(url) {
  * @param {string} version
  * @returns {string} YAML representation of configObj
  */
-const dump = (configObj, pipelineName, version) => (
-  `${rawTemplate.split('\n').slice(0, 7).join('\n')}
+const dump = (configObj, pipelineName, version, cpacVersion) => (
+  `%YAML 1.1
+---
+# CPAC Pipeline Configuration YAML file
+# Version ${cpacVersion}
+#
+# http://fcp-indi.github.io for more info.
+#
 # Pipeline config "${pipelineName}", version GUI-${version}
 # ${Date(Date.now())}
+#
+# Tip: This file can be edited manually with a text editor for quick modifications.
 
 ${yaml.dump(configObj)}`.replace(/\s*'':.*/gi, ''))
 
-export { defaultPipelineUrl, dump, getDefaultPipeline, rawTemplate, versionRe }
+export { defaultPipelineUrl, dump, getDefaultPipeline, versionRe }
 
 function slugify(text) {
   return text.toString().toLowerCase()
