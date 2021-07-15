@@ -1,11 +1,25 @@
 import React, { PureComponent } from 'react';
+import PropTypes from 'prop-types';
 import TextField from '@material-ui/core/TextField';
 
+/** Text field that updates on exiting the field or on pressing `Enter` rather than on every keystroke. */
 class CustomTextField extends PureComponent {
+  /** Manages the value in local state until user presses `Enter` or leaves the field.
+   * @param {object} values              The event object
+   * @param {string} values.target.value The current value of the text field (not stored yet)
+   */
   changePath = (values) => {
     this.setState({ path: values.target.value });
   }
 
+  /** Change the value in the stored pipeline configuration.
+   * @param {object} values The event object
+   * @param {string} values.target.name 
+   * @param {string} values.target.value The current value of the text field (not stored yet)
+   * @param {array<string>} entry exactly 2 entries: key, comma-separated csv analyses
+   * @param {function} handleChange
+   * @param {config} config
+   */
   handleChangedPath = (values, entry, handleChange, config) => {
     switch (config) {
       case null:
@@ -34,32 +48,31 @@ class CustomTextField extends PureComponent {
     if (event.key === 'Enter') {
       this.handleChangedPath(event, entry, handleChange, config);
     } else {
+      console.log(event);
+      console.log(this.state);
       this.changePath(event);
     }
   }
 }
 
-class ROITextField extends CustomTextField {
-
-  state = { path: this.props.entry[0] };
-
-  render() {
-    const { config, entry, fullKey, handleChange, helperText, value } = this.props;
-    return (
-      <TextField
-        fullWidth={ true }
-        name={ `${fullKey}` }
-        onChange={ (e) => this.changePath(e) }
-        onKeyDown={ (e) => this.handleKeyDown(e, entry, handleChange, config) }
-        onBlur={ (e) => this.handleChangedPath(e, entry, handleChange, config) }
-        value={ this.state.path }
-        helperText={ helperText }
-      />
-    )
-  }
-}
-
+/** A Material TextField with custom handling (to rerender less frequently) */
 class PipelineTextField extends CustomTextField {
+  static propTypes = {
+    /** Passed through to Material TextField */
+    fullWidth: PropTypes.bool,
+    label: PropTypes.string,
+    margin: PropTypes.string,
+    variant: PropTypes.string,
+    /** Dot-delimited sequence of keys from the top of the overall pipeline configuration to this field. */
+    name: PropTypes.string.isRequired,
+    /** Function to call on change completion (pressing `Enter` or leaving field). */
+    onChange: PropTypes.func.isRequired,
+    /** Editable text or number to display */
+    value: PropTypes.oneOfType([
+      PropTypes.number,
+      PropTypes.string
+    ])
+  }
 
   state = { path: this.props.value };
 
@@ -70,12 +83,12 @@ class PipelineTextField extends CustomTextField {
   }
 
   render() {
-    const { config, onChange } = this.props;
+    const { name, onChange } = this.props;
 
     return (
       <TextField
         { ...this.props }
-        key={ this.props.value }
+        key={ name }
         value={ this.state.path }
         onChange={ (e) => this.changePath(e) }
         onKeyDown={ (e) => this.handleKeyDown(e, this.state.path, onChange) }
@@ -85,5 +98,5 @@ class PipelineTextField extends CustomTextField {
   }
 }
 
-export default ROITextField;
-export { PipelineTextField };
+export default PipelineTextField;
+export { CustomTextField };

@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import Treachery from 'resources/treachery.jpg';
 import { withRouter } from 'react-router-dom';
 
+/** Custom 404 component */
 class NotFound extends Component {
   render() {
     return(

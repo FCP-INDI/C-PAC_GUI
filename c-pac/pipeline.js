@@ -7,7 +7,6 @@ const versionRe = new RegExp('(?<=\# Version:? \s*).*');
 function setVersion(rawTemplate) {
   let version = versionRe.exec(rawTemplate);
   version = (version && version.length) ? version[0] : 'unspecified';
-  console.log(version);
   return ({
     "id": `default-${version}`,
     "name": "Default",

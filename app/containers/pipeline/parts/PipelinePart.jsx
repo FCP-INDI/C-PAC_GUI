@@ -1,4 +1,5 @@
 import React, { PureComponent } from 'react';
+import PropTypes from 'prop-types';
 import Immutable from 'immutable';
 import { withStyles, Typography } from '@material-ui/core';
 import Grid from '@material-ui/core/Grid';
@@ -8,7 +9,7 @@ import AccordionDetails from '@material-ui/core/AccordionDetails';
 import AccordionSummary from '@material-ui/core/AccordionSummary';
 import FormGroup from '@material-ui/core/FormGroup';
 import MenuItem from '@material-ui/core/MenuItem';
-import { PipelineTextField } from 'components/TextField';
+import PipelineTextField from 'components/TextField';
 
 import CpacList from 'components/List';
 import Help from 'components/Help';
@@ -43,7 +44,22 @@ export const formatLabel = (label) => {
   }).join(" ");
 }
 
+/**
+ * Recursive component to convert YAML structure to GUI.
+ */
 class PipelinePart extends PureComponent {
+  static propTypes = {
+    /** Inherited style. */
+    classes: PropTypes.object.isRequired,
+    /** Current-depth Immutable Map to render. */
+    configuration: PropTypes.instanceOf(Immutable.Map).isRequired,
+    /** Function to handle changes to this component. */
+    onChange: PropTypes.func.isRequired,
+    /** Sequence of keys from the top of the overall pipeline configuration to this Map. */
+    parents: PropTypes.array.isRequired,
+    /** Current depth level (integer). */
+    level: PropTypes.number.isRequired
+  }
 
   static styles = theme => ({
     fullWidth: {

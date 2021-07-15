@@ -201,7 +201,6 @@ function* loadConfig (action) {
       // Update default if necessary
       if(!fromJS(template).equals(fromJS(initialState.pipelines[0]))) {
         const pipelineIds = initialState.pipelines.map((p)=>p.id);
-        console.log(pipelineIds);
         let oldDefault = initialState.pipelines[0];
         oldDefault.id = `default-${oldDefault.versions[0].version}`;
         if (!pipelineIds.includes(template.id)) {

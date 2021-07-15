@@ -1,4 +1,5 @@
 import React, { PureComponent } from 'react';
+import PropTypes from 'prop-types';
 import Grid from '@material-ui/core/Grid';
 import Immutable, { fromJS } from 'immutable';
 
@@ -16,11 +17,31 @@ import {
   DeleteIcon,
   DuplicateIcon
 } from 'components/icons';
+import CustomPropTypes from 'components/PropTypes';
 import OnOffSwitch from 'components/OnOffSwitch';
 import PipelinePart, { formatLabel } from 'containers/pipeline/parts/PipelinePart';
-import { PipelineTextField } from 'components/TextField';
+import PipelineTextField from 'components/TextField';
 
+/** A Boolean toggle component within a list. */
 class OnOffSwitchListItem extends PureComponent {
+  static propTypes = {
+    /** Text label to display by switch. */
+    label: PropTypes.string,
+    /** This list's specific key, this entire list. */
+    entry: CustomPropTypes.entryList.isRequired,
+    /** Sequence of keys from the top of the overall pipeline configuration to this list (array). */
+    chain: PropTypes.arrayOf(PropTypes.string).isRequired,
+    /** Dot-delimited sequence of keys from the top of the overall pipeline configuration to this list (array). */
+    name: PropTypes.string.isRequired,
+    /** This field's index in this list (array). */
+    i: PropTypes.number.isRequired,
+    /** On or off? (true == on) */
+    item: PropTypes.bool.isRequired,
+    /** Function to call on change. */
+    onChange: PropTypes.func.isRequired,
+    /** Regular expression for help field (deprecated). */
+    regex: PropTypes.instanceOf(RegExp)
+  }
 
   render() {
     const {
@@ -50,12 +71,30 @@ class OnOffSwitchListItem extends PureComponent {
   }
 }
 
+/** A TextField component within a list. */
 class CpacTextListItem extends PureComponent {
+  static propTypes = {
+    /** Text label to display by switch. */
+    label: PropTypes.string,
+    /** Sequence of keys from the top of the overall pipeline configuration to this list (array). */
+    chain: PropTypes.arrayOf(PropTypes.string).isRequired,
+    /** Dot-delimited sequence of keys from the top of the overall pipeline configuration to this list (array). */
+    name: PropTypes.string.isRequired,
+    /** This field's index in this list (array). */
+    i: PropTypes.number.isRequired,
+    /** On or off? (true == on) */
+    item: PropTypes.oneOfType([
+      PropTypes.number,
+      PropTypes.string
+    ]).isRequired,
+    /** Functions to call on change. */
+    onChange: PropTypes.func.isRequired,
+    handlers: PropTypes.objectOf(PropTypes.func).isRequired
+  }
 
   state = { item: this.props.item }; 
 
   render() {
-
     const {
       chain, handlers, i, inputType, item, label, name, onChange
     } = this.props;
@@ -93,10 +132,38 @@ class CpacTextListItem extends PureComponent {
 
 }
 
+/** Editable item in a list within a pipeline configuration. */
 class CpacListItem extends PureComponent {
+  static propTypes = {
+    /** Sequence of keys from the top of the overall pipeline configuration to this list (array). */
+    chain: PropTypes.arrayOf(PropTypes.string).isRequired,
+    /** Dot-delimited sequence of keys from the top of the overall pipeline configuration to this list (array). */
+    name: PropTypes.string.isRequired,
+    /** Text label to display by TextField. */
+    label: PropTypes.string,
+    /** Sequence of keys from the top of the overall pipeline configuration to this Map. */
+    parents: PropTypes.array.isRequired,
+    /** Current depth level (integer). */
+    level: PropTypes.number.isRequired,
+    /** This list's specific key, this entire list. */
+    entry: CustomPropTypes.entryList.isRequired,
+    /** This field's index in this list (array). */
+    i: PropTypes.number.isRequired,
+    /** On or off? (true == on) */
+    item: PropTypes.oneOfType([
+      PropTypes.bool,
+      PropTypes.number,
+      PropTypes.string
+    ]).isRequired,
+    /** Change methods */
+    handleDelete: PropTypes.func.isRequired,
+    handleDuplicate: PropTypes.func.isRequired,
+    onChange: PropTypes.func.isRequired,
+    /** Inherited style */
+    classes: PropTypes.object
+  }
 
   render() {
-
     const {
       chain, classes, entry, handleDelete, handleDuplicate, i, item, label,
       level, name, onChange, parents
@@ -150,7 +217,22 @@ class CpacListItem extends PureComponent {
   }
 }
 
+/** List of editable items within a pipeline configuration. */
 class CpacList extends PureComponent {
+  static propTypes = {
+    /** This list's specific key, this entire list. */
+    entry: CustomPropTypes.entryList.isRequired,
+    /** The Immutable Map containing this list. */
+    configuration: PropTypes.instanceOf(Immutable.Map),
+    /** Sequence of keys from the top of the overall pipeline configuration to this Map. */
+    parents: PropTypes.array.isRequired,
+    /** Current depth level (integer). */
+    level: PropTypes.number.isRequired,
+    /** Change method */
+    onChange: PropTypes.func.isRequired,
+    /** Inherited style */
+    classes: PropTypes.object
+  }
 
   state = { fullList: this.props.entry[1] };
 

@@ -15,7 +15,7 @@ import {
   HelpIcon
 } from './icons'
 
-
+/** TODO: Refactor for 1.8+ syntax */
 class Help extends PureComponent {
   state = {
     open: false,

@@ -1,13 +1,15 @@
-import React, { Component } from 'react'
-import { connect } from 'react-redux'
-import { withRouter, Link } from 'react-router-dom'
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { withRouter, Link } from 'react-router-dom';
+import Immutable from 'immutable';
+import PropTypes from 'prop-types';
 
 import clsx from 'clsx'
-import { formatMs, withStyles } from '@material-ui/core/styles'
+import { formatMs, withStyles } from '@material-ui/core/styles';
 
 import { Map } from 'immutable';
 
-import Grid from '@material-ui/core/Grid'
+import Grid from '@material-ui/core/Grid';
 
 import Card from '@material-ui/core/Card';
 import CardHeader from '@material-ui/core/CardHeader';
@@ -27,8 +29,6 @@ import IconButton from '@material-ui/core/IconButton';
 import Button from '@material-ui/core/Button';
 import Tooltip from '@material-ui/core/Tooltip';
 
-import PipelineStep from './PipelineStep';
-
 import {
   EnvironmentIcon,
   PipelineIcon,
@@ -46,11 +46,24 @@ import {
   DeleteIcon,
   DuplicateIcon,
 } from './icons';
-import { formatLabel } from '../containers/pipeline/parts/PipelinePart'
-import { isADefault } from '../containers/PipelinePage'
+import { formatLabel } from '../containers/pipeline/parts/PipelinePart';
+import { isADefault } from '../containers/PipelinePage';
 
-
+/** A card component to show a pipeline configuration available to view/edit, duplicate, and/or delete. */
 class PipelineCard extends Component {
+  static propTypes = {
+    /** Inherited style */
+    classes: PropTypes.object,
+    /** Methods for mutating array of pipelines */
+    onDelete: PropTypes.func.isRequired,
+    onDuplicate: PropTypes.func.isRequired,
+    /** A pipeline configuration */
+    pipeline: PropTypes.instanceOf(Immutable.Map).isRequired,
+    /** Routing props */
+    history: PropTypes.object,
+    location: PropTypes.object,
+    match: PropTypes.object
+  }
 
   static styles = theme => ({
     card: {
@@ -177,6 +190,31 @@ class PipelineCard extends Component {
           </Tooltip>
         </CardActions>
       </Card>
+    )
+  }
+}
+
+/** A row to indicate s broad pipeline step on a pipeline card */
+class PipelineStep extends Component {
+  static propTypes = {
+    /** Whether the step is On in the pipeline configuration */
+    stepKey: PropTypes.bool.isRequired,
+    /** Text to display for step */
+    label: PropTypes.string,
+    /** Inherited style */
+    classes: PropTypes.object
+  }
+
+  render() {
+    const { stepKey, label, classes } = this.props;
+    const enabledStyle = {root: stepKey ? classes.featEnabled : classes.featDisabled};
+    return (
+      <ListItem key={`step-${label}`}>
+        <ListItemIcon>
+          <PipelineStepIcon classes={enabledStyle} />
+        </ListItemIcon>
+        <ListItemText classes={enabledStyle} primary={label} />
+      </ListItem>
     )
   }
 }
