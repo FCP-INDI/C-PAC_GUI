@@ -44,12 +44,23 @@ class CustomTextField extends PureComponent {
     
   }
 
-  handleKeyDown = (event, entry, handleChange, config) => {
+  /** Handle keydowns in TextFields. Enter saves, everything else modifies local state.
+   * @param {object} event
+   * @param {array<string>} entry
+   * @param {function} handleChange
+   * @param {Immutable.Map} config
+   * @param {function} checkboxesCallback
+   */
+  handleKeyDown = (event, entry, handleChange, config, checkboxesCallback) => {
     if (event.key === 'Enter') {
       this.handleChangedPath(event, entry, handleChange, config);
+      if (checkboxesCallback != undefined) {
+        checkboxesCallback(false);
+      }
     } else {
-      console.log(event);
-      console.log(this.state);
+      if (checkboxesCallback != undefined) {
+        checkboxesCallback(true);
+      }
       this.changePath(event);
     }
   }

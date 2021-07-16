@@ -135,8 +135,9 @@ class ROITextField extends CustomTextField {
   state = { path: this.props.entry[0] };
 
   roiKeydown = (e, disableCheckboxes, entry, handleChange, config) => {
-    disableCheckboxes(false);
-    this.handleKeyDown(e, entry, handleChange, config);
+    this.handleKeyDown(
+      e, entry, handleChange, config, disableCheckboxes
+    );
   }
 
   exitTextBox = (e, disableCheckboxes, entry, handleChange, config) => {
