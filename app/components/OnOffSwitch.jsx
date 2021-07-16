@@ -24,7 +24,7 @@ class OnOffSwitch extends PureComponent {
   }
 
   render() {
-    const { checked, label, name, onChange, regex } = this.props;
+    const { checked, isDefault, label, name, onChange, regex } = this.props;
 
     switch (regex) {
       case null:
@@ -37,6 +37,7 @@ class OnOffSwitch extends PureComponent {
                   checked={checked}
                   onChange={onChange}
                   color="primary"
+                  disabled={ isDefault }
                 />
               </FormControl>
             </FormGroup>
@@ -57,6 +58,7 @@ class OnOffSwitch extends PureComponent {
                     checked={checked}
                     onChange={onChange}
                     color="primary"
+                    disabled={ isDefault }
                   />
                 </FormControlLabelled>
               </Help>

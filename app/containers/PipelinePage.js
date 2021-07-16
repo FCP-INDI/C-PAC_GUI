@@ -81,7 +81,7 @@ class PipelinePage extends Component {
     this.state = {
       dirty,
       version,
-      default: isADefault(pipeline.get('id')),
+      isDefault: isADefault(pipeline.get('id')),
       configuration: pipeline.getIn(['versions', version, 'configuration'])
     }
   }
@@ -146,7 +146,7 @@ class PipelinePage extends Component {
   handleChangedValue = memoizeOne(this.changedValue);
 
   handleChange = (values) => {
-    if (this.state.default) {
+    if (this.state.isDefault) {
       return
     }
 
@@ -196,7 +196,7 @@ class PipelinePage extends Component {
   }
 
   handleTitleClick = () => {
-    if (this.state.default) {
+    if (this.state.isDefault) {
       return
     }
     this.setState({
@@ -217,7 +217,7 @@ class PipelinePage extends Component {
   }
 
   toggleTitleHoverState(state) {
-    if (this.state.default) {
+    if (this.state.isDefault) {
       return
     }
     return {
@@ -250,7 +250,7 @@ class PipelinePage extends Component {
         onMouseLeave={this.handleTitleHover}
         onClick={this.handleTitleClick}
         style={{
-          cursor: this.state.default ? '' : 'pointer',
+          cursor: this.state.isDefault ? '' : 'pointer',
         }}
       >
         {
@@ -301,12 +301,12 @@ class PipelinePage extends Component {
           this.state.configuration ?
           (
             <React.Fragment>
-            { this.state.default ?
+            { this.state.isDefault ?
               <div className={classes.warning}>
                 You cannot change the default template! Please, duplicate it to create your own pipeline.
               </div>
               : null }
-              <PipelineEditor default={this.state.default} configuration={this.state.configuration} onChange={this.handleChange} onSave={this.handleSave} />
+              <PipelineEditor isDefault={this.state.isDefault} configuration={this.state.configuration} onChange={this.handleChange} onSave={this.handleSave} />
             </React.Fragment>
           )
           :

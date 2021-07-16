@@ -4,6 +4,25 @@ import TextField from '@material-ui/core/TextField';
 
 /** Text field that updates on exiting the field or on pressing `Enter` rather than on every keystroke. */
 class CustomTextField extends PureComponent {
+  static propTypes = {
+    /** Passed through to Material TextField */
+    fullWidth: PropTypes.bool,
+    label: PropTypes.string,
+    margin: PropTypes.string,
+    variant: PropTypes.string,
+    /** Dot-delimited sequence of keys from the top of the overall pipeline configuration to this field. */
+    name: PropTypes.string.isRequired,
+    /** Is this a default, immutable pipeline? */
+    isDefault: PropTypes.bool,
+    /** Function to call on change completion (pressing `Enter` or leaving field). */
+    onChange: PropTypes.func.isRequired,
+    /** Editable text or number to display */
+    value: PropTypes.oneOfType([
+      PropTypes.number,
+      PropTypes.string
+    ])
+  }
+
   /** Manages the value in local state until user presses `Enter` or leaves the field.
    * @param {object} values              The event object
    * @param {string} values.target.value The current value of the text field (not stored yet)
@@ -75,6 +94,8 @@ class PipelineTextField extends CustomTextField {
     variant: PropTypes.string,
     /** Dot-delimited sequence of keys from the top of the overall pipeline configuration to this field. */
     name: PropTypes.string.isRequired,
+    /** Is this a default, immutable pipeline? */
+    isDefault: PropTypes.bool,
     /** Function to call on change completion (pressing `Enter` or leaving field). */
     onChange: PropTypes.func.isRequired,
     /** Editable text or number to display */
@@ -99,11 +120,14 @@ class PipelineTextField extends CustomTextField {
   }
 
   render() {
-    const { name, onChange, value } = this.props;
+    const { name, isDefault, onChange, value } = this.props;
+    const passthrough = { ...this.props };
+    delete passthrough.isDefault;
 
     return (
       <TextField
-        { ...this.props }
+        { ...passthrough }
+        disabled={ isDefault }
         key={ name }
         value={ this.state.path }
         onChange={ (e) => this.changePath(e) }

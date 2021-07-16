@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import Immutable from 'immutable';
 
 import { withStyles } from '@material-ui/core';
 
@@ -33,7 +35,24 @@ import Switch from '@material-ui/core/Switch';
 
 import Collapse from '@material-ui/core/Collapse';
 
+/** An interactive component to view/edit a pipeline configuration. */
 class PipelineEditor extends Component {
+  static propTypes = {
+    /** Inherited style. */
+    classes: PropTypes.object.isRequired,
+    /** Immutable Map of configuration to render. */
+    configuration: PropTypes.instanceOf(Immutable.Map).isRequired,
+    /** Functions to handle changes to this component. */
+    onChange: PropTypes.func.isRequired,
+    onSave: PropTypes.func,
+    /** Is this a default pipeline that should not be editable? */
+    isDefault: PropTypes.bool
+  }
+
+  static defaultProps = {
+    isDefault: false
+  }
+
   constructor(props) {
     super(props);
     this.state = {
@@ -74,7 +93,7 @@ class PipelineEditor extends Component {
 
 
   render() {
-    const { classes, onChange, configuration } = this.props;
+    const { classes, configuration, isDefault, onChange } = this.props;
     const { tab } = this.state;
 
     // Set the sequence of tabs to display.
@@ -105,7 +124,12 @@ class PipelineEditor extends Component {
           }
         </Tabs>
         <Collapse key={`${tab}-collapse`} in={true}>
-          <PipelinePart configuration={entry} onChange={onChange} parents={[tab]} level={1} />
+          <PipelinePart
+            { ...{ isDefault, onChange } }
+            configuration={entry}
+            parents={[tab]}
+            level={1}
+          />
         </Collapse>
       </>
     );

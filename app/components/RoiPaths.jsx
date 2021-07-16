@@ -50,7 +50,11 @@ class RoiCheckbox extends PureComponent {
     /** The path to the specified ROI image */
     roiPath: PropTypes.string.isRequired,
     /** Method to update the state of the checkbox's parent table */
-    updateState: PropTypes.func.isRequired
+    updateState: PropTypes.func.isRequired,
+    /** Is this a default, immutable pipeline? */
+    isDefault: PropTypes.bool,
+    /** Should this checkbox be disabled now? */
+    disabled: PropTypes.bool
   }
 
   keyArray = this.props.fullKey.split('.');
@@ -58,7 +62,7 @@ class RoiCheckbox extends PureComponent {
 
   state = {
     checked: this.entry.split(',').map(item => item.trim()).includes(this.props.option),
-    disabled: this.props.disabled
+    disabled: this.props.isDefault || this.props.disabled
   }
 
   componentDidUpdate(prevProps) {
@@ -100,14 +104,16 @@ class RoiCheckbox extends PureComponent {
   }
 
   render() {
-    const { config, disabled, roiPath, fullKey, option, onChange } = this.props;
+    const { config, disabled, fullKey, isDefault, option, onChange, roiPath } = this.props;
     const { checked } = this.state;
     return (
       <Checkbox
-        name={`${fullKey}["${this.state.entry}"]`}
-        onChange={(e) => this.handleChangedOption(e, config, option, roiPath, onChange)}
-        checked={checked}
-        disabled={disabled}
+        name={ `${fullKey}["${this.state.entry}"]` }
+        onChange={ (e) => this.handleChangedOption(
+          e, config, option, roiPath, onChange
+        ) }
+        checked={ checked }
+        disabled={ isDefault || disabled }
       />
     )
   }
@@ -129,7 +135,9 @@ class ROITextField extends CustomTextField {
     /** 2-element array: editable text to display, comma-delimited analyses */
     entry: PropTypes.arrayOf(PropTypes.string).isRequired,
     /** Method to enable and disable checkboxes in parent table */
-    disableCheckboxes: PropTypes.func.isRequired
+    disableCheckboxes: PropTypes.func.isRequired,
+    /** Is this a default, immutable pipeline? */
+    isDefault: PropTypes.bool
   }
 
   state = { path: this.props.entry[0] };
@@ -148,7 +156,7 @@ class ROITextField extends CustomTextField {
   render() {
     const {
       config, disableCheckboxes, entry, fullKey, fullWidth, handleChange,
-      helperText
+      isDefault, helperText
     } = this.props;
 
     return (
@@ -160,6 +168,7 @@ class ROITextField extends CustomTextField {
         onBlur={ (e) => this.exitTextBox(e, disableCheckboxes, entry, handleChange, config) }
         onFocus={ () => disableCheckboxes(true) }
         value={ this.state.path }
+        disabled={ isDefault }
         { ...{ helperText } }
       />
     )
@@ -176,7 +185,14 @@ class RoiPaths extends PureComponent {
     /** Sequence of keys from top of pipeline configuration leading up to but not including `configKey`. */
     parents: PropTypes.arrayOf(PropTypes.string).isRequired,
     /** Headings for the checkboxes in the table of ROI paths */
-    validOptions: PropTypes.arrayOf(PropTypes.string).isRequired
+    validOptions: PropTypes.arrayOf(PropTypes.string).isRequired,    /** Is this a default, immutable pipeline? */
+    isDefault: PropTypes.bool
+  }
+
+  static defaultProps = {
+    classes: {},
+    help: '',
+    regex: ''
   }
 
   /** Put new masks at the end of GUI list
@@ -258,7 +274,10 @@ class RoiPaths extends PureComponent {
   }
 
   render() {
-    const { config, configKey, parents, onChange, validOptions, classes={}, help="", regex="" } = this.props;
+    const {
+      classes, config, configKey, help, isDefault, onChange, parents,
+      regex, validOptions
+    } = this.props;
 
     const fullKey = [...parents, configKey].join('.');
     return (
@@ -297,14 +316,16 @@ class RoiPaths extends PureComponent {
                               fullKey, config, entry, onChange
                             )
                           }
-                          disabled={ this.state.checkboxesDisabled }
+                          disabled={
+                            isDefault || this.state.checkboxesDisabled
+                          }
                         >
                           <DeleteIcon />
                         </IconButton>
                       </TableCell>
                       <TableCell>
                         <ROITextField
-                          {...{config, entry, fullKey }}
+                          {...{config, entry, fullKey, isDefault }}
                           handleChange={onChange}
                           disableCheckboxes={this.disableCheckboxes}
                         />
@@ -316,6 +337,7 @@ class RoiPaths extends PureComponent {
                                 config,
                                 roiPath,
                                 fullKey,
+                                isDefault,
                                 onChange,
                                 option,
                                 updateState
@@ -335,7 +357,7 @@ class RoiPaths extends PureComponent {
                 )
               }
               </TableBody>
-              { this.state.sortedPaths.includes('') ? null : (<TableFooter>
+              { isDefault || this.state.sortedPaths.includes('') ? null : (<TableFooter>
                 <TableRow>
                   <TableCell padding="checkbox" colSpan={7} className={classes.footer}>
                     <Fab aria-label="Add new ROI" onClick={() => this.addMask(fullKey, config, onChange)}>

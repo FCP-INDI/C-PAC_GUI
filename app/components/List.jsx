@@ -40,17 +40,20 @@ class OnOffSwitchListItem extends PureComponent {
     /** Function to call on change. */
     onChange: PropTypes.func.isRequired,
     /** Regular expression for help field (deprecated). */
-    regex: PropTypes.instanceOf(RegExp)
+    regex: PropTypes.instanceOf(RegExp),
+    /** Is this a default, immutable pipeline? */
+    isDefault: PropTypes.bool
   }
 
   render() {
     const {
-      chain, entry, handleDelete, i, item, label, name, onChange, regex
+      chain, entry, handleDelete, i, isDefault, item, label, name, onChange,
+      regex
     } = this.props;
     return (
       <ListItem button key={i}>
         <OnOffSwitch
-          { ...{ label, onChange } }
+          { ...{ label, isDefault, onChange } }
           key={ `${entry[0]}-${i}` }
           name={`${name}.${i}`}
           // onChange={(e) => this.togglePair(e, onChange)}
@@ -58,11 +61,14 @@ class OnOffSwitchListItem extends PureComponent {
           checked={ item }
         />
         <ListItemSecondaryAction>
-          <IconButton onClick={() => {
-            handleDelete(
-              chain, name, i, onChange
-            );
-          }}>
+          <IconButton
+            onClick={ () => {
+              handleDelete(
+                chain, name, i, onChange
+              );
+            } }
+            disabled={ isDefault }
+          >
             <DeleteIcon />
           </IconButton>
         </ListItemSecondaryAction>
@@ -89,14 +95,16 @@ class CpacTextListItem extends PureComponent {
     ]).isRequired,
     /** Functions to call on change. */
     onChange: PropTypes.func.isRequired,
-    handlers: PropTypes.objectOf(PropTypes.func).isRequired
+    handlers: PropTypes.objectOf(PropTypes.func).isRequired,
+    /** Is this a default, immutable pipeline? */
+    isDefault: PropTypes.bool
   }
 
   state = { item: this.props.item }; 
 
   render() {
     const {
-      chain, handlers, i, inputType, item, label, name, onChange
+      chain, handlers, i, inputType, isDefault, item, label, name, onChange
     } = this.props;
 
     return (
@@ -106,23 +114,29 @@ class CpacTextListItem extends PureComponent {
           name={`${name}.${i}`}
           type={inputType}
           value={item}
-          onChange={onChange}
+          { ...{ isDefault, onChange } }
         />
         <ListItemSecondaryAction>
           { item == '' ? null : (
-            <IconButton onClick={() => {
-              handlers.handleDuplicate(
-                chain, name, i, onChange
-              );
-            }}>
+            <IconButton
+              disabled={ isDefault }
+              onClick={ () => {
+                handlers.handleDuplicate(
+                  chain, name, i, onChange
+                );
+              } }
+            >
               <DuplicateIcon />
             </IconButton>
           ) }
-          <IconButton onClick={() => {
-            handlers.handleDelete(
-              chain, name, i, onChange
-            );
-          }}>
+          <IconButton
+            disabled={ isDefault }
+            onClick={() => {
+              handlers.handleDelete(
+                chain, name, i, onChange
+              );
+            }}
+          >
             <DeleteIcon />
           </IconButton>
         </ListItemSecondaryAction>
@@ -153,20 +167,23 @@ class CpacListItem extends PureComponent {
     item: PropTypes.oneOfType([
       PropTypes.bool,
       PropTypes.number,
-      PropTypes.string
+      PropTypes.string,
+      PropTypes.instanceOf(Immutable.Map)
     ]).isRequired,
     /** Change methods */
     handleDelete: PropTypes.func.isRequired,
     handleDuplicate: PropTypes.func.isRequired,
     onChange: PropTypes.func.isRequired,
     /** Inherited style */
-    classes: PropTypes.object
+    classes: PropTypes.object,
+    /** Is this a default, immutable pipeline? */
+    isDefault: PropTypes.bool
   }
 
   render() {
     const {
-      chain, classes, entry, handleDelete, handleDuplicate, i, item, label,
-      level, name, onChange, parents
+      chain, classes, entry, handleDelete, handleDuplicate, i, isDefault,
+      item, label, level, name, onChange, parents
     } = this.props;
     const handlers = {
       handleDelete: handleDelete,
@@ -179,7 +196,8 @@ class CpacListItem extends PureComponent {
           return (
             <OnOffSwitchListItem
               { ...{
-                chain, entry, handleDelete, i, item, label, name, onChange
+                chain, entry, handleDelete, i, isDefault, item, label, name,
+                onChange
               } }
               regex={ null }
             />
@@ -187,14 +205,18 @@ class CpacListItem extends PureComponent {
         case "number":
           return (
             <CpacTextListItem
-              { ...{ chain, handlers, i, item, label, name, onChange } }
+              { ...{
+                chain, handlers, i, isDefault, item, label, name, onChange
+              } }
               inputType={ 'number' }
             />
           )
         case "string":
           return (
             <CpacTextListItem
-              { ...{ chain, handlers, i, item, label, name, onChange } }
+              { ...{
+                chain, handlers, i, isDefault, item, label, name, onChange
+              } }
               inputType={ 'text' }
             />
           )
@@ -206,7 +228,7 @@ class CpacListItem extends PureComponent {
       return (
         <Grid container>
           <PipelinePart 
-            { ...{ classes, onChange } }
+            { ...{ classes, isDefault, onChange } }
             configuration={ item }
             level={ level + 1 }
             parents={ [...parents.slice(0, level), entry[0]] }
@@ -231,7 +253,9 @@ class CpacList extends PureComponent {
     /** Change method */
     onChange: PropTypes.func.isRequired,
     /** Inherited style */
-    classes: PropTypes.object
+    classes: PropTypes.object,
+    /** Is this a default, immutable pipeline? */
+    isDefault: PropTypes.bool
   }
 
   state = { fullList: this.props.entry[1] };
@@ -278,7 +302,7 @@ class CpacList extends PureComponent {
   }
 
   render() {
-    const {entry, classes, level, parents, onChange} = this.props;
+    const {entry, classes, isDefault, level, parents, onChange} = this.props;
 
     const regex = new RegExp(`^\s*{entry[0]}`);
     const label = formatLabel(entry[0]);
@@ -300,8 +324,8 @@ class CpacList extends PureComponent {
         return (
           <CpacListItem
             { ... {
-              chain, classes, entry, i, item, label, level, name, onChange,
-              parents
+              chain, classes, entry, i, isDefault, item, label, level, name,
+              onChange, parents
             } }
             handleDelete={ this.handleDelete }
             handleDuplicate={ this.handleDuplicate }
@@ -310,6 +334,7 @@ class CpacList extends PureComponent {
         )
       }) }
       { (
+        isDefault ||
         entry[1].includes('') ||
         (typeof(entry[1].get(0)) == 'boolean' && entry[1].size >= 2)
       ) ? null : (<>

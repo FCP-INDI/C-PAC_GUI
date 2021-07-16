@@ -72,7 +72,9 @@ class PipelinePart extends PureComponent {
   });
 
   render() {
-    const { classes, configuration, onChange, parents, level } = this.props;
+    const {
+      classes, configuration, isDefault, level, onChange, parents
+    } = this.props;
 
     switch (Immutable.Map.isMap(configuration)) {
       case true:
@@ -82,17 +84,33 @@ class PipelinePart extends PureComponent {
             switch (entry[0]) { // handle objects with custom keys
               case "tse_roi_paths":
                 return (
-                  <RoiPaths key={entry[0]} configKey={entry[0]} parents={parents} config={entry[1]} onChange={onChange} validOptions={["Avg", "Voxel", "SpatialReg", "PearsonCorr", "PartialCorr"]}/>
+                  <RoiPaths
+                    { ...{ isDefault, onChange, parents } }
+                    key={entry[0]}
+                    configKey={entry[0]}
+                    config={entry[1]}
+                    validOptions={[
+                      "Avg", "Voxel", "SpatialReg", "PearsonCorr",
+                      "PartialCorr"
+                    ]}
+                  />
                 )
               case "sca_roi_paths":
                 return (
-                  <RoiPaths key={entry[0]} configKey={entry[0]} parents={parents} config={entry[1]} onChange={onChange} validOptions={["Avg", "DualReg", "MultReg"]}/>
+                  <RoiPaths
+                    { ...{ isDefault, onChange, parents } }
+                    key={entry[0]}
+                    configKey={entry[0]}
+                    config={entry[1]}
+                    validOptions={["Avg", "DualReg", "MultReg"]}
+                  />
                 )
               default: // all others
                 if (Immutable.List.isList(entry[1])) {
                   return (
                     <CpacList { ...{
-                        entry, classes, configuration, level, parents, onChange
+                        entry, classes, configuration, isDefault, level,
+                        parents, onChange
                       } }
                       key={`list-${entry[0]}`}
                     />
@@ -109,7 +127,12 @@ class PipelinePart extends PureComponent {
                           </AccordionSummary>
                           <AccordionDetails>
                           <Grid container>
-                            <PipelinePart configuration={entry[1]} classes={classes} onChange={onChange} parents={[...parents.slice(0, level), entry[0]]} level={level + 1} />
+                            <PipelinePart
+                              { ...{ classes, isDefault, onChange } }
+                              configuration={entry[1]}
+                              parents={[...parents.slice(0, level), entry[0]]}
+                              level={level + 1}
+                            />
                           </Grid>
                           </AccordionDetails>
                         </Accordion>
@@ -122,7 +145,7 @@ class PipelinePart extends PureComponent {
                         case 'boolean':
                           return (
                             <OnOffSwitch
-                              {...{regex, label, name, onChange}}
+                              {...{regex, label, isDefault, name, onChange}}
                               key={entry[0]}
                               checked={entry[1]}
                             />
@@ -137,10 +160,13 @@ class PipelinePart extends PureComponent {
                                   help=""
                                   fullWidth >
                                   <PipelineTextField
-                                    label={label} fullWidth margin="normal" variant="outlined"
-                                    name={name}
+                                    { ...{
+                                      label, isDefault, name, onChange
+                                    } }
+                                    fullWidth
+                                    margin="normal"
+                                    variant="outlined"
                                     value={entry[1]}
-                                    onChange={onChange}
                                   />
                                 </Help>
                               </FormGroup>
@@ -156,11 +182,14 @@ class PipelinePart extends PureComponent {
                                   help=""
                                   fullWidth >
                                   <PipelineTextField
-                                    label={label} fullWidth margin="normal" variant="outlined"
-                                    name={name}
+                                    { ...{
+                                      label, isDefault, name, onChange
+                                    } }
+                                    fullWidth
+                                    margin="normal"
+                                    variant="outlined"
                                     type='number'
                                     value={entry[1]}
-                                    onChange={onChange}
                                   />
                                 </Help>
                               </FormGroup>
@@ -184,10 +213,10 @@ class PipelinePart extends PureComponent {
           case 'FROM':
             return (
               <PipelineTextField
+                { ...{ isDefault, onChange } }
                 fullWidth margin="normal" variant="outlined"
                 name={parents.join('.')}
                 value={configuration}
-                onChange={onChange}
                 helperText={'name of a preconfig or in-container path to a custom pipeline config file'}
               />
             )
