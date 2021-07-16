@@ -49,6 +49,8 @@ import {
 import { formatLabel } from '../containers/pipeline/parts/PipelinePart';
 import { isADefault } from '../containers/PipelinePage';
 
+const cardSteps = ['anatomical_preproc', 'functional_preproc', 'surface_analysis'];
+
 /** A card component to show a pipeline configuration available to view/edit, duplicate, and/or delete. */
 class PipelineCard extends Component {
   static propTypes = {
@@ -103,7 +105,7 @@ class PipelineCard extends Component {
 
     const version = versions.get(versionId)
     const configuration = version.getIn(['configuration', ]);
-    const cardSteps = ['anatomical_preproc', 'functional_preproc', 'surface_analysis'];
+
     let derivatives = [];
     Object.keys(configuration.toJS()).forEach(step => {
       if (step === 'FROM') {
@@ -219,4 +221,5 @@ class PipelineStep extends Component {
   }
 }
 
-export default withRouter(withStyles(PipelineCard.styles)(PipelineCard))
+export default withRouter(withStyles(PipelineCard.styles)(PipelineCard));
+export { cardSteps };

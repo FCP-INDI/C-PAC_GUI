@@ -25,6 +25,7 @@ import {
 } from 'components/icons';
 
 import { formatLabel, PipelinePart } from 'containers/pipeline/parts';
+import { cardSteps } from 'components/PipelineCard';
 
 import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton'
@@ -33,7 +34,6 @@ import Switch from '@material-ui/core/Switch';
 import Collapse from '@material-ui/core/Collapse';
 
 class PipelineEditor extends Component {
-
   constructor(props) {
     super(props);
     this.state = {
@@ -63,6 +63,7 @@ class PipelineEditor extends Component {
       [name, value]
     ]
 
+    // @TODO: Restore toggles on tabs
     // if (name == "functional.enabled") {
     //   this.setState({ tab: value ? 1 : 0 });
     //   props.push(["derivatives.enabled", value])
@@ -71,14 +72,23 @@ class PipelineEditor extends Component {
     this.props.onChange(props)
   }
 
+
   render() {
-    const { classes, onChange, configuration } = this.props
-    const { tab } = this.state
+    const { classes, onChange, configuration } = this.props;
+    const { tab } = this.state;
+
+    // Set the sequence of tabs to display.
+    const tabSequence = Array.from(new Set([
+      'pipeline_setup', // general setup first
+      ...cardSteps, // the steps shown on the cards
+      ...configuration.keySeq().toJS() // all the rest of the steps
+    ]));
 
     const disable = (event) => {
       event.stopPropagation()
     }
     const entry = configuration.getIn([tab]);
+
     return (
       <>
         <Tabs
@@ -89,7 +99,7 @@ class PipelineEditor extends Component {
           variant="scrollable"
         >
           {
-            configuration.keySeq().toJS().map((k) => (
+            tabSequence.map((k) => (
               <Tab label={formatLabel(k)} value={k} key={`tabtab-${k}`} />
             ))
           }
