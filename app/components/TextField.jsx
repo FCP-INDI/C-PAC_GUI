@@ -16,7 +16,7 @@ class CustomTextField extends PureComponent {
    * @param {object} values The event object
    * @param {string} values.target.name 
    * @param {string} values.target.value The current value of the text field (not stored yet)
-   * @param {array<string>} entry exactly 2 entries: key, comma-separated csv analyses
+   * @param {array<string>|string} entry exactly 2 entries (for ROI entries): key, comma-separated csv analyses, or just a string (for other text entries)
    * @param {function} handleChange
    * @param {config} config
    */
@@ -46,17 +46,16 @@ class CustomTextField extends PureComponent {
 
   /** Handle keydowns in TextFields. Enter saves, everything else modifies local state.
    * @param {object} event
-   * @param {array<string>} entry
-   * @param {function} handleChange
+   * @param {array<string>|string} entry
    * @param {Immutable.Map} config
    * @param {function} checkboxesCallback
    */
-  handleKeyDown = (event, entry, handleChange, config, checkboxesCallback) => {
+  handleKeyDown = (event, entry, config, checkboxesCallback) => {
     if (event.key === 'Enter') {
-      this.handleChangedPath(event, entry, handleChange, config);
       if (checkboxesCallback != undefined) {
         checkboxesCallback(false);
       }
+      event.target.blur(event);
     } else {
       if (checkboxesCallback != undefined) {
         checkboxesCallback(true);
@@ -87,14 +86,20 @@ class PipelineTextField extends CustomTextField {
 
   state = { path: this.props.value };
 
-  componentDidUpdate(prevProps) {
+  /** Make sure we our local change isn't reverted by the save. */
+  getSnapshotBeforeUpdate(prevProps, prevState) {
+    return prevState.path;
+  }
+
+  /** Update the text in the TextField when the config is updated. */
+  componentDidUpdate(prevProps, prevState, snapshot) {
     if (prevProps.value !== this.props.value) {
-      this.setState({ path: this.props.value });
+      this.setState({ path: snapshot });
     }
   }
 
   render() {
-    const { name, onChange } = this.props;
+    const { name, onChange, value } = this.props;
 
     return (
       <TextField
@@ -102,7 +107,7 @@ class PipelineTextField extends CustomTextField {
         key={ name }
         value={ this.state.path }
         onChange={ (e) => this.changePath(e) }
-        onKeyDown={ (e) => this.handleKeyDown(e, this.state.path, onChange) }
+        onKeyDown={ (e) => this.handleKeyDown(e, this.state.path) }
         onBlur={ (e) => this.handleChangedPath(e, this.state.path, onChange) }
       />
     )

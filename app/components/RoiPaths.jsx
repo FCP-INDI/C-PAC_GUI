@@ -156,7 +156,7 @@ class ROITextField extends CustomTextField {
         fullWidth={ fullWidth || true }
         name={ `${fullKey}` }
         onChange={ (e) => this.changePath(e) }
-        onKeyDown={ (e) => this.roiKeydown(e, disableCheckboxes, entry, handleChange, config) }
+        onKeyDown={ (e) => this.roiKeydown(e, disableCheckboxes, entry, config) }
         onBlur={ (e) => this.exitTextBox(e, disableCheckboxes, entry, handleChange, config) }
         onFocus={ () => disableCheckboxes(true) }
         value={ this.state.path }
