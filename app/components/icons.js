@@ -46,6 +46,7 @@ export { default as AdvancedConfigIcon } from '@material-ui/icons/SettingsApplic
 export { default as FeedbackIcon } from '@material-ui/icons/Feedback';
 export { default as GroupIcon } from '@material-ui/icons/Group';
 export { default as BulletIcon } from '@material-ui/icons/Lens';
+export { default as FilterBWIcon } from '@material-ui/icons/FilterBAndW';
 
 // import createSvgIcon from '../utils/createSvgIcon'
 // export const BrainIcon = createSvgIcon(

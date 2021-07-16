@@ -112,7 +112,8 @@ class PipelinePage extends Component {
   changedValue = (key, value) => {
     if (typeof key == "string") {
       key = key.split('.')
-    } 
+    }
+
     let configuration = this.state.configuration;
 
     // Toggle both if there are two entries in a Boolean list

@@ -123,7 +123,6 @@ class PipelineTextField extends CustomTextField {
     const { name, isDefault, onChange, value } = this.props;
     const passthrough = { ...this.props };
     delete passthrough.isDefault;
-
     return (
       <TextField
         { ...passthrough }
