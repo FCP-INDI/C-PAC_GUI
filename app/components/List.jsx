@@ -288,14 +288,15 @@ class CpacList extends PureComponent {
   handleNew = (chain, name, onChange) => {
     let newList = this.props.configuration.getIn([chain[chain.length - 1]]).toJS();
     switch (typeof(newList[0])) {
-      case 'string':
-        newList.push('');
-        break;
       case 'boolean':
         newList.push(!newList[0]);
         break;
       case 'number':
         newList.push(0);
+        break;
+      case 'string':
+      default:
+        newList.push('');
         break;
     }
     this.updateList(name, newList, onChange);
