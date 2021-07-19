@@ -21,7 +21,7 @@ import CustomPropTypes from 'components/PropTypes';
 import OnOffSwitch from 'components/OnOffSwitch';
 import PipelinePart, { formatLabel } from 'containers/pipeline/parts/PipelinePart';
 import PipelineTextField from 'components/TextField';
-import RegressorCard, { emptyRegressor } from 'components/Regressor';
+import RegressorCard, { emptyRegressor } from 'containers/pipeline/parts/Regressor';
 
 /** A Boolean toggle component within a list. */
 class OnOffSwitchListItem extends PureComponent {
@@ -310,8 +310,6 @@ class CpacList extends PureComponent {
     const label = formatLabel(entry[0]);
     const chain = [...parents, entry[0]];
     const name = chain.join('.');
-
-    console.log(this.props.configuration.getIn([chain[chain.length - 1]]).toJS()[0])
 
     return (
       <Grid key={ entry[0] } item xs={ 12 } className={ classes.fullWidth }>

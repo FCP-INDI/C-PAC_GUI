@@ -112,7 +112,14 @@ class PipelinePage extends Component {
   changedValue = (key, value) => {
     if (typeof key == "string") {
       key = key.split('.')
-    } 
+    }
+
+    console.log(key);
+    console.log(value);
+
+    if (isImmutable(value)) {
+      console.log(value.toJS());
+    }
     let configuration = this.state.configuration;
 
     // Toggle both if there are two entries in a Boolean list
@@ -146,6 +153,7 @@ class PipelinePage extends Component {
   handleChangedValue = memoizeOne(this.changedValue);
 
   handleChange = (values) => {
+    console.log(values);
     if (this.state.isDefault) {
       return
     }

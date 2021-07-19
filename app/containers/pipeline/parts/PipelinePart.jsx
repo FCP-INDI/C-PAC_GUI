@@ -16,6 +16,8 @@ import Help from 'components/Help';
 import OnOffSwitch from 'components/OnOffSwitch';
 import RoiPaths from 'components/RoiPaths';
 
+import NuisanceRegression from './Regressor';
+
 export const formatLabel = (label) => {
   const specialCasings = {
     afni: "AFNI",
@@ -82,6 +84,13 @@ class PipelinePart extends PureComponent {
           <>
           { configuration.entrySeq().map((entry) => {
             switch (entry[0]) { // handle objects with custom keys
+              case "Regressors":
+                return (
+                  <NuisanceRegression
+                    { ...{ configuration, onChange } }
+                    key='Regressors'
+                  />
+                )
               case "tse_roi_paths":
                 return (
                   <RoiPaths
