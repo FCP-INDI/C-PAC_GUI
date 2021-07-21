@@ -103,8 +103,7 @@ class PipelinePage extends Component {
 
       this.setState({
         dirty,
-        version,
-        configuration: pipeline.getIn(['versions', version, 'configuration'])
+        version
       });
     }
   }
@@ -113,7 +112,6 @@ class PipelinePage extends Component {
     if (typeof key == "string") {
       key = key.split('.')
     }
-
     let configuration = this.state.configuration;
 
     // Toggle both if there are two entries in a Boolean list

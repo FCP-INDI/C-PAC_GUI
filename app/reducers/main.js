@@ -74,7 +74,6 @@ export default function main(state, action) {
       const { pipeline: id, configuration } = action
       const i = state.getIn(['config', 'pipelines'])
                      .findIndex((p) => p.get('id') == id);
-
       return state.setIn(
         ['config', 'pipelines', i, 'versions', '0'],
         fromJS({

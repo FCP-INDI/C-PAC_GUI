@@ -87,7 +87,7 @@ class PipelinePart extends PureComponent {
               case "Regressors":
                 return (
                   <NuisanceRegression
-                    { ...{ configuration, onChange } }
+                    { ...{ classes, configuration, onChange } }
                     key='Regressors'
                   />
                 )

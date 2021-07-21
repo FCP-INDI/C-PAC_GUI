@@ -274,51 +274,6 @@ class SignalCorrection extends PureComponent {
   }
 }
 
-/** A card component to show a pipeline configuration available to view/edit, duplicate, and/or delete. */
-class RegressorCard extends PureComponent {
-  // static propTypes = {
-  //   /** Inherited style */
-  //   classes: PropTypes.object,
-  //   /** Methods for mutating array of pipelines */
-  //   onDelete: PropTypes.func.isRequired,
-  //   onDuplicate: PropTypes.func.isRequired,
-  //   /** A pipeline configuration */
-  //   pipeline: PropTypes.instanceOf(Immutable.Map).isRequired,
-  //   /** Routing props */
-  //   history: PropTypes.object,
-  //   location: PropTypes.object,
-  //   match: PropTypes.object
-  // }
-
-  // handleOpen = (pipeline) => {
-  //   this.props.history.push(`/pipelines/${pipeline}`)
-  // }
-
-  render() {
-    const { chain, classes, level, isDefault, item, onChange, parents } = this.props
-    console.log(chain);
-    console.log(item);
-    console.log(parents);
-
-    return (
-      <Card className={classes.card}>
-        <CardHeader
-          avatar={
-            <Avatar className={classes.avatar}>
-              <FilterBWIcon />
-            </Avatar>
-          }
-          title={ item.getIn(['Name']) }
-          subheader={'Regressor'}
-        />
-        <CardContent className={classes.info}>
-         {JSON.stringify(item.toJS())}
-        </CardContent>
-      </Card>
-    )
-  }
-}
-
 /** A modal in which to edit a Regressor.
  * @TODO This component includes configuration validation information that is not yet encoded in C-PAC.
  * @TODO This component mixes controlled and uncontrolled components.
@@ -702,7 +657,14 @@ class NuisanceRegression extends PureComponent {
     content: { padding: 0, minHeight: 10, margin: 0 },
     details: { padding: '0 10px 0 10px', minHeight: 10 },
     details_box: { margin: 0 },
-    footer: { textAlign: 'right', padding: theme.spacing(2) }
+    footer: { textAlign: 'right', padding: theme.spacing(2) },
+    fullWidth: {
+      width: "100%",
+    },
+    sectionTitle: {
+      paddingTop: 6,
+      paddingLeft: 6,
+    }
   });
 
   /** Helper to pass key, value to updater.
@@ -886,7 +848,7 @@ class NuisanceRegression extends PureComponent {
   }
 
   render() {
-    const { classes, configuration, onChange } = this.props
+    const { classes, configuration, onChange } = this.props;
 
     const regressors = configuration.getIn(['Regressors']);
 

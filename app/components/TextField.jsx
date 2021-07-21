@@ -1,4 +1,4 @@
-import React, { PureComponent } from 'react';
+import React, { PureComponent, useState } from 'react';
 import PropTypes from 'prop-types';
 import TextField from '@material-ui/core/TextField';
 
@@ -24,11 +24,11 @@ class CustomTextField extends PureComponent {
   }
 
   /** Manages the value in local state until user presses `Enter` or leaves the field.
-   * @param {object} values              The event object
-   * @param {string} values.target.value The current value of the text field (not stored yet)
+   * @param {object} event              The event object
+   * @param {string} event.target.value The current value of the text field (not stored yet)
    */
-  changePath = (values) => {
-    this.setState({ path: values.target.value });
+  changePath = (event) => {
+    this.setState({ path: event.target.value });
   }
 
   /** Change the value in the stored pipeline configuration.
@@ -40,22 +40,23 @@ class CustomTextField extends PureComponent {
    * @param {config} config
    */
   handleChangedPath = (values, entry, handleChange, config) => {
+    const { name, value } = values.target;
     switch (config) {
       case null:
       case undefined:
         handleChange({
           target: {
-            name: values.target.name,
+            name,
             value: entry
           }
         })
         break;
       default:
         let newConfig = config.delete(entry[0])
-        newConfig = newConfig.setIn([values.target.value], entry[1])
+        newConfig = newConfig.setIn([value], entry[1])
         handleChange({
           target: {
-            name: values.target.name,
+            name,
             value: newConfig
           }
         })
@@ -106,18 +107,6 @@ class PipelineTextField extends CustomTextField {
   }
 
   state = { path: this.props.value };
-
-  /** Make sure we our local change isn't reverted by the save. */
-  getSnapshotBeforeUpdate(prevProps, prevState) {
-    return prevState.path;
-  }
-
-  /** Update the text in the TextField when the config is updated. */
-  componentDidUpdate(prevProps, prevState, snapshot) {
-    if (prevProps.value !== this.props.value) {
-      this.setState({ path: snapshot });
-    }
-  }
 
   render() {
     const { name, isDefault, onChange, value } = this.props;

@@ -21,7 +21,6 @@ import CustomPropTypes from 'components/PropTypes';
 import OnOffSwitch from 'components/OnOffSwitch';
 import PipelinePart, { formatLabel } from 'containers/pipeline/parts/PipelinePart';
 import PipelineTextField from 'components/TextField';
-import RegressorCard, { emptyRegressor } from 'containers/pipeline/parts/Regressor';
 
 /** A Boolean toggle component within a list. */
 class OnOffSwitchListItem extends PureComponent {
@@ -111,7 +110,7 @@ class CpacTextListItem extends PureComponent {
     return (
       <ListItem button key={i}>
         <PipelineTextField
-          label={label} fullWidth margin="normal" variant="outlined"
+          label={label} margin="normal" variant="outlined"
           name={`${name}.${i}`}
           type={inputType}
           value={item}
@@ -227,10 +226,11 @@ class CpacListItem extends PureComponent {
       }
     } else {
       return (
-        <RegressorCard
-          { ...{ chain, classes, isDefault, item, onChange, } }
-          level={ level + 1 }
-          parents={ [...parents.slice(0, level), entry[0]] }
+          <PipelinePart
+          { ...{ classes, isDefault, onChange } }
+          configuration={item}
+          parents={[...parents.slice(0, level), entry[0]]}
+          level={level + 1}
         />
       )
     }
@@ -287,7 +287,7 @@ class CpacList extends PureComponent {
     let newList = this.props.configuration.getIn([chain[chain.length - 1]]).toJS();
     switch (typeof(newList[0])) {
       case 'object':
-        newList.push(emptyRegressor);
+        newList.push({});
         break;
       case 'boolean':
         newList.push(!newList[0]);
