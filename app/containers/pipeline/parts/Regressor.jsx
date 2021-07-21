@@ -63,7 +63,10 @@ import {
   DuplicateIcon
 } from 'components/icons';
 
-class Regressor extends PureComponent {
+/** One signal correction GUI component.
+ * @TODO This component includes configuration validation information that is not yet encoded in C-PAC.
+ */
+class SignalCorrection extends PureComponent {
   static propTypes = {
     /** Regressor to render */
     regressor: PropTypes.object,
@@ -73,11 +76,11 @@ class Regressor extends PureComponent {
     regressorKey: PropTypes.string.isRequired,
     /** Text to display for regressor name */
     name: PropTypes.string.isRequired,
-    /**  */
+    /** Boolean values to indicate whether these options are part of this signal correction */
     derivatives: PropTypes.bool,
     summary: PropTypes.bool,
     extraction: PropTypes.bool,
-    /**  */
+    /** Custom component to include in this signal correction */
     custom: PropTypes.node,
     /** Inherited style */
     classes: PropTypes.object,
@@ -110,7 +113,7 @@ class Regressor extends PureComponent {
   render() {
 
     const {
-      classes, configuration, custom, derivatives, extraction, i, name,
+      classes, custom, derivatives, extraction, i, name,
       onChange, regressor, summary
     } = this.props; 
 
@@ -202,7 +205,7 @@ class Regressor extends PureComponent {
               </>
             ) : null }
 
-            {custom}
+            { custom }
 
             { extraction ? (
               <>
@@ -271,57 +274,30 @@ class Regressor extends PureComponent {
   }
 }
 
-/** A card component to show a pipeline configuration available to view/edit, duplicate, and/or delete. */
-class RegressorCard extends PureComponent {
-  // static propTypes = {
-  //   /** Inherited style */
-  //   classes: PropTypes.object,
-  //   /** Methods for mutating array of pipelines */
-  //   onDelete: PropTypes.func.isRequired,
-  //   onDuplicate: PropTypes.func.isRequired,
-  //   /** A pipeline configuration */
-  //   pipeline: PropTypes.instanceOf(Immutable.Map).isRequired,
-  //   /** Routing props */
-  //   history: PropTypes.object,
-  //   location: PropTypes.object,
-  //   match: PropTypes.object
-  // }
-
-  // handleOpen = (pipeline) => {
-  //   this.props.history.push(`/pipelines/${pipeline}`)
-  // }
-
-  render() {
-    const { chain, classes, level, isDefault, item, onChange, parents } = this.props;
-
-    return (
-      <Card className={classes.card}>
-        <CardHeader
-          avatar={
-            <Avatar className={classes.avatar}>
-              <FilterBWIcon />
-            </Avatar>
-          }
-          title={ item.getIn(['Name']) }
-          subheader={'Regressor'}
-        />
-        <CardContent className={classes.info}>
-         {JSON.stringify(item.toJS())}
-        </CardContent>
-      </Card>
-    )
-  }
-}
-
+/** A modal in which to edit a Regressor.
+ * @TODO This component includes configuration validation information that is not yet encoded in C-PAC.
+ * @TODO This component mixes controlled and uncontrolled components.
+*/
 class RegressorDialog extends PureComponent {
+  static propTypes = {
+    /** Regressor to render */
+    regressor: PropTypes.object,
+    /** Regresor index */
+    editRegressor: PropTypes.number.isRequired,
+    /** Inherited style */
+    classes: PropTypes.object,
+    /** Method for mutating regressor in pipeline config */
+    onChange: PropTypes.func.isRequired,
+    /** Method to close the modal */
+    handleClose: PropTypes.func.isRequired
+  }
+
   state = {
     regressorName: this.props.regressor.getIn(['Name'])
   }
 
   render() {
-    const {
-      classes, configuration, handleClose, onChange, regressor
-    } = this.props;
+    const { classes, handleClose, onChange, regressor } = this.props;
     const i = this.props.editRegressor;
 
     return (
@@ -348,14 +324,14 @@ class RegressorDialog extends PureComponent {
               style={ { flexGrow: 1, margin: '10px 0 10px 10px', width: '95%' } }
             />
           </Accordion>
-          <Regressor
+          <SignalCorrection
             { ...{ classes, i, regressor, onChange } }
             key={`Regressor-${i}-Motion`}
             regressorKey='Motion'
             name='Motion'
             derivatives={true}
           />
-          <Regressor
+          <SignalCorrection
             { ...{ classes, i, regressor, onChange }}
             key={`Regressor-${i}-GSR`}
             regressorKey='GlobalSignal'
@@ -363,7 +339,7 @@ class RegressorDialog extends PureComponent {
             derivatives={true}
             summary={true}
           />
-          <Regressor
+          <SignalCorrection
             { ...{ classes, i, regressor, onChange } }
             key={`Regressor-${i}-GM`}
             regressorKey='GrayMatter'
@@ -372,7 +348,7 @@ class RegressorDialog extends PureComponent {
             summary={true}
             extraction={true}
           />
-          <Regressor
+          <SignalCorrection
             { ...{ classes, i, regressor, onChange } }
             key={`Regressor-${i}-WM`}
             regressorKey='WhiteMatter'
@@ -381,7 +357,7 @@ class RegressorDialog extends PureComponent {
             summary={true}
             extraction={true}
           />
-          <Regressor
+          <SignalCorrection
             { ...{ classes, i, regressor, onChange } }
             key={`Regressor-${i}-CSF`}
             regressorKey='CerebrospinalFluid'
@@ -390,7 +366,7 @@ class RegressorDialog extends PureComponent {
             summary={true}
             extraction={true}
           />
-          <Regressor
+          <SignalCorrection
             { ...{ classes, i, regressor, onChange } }
             key={`Regressor-${i}-aCompCor`}
             regressorKey='aCompCor'
@@ -425,7 +401,7 @@ class RegressorDialog extends PureComponent {
               </FormGroup>
             ) }
           />
-          <Regressor
+          <SignalCorrection
             { ...{ classes, i, regressor, onChange } }
             key={`Regressor-${i}-tCompCor`}
             regressorKey='tCompCor'
@@ -483,7 +459,7 @@ class RegressorDialog extends PureComponent {
               </>
             ) }
           />
-          <Regressor
+          <SignalCorrection
             { ...{ classes, i, regressor, onChange } }
             key={`Regressor-${i}-PolyOrt`}
             regressorKey='PolyOrt'
@@ -499,7 +475,7 @@ class RegressorDialog extends PureComponent {
               </FormGroup>
             ) }
           />
-          <Regressor
+          <SignalCorrection
             { ...{ classes, i, regressor, onChange } }
             key={`Regressor-${i}-Bandpass`}
             regressorKey='BandPass'
@@ -531,7 +507,7 @@ class RegressorDialog extends PureComponent {
               </>
             ) }
           />
-          <Regressor
+          <SignalCorrection
             { ...{ classes, i, regressor, onChange } }
             key={`Regressor-${i}-Censor`}
             regressorKey='Censor'
@@ -606,6 +582,14 @@ class RegressorDialog extends PureComponent {
 
 /** One regressor in the list. */
 class RegressorListItem extends PureComponent {
+  static propTypes = {
+    /** Regressor to render */
+    regressor: PropTypes.object,
+    /** Regresor index */
+    i: PropTypes.number.isRequired,
+    /** Methods for mutating regressor in pipeline config */
+    handlers: PropTypes.objectOf(PropTypes.func).isRequired
+  }
 
   render() {
     const { handlers, i, regressor } = this.props;
@@ -620,7 +604,9 @@ class RegressorListItem extends PureComponent {
     }</span>);
 
     return (
-      <ListItem button key={i} onClick={((regi) => () => handlers.handleEdit(regi))(i)}>
+      <ListItem button key={i} onClick={
+        ((regi) => () => handlers.handleEdit(regi))(i)
+      }>
         { regressorName ?
           <ListItemText
             primary={regressorName}
@@ -649,29 +635,17 @@ class RegressorListItem extends PureComponent {
 
 }
 
-/** Nusiance Regression component ported forward from 1.6+ with minimal changes. This component was more specific than the documentation in the default pipeline at the time of the GUI refactor from 1.6 to 1.8. */
+/** Nusiance Regression component ported forward from 1.6+ with minimal changes. This component was more specific than the documentation in the default pipeline at the time of the GUI refactor from 1.6 to 1.8.
+ * @TODO This component includes configuration validation information that is not yet encoded in C-PAC.
+*/
 class NuisanceRegression extends PureComponent {
   static propTypes = {
-    //** Pipelin configuration */
+    //** Pipeline configuration */
     configuration: PropTypes.instanceOf(Immutable.Map),
-  //   /** Regressor to render */
-  //   regressor: PropTypes.object,
-  //   /** Regresor index */
-  //   i: PropTypes.number.isRequired,
-  //   /** Key for rendered regressor */
-  //   regressorKey: PropTypes.string.isRequired,
-  //   /** Text to display for regressor name */
-  //   name: PropTypes.string.isRequired,
-  //   /**  */
-  //   derivatives: PropTypes.bool,
-  //   summary: PropTypes.bool,
-  //   extraction: PropTypes.bool,
-  //   /**  */
-  //   custom: PropTypes.node,
-  //   /** Inherited style */
-  //   classes: PropTypes.object,
     /** Method for mutating regressor in pipeline config */
     onChange: PropTypes.func.isRequired,
+    /** Inherited style */
+    classes: PropTypes.object
   }
 
   state = {
@@ -899,7 +873,7 @@ class NuisanceRegression extends PureComponent {
                 {
                   regressor ?
                   <RegressorDialog
-                    { ...{ classes, configuration, onChange, regressor } }
+                    { ...{ classes, onChange, regressor } }
                     editRegressor={ this.state.editRegressor }
                     handleClose={ this.handleClose }
                   /> :
