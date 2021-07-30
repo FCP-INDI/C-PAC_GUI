@@ -13,6 +13,7 @@ import DatasetSettingsEditor from '../components/dataset/DatasetSettingsEditor';
 import Header, { HeaderText, HeaderAvatar, HeaderTools } from '../components/Header';
 import Content from '../components/Content';
 import Box from '../components/Box';
+import NotFound from 'components/404';
 
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
@@ -127,8 +128,7 @@ class DatasetPage extends Component {
     const { classes, dataset } = this.props
 
     if (!dataset) {
-      // @TODO ASH create a 404 page/component
-      return "404"
+      return <NotFound />
     }
 
     const tools = (

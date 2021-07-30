@@ -28,7 +28,7 @@ jobs:
           command: yarn && yarn run link
       - run:
           command:  |
-            export NODE_ENV=$([ "${CIRCLE_BRANCH}" == "master" ] && echo "production" || echo "development")
+            export NODE_ENV=$([ "${CIRCLE_BRANCH}" == "main" ] && echo "production" || echo "development")
             CSC_LINK=file:///tmp/default.p12 yarn run package:mac
       - run:
           command: mv dist dist-macos
@@ -48,7 +48,7 @@ jobs:
           command: yarn && yarn run link
       - run:
           command: |
-            export NODE_ENV=$([ "${CIRCLE_BRANCH}" == "master" ] && echo "production" || echo "development")
+            export NODE_ENV=$([ "${CIRCLE_BRANCH}" == "main" ] && echo "production" || echo "development")
             yarn run package:linux
       - run:
           command: mv dist dist-linux
@@ -68,12 +68,12 @@ jobs:
           command: yarn && yarn run link
       - run:
           command: |
-            export NODE_ENV=$([ "${CIRCLE_BRANCH}" == "master" ] && echo "production" || echo "development")
+            export NODE_ENV=$([ "${CIRCLE_BRANCH}" == "main" ] && echo "production" || echo "development")
             TARGET=electron yarn run build:renderer
             mv ./app/dist dist-web-electron
       - run:
           command: |
-            export NODE_ENV=$([ "${CIRCLE_BRANCH}" == "master" ] && echo "production" || echo "development")
+            export NODE_ENV=$([ "${CIRCLE_BRANCH}" == "main" ] && echo "production" || echo "development")
             TARGET=browser yarn run build:renderer
             mv ./app/dist dist-web-browser
       - persist_to_workspace:
@@ -104,10 +104,10 @@ jobs:
           name: Deploy releases
           command: |
             VERSION=v`jq -r '.version' package.json`
-            TAG=$([ "${CIRCLE_BRANCH}" == "master" ] && echo "latest" || echo "nightly")
+            TAG=$([ "${CIRCLE_BRANCH}" == "main" ] && echo "latest" || echo "nightly")
             
             RELEASE_OPTS=""
-            if [ "${CIRCLE_BRANCH}" != "master" ]; then
+            if [ "${CIRCLE_BRANCH}" != "main" ]; then
               RELEASE_OPTS="--pre-release"
             fi
 
@@ -122,7 +122,8 @@ jobs:
             git tag "${TAG}"
             git push origin "${TAG}" -f
 
-            if [ "${CIRCLE_BRANCH}" == "master" ]; then
+            if [ "${CIRCLE_BRANCH}" == "main" ]; then
+              github-release delete -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} --tag "${VERSION}" || true
               github-release release -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} --tag "${VERSION}" --name "${VERSION}" ${RELEASE_OPTS}
               github-release upload -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} --tag "${VERSION}" --name "c-pac_gui-${VERSION}-linux-amd64.deb" --file /tmp/workspace/dist-linux/c-pac_gui_*_amd64.deb
               github-release upload -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} --tag "${VERSION}" --name "c-pac_gui-${VERSION}-linux-amd64.snap" --file /tmp/workspace/dist-linux/c-pac_gui_*_amd64.snap
@@ -159,12 +160,12 @@ jobs:
           name: Deploy web-version
           command: |
             VERSION=v`jq -r '.version' package.json`
-            TAG=$([ "${CIRCLE_BRANCH}" == "master" ] && echo "latest" || echo "nightly")
+            TAG=$([ "${CIRCLE_BRANCH}" == "main" ] && echo "latest" || echo "nightly")
             
             git clone --single-branch --branch gh-pages git@github.com:${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}.git /tmp/repo
             cd /tmp/repo
 
-            if [ "${CIRCLE_BRANCH}" == "master" ]; then
+            if [ "${CIRCLE_BRANCH}" == "main" ]; then
               rm -Rf /tmp/repo/versions/${VERSION} 2> /dev/null | true
               mkdir -p /tmp/repo/versions/${VERSION}
               cp -Rf /tmp/workspace/dist-web-browser /tmp/repo/versions/${VERSION}/browser
@@ -206,7 +207,7 @@ workflows:
           filters:
             branches:
               only:
-                - master
+                - main
                 - develop
           requires:
             - build-linux
@@ -216,7 +217,7 @@ workflows:
           filters:
             branches:
               only:
-                - master
+                - main
                 - develop
           requires:
             - build-web

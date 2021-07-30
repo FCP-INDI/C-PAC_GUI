@@ -2,7 +2,7 @@ import path from 'path';
 import webpack from 'webpack';
 import { dependencies as externals } from '../app/package.json';
 
-const target = process.env.TARGET === 'browser' ? 'browser' : 'electron'
+const target = process.env.TARGET === 'browser' ? 'browser' : 'electron';
 
 export default {
   externals: Object.keys(externals || {}),
@@ -54,8 +54,8 @@ export default {
       VERSION: JSON.stringify(process.env.npm_package_version),
     }),
 
-    new webpack.NormalModuleReplacementPlugin(/.*\.platform$/, function(resource) {
+    new webpack.NormalModuleReplacementPlugin(/.*\.platform$/, ((resource) => {
       resource.request = resource.request.replace(/platform$/, target);
-    }),
+    })),
   ],
 };

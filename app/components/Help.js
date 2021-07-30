@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { PureComponent } from 'react'
 import PropTypes from 'prop-types'
 import { withStyles } from '@material-ui/core/styles'
 import Typography from '@material-ui/core/Typography'
@@ -15,8 +15,8 @@ import {
   HelpIcon
 } from './icons'
 
-
-class Help extends React.Component {
+/** TODO: Refactor for 1.8+ syntax */
+class Help extends PureComponent {
   state = {
     open: false,
   }
@@ -58,8 +58,8 @@ class Help extends React.Component {
     let code = ""
 
     if (type && regex){
-      // @TODO include other templates
-      const t = type == "pipeline" ? cpac.pipeline.rawTemplate : ""
+      // @TODO replace this functionality
+      const t = '' // type == "pipeline" ? cpac.pipeline.rawTemplate : ""
       const lines = t.split('\n')
 
       for (matchedLine in lines) {
@@ -94,6 +94,8 @@ class Help extends React.Component {
     }
 
     const button = (
+      <>
+      {/* TODO: fix help
       <IconButton
         aria-label="Help"
         disableRipple
@@ -103,7 +105,8 @@ class Help extends React.Component {
         style={{ buttonStyle, ...rootStyle }}
         onClick={this.handleOpen}>
         <HelpIcon fontSize="small" />
-      </IconButton>
+      </IconButton> */}
+      </>
     )
 
     return (

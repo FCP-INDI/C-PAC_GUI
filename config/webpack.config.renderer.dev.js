@@ -2,12 +2,12 @@ import path from 'path';
 import fs from 'fs';
 import webpack from 'webpack';
 import merge from 'webpack-merge';
-import { spawn, execSync } from 'child_process';
+import { execSync } from 'child_process';
 
-import HtmlWebpackPlugin from 'html-webpack-plugin'
+import HtmlWebpackPlugin from 'html-webpack-plugin';
 
-import baseConfig from './webpack.config.base';
 import MiniCssExtractPlugin from 'mini-css-extract-plugin';
+import baseConfig from './webpack.config.base';
 
 const port = process.env.PORT || 1212;
 const publicPath = `http://localhost:${port}`;
@@ -16,7 +16,7 @@ const dist = path.resolve(process.cwd(), 'app', 'dist');
 const dll = path.resolve(dist, 'dll');
 const manifest = path.resolve(dll, 'renderer.json');
 
-const target = process.env.TARGET == 'browser' ? 'web' : 'electron-renderer'
+const target = process.env.TARGET == 'browser' ? 'web' : 'electron-renderer';
 
 if (!(fs.existsSync(dll) && fs.existsSync(manifest))) {
   execSync('yarn run build-dll');
