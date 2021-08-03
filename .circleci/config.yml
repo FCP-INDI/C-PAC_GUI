@@ -183,8 +183,23 @@ jobs:
 
             ls -1 /tmp/repo/versions > /tmp/repo/versions.txt
 
+            COMMIT_MESSAGE=$(git show-branch --no-name origin/${CIRCLE_BRANCH})
+            GITMOJI=$(echo $COMMIT_MESSAGE | awk -F ':' '{print $2}')
+            if [ "$GITMOJI" ]
+            then
+              GITMOJI_CODEPOINT=$( \
+                curl -H "Accept: application/vnd.github.v3+json" https://api.github.com/emojis | \
+                jq -r ".${GITMOJI}" | \
+                awk -F 'https://github.githubassets.com/images/icons/emoji/unicode/|.png.*' '{print $2}' \
+              )
+              if [ "$GITMOJI_CODEPOINT" ]
+              then
+                GITMOJI_UNICODE="$(echo -e \\u$GITMOJI_CODEPOINT) "
+                COMMIT_MESSAGE="${GITMOJI_UNICODE}${COMMIT_MESSAGE/\:$GITMOJI\:}"
+              fi
+            fi
             git add .
-            git commit -m $(git show-branch --no-name origin/${CIRCLE_BRANCH}) || true
+            git commit -m "${COMMIT_MESSAGE}" || true
             git push -f origin gh-pages || true
 
 workflows:
