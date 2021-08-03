@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { withRouter, Link } from 'react-router-dom';
 import Immutable from 'immutable';
 import PropTypes from 'prop-types';
+import semver from 'semver';
 
 import clsx from 'clsx'
 import { formatMs, withStyles } from '@material-ui/core/styles';
@@ -44,10 +45,14 @@ import {
   LogIcon,
   BrainIcon,
   DeleteIcon,
-  DuplicateIcon,
+  DeprecatedIcon,
+  DownloadIcon,
+  DuplicateIcon
 } from './icons';
 import { formatLabel } from '../containers/pipeline/parts/PipelinePart';
 import { isADefault } from '../containers/PipelinePage';
+
+import cpac from '@internal/c-pac';
 
 const cardSteps = ['anatomical_preproc', 'functional_preproc', 'surface_analysis'];
 
@@ -88,6 +93,26 @@ class PipelineCard extends Component {
     featDisabled: { opacity: 0.5 },
     featEnabled: { opacity: 1.0 },
   })
+
+  handleDownload = (pipelineName) => {
+    const { pipeline } = this.props;
+    const version = pipeline.getIn(['versions', ]).keySeq().toJS()[0]
+    const configuration = pipeline.getIn(['versions', version, 'configuration']);
+    const cpacVersion = pipeline.getIn(['versions', version, 'version']);
+
+    var blob = new Blob(
+      [cpac.pipeline.dump(
+        configuration.toJS(), pipelineName, version, cpacVersion
+      )],
+      { type: "text/yaml;charset=utf-8" }
+    );
+
+    var anchor = document.createElement('a');
+    anchor.href = window.URL.createObjectURL(blob);
+    anchor.target = '_blank';
+    anchor.download = pipelineName + '.yml'
+    anchor.click();
+  }
 
   handleOpen = (pipeline) => {
     this.props.history.push(`/pipelines/${pipeline}`)
@@ -136,63 +161,104 @@ class PipelineCard extends Component {
     if (configuration.hasOwnProperty('importedPipeline')) {
       cardSubheader = `FROM '${configuration.importedPipeline}' (${cardSubheader})`
     }
-    return (
-      <Card className={classes.card}>
-        <CardHeader
-          avatar={
-            <Avatar className={classes.avatar}>
-              <PipelineIcon />
-            </Avatar>
-          }
-          title={pipeline.get('name')}
-          subheader={cardSubheader}
-        />
-        <CardContent className={classes.info}>
+    if (semver.gte(version.get('version'), '1.8.0')) {
+      return (
+        <Card className={classes.card}>
+          <CardHeader
+            avatar={
+              <Avatar className={classes.avatar}>
+                <PipelineIcon />
+              </Avatar>
+            }
+            title={pipeline.get('name')}
+            subheader={cardSubheader}
+          />
+          <CardContent className={classes.info}>
+            <List>
+              {cardSteps.map(step =>{
+                const runKey = (step !== 'surface_analysis') ? 'run' : 'run_freesurfer';
+                return (
+                  <PipelineStep
+                    {...{classes}}
+                    stepKey={configuration.getIn([step, runKey])}
+                    label={formatLabel(step)}
+                    key={step}
+                  />
+                )
+              })}
+              <PipelineStep
+                {...{classes}}
+                stepKey={Boolean(derivatives)}
+                label={`${derivatives} derivative${derivatives === 1 ? '' : 's'}`}
+                key='derivatives'
+              />
+            </List>
+          </CardContent>
+          <CardActions className={classes.actions}>
+
+            <Tooltip title="Duplicate">
+              <IconButton onClick={() => this.props.onDuplicate(pipeline.get('id'))}>
+                <DuplicateIcon />
+              </IconButton>
+            </Tooltip>
+
+            { !pipelineIsADefault ?
+              <Tooltip title="Delete">
+                <IconButton onClick={() => this.props.onDelete(pipeline.get('id'))}>
+                  <DeleteIcon />
+                </IconButton>
+              </Tooltip>
+              : null
+            }
+
+            <Tooltip title={pipelineIsADefault ? 'View' : 'View / Edit'}>
+              <IconButton className={classes.expand} onClick={() => this.handleOpen(pipeline.get('id'))}>
+                {pipelineIsADefault ? <PlayArrowIcon /> : <NavigateNextIcon />}
+              </IconButton>
+            </Tooltip>
+          </CardActions>
+        </Card>
+      )
+    } else {
+      return (
+        <Card className={classes.card}>
+          <CardHeader
+            avatar={
+              <Avatar className={classes.avatar}>
+                <PipelineIcon />
+              </Avatar>
+            }
+            title={pipeline.get('name')}
+            subheader={cardSubheader}
+          />
+          <CardContent className={classes.info}>
           <List>
-            {cardSteps.map(step =>{
-              const runKey = (step !== 'surface_analysis') ? 'run' : 'run_freesurfer';
-              return (
-                <PipelineStep
-                  {...{classes}}
-                  stepKey={configuration.getIn([step, runKey])}
-                  label={formatLabel(step)}
-                  key={step}
-                />
-              )
-            })}
-            <PipelineStep
-              {...{classes}}
-              stepKey={Boolean(derivatives)}
-              label={`${derivatives} derivative${derivatives === 1 ? '' : 's'}`}
-              key='derivatives'
-            />
+            <ListItem key='deprecated'>
+              <ListItemIcon>
+                <DeprecatedIcon />
+              </ListItemIcon>
+              <ListItemText primary='Deprecated' secondary='Please upgrade your pipeline configuration' />
+            </ListItem>
           </List>
-        </CardContent>
-        <CardActions className={classes.actions}>
+          </CardContent>
+          <CardActions className={classes.actions}>
 
-          <Tooltip title="Duplicate">
-            <IconButton onClick={() => this.props.onDuplicate(pipeline.get('id'))}>
-              <DuplicateIcon />
-            </IconButton>
-          </Tooltip>
+            <Tooltip title="Download config file">
+              <IconButton onClick={() => this.handleDownload(pipeline.get('id'))}>
+                <DownloadIcon />
+              </IconButton>
+            </Tooltip>
 
-          { !pipelineIsADefault ?
             <Tooltip title="Delete">
               <IconButton onClick={() => this.props.onDelete(pipeline.get('id'))}>
                 <DeleteIcon />
               </IconButton>
             </Tooltip>
-            : null
-          }
 
-          <Tooltip title={pipelineIsADefault ? 'View' : 'View / Edit'}>
-            <IconButton className={classes.expand} onClick={() => this.handleOpen(pipeline.get('id'))}>
-              {pipelineIsADefault ? <PlayArrowIcon /> : <NavigateNextIcon />}
-            </IconButton>
-          </Tooltip>
-        </CardActions>
-      </Card>
-    )
+          </CardActions>
+        </Card>
+      )
+    };
   }
 }
 

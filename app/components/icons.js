@@ -18,6 +18,7 @@ export { default as RunPausedIcon } from '@material-ui/icons/PauseCircleFilled';
 export { default as FormatIcon } from '@material-ui/icons/Folder';
 export { default as MenuIcon } from '@material-ui/icons/Menu';
 export { default as PipelineStepIcon } from '@material-ui/icons/Extension';
+export { default as DeprecatedIcon } from '@material-ui/icons/AssignmentLate';
 export { default as PipelineExecutionTimeIcon } from '@material-ui/icons/AccessTime';
 export { default as LoadingIcon } from '@material-ui/icons/Loop';
 export { default as AuthErrorIcon } from '@material-ui/icons/Lock';

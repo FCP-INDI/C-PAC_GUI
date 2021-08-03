@@ -202,10 +202,16 @@ function* loadConfig (action) {
       if(!fromJS(template).equals(fromJS(initialState.pipelines[0]))) {
         const pipelineIds = initialState.pipelines.map((p)=>p.id);
         let oldDefault = initialState.pipelines[0];
-        oldDefault.id = `default-${oldDefault.versions[0].version}`;
-        if (!pipelineIds.includes(template.id)) {
-          initialState.pipelines.push(oldDefault);
-          initialState.pipelines[0] = template;
+        if (oldDefault == undefined) {
+          initialState.pipelines.push(template);
+        } else if (oldDefault.versions !== undefined) {
+          if (Object.keys(oldDefault.versions).includes['0']) {
+            oldDefault.id = `default-${oldDefault.versions[0].version}`;
+          }
+          if (!pipelineIds.includes(template.id)) {
+            initialState.pipelines.push(oldDefault);
+            initialState.pipelines[0] = template;
+          };
         };
       };
       console.log("Using local state");

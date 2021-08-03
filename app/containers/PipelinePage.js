@@ -41,7 +41,7 @@ import {
   EditIcon,
 } from 'components/icons';
 
-import cpac from '@internal/c-pac'
+import cpac from '@internal/c-pac';
 
 
 class PipelinePage extends Component {
