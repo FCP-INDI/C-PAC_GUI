@@ -34,19 +34,21 @@ export function normalize(pipeline) {
   let configuration = pipeline.versions[lastVersion].configuration
 
   if (pipeline.versions[lastVersion].version &&
-    semver.gte(pipeline.versions[lastVersion].version, '1.4.3')) {
-
-    let nuisanceRegression = configuration.functional.nuisance_regression
-    for (let regressors_i in configuration.functional.nuisance_regression.regressors) {
-      let regressors = nuisanceRegression.regressors[regressors_i]
-      if (regressors.Censor.thresholds) {
-        if (regressors.Censor.thresholds.length) {
-          regressors.Censor.threshold = regressors.Censor.thresholds[0]
-        } else {
-          regressors.Censor.enabled = false
-          regressors.Censor.threshold = {
-            type: 'FD_J',
-            value: 0.0,
+    semver.gte(pipeline.versions[lastVersion].version, '1.4.3')
+  ) {
+    if (semver.lt(pipeline.versions[lastVersion].version, '1.8.0')) {
+      let nuisanceRegression = configuration.functional.nuisance_regression
+      for (let regressors_i in configuration.functional.nuisance_regression.regressors) {
+        let regressors = nuisanceRegression.regressors[regressors_i]
+        if (regressors.Censor.thresholds) {
+          if (regressors.Censor.thresholds.length) {
+            regressors.Censor.threshold = regressors.Censor.thresholds[0]
+          } else {
+            regressors.Censor.enabled = false
+            regressors.Censor.threshold = {
+              type: 'FD_J',
+              value: 0.0,
+            }
           }
         }
       }
