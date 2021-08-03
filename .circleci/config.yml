@@ -163,6 +163,8 @@ jobs:
             
             git clone --single-branch --branch gh-pages git@github.com:${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}.git /tmp/repo
             cd /tmp/repo
+            git remote set-branches --add origin ${CIRCLE_BRANCH}
+            git fetch origin ${CIRCLE_BRANCH}
 
             if [ "${CIRCLE_BRANCH}" == "main" ]; then
               rm -Rf /tmp/repo/versions/${VERSION} 2> /dev/null | true
