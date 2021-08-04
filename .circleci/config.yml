@@ -198,6 +198,7 @@ jobs:
                 COMMIT_MESSAGE="${GITMOJI_UNICODE}${COMMIT_MESSAGE/\:$GITMOJI\:}"
               fi
             fi
+            git checkout origin/${CIRCLE_BRANCH} -- .circleci
             git add .
             git commit -m "${COMMIT_MESSAGE}" || true
             git push -f origin gh-pages || true
