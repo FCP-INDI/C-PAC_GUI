@@ -123,6 +123,7 @@ jobs:
             git push origin "${TAG}" -f
 
             if [ "${CIRCLE_BRANCH}" == "main" ]; then
+              github-release delete -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} --tag "${VERSION}" || true
               github-release release -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} --tag "${VERSION}" --name "${VERSION}" ${RELEASE_OPTS}
               github-release upload -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} --tag "${VERSION}" --name "c-pac_gui-${VERSION}-linux-amd64.deb" --file /tmp/workspace/dist-linux/c-pac_gui_*_amd64.deb
               github-release upload -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} --tag "${VERSION}" --name "c-pac_gui-${VERSION}-linux-amd64.snap" --file /tmp/workspace/dist-linux/c-pac_gui_*_amd64.snap
