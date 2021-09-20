@@ -274,6 +274,66 @@ class SignalCorrection extends PureComponent {
   }
 }
 
+/** One CensorThreshold in a Censor Regressor. */
+class CensorThreshold extends PureComponent {
+  static propTypes = {
+    /** Regressor to render */
+    regressor: PropTypes.object,
+    /** Regresor index */
+    i: PropTypes.number.isRequired,
+    /** Threshold index */
+    j: PropTypes.number.isRequired,
+    /** Threshold object (type & value) */
+    threshold: PropTypes.instanceOf(Immutable.Map).isRequired,
+    /** Methods for mutating regressor in pipeline config */
+    handleThresholdChange: PropTypes.func.isRequired,
+    onChange: PropTypes.func.isRequired,
+  }
+
+  /** Function to delete a Threshold from a Censor Regressor.
+   * @param {number} j Threshold index within Censor
+   */
+  handleDelete = (j) => {
+    const { handleThresholdChange, i, onChange, regressor } = this.props;
+
+    let thresholds = regressor.getIn(['Censor', 'thresholds'], fromJS([]));
+    thresholds = thresholds.delete(j);
+
+    handleThresholdChange(thresholds, i, onChange);
+  };
+
+  render() {
+    const { i, j, onChange, regressor, threshold } = this.props;
+
+    return (
+      <FormGroup style={ { flexGrow: 1, margin: '0 0 10px 0' } }>
+        <PipelineTextField
+          select
+          label="Threshold type"
+          name={`nuisance_corrections.2-nuisance_regression.Regressors.${i}.Censor.thresholds.${j}.type`}
+          value={threshold.getIn(["type"], 'FD_J')}
+          onChange={onChange}
+          fullWidth margin="normal" variant="outlined"
+        >
+          <MenuItem value={"FD_J"}>Framewise Displacement - Jenkinson</MenuItem>
+          <MenuItem value={"FD_P"}>Framewise Displacement - Power</MenuItem>
+          <MenuItem value={"DVARS"}>DVARS</MenuItem>
+        </PipelineTextField>
+        <PipelineTextField label="Threshold"
+          name={`nuisance_corrections.2-nuisance_regression.Regressors.${i}.Censor.thresholds.${j}.value`}
+          value={threshold.getIn(["value"])}
+          onChange={onChange}
+          fullWidth margin="normal" variant="outlined"
+        />
+        <IconButton onClick={() => this.handleDelete(j)}>
+          <DeleteIcon />
+        </IconButton>
+        <Divider />
+      </FormGroup>
+    )
+  }
+}
+
 /** A modal in which to edit a Regressor.
  * @TODO This component includes configuration validation information that is not yet encoded in C-PAC.
  * @TODO This component mixes controlled and uncontrolled components.
@@ -295,6 +355,37 @@ class RegressorDialog extends PureComponent {
   state = {
     regressorName: this.props.regressor.getIn(['Name'])
   }
+
+  /** Helper to pass key, value to updater.
+   * @param {Immtable.List} change updated list of regressors
+   * @param {number} i Regressor index
+   * @param {function} onChange
+   */
+  handleThresholdChange = ((change, i, onChange) => {
+    onChange({
+      target: {
+        name: ['nuisance_corrections', '2-nuisance_regression', 'Regressors', i, 'Censor', 'thresholds'],
+        value: change
+      }
+    });
+  });
+
+  /** Function to add a Threshold to a Censor Regressor
+   * @param {number} i Regressor index
+   */
+  handleNewThreshold = (i) => {
+    const { regressor, onChange } = this.props;
+
+    this.handleThresholdChange(
+      regressor.getIn(['Censor', 'thresholds'], fromJS([])).push(
+        fromJS({
+          type: 'FD_J',
+          value: 0
+        })
+      ), i, onChange
+    );
+  };
+
 
   render() {
     const { classes, handleClose, onChange, regressor } = this.props;
@@ -532,7 +623,7 @@ class RegressorDialog extends PureComponent {
                 <FormGroup row>
                   <TextField label="Number of previous TRs to censor"
                     name={`nuisance_corrections.2-nuisance_regression.Regressors.${i}.Censor.number_of_previous_trs_to_censor`}
-                    value={regressor.getIn(['Censor', 'number_of_previous_trs_to_censor'])}
+                    value={regressor.getIn(['Censor', 'number_of_previous_trs_to_censor'], 0)}
                     onChange={onChange}
                     fullWidth margin="normal" variant="outlined"
                     InputProps={{
@@ -543,7 +634,7 @@ class RegressorDialog extends PureComponent {
                 <FormGroup row>
                   <TextField label="Number of subsequent TRs to censor"
                     name={`nuisance_corrections.2-nuisance_regression.Regressors.${i}.Censor.number_of_subsequent_trs_to_censor`}
-                    value={regressor.getIn(['Censor', 'number_of_subsequent_trs_to_censor'])}
+                    value={regressor.getIn(['Censor', 'number_of_subsequent_trs_to_censor'], 0)}
                     onChange={onChange}
                     fullWidth margin="normal" variant="outlined"
                     InputProps={{
@@ -551,25 +642,18 @@ class RegressorDialog extends PureComponent {
                     }}
                   />
                 </FormGroup>
-                <FormGroup row>
-                  <TextField
-                    select
-                    label="Threshold type"
-                    name={`nuisance_corrections.2-nuisance_regression.Regressors.${i}.Censor.threshold.type`}
-                    value={regressor.getIn(["Censor", "threshold", "type"], 'FD_J')}
-                    onChange={onChange}
-                    fullWidth margin="normal" variant="outlined"
-                  >
-                    <MenuItem value={"FD_J"}>Framewise Displacement - Jenkinson</MenuItem>
-                    <MenuItem value={"FD_P"}>Framewise Displacement - Power</MenuItem>
-                    <MenuItem value={"DVARS"}>DVARS</MenuItem>
-                  </TextField>
-                  <TextField label="Threshold"
-                    name={`nuisance_corrections.2-nuisance_regression.Regressors.${i}.Censor.threshold.value`}
-                    value={regressor.getIn(["Censor", "threshold", "value"])}
-                    onChange={onChange}
-                    fullWidth margin="normal" variant="outlined"
-                  />
+                <FormGroup style={ { flexGrow: 1, margin: '0 0 10px 0' } }>
+                  {
+                    regressor.getIn(["Censor", "thresholds"], fromJS([])).map((threshold, j) => <CensorThreshold
+                        { ...{i, j, onChange, regressor, threshold} }
+                        handleThresholdChange={this.handleThresholdChange}
+                        key={`Censor-${j}`}
+                      />
+                    )
+                  }
+                  <IconButton onClick={() => this.handleNewThreshold(i)}>
+                    <AddIcon />
+                  </IconButton>
                 </FormGroup>
               </>
             ) }
@@ -831,8 +915,21 @@ class NuisanceRegression extends PureComponent {
         regressor_terms += `\\;${regressor['bottom_frequency'] || 0.00}-${regressor['top_frequency'] || 9999.00}`
       }
 
-      if (reg == 'Censor' && regressor.method && regressor.threshold) {
-        regressor_terms += `\\;\\textrm{${regressor['method']}}\\;\\textrm{${censor_renaming[regressor['threshold']['type']]}}:\\;${regressor['threshold']['value']}`
+      if (reg == 'Censor') {
+        regressor_terms += `^\\textrm{-${regressor.number_of_previous_trs_to_censor || 0}}_\\textrm{+${regressor.number_of_subsequent_trs_to_censor || 0}}\\;`;
+        if (regressor.thresholds) {
+          regressor.thresholds.forEach((thresh, regi) => {
+            if (regi === 0) {
+              regressor_terms += `[`;
+            }
+            regressor_terms += `\\;\\textrm{${censor_renaming[thresh['type']]}}:${thresh['value']}`;
+            if (regi < regressor.thresholds.length - 1) {
+              regressor_terms += `,\\;`;
+            } else {
+              regressor_terms += `]`;
+            };
+          });
+        }
       }
 
       regressor_pieces.push(regressor_terms)
