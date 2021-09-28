@@ -177,13 +177,15 @@ class CpacListItem extends PureComponent {
     /** Inherited style */
     classes: PropTypes.object,
     /** Is this a default, immutable pipeline? */
-    isDefault: PropTypes.bool
+    isDefault: PropTypes.bool,
+    /** Validation schema */
+    schema: PropTypes.object.isRequired
   }
 
   render() {
     const {
       chain, classes, entry, handleDelete, handleDuplicate, i, isDefault,
-      item, label, level, name, onChange, parents
+      item, label, level, name, onChange, parents, schema
     } = this.props;
     const handlers = {
       handleDelete: handleDelete,
@@ -227,7 +229,7 @@ class CpacListItem extends PureComponent {
     } else {
       return (
           <PipelinePart
-          { ...{ classes, isDefault, onChange } }
+          { ...{ classes, isDefault, onChange, schema } }
           configuration={item}
           parents={[...parents.slice(0, level), entry[0]]}
           level={level + 1}
@@ -253,7 +255,9 @@ class CpacList extends PureComponent {
     /** Inherited style */
     classes: PropTypes.object,
     /** Is this a default, immutable pipeline? */
-    isDefault: PropTypes.bool
+    isDefault: PropTypes.bool,
+    /** Validation schema */
+    schema: PropTypes.object.isRequired
   }
 
   state = { fullList: this.props.entry[1] };
@@ -327,7 +331,7 @@ class CpacList extends PureComponent {
           <CpacListItem
             { ... {
               chain, classes, entry, i, isDefault, item, label, level, name,
-              onChange, parents
+              onChange, parents, schema
             } }
             handleDelete={ this.handleDelete }
             handleDuplicate={ this.handleDuplicate }

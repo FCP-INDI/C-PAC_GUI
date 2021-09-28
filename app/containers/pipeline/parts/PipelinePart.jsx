@@ -60,7 +60,9 @@ class PipelinePart extends PureComponent {
     /** Sequence of keys from the top of the overall pipeline configuration to this Map. */
     parents: PropTypes.array.isRequired,
     /** Current depth level (integer). */
-    level: PropTypes.number.isRequired
+    level: PropTypes.number.isRequired,
+    /** Validation schema */
+    schema: PropTypes.object.isRequired
   }
 
   static styles = theme => ({
@@ -75,7 +77,7 @@ class PipelinePart extends PureComponent {
 
   render() {
     const {
-      classes, configuration, isDefault, level, onChange, parents
+      classes, configuration, isDefault, level, onChange, parents, schema
     } = this.props;
 
     switch (Immutable.Map.isMap(configuration)) {
@@ -119,7 +121,7 @@ class PipelinePart extends PureComponent {
                   return (
                     <CpacList { ...{
                         entry, classes, configuration, isDefault, level,
-                        parents, onChange
+                        parents, onChange, schema
                       } }
                       key={`list-${entry[0]}`}
                     />
@@ -137,7 +139,7 @@ class PipelinePart extends PureComponent {
                           <AccordionDetails>
                           <Grid container>
                             <PipelinePart
-                              { ...{ classes, isDefault, onChange } }
+                              { ...{ classes, isDefault, onChange, schema } }
                               configuration={entry[1]}
                               parents={[...parents.slice(0, level), entry[0]]}
                               level={level + 1}
@@ -160,6 +162,7 @@ class PipelinePart extends PureComponent {
                             />
                           )
                         case 'string':
+                          console.log(schema.getIn(name.split('.')).toJS())
                           return (
                             <Grid key={entry[0]} item xs={12}>
                               <FormGroup row>

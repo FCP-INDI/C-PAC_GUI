@@ -103,7 +103,7 @@ function* loadConfig (action) {
         //   }
         // }
       ],
-      schema: {pipeline: cpacSchema},
+      schema: {pipeline: fromJS(cpacSchema)},
       pipelines: [
         template
       ],

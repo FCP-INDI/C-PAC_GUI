@@ -45,6 +45,8 @@ class PipelineEditor extends Component {
     /** Functions to handle changes to this component. */
     onChange: PropTypes.func.isRequired,
     onSave: PropTypes.func,
+    /** Validation schema */
+    schema: PropTypes.object.isRequired,
     /** Is this a default pipeline that should not be editable? */
     isDefault: PropTypes.bool
   }
@@ -93,7 +95,7 @@ class PipelineEditor extends Component {
 
 
   render() {
-    const { classes, configuration, isDefault, onChange } = this.props;
+    const { classes, configuration, isDefault, onChange, schema } = this.props;
     const { tab } = this.state;
 
     // Set the sequence of tabs to display.
@@ -125,7 +127,7 @@ class PipelineEditor extends Component {
         </Tabs>
         <Collapse key={`${tab}-collapse`} in={true}>
           <PipelinePart
-            { ...{ isDefault, onChange } }
+            { ...{ isDefault, onChange, schema } }
             configuration={entry}
             parents={[tab]}
             level={1}
