@@ -1,23 +1,23 @@
-import React, { PureComponent } from 'react';
-import PropTypes from 'prop-types';
-import Immutable from 'immutable';
-import { withStyles, Typography } from '@material-ui/core';
-import Grid from '@material-ui/core/Grid';
+import React, { PureComponent } from "react";
+import PropTypes from "prop-types";
+import Immutable from "immutable";
+import { withStyles, Typography } from "@material-ui/core";
+import Grid from "@material-ui/core/Grid";
 
-import Accordion from '@material-ui/core/Accordion';
-import AccordionDetails from '@material-ui/core/AccordionDetails';
-import AccordionSummary from '@material-ui/core/AccordionSummary';
-import FormGroup from '@material-ui/core/FormGroup';
-import MenuItem from '@material-ui/core/MenuItem';
-import TextField from '@material-ui/core/TextField';
-import PipelineTextField from 'components/TextField';
+import Accordion from "@material-ui/core/Accordion";
+import AccordionDetails from "@material-ui/core/AccordionDetails";
+import AccordionSummary from "@material-ui/core/AccordionSummary";
+import FormGroup from "@material-ui/core/FormGroup";
+import MenuItem from "@material-ui/core/MenuItem";
+import TextField from "@material-ui/core/TextField";
+import PipelineTextField from "components/TextField";
 
-import CpacList from 'components/List';
-import Help from 'components/Help';
-import OnOffSwitch from 'components/OnOffSwitch';
-import RoiPaths from 'components/RoiPaths';
+import CpacList from "components/List";
+import Help from "components/Help";
+import OnOffSwitch from "components/OnOffSwitch";
+import RoiPaths from "components/RoiPaths";
 
-import NuisanceRegression from './Regressor';
+import NuisanceRegression from "./Regressor";
 
 export const formatLabel = (label) => {
   const specialCasings = {
@@ -91,7 +91,7 @@ class PipelinePart extends PureComponent {
                 return (
                   <NuisanceRegression
                     { ...{ classes, configuration, onChange } }
-                    key='Regressors'
+                    key="Regressors"
                   />
                 )
               case "tse_roi_paths":
@@ -152,9 +152,9 @@ class PipelinePart extends PureComponent {
                     case false:
                       const regex = new RegExp(`^\s*{entry[0]}`);
                       const label = formatLabel(entry[0]);
-                      const name = [...parents.slice(0, level), entry[0]].join('.');
+                      const name = [...parents.slice(0, level), entry[0]].join(".");
                       switch (typeof(entry[1])) {
-                        case 'boolean':
+                        case "boolean":
                           return (
                             <OnOffSwitch
                               {...{regex, label, isDefault, name, onChange}}
@@ -162,11 +162,11 @@ class PipelinePart extends PureComponent {
                               checked={entry[1]}
                             />
                           )
-                        case 'string':
-                          const immutableOptions = schema.getIn(name.split('.'))
+                        case "string":
+                          const immutableOptions = schema.getIn(name.split("."))
                           const validOptions = immutableOptions != undefined ? immutableOptions.toJS() : undefined
-                          if (validOptions != undefined && Object.keys(validOptions)[0] == 'In') {
-                            const options = Object.keys(validOptions.In)[0] == 'set' ? validOptions.In.set : validOptions.In
+                          if (validOptions != undefined && Object.keys(validOptions)[0] == "In") {
+                            const options = Object.keys(validOptions.In)[0] == "set" ? validOptions.In.set : validOptions.In
                             return (
                               <Grid key={entry[0]} item xs={12}>
                                 <FormGroup row>
@@ -213,7 +213,7 @@ class PipelinePart extends PureComponent {
                               </FormGroup>
                             </Grid>
                           )
-                        case 'number':
+                        case "number":
                           return (
                             <Grid key={entry[0]} item xs={12}>
                               <FormGroup row>
@@ -229,7 +229,7 @@ class PipelinePart extends PureComponent {
                                     fullWidth
                                     margin="normal"
                                     variant="outlined"
-                                    type='number'
+                                    type="number"
                                     value={entry[1]}
                                   />
                                 </Help>
@@ -251,14 +251,14 @@ class PipelinePart extends PureComponent {
         )
       default:
         switch (parents[0]) {
-          case 'FROM':
+          case "FROM":
             return (
               <PipelineTextField
                 { ...{ isDefault, onChange } }
                 fullWidth margin="normal" variant="outlined"
-                name={parents.join('.')}
+                name={parents.join(".")}
                 value={configuration}
-                helperText={'name of a preconfig or in-container path to a custom pipeline config file'}
+                helperText={"name of a preconfig or in-container path to a custom pipeline config file"}
               />
             )
           default:
