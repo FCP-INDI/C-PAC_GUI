@@ -9,6 +9,7 @@ import AccordionDetails from '@material-ui/core/AccordionDetails';
 import AccordionSummary from '@material-ui/core/AccordionSummary';
 import FormGroup from '@material-ui/core/FormGroup';
 import MenuItem from '@material-ui/core/MenuItem';
+import TextField from '@material-ui/core/TextField';
 import PipelineTextField from 'components/TextField';
 
 import CpacList from 'components/List';
@@ -162,7 +163,36 @@ class PipelinePart extends PureComponent {
                             />
                           )
                         case 'string':
-                          console.log(schema.getIn(name.split('.')).toJS())
+                          const immutableOptions = schema.getIn(name.split('.'))
+                          const validOptions = immutableOptions != undefined ? immutableOptions.toJS() : undefined
+                          if (validOptions != undefined && Object.keys(validOptions)[0] == 'In') {
+                            if (Object.keys(validOptions.In)[0] == 'set') {
+                              return (
+                                <Grid key={entry[0]} item xs={12}>
+                                  <FormGroup row>
+                                    <Help
+                                      type="pipeline"
+                                      regex={regex}
+                                      help=""
+                                      fullWidth >
+                                      <TextField
+                                        { ...{
+                                          label, name, onChange
+                                        } }
+                                        fullWidth
+                                        select
+                                        margin="normal"
+                                        variant="outlined"
+                                        value={entry[1]}
+                                      >
+                                        {validOptions.In.set.map((option) => (<MenuItem key={option} value={option}>{option}</MenuItem>))}
+                                      </TextField>
+                                    </Help>
+                                  </FormGroup>
+                                </Grid>
+                              )
+                            }
+                          }
                           return (
                             <Grid key={entry[0]} item xs={12}>
                               <FormGroup row>
