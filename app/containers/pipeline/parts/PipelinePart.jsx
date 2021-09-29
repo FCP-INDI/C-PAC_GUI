@@ -166,32 +166,31 @@ class PipelinePart extends PureComponent {
                           const immutableOptions = schema.getIn(name.split('.'))
                           const validOptions = immutableOptions != undefined ? immutableOptions.toJS() : undefined
                           if (validOptions != undefined && Object.keys(validOptions)[0] == 'In') {
-                            if (Object.keys(validOptions.In)[0] == 'set') {
-                              return (
-                                <Grid key={entry[0]} item xs={12}>
-                                  <FormGroup row>
-                                    <Help
-                                      type="pipeline"
-                                      regex={regex}
-                                      help=""
-                                      fullWidth >
-                                      <TextField
-                                        { ...{
-                                          label, name, onChange
-                                        } }
-                                        fullWidth
-                                        select
-                                        margin="normal"
-                                        variant="outlined"
-                                        value={entry[1]}
-                                      >
-                                        {validOptions.In.set.map((option) => (<MenuItem key={option} value={option}>{option}</MenuItem>))}
-                                      </TextField>
-                                    </Help>
-                                  </FormGroup>
-                                </Grid>
-                              )
-                            }
+                            const options = Object.keys(validOptions.In)[0] == 'set' ? validOptions.In.set : validOptions.In
+                            return (
+                              <Grid key={entry[0]} item xs={12}>
+                                <FormGroup row>
+                                  <Help
+                                    type="pipeline"
+                                    regex={regex}
+                                    help=""
+                                    fullWidth >
+                                    <TextField
+                                      { ...{
+                                        label, name, onChange
+                                      } }
+                                      fullWidth
+                                      select
+                                      margin="normal"
+                                      variant="outlined"
+                                      value={entry[1]}
+                                    >
+                                      {options.map((option) => (<MenuItem key={option} value={option}>{option}</MenuItem>))}
+                                    </TextField>
+                                  </Help>
+                                </FormGroup>
+                              </Grid>
+                            )
                           }
                           return (
                             <Grid key={entry[0]} item xs={12}>
