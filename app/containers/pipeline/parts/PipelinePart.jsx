@@ -7,8 +7,12 @@ import Grid from "@material-ui/core/Grid";
 import Accordion from "@material-ui/core/Accordion";
 import AccordionDetails from "@material-ui/core/AccordionDetails";
 import AccordionSummary from "@material-ui/core/AccordionSummary";
+import FormControl from "@material-ui/core/FormControl";
 import FormGroup from "@material-ui/core/FormGroup";
+import FormLabel from "@material-ui/core/FormLabel";
 import MenuItem from "@material-ui/core/MenuItem";
+import Radio from "@material-ui/core/Radio";
+import RadioGroup from "@material-ui/core/RadioGroup";
 import TextField from "@material-ui/core/TextField";
 import PipelineTextField from "components/TextField";
 
@@ -18,6 +22,7 @@ import OnOffSwitch from "components/OnOffSwitch";
 import RoiPaths from "components/RoiPaths";
 
 import NuisanceRegression from "./Regressor";
+import RadioOption from "./RadioOption";
 
 export const formatLabel = (label) => {
   const specialCasings = {
@@ -165,32 +170,48 @@ class PipelinePart extends PureComponent {
                         case "string":
                           const immutableOptions = schema.getIn(name.split("."))
                           const validOptions = immutableOptions != undefined ? immutableOptions.toJS() : undefined
-                          if (validOptions != undefined && Object.keys(validOptions)[0] == "In") {
-                            const options = Object.keys(validOptions.In)[0] == "set" ? validOptions.In.set : validOptions.In
-                            return (
-                              <Grid key={entry[0]} item xs={12}>
-                                <FormGroup row>
-                                  <Help
-                                    type="pipeline"
-                                    regex={regex}
-                                    help=""
-                                    fullWidth >
-                                    <TextField
-                                      { ...{
-                                        label, name, onChange
-                                      } }
-                                      fullWidth
-                                      select
-                                      margin="normal"
-                                      variant="outlined"
-                                      value={entry[1]}
-                                    >
-                                      {options.map((option) => (<MenuItem key={option} value={option}>{option}</MenuItem>))}
-                                    </TextField>
-                                  </Help>
-                                </FormGroup>
-                              </Grid>
-                            )
+                          if (validOptions != undefined) {
+                            if (Object.keys(validOptions)[0] == "In") {
+                              const options = Object.keys(validOptions.In)[0] == "set" ? validOptions.In.set : validOptions.In
+                              return (
+                                <Grid key={entry[0]} item xs={12}>
+                                  <FormGroup row>
+                                    <Help
+                                      type="pipeline"
+                                      regex={regex}
+                                      help=""
+                                      fullWidth >
+                                      <TextField
+                                        { ...{
+                                          label, name, onChange
+                                        } }
+                                        fullWidth
+                                        select
+                                        margin="normal"
+                                        variant="outlined"
+                                        value={entry[1]}
+                                      >
+                                        {options.map((option) => (<MenuItem key={option} value={option}>{option}</MenuItem>))}
+                                      </TextField>
+                                    </Help>
+                                  </FormGroup>
+                                </Grid>
+                              )
+                            } else if (Object.keys(validOptions)[0] == "Any") {
+                              return (
+                                <FormControl key={entry[0]} component="fieldset">
+                                  <FormLabel component="legend">{label}</FormLabel>
+                                  <RadioGroup
+                                    { ...{name, onChange} }
+                                    aria-label="gender"
+                                    value={entry[1]}
+                                  >
+                                    {validOptions.Any.map((option) => JSON.stringify(option))}
+                                    {/* (<RadioOption key={option} { ...{option} }/>) */}
+                                  </RadioGroup>
+                                </FormControl>
+                              )
+                            }
                           }
                           return (
                             <Grid key={entry[0]} item xs={12}>
