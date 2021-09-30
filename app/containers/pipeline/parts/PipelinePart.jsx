@@ -206,8 +206,7 @@ class PipelinePart extends PureComponent {
                                     aria-label="gender"
                                     value={entry[1]}
                                   >
-                                    {validOptions.Any.map((option) => JSON.stringify(option))}
-                                    {/* (<RadioOption key={option} { ...{option} }/>) */}
+                                    {validOptions.Any.map((option) => <RadioOption key={option} { ...{isDefault, name, onChange, option} }/>)}
                                   </RadioGroup>
                                 </FormControl>
                               )
