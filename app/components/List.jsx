@@ -56,7 +56,6 @@ class OnOffSwitchListItem extends PureComponent {
           { ...{ label, isDefault, onChange } }
           key={ `${entry[0]}-${i}` }
           name={`${name}.${i}`}
-          // onChange={(e) => this.togglePair(e, onChange)}
           regex={ regex }
           checked={ item }
         />

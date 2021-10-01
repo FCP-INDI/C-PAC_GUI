@@ -12,7 +12,6 @@ import FormGroup from "@material-ui/core/FormGroup";
 import FormLabel from "@material-ui/core/FormLabel";
 import MenuItem from "@material-ui/core/MenuItem";
 import Radio from "@material-ui/core/Radio";
-import RadioGroup from "@material-ui/core/RadioGroup";
 import TextField from "@material-ui/core/TextField";
 import PipelineTextField from "components/TextField";
 
@@ -22,7 +21,7 @@ import OnOffSwitch from "components/OnOffSwitch";
 import RoiPaths from "components/RoiPaths";
 
 import NuisanceRegression from "./Regressor";
-import RadioOption from "./RadioOption";
+import CPACRadioGroup from "./RadioGroup";
 
 export const formatLabel = (label) => {
   const specialCasings = {
@@ -201,13 +200,10 @@ class PipelinePart extends PureComponent {
                               return (
                                 <FormControl key={entry[0]} component="fieldset">
                                   <FormLabel component="legend">{label}</FormLabel>
-                                  <RadioGroup
-                                    { ...{name, onChange} }
-                                    aria-label="gender"
+                                  <CPACRadioGroup
+                                    { ...{ label, name, onChange, validOptions } }
                                     value={entry[1]}
-                                  >
-                                    {validOptions.Any.map((option) => <RadioOption key={option} { ...{isDefault, name, onChange, option} }/>)}
-                                  </RadioGroup>
+                                  />
                                 </FormControl>
                               )
                             }
