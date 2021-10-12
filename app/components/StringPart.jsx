@@ -32,17 +32,19 @@ class PipelineStringPart extends PureComponent {
 
   render() {
     const { entry, isDefault, name, onChange, regex, schema } = this.props;
-    let { label } = this.props;
+    let { label, validOptions } = this.props;
     let schemaKey = name.split(".");
     const schemaArrayOf = !isNaN(parseInt(schemaKey[schemaKey.length - 1]));
     if (schemaArrayOf) {
       schemaKey = schemaKey.slice(0, -1)
     }
     const immutableOptions = schema.getIn(schemaKey);
-    let validOptions = immutableOptions != undefined ? immutableOptions.toJS() : undefined;
-    if (schemaArrayOf) {
-      validOptions = validOptions[0];
-      label = null;
+    if (!validOptions) {
+      validOptions = immutableOptions != undefined ? immutableOptions.toJS() : undefined;
+      if (schemaArrayOf) {
+        validOptions = validOptions[0];
+        label = null;  // label is already displayed for the whole list
+      }
     }
     if (validOptions != undefined && Object.keys(validOptions)[0] == "In") {
       const options = Object.keys(validOptions.In)[0] == "set" ? validOptions.In.set : validOptions.In;
