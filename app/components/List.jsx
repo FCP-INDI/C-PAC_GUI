@@ -20,6 +20,7 @@ import {
 import CustomPropTypes from 'components/PropTypes';
 import OnOffSwitch from 'components/OnOffSwitch';
 import PipelinePart, { formatLabel } from 'containers/pipeline/parts/PipelinePart';
+import PipelineStringPart from "components/StringPart";
 import PipelineTextField from 'components/TextField';
 
 /** A Boolean toggle component within a list. */
@@ -104,17 +105,20 @@ class CpacTextListItem extends PureComponent {
 
   render() {
     const {
-      chain, handlers, i, inputType, isDefault, item, label, name, onChange
+      chain, handlers, i, inputType, isDefault, item, label, name, onChange, schema
     } = this.props;
 
     return (
       <ListItem button key={i}>
-        <PipelineTextField
-          label={label} margin="normal" variant="outlined"
+        <PipelineStringPart
+          { ...{
+            isDefault,
+            label,
+            onChange,
+            schema } }
+          entry={[label, item]}
           name={`${name}.${i}`}
-          type={inputType}
-          value={item}
-          { ...{ isDefault, onChange } }
+          regex={ null }
         />
         <ListItemSecondaryAction>
           { item == '' ? null : (
@@ -208,7 +212,7 @@ class CpacListItem extends PureComponent {
           return (
             <CpacTextListItem
               { ...{
-                chain, handlers, i, isDefault, item, label, name, onChange
+                chain, handlers, i, isDefault, item, label, name, onChange, schema
               } }
               inputType={ 'number' }
             />
@@ -217,7 +221,7 @@ class CpacListItem extends PureComponent {
           return (
             <CpacTextListItem
               { ...{
-                chain, handlers, i, isDefault, item, label, name, onChange
+                chain, handlers, i, isDefault, item, label, name, onChange, schema
               } }
               inputType={ 'text' }
             />

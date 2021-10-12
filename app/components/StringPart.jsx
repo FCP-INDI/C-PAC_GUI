@@ -15,7 +15,7 @@ import PipelineTextField from "components/TextField";
 class PipelineStringPart extends PureComponent {
   static propTypes = {
     /** 2-element array: key, value */
-    entry: PropTypes.arrayOf(PropTypes.string).isRequired,
+    entry: PropTypes.array.isRequired,
     /** Dot-delimited sequence of keys from the top of the overall pipeline configuration to this list (array). */
     name: PropTypes.string.isRequired,
     /** Text label to display by TextField. */
@@ -27,13 +27,23 @@ class PipelineStringPart extends PureComponent {
     /** Validation schema */
     schema: PropTypes.object.isRequired,
     /** Regular expression */
-    regex: PropTypes.instanceOf(RegExp).isRequired,
+    regex: PropTypes.instanceOf(RegExp),
   }
 
   render() {
-    const { entry, isDefault, label, name, onChange, regex, schema } = this.props;
-    const immutableOptions = schema.getIn(name.split("."));
-    const validOptions = immutableOptions != undefined ? immutableOptions.toJS() : undefined;
+    const { entry, isDefault, name, onChange, regex, schema } = this.props;
+    let { label } = this.props;
+    let schemaKey = name.split(".");
+    const schemaArrayOf = !isNaN(parseInt(schemaKey[schemaKey.length - 1]));
+    if (schemaArrayOf) {
+      schemaKey = schemaKey.slice(0, -1)
+    }
+    const immutableOptions = schema.getIn(schemaKey);
+    let validOptions = immutableOptions != undefined ? immutableOptions.toJS() : undefined;
+    if (schemaArrayOf) {
+      validOptions = validOptions[0];
+      label = null;
+    }
     if (validOptions != undefined && Object.keys(validOptions)[0] == "In") {
       const options = Object.keys(validOptions.In)[0] == "set" ? validOptions.In.set : validOptions.In;
       return (
