@@ -94,7 +94,7 @@ jobs:
       - run:
           name: Install deployment dependencies
           command: |
-            wget https://github.com/aktau/github-release/releases/download/v0.10.0/linux-amd64-github-release.tar.bz2 -O /home/circleci/linux-amd64-github-release.tar.bz2
+            wget https://github.com/aktau/github-release/releases/download/v0.7.2/linux-amd64-github-release.tar.bz2 -O /home/circleci/linux-amd64-github-release.tar.bz2
             tar xjf /home/circleci/linux-amd64-github-release.tar.bz2 -C /home/circleci
             sudo mv /home/circleci/bin/linux/amd64/github-release /usr/local/bin
             rm -Rf /home/circleci/bin/linux
