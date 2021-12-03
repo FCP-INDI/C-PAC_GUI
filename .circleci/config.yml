@@ -159,6 +159,7 @@ jobs:
       - run:
           name: Deploy web version
           command: |
+            apt-get update && apt-get install jq -y
             VERSION=v`jq -r '.version' package.json`
             TAG=$([ "${CIRCLE_BRANCH}" == "main" ] && echo "latest" || echo "nightly")
             
