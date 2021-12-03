@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import memoizeOne from 'memoize-one';
 
 import {
   pipelineVersionDirtyUpdate,
@@ -16,6 +17,7 @@ import PipelineEditor from 'containers/pipeline/PipelineEditor';
 import Header, { HeaderText, HeaderAvatar, HeaderTools } from 'components/Header';
 import Content from 'components/Content';
 import Box from 'components/Box';
+import NotFound from 'components/404';
 
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
@@ -39,7 +41,7 @@ import {
   EditIcon,
 } from 'components/icons';
 
-import cpac from '@internal/c-pac'
+import cpac from '@internal/c-pac';
 
 
 class PipelinePage extends Component {
@@ -56,7 +58,7 @@ class PipelinePage extends Component {
   constructor(props) {
     super(props)
 
-    const pipeline = this.props.pipeline
+    const { pipeline, schema } = this.props;
 
     if (!pipeline) {
       return
@@ -79,12 +81,12 @@ class PipelinePage extends Component {
     this.state = {
       dirty,
       version,
-      default: pipeline.get('id') === 'default',
+      isDefault: isADefault(pipeline.get('id')),
       configuration: pipeline.getIn(['versions', version, 'configuration'])
     }
   }
 
-  componentWillReceiveProps(nextProps) {
+  componentDidUpdate(nextProps) {
     if (!nextProps.pipeline.get('versions').keySeq().equals(this.props.pipeline.get('versions').keySeq())) {
       const pipeline = nextProps.pipeline
       const versions = pipeline.get('versions')
@@ -101,34 +103,35 @@ class PipelinePage extends Component {
 
       this.setState({
         dirty,
-        version,
-        configuration: pipeline.getIn(['versions', version, 'configuration'])
+        version
       });
     }
   }
 
-  handleChange = (values) => {
-    if (this.state.default) {
-      return
+  changedValue = (key, value) => {
+    if (typeof key == "string") {
+      key = key.split('.')
+    }
+    let configuration = this.state.configuration;
+
+    // Toggle both if there are two entries in a Boolean list
+    if (Array.isArray(key)) {
+      const indexInList = key[key.length - 1];
+      if (
+        typeof(value) === 'boolean' &&
+        !isNaN(indexInList) &&  // make sure the index is a number
+        !(indexInList % 1)
+      ) {  // make sure the index is an integer
+          const listKey = key.slice(0, key.length - 1);
+          let newList = configuration.getIn(listKey).toJS();
+          if (newList.length == 2) {
+            key = listKey;
+            value = newList.map((item) => !item);
+          }
+        }
     }
 
-    let configuration = this.state.configuration
-
-    if (values.target) {
-      const name = values.target.name
-      const value = values.target.type && values.target.type == "checkbox" ?
-                      values.target.checked :
-                      values.target.value
-
-      return this.handleChange([[name, fromJS(value)]])
-    }
-
-    for (let [key, value] of values) {
-      if (typeof key == "string") {
-        key = key.split('.')
-      }
-      configuration = configuration.setIn(key, isImmutable(value) ? value : fromJS(value))
-    }
+    configuration = configuration.setIn(key, isImmutable(value) ? value : fromJS(value));
 
     this.props.pipelineVersionDirtyUpdate(
       this.props.pipeline,
@@ -136,6 +139,24 @@ class PipelinePage extends Component {
     )
 
     this.setState({ configuration, dirty: true, version: "0" })
+    return(configuration)
+  }
+
+  handleChangedValue = memoizeOne(this.changedValue);
+
+  handleChange = (values) => {
+    if (this.state.isDefault) {
+      return
+    }
+
+    if (values.target) {
+      const name = values.target.name;
+      const value = values.target.type && values.target.type == "checkbox" ?
+                      values.target.checked :
+                      values.target.value;
+      return this.handleChangedValue(name, fromJS(value));
+    }
+
   }
 
   handleSave = () => {
@@ -143,33 +164,38 @@ class PipelinePage extends Component {
   };
 
   handleRevert = () => {
-    this.props.pipelineVersionDirtyRevert(this.props.pipeline.get('id'))
+    this.props.pipelineVersionDirtyRevert(this.props.pipeline.get('id'));
   };
 
   handleDownload = () => {
-    const pipeline = this.props.pipeline
-    const versions = pipeline.get('versions')
+    const pipeline = this.props.pipeline;
+    const configuration = this.state.configuration;
+    const pipelineName = pipeline.get('name');
+    const versions = pipeline.get('versions');
     let version = null
     if (versions.has("0")) {
       version = "0"
     } else {
       version = versions.keySeq().max()
     }
+    const cpacVersion = pipeline.getIn(['versions', version, 'version']);
 
     var blob = new Blob(
-      [cpac.pipeline.dump(pipeline.toJS(), version)],
+      [cpac.pipeline.dump(
+        configuration.toJS(), pipelineName, version, cpacVersion
+      )],
       { type: "text/yaml;charset=utf-8" }
     );
 
     var anchor = document.createElement('a');
     anchor.href = window.URL.createObjectURL(blob);
     anchor.target = '_blank';
-    anchor.download = pipeline.get('name') + '.yml'
+    anchor.download = pipelineName + '.yml'
     anchor.click();
   }
 
   handleTitleClick = () => {
-    if (this.state.default) {
+    if (this.state.isDefault) {
       return
     }
     this.setState({
@@ -190,7 +216,7 @@ class PipelinePage extends Component {
   }
 
   toggleTitleHoverState(state) {
-    if (this.state.default) {
+    if (this.state.isDefault) {
       return
     }
     return {
@@ -223,18 +249,21 @@ class PipelinePage extends Component {
         onMouseLeave={this.handleTitleHover}
         onClick={this.handleTitleClick}
         style={{
-          cursor: this.state.default ? '' : 'pointer',
+          cursor: this.state.isDefault ? '' : 'pointer',
         }}
-      >{ pipeline.get('name') + (this.state.dirty ? " *" : "") }</div>
+      >
+        {
+          pipeline.get('name') // TODO: fix dirty/save/revert + (this.state.dirty ? " *" : "")
+        }
+      </div>
     )
   }
 
   render() {
-    const { classes, pipeline } = this.props
+    const { classes, pipeline, schema } = this.props
 
     if (!pipeline) {
-      // @TODO ASH create a 404 page/component
-      return "404"
+      return <NotFound />
     }
 
     const tools = (
@@ -245,7 +274,7 @@ class PipelinePage extends Component {
           </IconButton>
         </Tooltip>
 
-        <Tooltip title={this.state.default ? "You cannot change the default template!" : "Save"}>
+        {/* TODO: fix dirty/save/revert <Tooltip title={this.state.default ? "You cannot change the default template!" : "Save"}>
           <span>
             <IconButton disabled={this.state.default} onClick={this.handleSave}>
               <SaveIcon />
@@ -259,7 +288,7 @@ class PipelinePage extends Component {
               <RevertIcon />
             </IconButton>
           </span>
-        </Tooltip>
+        </Tooltip> */}
       </React.Fragment>
     )
 
@@ -271,12 +300,12 @@ class PipelinePage extends Component {
           this.state.configuration ?
           (
             <React.Fragment>
-            { this.state.default ?
+            { this.state.isDefault ?
               <div className={classes.warning}>
                 You cannot change the default template! Please, duplicate it to create your own pipeline.
               </div>
               : null }
-              <PipelineEditor default={this.state.default} configuration={this.state.configuration} onChange={this.handleChange} onSave={this.handleSave} />
+              <PipelineEditor { ...{schema} } isDefault={this.state.isDefault} configuration={this.state.configuration} onChange={this.handleChange} onSave={this.handleSave} />
             </React.Fragment>
           )
           :
@@ -288,10 +317,11 @@ class PipelinePage extends Component {
 }
 
 const mapStateToProps = (state, props) => {
-  const { match: { params: { pipeline } } } = props
+  const { match: { params: { pipeline } } } = props;
 
   return {
     pipeline: state.main.getIn(['config', 'pipelines']).find((p) => p.get('id') == pipeline),
+    schema: state.main.getIn(['config', 'schema', 'pipeline'])
   }
 }
 
@@ -306,6 +336,15 @@ const mapDispatchToProps = {
 const areStatesEqual = (next, prev) => {
   // TODO review
   return false
+}
+
+/**
+ * Checks if a given pipeline ID is for a default pipeline.
+ * @param {string} pipelineID
+ * @returns {boolean}
+ */
+export const isADefault = (pipelineId) => {
+  return pipelineId.slice(0, 7) === 'default';
 }
 
 export default connect(mapStateToProps, mapDispatchToProps, null, { areStatesEqual })(withStyles(PipelinePage.styles)(PipelinePage));

@@ -35,9 +35,7 @@
     "babel-loader": "^8.0.4",
     "babel-plugin-add-module-exports": "^1.0.0",
     "babel-plugin-inline-import": "^3.0.0",
-    "babel-plugin-transform-es2015-modules-commonjs": "^6.26.2",
-    "chai": "^4.2.0",
-    "mocha": "^7.1.2"
+    "babel-plugin-transform-es2015-modules-commonjs": "^6.26.2"
   },
   "scripts": {
     "test": "mocha --require @babel/register -R spec"

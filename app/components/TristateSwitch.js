@@ -71,8 +71,6 @@ class TriSwitchBase extends React.Component {
   handleInputChange = event => {
     const checked = event.target.checked;
 
-    console.log(event)
-
     if (!this.isControlled) {
       this.setState({ checked });
     }

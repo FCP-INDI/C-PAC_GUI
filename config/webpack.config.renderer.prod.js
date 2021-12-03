@@ -2,18 +2,18 @@ import path from 'path';
 import webpack from 'webpack';
 import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
 
-import HtmlWebpackPlugin from 'html-webpack-plugin'
-import MiniCssExtractPlugin from 'mini-css-extract-plugin'
+import HtmlWebpackPlugin from 'html-webpack-plugin';
+import MiniCssExtractPlugin from 'mini-css-extract-plugin';
 
 import merge from 'webpack-merge';
 import baseConfig from './webpack.config.base';
 
 const dist = path.resolve(process.cwd(), 'app', 'dist');
 
-const SpeedMeasurePlugin = require("speed-measure-webpack-plugin");
-const smp = new SpeedMeasurePlugin();
+// const SpeedMeasurePlugin = require("speed-measure-webpack-plugin");
+// const smp = new SpeedMeasurePlugin();
 
-const target = process.env.TARGET == 'browser' ? 'web' : 'electron-renderer'
+const target = process.env.TARGET == 'browser' ? 'web' : 'electron-renderer';
 
 const config = merge(baseConfig, {
   target,

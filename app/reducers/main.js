@@ -22,7 +22,22 @@ import uuid from 'uuid/v4'
 import { fromJS } from 'immutable'
 
 import cpac from '@internal/c-pac'
+import { loadYaml } from '../../c-pac/resources/pipeline/yaml'
+import { versionRe } from '../../c-pac/pipeline'
 
+/**
+ * Function to persist C-PAC version tag across updates
+ * @param {!number} i
+ * @param {Map<string, object>} state
+ * @returns {Map<string, object>} Semantic Version of C-PAC for which pipeline config is sytactically specified.
+ */
+const persistVersion = (i, state) => state.getIn([
+  'config', 'pipelines', i, 'versions', Math.max(
+    ...Array.from(state.getIn([
+      'config', 'pipelines', i, 'versions'
+    ]).keySeq()).map(k => parseInt(k))
+  ).toString(), 'version'
+]);
 
 export default function main(state, action) {
   if (!state) {
@@ -57,14 +72,12 @@ export default function main(state, action) {
 
     case PIPELINE_VERSION_DIRTY_UPDATE: {
       const { pipeline: id, configuration } = action
-
       const i = state.getIn(['config', 'pipelines'])
-                     .findIndex((p) => p.get('id') == id)
-
+                     .findIndex((p) => p.get('id') == id);
       return state.setIn(
         ['config', 'pipelines', i, 'versions', '0'],
         fromJS({
-          version: '1.6.0',
+          version: persistVersion(i, state),
           configuration
         })
       )
@@ -72,7 +85,6 @@ export default function main(state, action) {
 
     case PIPELINE_VERSION_DIRTY_SAVE: {
       const { pipeline: id } = action
-
       const i = state.getIn(['config', 'pipelines'])
                      .findIndex((p) => p.get('id') == id)
 
@@ -84,7 +96,7 @@ export default function main(state, action) {
         .setIn([
           'config', 'pipelines', i, 'versions', new Date().getTime().toString()
         ], fromJS({
-          version: '1.3.0',
+          version: persistVersion(i, state),
           configuration: state.getIn(['config', 'pipelines', i, 'versions', '0', 'configuration'])
         }))
         .deleteIn(['config', 'pipelines', i, 'versions', '0'])
@@ -108,10 +120,16 @@ export default function main(state, action) {
       const { content } = action
       const pipelines = state.getIn(['config', 'pipelines'])
       const newPipelineId = uuid()
-      const newPipeline = fromJS(cpac.pipeline.parse(content))
-        .set('id', newPipelineId)
-
-      let name = newPipeline.get('name').trim()
+      const newPipeline = {
+        'id': newPipelineId,
+        'pipeline': fromJS(loadYaml(content))
+      };
+      let name = '[Unnamed]';
+      try { // C-PAC v1.8+
+        name = newPipeline.pipeline.getIn(['pipeline_setup', 'pipeline_name'])
+      } catch { // C-PAC v1.7
+        name = newPipeline.pipeline.get('name') ? newPipeline.get('name').trim() : name;
+      }
       let iName = 2
       if (pipelines.filter((p) => p.get('name') == name).size > 0) {
         while(pipelines.filter((p) => p.get('name') == name + ' (' + iName + ')').size > 0) {
@@ -119,11 +137,15 @@ export default function main(state, action) {
         }
         name = name + ' (' + iName + ')'
       }
-
+      newPipeline.name = name;
+      newPipeline.versions = {'0': {
+        configuration: newPipeline.pipeline,
+        version: versionRe.exec(content)[0]
+      }}
+      delete newPipeline.pipeline;
       const newPipelines = pipelines.push(
-        newPipeline
-          .set('name', name)
-      )
+        fromJS(newPipeline)
+      );
       return state.setIn(['config', 'pipelines'], newPipelines)
     }
 

@@ -1,5 +1,1 @@
-export GeneralPage from './GeneralPage'
-export AnatomicalPage from './AnatomicalPage'
-export FunctionalPage from './FunctionalPage'
-export LongitudinalPage from './LongitudinalPage'
-export DerivativesPage from './DerivativesPage'
+export PipelinePart, { formatLabel } from './PipelinePart'
