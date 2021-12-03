@@ -2414,3 +2414,7 @@ div#image_credit {
   bottom: 2ex;
   position: fixed;
 }
+
+.MuiListItem-container .MuiInputBase-fullWidth {
+  width: 90%;
+}
