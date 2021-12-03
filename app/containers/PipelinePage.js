@@ -58,7 +58,7 @@ class PipelinePage extends Component {
   constructor(props) {
     super(props)
 
-    const { pipeline } = this.props;
+    const { pipeline, schema } = this.props;
 
     if (!pipeline) {
       return
@@ -260,7 +260,7 @@ class PipelinePage extends Component {
   }
 
   render() {
-    const { classes, pipeline } = this.props
+    const { classes, pipeline, schema } = this.props
 
     if (!pipeline) {
       return <NotFound />
@@ -305,7 +305,7 @@ class PipelinePage extends Component {
                 You cannot change the default template! Please, duplicate it to create your own pipeline.
               </div>
               : null }
-              <PipelineEditor isDefault={this.state.isDefault} configuration={this.state.configuration} onChange={this.handleChange} onSave={this.handleSave} />
+              <PipelineEditor { ...{schema} } isDefault={this.state.isDefault} configuration={this.state.configuration} onChange={this.handleChange} onSave={this.handleSave} />
             </React.Fragment>
           )
           :
@@ -317,10 +317,11 @@ class PipelinePage extends Component {
 }
 
 const mapStateToProps = (state, props) => {
-  const { match: { params: { pipeline } } } = props
+  const { match: { params: { pipeline } } } = props;
 
   return {
     pipeline: state.main.getIn(['config', 'pipelines']).find((p) => p.get('id') == pipeline),
+    schema: state.main.getIn(['config', 'schema', 'pipeline'])
   }
 }
 

@@ -1,22 +1,22 @@
-import React, { PureComponent } from 'react';
-import PropTypes from 'prop-types';
-import Immutable from 'immutable';
-import { withStyles, Typography } from '@material-ui/core';
-import Grid from '@material-ui/core/Grid';
+import React, { PureComponent } from "react";
+import PropTypes from "prop-types";
+import Immutable from "immutable";
+import { withStyles, Typography } from "@material-ui/core";
+import Grid from "@material-ui/core/Grid";
 
-import Accordion from '@material-ui/core/Accordion';
-import AccordionDetails from '@material-ui/core/AccordionDetails';
-import AccordionSummary from '@material-ui/core/AccordionSummary';
-import FormGroup from '@material-ui/core/FormGroup';
-import MenuItem from '@material-ui/core/MenuItem';
-import PipelineTextField from 'components/TextField';
+import Accordion from "@material-ui/core/Accordion";
+import AccordionDetails from "@material-ui/core/AccordionDetails";
+import AccordionSummary from "@material-ui/core/AccordionSummary";
+import FormGroup from "@material-ui/core/FormGroup";
+import PipelineStringPart from "components/StringPart";
+import PipelineTextField from "components/TextField";
 
-import CpacList from 'components/List';
-import Help from 'components/Help';
-import OnOffSwitch from 'components/OnOffSwitch';
-import RoiPaths from 'components/RoiPaths';
+import CpacList from "components/List";
+import Help from "components/Help";
+import OnOffSwitch from "components/OnOffSwitch";
+import RoiPaths from "components/RoiPaths";
 
-import NuisanceRegression from './Regressor';
+import NuisanceRegression from "./Regressor";
 
 export const formatLabel = (label) => {
   const specialCasings = {
@@ -60,7 +60,9 @@ class PipelinePart extends PureComponent {
     /** Sequence of keys from the top of the overall pipeline configuration to this Map. */
     parents: PropTypes.array.isRequired,
     /** Current depth level (integer). */
-    level: PropTypes.number.isRequired
+    level: PropTypes.number.isRequired,
+    /** Validation schema */
+    schema: PropTypes.object.isRequired
   }
 
   static styles = theme => ({
@@ -75,7 +77,7 @@ class PipelinePart extends PureComponent {
 
   render() {
     const {
-      classes, configuration, isDefault, level, onChange, parents
+      classes, configuration, isDefault, level, onChange, parents, schema
     } = this.props;
 
     switch (Immutable.Map.isMap(configuration)) {
@@ -88,7 +90,7 @@ class PipelinePart extends PureComponent {
                 return (
                   <NuisanceRegression
                     { ...{ classes, configuration, onChange } }
-                    key='Regressors'
+                    key="Regressors"
                   />
                 )
               case "tse_roi_paths":
@@ -119,7 +121,7 @@ class PipelinePart extends PureComponent {
                   return (
                     <CpacList { ...{
                         entry, classes, configuration, isDefault, level,
-                        parents, onChange
+                        parents, onChange, schema
                       } }
                       key={`list-${entry[0]}`}
                     />
@@ -137,7 +139,7 @@ class PipelinePart extends PureComponent {
                           <AccordionDetails>
                           <Grid container>
                             <PipelinePart
-                              { ...{ classes, isDefault, onChange } }
+                              { ...{ classes, isDefault, onChange, schema } }
                               configuration={entry[1]}
                               parents={[...parents.slice(0, level), entry[0]]}
                               level={level + 1}
@@ -149,9 +151,9 @@ class PipelinePart extends PureComponent {
                     case false:
                       const regex = new RegExp(`^\s*{entry[0]}`);
                       const label = formatLabel(entry[0]);
-                      const name = [...parents.slice(0, level), entry[0]].join('.');
+                      const name = [...parents.slice(0, level), entry[0]].join(".");
                       switch (typeof(entry[1])) {
-                        case 'boolean':
+                        case "boolean":
                           return (
                             <OnOffSwitch
                               {...{regex, label, isDefault, name, onChange}}
@@ -159,7 +161,19 @@ class PipelinePart extends PureComponent {
                               checked={entry[1]}
                             />
                           )
-                        case 'string':
+                        case "string":
+                          return <PipelineStringPart
+                                  { ...{
+                                    entry,
+                                    isDefault,
+                                    label,
+                                    name,
+                                    onChange,
+                                    regex,
+                                    schema } }
+                                  key={entry[0]}
+                                 />
+                        case "number":
                           return (
                             <Grid key={entry[0]} item xs={12}>
                               <FormGroup row>
@@ -175,29 +189,7 @@ class PipelinePart extends PureComponent {
                                     fullWidth
                                     margin="normal"
                                     variant="outlined"
-                                    value={entry[1]}
-                                  />
-                                </Help>
-                              </FormGroup>
-                            </Grid>
-                          )
-                        case 'number':
-                          return (
-                            <Grid key={entry[0]} item xs={12}>
-                              <FormGroup row>
-                                <Help
-                                  type="pipeline"
-                                  regex={regex}
-                                  help=""
-                                  fullWidth >
-                                  <PipelineTextField
-                                    { ...{
-                                      label, isDefault, name, onChange
-                                    } }
-                                    fullWidth
-                                    margin="normal"
-                                    variant="outlined"
-                                    type='number'
+                                    type="number"
                                     value={entry[1]}
                                   />
                                 </Help>
@@ -219,14 +211,14 @@ class PipelinePart extends PureComponent {
         )
       default:
         switch (parents[0]) {
-          case 'FROM':
+          case "FROM":
             return (
               <PipelineTextField
                 { ...{ isDefault, onChange } }
                 fullWidth margin="normal" variant="outlined"
-                name={parents.join('.')}
+                name={parents.join(".")}
                 value={configuration}
-                helperText={'name of a preconfig or in-container path to a custom pipeline config file'}
+                helperText={"name of a preconfig or in-container path to a custom pipeline config file"}
               />
             )
           default:

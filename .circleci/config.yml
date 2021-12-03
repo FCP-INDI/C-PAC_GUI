@@ -143,7 +143,7 @@ jobs:
 
   deploy-web:
     docker:
-      - image: cimg/node:current
+      - image: fcpindi/c-pac:nightly
     environment:
       BASH_ENV: ".circleci/bashrc"
     steps:
@@ -157,7 +157,7 @@ jobs:
             git config --global user.name "Theodore"
       - add_ssh_keys
       - run:
-          name: Deploy web-version
+          name: Deploy web version
           command: |
             VERSION=v`jq -r '.version' package.json`
             TAG=$([ "${CIRCLE_BRANCH}" == "main" ] && echo "latest" || echo "nightly")

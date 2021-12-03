@@ -27,6 +27,7 @@ import {
 // import { phenotype } from './config.data'
 import cpac from '@internal/c-pac';
 import { getDefaultPipeline, defaultPipelineUrl } from '@internal/c-pac/pipeline';
+import cpacSchema from '@internal/c-pac/resources/pipeline/schema.json';
 
 import { fromJS } from 'immutable';
 
@@ -102,7 +103,7 @@ function* loadConfig (action) {
         //   }
         // }
       ],
-
+      schema: {pipeline: fromJS(cpacSchema)},
       pipelines: [
         template
       ],

@@ -176,11 +176,11 @@ class PipelineCard extends Component {
           <CardContent className={classes.info}>
             <List>
               {cardSteps.map(step =>{
-                const runKey = (step !== 'surface_analysis') ? 'run' : 'run_freesurfer';
+                const runKey = 'run';
                 return (
                   <PipelineStep
                     {...{classes}}
-                    stepKey={configuration.getIn([step, runKey])}
+                    stepKey={configuration.getIn([step, runKey], true)}
                     label={formatLabel(step)}
                     key={step}
                   />
