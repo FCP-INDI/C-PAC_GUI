@@ -173,6 +173,7 @@ jobs:
               mkdir -p /tmp/repo/versions/${VERSION}
               cp -Rf /tmp/workspace/dist-web-browser /tmp/repo/versions/${VERSION}/browser
               cp -Rf /tmp/workspace/dist-web-electron /tmp/repo/versions/${VERSION}/electron
+              rm -Rf .circleci | true
 
               find . -maxdepth 1 ! -name '.git' ! -name 'versions' ! -name 'versions.txt' ! -name '.' -delete
               cp -Rf /tmp/workspace/dist-web-browser/* /tmp/repo
