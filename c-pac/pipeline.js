@@ -1,7 +1,7 @@
 import yaml from 'js-yaml';
 import yamlTemplate, { raw, loadYaml } from './resources/pipeline/yaml';
 
-const defaultPipelineUrl = 'https://raw.githubusercontent.com/FCP-INDI/C-PAC/master/dev/docker_data/default_pipeline.yml';
+const defaultPipelineUrl = 'https://raw.githubusercontent.com/FCP-INDI/C-PAC/main/dev/docker_data/default_pipeline.yml';
 const versionRe = new RegExp('(?<=\# Version:? \s*).*');
 
 function setVersion(rawTemplate) {
