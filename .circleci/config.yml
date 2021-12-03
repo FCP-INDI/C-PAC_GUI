@@ -124,22 +124,22 @@ jobs:
 
             if [ "${CIRCLE_BRANCH}" == "main" ]; then
               github-release delete -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} --tag "${VERSION}" || true
-              github-release release -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} --tag "${VERSION}" --name "${VERSION}" ${RELEASE_OPTS}
-              github-release upload -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} --tag "${VERSION}" --name "c-pac_gui-${VERSION}-linux-amd64.deb" --file /tmp/workspace/dist-linux/c-pac_gui_*_amd64.deb
-              github-release upload -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} --tag "${VERSION}" --name "c-pac_gui-${VERSION}-linux-amd64.snap" --file /tmp/workspace/dist-linux/c-pac_gui_*_amd64.snap
-              github-release upload -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} --tag "${VERSION}" --name "c-pac_gui-${VERSION}-linux-amd64.tar.gz" --file /tmp/workspace/dist-linux/c-pac_gui-*.tar.gz
-              github-release upload -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} --tag "${VERSION}" --name "c-pac_gui-${VERSION}-osx-amd64.dmg" --file /tmp/workspace/dist-macos/C-PAC-*.dmg
-              github-release upload -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} --tag "${VERSION}" --name "c-pac_gui-${VERSION}-osx-amd64.zip" --file /tmp/workspace/dist-macos/C-PAC-*-mac.zip
-              github-release upload -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} --tag "${VERSION}" --name "c-pac_gui-${VERSION}-browser.zip" --file /tmp/c-pac_gui-*-browser.zip
+              github-release release -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} --tag "${VERSION}" --name "${VERSION}" ${RELEASE_OPTS} || true
+              github-release upload -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} --tag "${VERSION}" --name "c-pac_gui-${VERSION}-linux-amd64.deb" --file /tmp/workspace/dist-linux/c-pac_gui_*_amd64.deb || true
+              github-release upload -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} --tag "${VERSION}" --name "c-pac_gui-${VERSION}-linux-amd64.snap" --file /tmp/workspace/dist-linux/c-pac_gui_*_amd64.snap || true
+              github-release upload -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} --tag "${VERSION}" --name "c-pac_gui-${VERSION}-linux-amd64.tar.gz" --file /tmp/workspace/dist-linux/c-pac_gui-*.tar.gz || true
+              github-release upload -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} --tag "${VERSION}" --name "c-pac_gui-${VERSION}-osx-amd64.dmg" --file /tmp/workspace/dist-macos/C-PAC-*.dmg || true
+              github-release upload -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} --tag "${VERSION}" --name "c-pac_gui-${VERSION}-osx-amd64.zip" --file /tmp/workspace/dist-macos/C-PAC-*-mac.zip || true
+              github-release upload -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} --tag "${VERSION}" --name "c-pac_gui-${VERSION}-browser.zip" --file /tmp/c-pac_gui-*-browser.zip || true
             fi
             
-            github-release release -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} --tag "${TAG}" --name "${TAG}" ${RELEASE_OPTS}
-            github-release upload -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} --tag "${TAG}" --name "c-pac_gui-${TAG}-linux-amd64.deb" --file /tmp/workspace/dist-linux/c-pac_gui_*_amd64.deb
-            github-release upload -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} --tag "${TAG}" --name "c-pac_gui-${TAG}-linux-amd64.snap" --file /tmp/workspace/dist-linux/c-pac_gui_*_amd64.snap
-            github-release upload -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} --tag "${TAG}" --name "c-pac_gui-${TAG}-linux-amd64.tar.gz" --file /tmp/workspace/dist-linux/c-pac_gui-*.tar.gz
-            github-release upload -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} --tag "${TAG}" --name "c-pac_gui-${TAG}-osx-amd64.dmg" --file /tmp/workspace/dist-macos/C-PAC-*.dmg
-            github-release upload -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} --tag "${TAG}" --name "c-pac_gui-${TAG}-osx-amd64.zip" --file /tmp/workspace/dist-macos/C-PAC-*-mac.zip
-            github-release upload -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} --tag "${TAG}" --name "c-pac_gui-${TAG}-browser.zip" --file /tmp/c-pac_gui-*-browser.zip
+            github-release release -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} --tag "${TAG}" --name "${TAG}" ${RELEASE_OPTS} || true
+            github-release upload -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} --tag "${TAG}" --name "c-pac_gui-${TAG}-linux-amd64.deb" --file /tmp/workspace/dist-linux/c-pac_gui_*_amd64.deb || true
+            github-release upload -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} --tag "${TAG}" --name "c-pac_gui-${TAG}-linux-amd64.snap" --file /tmp/workspace/dist-linux/c-pac_gui_*_amd64.snap || true
+            github-release upload -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} --tag "${TAG}" --name "c-pac_gui-${TAG}-linux-amd64.tar.gz" --file /tmp/workspace/dist-linux/c-pac_gui-*.tar.gz || true
+            github-release upload -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} --tag "${TAG}" --name "c-pac_gui-${TAG}-osx-amd64.dmg" --file /tmp/workspace/dist-macos/C-PAC-*.dmg || true
+            github-release upload -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} --tag "${TAG}" --name "c-pac_gui-${TAG}-osx-amd64.zip" --file /tmp/workspace/dist-macos/C-PAC-*-mac.zip || true
+            github-release upload -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} --tag "${TAG}" --name "c-pac_gui-${TAG}-browser.zip" --file /tmp/c-pac_gui-*-browser.zip || true
 
   deploy-web:
     docker:
