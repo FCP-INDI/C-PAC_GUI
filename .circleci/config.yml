@@ -39,7 +39,7 @@ jobs:
 
   build-linux:
     docker:
-      - image: cimg/node:current
+      - image: cimg/node:lts
     environment:
       BASH_ENV: ".circleci/bashrc"
     steps:
@@ -59,7 +59,7 @@ jobs:
 
   build-web:
     docker:
-      - image: cimg/node:current
+      - image: cimg/node:lts
     environment:
       BASH_ENV: ".circleci/bashrc"
     steps:
@@ -84,7 +84,7 @@ jobs:
 
   deploy-releases:
     docker:
-      - image: cimg/node:current
+      - image: cimg/node:lts
     environment:
       BASH_ENV: ".circleci/bashrc"
     steps:
