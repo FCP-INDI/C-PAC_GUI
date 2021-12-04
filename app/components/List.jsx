@@ -298,7 +298,12 @@ class CpacList extends PureComponent {
    * @returns {Array} [string[], boolean] - [remaining valid options, all valid options already selected]
    */
   getValidOptions = (chain, schema, item) => {
-    let validOptions = schema.getIn(chain).toJS()[0].In;
+    let validOptions;
+    try {
+      validOptions = schema.getIn(chain).toJS()[0].In;
+    } catch(TypeError) {
+      validOptions = undefined;
+    }
     if (validOptions == undefined) {
       validOptions = [];
     }
