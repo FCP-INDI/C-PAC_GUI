@@ -27,7 +27,7 @@ jobs:
       - run:
           command: yarn && yarn run link
       - run:
-          command:  |
+          command: |
             export NODE_ENV=$([ "${CIRCLE_BRANCH}" == "main" ] && echo "production" || echo "development")
             CSC_LINK=file:///tmp/default.p12 yarn run package:mac
       - run:
@@ -45,9 +45,10 @@ jobs:
     steps:
       - checkout
       - run:
-          command: yarn && yarn run link
+          command: export NODE_OPTIONS=--openssl-legacy-provider && yarn && yarn run link
       - run:
           command: |
+            export NODE_OPTIONS=--openssl-legacy-provider
             export NODE_ENV=$([ "${CIRCLE_BRANCH}" == "main" ] && echo "production" || echo "development")
             yarn run package:linux
       - run:
@@ -65,14 +66,16 @@ jobs:
     steps:
       - checkout
       - run:
-          command: yarn && yarn run link
+          command: export NODE_OPTIONS=--openssl-legacy-provider && yarn && yarn run link
       - run:
           command: |
+            export NODE_OPTIONS=--openssl-legacy-provider
             export NODE_ENV=$([ "${CIRCLE_BRANCH}" == "main" ] && echo "production" || echo "development")
             TARGET=electron yarn run build:renderer
             mv ./app/dist dist-web-electron
       - run:
           command: |
+            export NODE_OPTIONS=--openssl-legacy-provider
             export NODE_ENV=$([ "${CIRCLE_BRANCH}" == "main" ] && echo "production" || echo "development")
             TARGET=browser yarn run build:renderer
             mv ./app/dist dist-web-browser
