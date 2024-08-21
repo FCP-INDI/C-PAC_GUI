@@ -68,15 +68,11 @@ export default function main(state, action) {
     case PIPELINE_VERSION_DIRTY_UPDATE: {
       const { pipeline: id, configuration } = action
       const i = state.getIn(['config', 'pipelines'])
-                     .findIndex((p) => p.get('id') == id);
+        .findIndex((p) => p.get('id') == id);
       return state.setIn(
         ['config', 'pipelines', i, 'versions', '0'],
         fromJS({
-<<<<<<< HEAD
-          version: persistVersion(i, state),
-=======
           version: cpac.pipeline.version,
->>>>>>> cd4c830 (add TODOs, use integer as versions, use C-PAC version from template)
           configuration
         })
       )
@@ -85,7 +81,7 @@ export default function main(state, action) {
     case PIPELINE_VERSION_DIRTY_SAVE: {
       const { pipeline: id } = action
       const i = state.getIn(['config', 'pipelines'])
-                     .findIndex((p) => p.get('id') == id)
+        .findIndex((p) => p.get('id') == id)
 
       if (!state.getIn(['config', 'pipelines', i, 'versions']).has("0")) {
         return state
@@ -95,12 +91,8 @@ export default function main(state, action) {
         .setIn([
           'config', 'pipelines', i, 'versions', "" + state.getIn(['config', 'pipelines', i, 'versions']).size
         ], fromJS({
-<<<<<<< HEAD
-          version: persistVersion(i, state),
-=======
           version: cpac.pipeline.version,
           date: new Date().getTime(),
->>>>>>> cd4c830 (add TODOs, use integer as versions, use C-PAC version from template)
           configuration: state.getIn(['config', 'pipelines', i, 'versions', '0', 'configuration'])
         }))
         .deleteIn(['config', 'pipelines', i, 'versions', '0'])
@@ -110,7 +102,7 @@ export default function main(state, action) {
       const { pipeline: id } = action
 
       const i = state.getIn(['config', 'pipelines'])
-                     .findIndex((p) => p.get('id') == id)
+        .findIndex((p) => p.get('id') == id)
 
       if (!state.getIn(['config', 'pipelines', i, 'versions']).has("0")) {
         return state
@@ -136,16 +128,18 @@ export default function main(state, action) {
       }
       let iName = 2
       if (pipelines.filter((p) => p.get('name') == name).size > 0) {
-        while(pipelines.filter((p) => p.get('name') == name + ' (' + iName + ')').size > 0) {
+        while (pipelines.filter((p) => p.get('name') == name + ' (' + iName + ')').size > 0) {
           iName++
         }
         name = name + ' (' + iName + ')'
       }
       newPipeline.name = name;
-      newPipeline.versions = {'0': {
-        configuration: newPipeline.pipeline,
-        version: versionRe.exec(content)[0]
-      }}
+      newPipeline.versions = {
+        '0': {
+          configuration: newPipeline.pipeline,
+          version: versionRe.exec(content)[0]
+        }
+      }
       delete newPipeline.pipeline;
       const newPipelines = pipelines.push(
         fromJS(newPipeline)
@@ -177,7 +171,7 @@ export default function main(state, action) {
         name = name.replace(/\(([0-9]+)\)$/, '').trim()
       }
 
-      while(pipelines.filter((p) => p.get('name') == name + ' (' + iName + ')' ).size > 0) {
+      while (pipelines.filter((p) => p.get('name') == name + ' (' + iName + ')').size > 0) {
         iName++
       }
       name = name + ' (' + iName + ')'
@@ -198,7 +192,7 @@ export default function main(state, action) {
       const { pipeline: id } = action
 
       const i = state.getIn(['config', 'pipelines'])
-                     .findIndex((p) => p.get('id') == id)
+        .findIndex((p) => p.get('id') == id)
 
       return state.deleteIn(['config', 'pipelines', i])
     }

@@ -6,19 +6,19 @@ import { default as LZString } from '../utils/lz-string'
 import { Dexie } from 'dexie'
 
 const db = new Dexie('idxedDB')
-db.version(1).stores({cpac: "key,value"})
+db.version(1).stores({ cpac: "key,value" })
 
 
 export async function dbUpdate(key, value) {
-  await db.cpac.put({key: key, value: value})
+  await db.cpac.put({ key: key, value: value })
 }
 
 export async function dbGet(key) {
-  return db.cpac.where({key: key}).first(val => val ? val.value : null);
+  return db.cpac.where({ key: key }).first(val => val ? val.value : null);
 }
 
-export async function dbClear(key=null) {
-  if (key){
+export async function dbClear(key = null) {
+  if (key) {
     await db.cpac.where('key').anyOf(key).delete()
   }
   else {
@@ -42,14 +42,14 @@ export function websocketChannel(scheduler, ws, message_type, cancel_type) {
         message_type instanceof Function ?
           message_type(scheduler) :
           { type: message_type, scheduler, message }
-        )
+      )
     }
     ws.onerror = () => {
       return emitter(
         cancel_type instanceof Function ?
           cancel_type(scheduler) :
           { type: cancel_type, scheduler }
-        )
+      )
     }
     ws.onclose = () => {
       return emitter(
@@ -83,7 +83,7 @@ export async function fetch(url, init) {
   }
 }
 
-function* traverseState(object, comparison, key=[]) {
+function* traverseState(object, comparison, key = []) {
   if (object instanceof Immutable.Map) {
     if (comparison(object)) {
       yield key, object
@@ -116,7 +116,7 @@ export function configLocalState(key, initialState = {}, {
 
   const requestKey = (stateKey) => `${key}/${stateKey.join('/')}`
 
-  function* loadLocalState () {
+  function* loadLocalState() {
     const versionedInitialState = key === 'cpacpy' ?
       initialState : { version: VERSION, ...initialState, }
 
@@ -134,7 +134,7 @@ export function configLocalState(key, initialState = {}, {
       }
       yield put({ type: loadSuccess, config: localState })
     } catch (error) {
-      yield put({type: loadError, error})
+      yield put({ type: loadError, error })
     }
 
     // const cache = yield caches.open('cpac')
@@ -157,7 +157,7 @@ export function configLocalState(key, initialState = {}, {
     try {
       let config = yield select((state) => state[key]);
 
-<<<<<<< HEAD
+
       let cacheCount = 0
       for (let k of traverseState(config, (o) => o instanceof Immutable.Map && o.get('_cache'))) {
         const reqKey = new Request(requestKey(k))
@@ -170,7 +170,7 @@ export function configLocalState(key, initialState = {}, {
         cacheCount++
       }
 
-=======
+
       // const cache = yield caches.open('cpac')
       // let cacheCount = 0
       // for (let k of traverseState(config, (o) => o instanceof Immutable.Map && o.get('_cache'))) {
@@ -183,29 +183,23 @@ export function configLocalState(key, initialState = {}, {
       //   config = config.setIn(k, Immutable.fromJS({ _cache: k }))
       //   cacheCount++
       // }
-<<<<<<< HEAD
-<<<<<<< HEAD
-      
-<<<<<<< HEAD
->>>>>>> 0934beb (fix: use headers instead of post)
+
       localStorage.setItem(key, JSON.stringify(config.toJS()))
-=======
+
       localStorage.setItem(key, LZString.compress(JSON.stringify(config.toJS())))
->>>>>>> 10b7018 (Fix: lzstring for localstorage)
-=======
+
       console.log("m2", key, config)
       yield dbSave(key, LZString.compress(JSON.stringify(config.toJS())))
->>>>>>> 7da7d3c (tmp: indexedDB solution with dexie.js)
-=======
+
       yield dbUpdate(key, LZString.compress(JSON.stringify(config.toJS())))
->>>>>>> 8250f46 (Feature: indexedDB as localStorage (1/2))
+
       yield put({ type: saveSuccess, config })
     } catch (error) {
       yield put({ type: saveError, error })
     }
   }
 
-  function* clearLocalState(key=null) {
+  function* clearLocalState(key = null) {
     try {
       yield dbClear(key)
       yield put({ type: clearSuccess })

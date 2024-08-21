@@ -3,11 +3,7 @@ export default {
   name: 'Default',
   versions: {
     'default': {
-<<<<<<< HEAD
-      version: '1.6.0',
-=======
       version: '1.4.3',
->>>>>>> f2a1340 (theo data-config generation! and some other stuff)
       configuration: {
         format: 'bids',
         options: {
