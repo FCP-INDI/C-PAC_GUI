@@ -18,7 +18,7 @@ import {
   PIPELINE_DELETE,
 } from '../actions/pipeline'
 
-import uuid from 'uuid/v4'
+import { v4 as uuidv4 } from 'uuid';
 import { fromJS } from 'immutable'
 
 import cpac from '@internal/c-pac'
@@ -119,7 +119,7 @@ export default function main(state, action) {
     case PIPELINE_IMPORT: {
       const { content } = action
       const pipelines = state.getIn(['config', 'pipelines'])
-      const newPipelineId = uuid()
+      const newPipelineId = uuidv4()
       const newPipeline = {
         'id': newPipelineId,
         'pipeline': fromJS(loadYaml(content))
@@ -179,7 +179,7 @@ export default function main(state, action) {
       name = name + ' (' + iName + ')'
 
       const newVersion = new Date().getTime().toString()
-      const newPipelineId = uuid()
+      const newPipelineId = uuidv4()
       const newPipeline = pipeline
         .set('versions', fromJS({ [newVersion]: pipeline.getIn(['versions', oldVersion]) }))
         .set('name', name)

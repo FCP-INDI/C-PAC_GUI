@@ -40,7 +40,7 @@ import cpac from '@internal/c-pac';
 const cardSteps = ['anatomical_preproc', 'functional_preproc', 'surface_analysis'];
 
 function stripDevSuffix(version) {
-  return version.endsWith('.dev') ? version.slice(0, -4) : version;
+  return version.replace(/\.dev\d*$/, '');
 }
 
 /** A card component to show a pipeline configuration available to view/edit, duplicate, and/or
