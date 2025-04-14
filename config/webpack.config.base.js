@@ -5,6 +5,8 @@ import { dependencies as externals } from '../app/package.json';
 const target = process.env.TARGET === 'browser' ? 'browser' : 'electron';
 
 export default {
+  // experiments: { futureDefaults: true, },
+
   externals: Object.keys(externals || {}),
 
   module: {
@@ -57,5 +59,9 @@ export default {
     new webpack.NormalModuleReplacementPlugin(/.*\.platform$/, ((resource) => {
       resource.request = resource.request.replace(/platform$/, target);
     })),
+
+    new webpack.ProvidePlugin({
+      global: require.resolve('global')
+    }),
   ],
 };

@@ -1,8 +1,4 @@
-/*
- * @NOTE: Prepend a `~` to css file paths that are in your node_modules
- *        See https://github.com/webpack-contrib/sass-loader#imports
- */
-@import "~font-awesome/css/font-awesome.css";
+@import "font-awesome/css/font-awesome.css";
 
 * {
   -webkit-touch-callout: none; /* iOS Safari */
@@ -38,6 +34,7 @@ header#root-header a {
 header#root-header img,
 header#root-header a img {
   max-height: 50px;
+  max-width: fit-content;
   box-shadow: #232c39;
 }
 
@@ -54,12 +51,6 @@ h2 {
   font-size: 2.25rem;
   font-weight: bold;
   letter-spacing: -0.025em;
-}
-
-p {
-}
-
-li {
 }
 
 a {
