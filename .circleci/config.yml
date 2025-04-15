@@ -4,9 +4,11 @@ jobs:
 
   build-macos:
     macos:
-      xcode: "13.0.0"
+      xcode: 16.2.0
     environment:
       FL_OUTPUT_DIR: output
+      NODE_VERSION: v23.11.0
+      NVM_VERSION: v0.40.2
     steps:
       - checkout
       - run:
@@ -18,12 +20,11 @@ jobs:
       - run:
           name: Setup NVM
           command: |
-            export NODE_VERSION=$(cat .nvmrc)
-            curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.34.0/install.sh | bash -s -- --no-use
+            curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.2/install.sh | bash -s -- --no-use
             echo 'export NVM_DIR=$HOME/.nvm' >> $BASH_ENV
             echo 'source $NVM_DIR/nvm.sh' >> $BASH_ENV
-            echo 'nvm install v15.13.0' >> $BASH_ENV
-            echo 'nvm alias default v15.13.0' >> $BASH_ENV
+            echo 'nvm install ${NODE_VERSION}' >> $BASH_ENV
+            echo 'nvm alias default ${NODE_VERSION}' >> $BASH_ENV
       - run:
           command: yarn && yarn run link
       - run:
@@ -159,7 +160,7 @@ jobs:
       - run:
           name: Deploy web version
           command: |
-            apt-get update && apt-get install jq -y
+            apt-get update && apt-get install jq openssh-client -y
             VERSION=v`jq -r '.version' package.json`
             TAG=$([ "${CIRCLE_BRANCH}" == "main" ] && echo "latest" || echo "nightly")
             
@@ -207,7 +208,6 @@ jobs:
             git push -f origin gh-pages || true
 
 workflows:
-  version: 2
   build:
     jobs:
       - build-linux:
