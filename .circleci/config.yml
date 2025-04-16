@@ -63,6 +63,7 @@ jobs:
       - image: cimg/node:lts
     environment:
       BASH_ENV: ".circleci/bashrc"
+      REACT_APP_BUGSNAG_API_KEY: ${{ secrets.BUGSNAG_API_KEY }}
     steps:
       - checkout
       - run:
