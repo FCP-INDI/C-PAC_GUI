@@ -25,7 +25,7 @@ const config = merge(baseConfig, {
     publicPath: '',
     filename: 'renderer.prod.js'
   },
-
+  devtool: 'source-map',
   module: {
     rules: [
       {

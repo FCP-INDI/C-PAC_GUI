@@ -11,7 +11,7 @@
     "build:all": "yarn run build:electron && yarn run build:renderer",
     "electron-rebuild": "electron-rebuild --parallel --force --types prod,dev,optional --module-dir app",
     "postinstall": "yarn run build-dll && electron-builder install-app-deps && yarn run link",
-    "prestart": "yarn run build",
+    "prestart": "yarn run build:all",
     "link": "cd c-pac && yarn && yarn link && cd .. && yarn link @internal/c-pac",
     "start": "cross-env NODE_ENV=production electron ./app/",
     "dev:browser": "TARGET=browser yarn run dev:renderer",
