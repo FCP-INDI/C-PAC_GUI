@@ -9,6 +9,7 @@ jobs:
       FL_OUTPUT_DIR: output
       NODE_VERSION: v23.11.0
       NVM_VERSION: v0.40.2
+      REACT_APP_BUGSNAG_API_KEY: ${{ secrets.BUGSNAG_API_KEY }}
     steps:
       - checkout
       - run:
@@ -43,6 +44,7 @@ jobs:
       - image: cimg/node:lts
     environment:
       BASH_ENV: ".circleci/bashrc"
+      REACT_APP_BUGSNAG_API_KEY: ${{ secrets.BUGSNAG_API_KEY }}
     steps:
       - checkout
       - run:
@@ -89,6 +91,7 @@ jobs:
       - image: cimg/node:lts
     environment:
       BASH_ENV: ".circleci/bashrc"
+      REACT_APP_BUGSNAG_API_KEY: ${{ secrets.BUGSNAG_API_KEY }}
     steps:
       - checkout
       - attach_workspace:
@@ -148,6 +151,7 @@ jobs:
       - image: fcpindi/c-pac:nightly
     environment:
       BASH_ENV: ".circleci/bashrc"
+      REACT_APP_BUGSNAG_API_KEY: ${{ secrets.BUGSNAG_API_KEY }}
     steps:
       - checkout
       - attach_workspace:
