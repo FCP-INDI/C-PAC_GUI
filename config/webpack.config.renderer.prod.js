@@ -89,6 +89,7 @@ const config = merge(baseConfig, {
   plugins: [
     new webpack.EnvironmentPlugin({
       NODE_ENV: 'production',
+      REACT_APP_BUGSNAG_API_KEY: JSON.stringify(process.env.REACT_APP_BUGSNAG_API_KEY),
     }),
 
     new MiniCssExtractPlugin({

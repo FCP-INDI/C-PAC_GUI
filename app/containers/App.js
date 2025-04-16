@@ -4,8 +4,8 @@ import { withRouter } from 'react-router-dom'
 import { Link } from 'react-router-dom'
 import { configLoad } from '../actions/main'
 
-import bugsnag from '@bugsnag/js'
-import bugsnagReact from '@bugsnag/plugin-react'
+import Bugsnag from '@bugsnag/js'
+import BugsnagPluginReact from '@bugsnag/plugin-react'
 
 import classNames from 'clsx';
 import { withStyles, typography } from '@material-ui/core/styles';
@@ -56,9 +56,11 @@ import Logo from 'resources/logo.png';
 
 let ErrorBoundary = ({ children }) => children
 if (process.env.NODE_ENV === 'production') {
-  const bugsnagClient = bugsnag('ed924a7990f8305f7bb59bc050b92239')
-  bugsnagClient.use(bugsnagReact, React)
-  ErrorBoundary = bugsnagClient.getPlugin('react')
+  Bugsnag.start({
+    apiKey: process.env.REACT_APP_BUGSNAG_API_KEY,
+    plugins: [new BugsnagPluginReact()]
+  });
+  const ErrorBoundary = Bugsnag.getPlugin('react').createErrorBoundary(React);
 }
 
 
