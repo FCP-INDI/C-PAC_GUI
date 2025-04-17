@@ -134,7 +134,7 @@
     "speed-measure-webpack-plugin": "^1.5.0",
     "style-loader": "^0.23.1",
     "stylefmt": "git+https://github.com/ronilaukkarinen/stylefmt.git",
-    "stylelint": "^13.13.1",
+    "stylelint": "^16.18.0",
     "stylelint-config-standard": "^21.0.0",
     "url-loader": "^4.1.1",
     "webpack": "^5.30.0",
