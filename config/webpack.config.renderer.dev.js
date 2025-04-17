@@ -153,6 +153,7 @@ const config = merge(baseConfig, {
     devMiddleware: {
       publicPath,
     },
+    port,
     allowedHosts: 'all',
     compress: true,
     client: {
@@ -162,7 +163,6 @@ const config = merge(baseConfig, {
       },
       logging: 'info'
     },
-    hot: true,
     headers: { 'Access-Control-Allow-Origin': '*' },
     static: {
       directory: path.join(__dirname, '..', 'app', 'dist')
