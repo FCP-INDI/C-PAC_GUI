@@ -149,7 +149,7 @@ class PipelinePart extends PureComponent {
                         </Accordion>
                       )
                     case false:
-                      const regex = new RegExp(`^\s*{entry[0]}`);
+                      const regex = new RegExp(`^\\s*${entry[0]}`);
                       const label = formatLabel(entry[0]);
                       const name = [...parents.slice(0, level), entry[0]].join(".");
                       switch (typeof(entry[1])) {
