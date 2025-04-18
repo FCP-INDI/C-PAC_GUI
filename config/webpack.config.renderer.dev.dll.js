@@ -3,6 +3,7 @@ import path from 'path';
 import merge from 'webpack-merge';
 import baseConfig from './webpack.config.base';
 import { dependencies } from '../package.json';
+import ESLintWebpackPlugin from 'eslint-webpack-plugin';
 
 const dist = path.resolve(process.cwd(), 'app', 'dist', 'dll');
 
@@ -64,9 +65,6 @@ export default merge(baseConfig, {
         use: [
           {
             loader: 'babel-loader'
-          },
-          {
-            loader: 'eslint-loader'
           }
         ]
       },
@@ -136,6 +134,10 @@ export default merge(baseConfig, {
   },
 
   plugins: [
+    new ESLintWebpackPlugin({
+      extensions: ['js', 'jsx'],
+    }),
+
     new webpack.DllPlugin({
       path: path.join(dist, '[name].json'),
       name: '[name]',
