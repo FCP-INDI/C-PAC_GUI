@@ -372,7 +372,7 @@ class CpacList extends PureComponent {
       entry, classes, isDefault, level, onChange, parents, schema
     } = this.props;
 
-    const regex = new RegExp(`^\s*{entry[0]}`);
+    const regex = new RegExp(`^\\s*${entry[0]}`);
     const label = formatLabel(entry[0]);
     const chain = [...parents, entry[0]];
     const name = chain.join(".");

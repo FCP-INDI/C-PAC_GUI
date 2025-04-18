@@ -139,8 +139,8 @@ const config = merge(baseConfig, {
     }),
 
     new MiniCssExtractPlugin({
-      filename: '[name].[hash].css',
-      chunkFilename: '[id].[hash].css',
+      filename: '[name].[fullhash].css',
+      chunkFilename: '[id].[fullhash].css',
     }),
   ],
 
@@ -150,27 +150,25 @@ const config = merge(baseConfig, {
   },
 
   devServer: {
-    public: '0.0.0.0:1212',
-    host: '0.0.0.0',
-    port,
-    publicPath,
-    disableHostCheck: true,
-    compress: true,
-    inline: true,
-    lazy: false,
-    hot: true,
-    clientLogLevel: 'info',
-    headers: { 'Access-Control-Allow-Origin': '*' },
-    contentBase: path.join(__dirname, '..', 'app', 'dist'),
-    watchOptions: {
-      aggregateTimeout: 300,
-      ignored: /node_modules/,
-      poll: 100
+    devMiddleware: {
+      publicPath,
     },
-    historyApiFallback: {
-      verbose: true,
-      disableDotRule: false,
-    }
+    port,
+    allowedHosts: 'all',
+    compress: true,
+    client: {
+      webSocketURL: {
+        hostname: '0.0.0.0',
+        port: 1212,
+      },
+      logging: 'info'
+    },
+    headers: { 'Access-Control-Allow-Origin': '*' },
+    static: {
+      directory: path.join(__dirname, '..', 'app', 'dist')
+    },
+    watchFiles: {},
+    historyApiFallback: {}
   },
 });
 
