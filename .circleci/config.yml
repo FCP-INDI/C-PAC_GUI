@@ -1,7 +1,16 @@
 version: 2.1
 
-jobs:
+commands:
+  upgrade-and-run-yarn:
+    steps:
+      - run:
+          name: Upgrade and run Yarn
+          command: |
+            npm install -g corepack
+            yarn set version 4.9.1
+            yarn
 
+jobs:
   build-macos:
     macos:
       xcode: 16.2.0
@@ -25,8 +34,7 @@ jobs:
             echo 'source $NVM_DIR/nvm.sh' >> $BASH_ENV
             echo 'nvm install ${NODE_VERSION}' >> $BASH_ENV
             echo 'nvm alias default ${NODE_VERSION}' >> $BASH_ENV
-      - run:
-          command: yarn && yarn run link
+      - upgrade-and-run-yarn
       - run:
           command:  |
             export NODE_ENV=$([ "${CIRCLE_BRANCH}" == "main" ] && echo "production" || echo "development")
@@ -45,8 +53,7 @@ jobs:
       BASH_ENV: ".circleci/bashrc"
     steps:
       - checkout
-      - run:
-          command: yarn && yarn run link
+      - upgrade-and-run-yarn
       - run:
           command: |
             export NODE_ENV=$([ "${CIRCLE_BRANCH}" == "main" ] && echo "production" || echo "development")
@@ -65,8 +72,7 @@ jobs:
       BASH_ENV: ".circleci/bashrc"
     steps:
       - checkout
-      - run:
-          command: yarn && yarn run link
+      - upgrade-and-run-yarn
       - run:
           command: |
             export NODE_ENV=$([ "${CIRCLE_BRANCH}" == "main" ] && echo "production" || echo "development")
