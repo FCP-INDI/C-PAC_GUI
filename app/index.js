@@ -1,19 +1,19 @@
 // import { remote } from 'electron'
 import React from 'react';
-import ReactDOM from 'react-dom';
+import ReactDOM from 'react-dom/client';
 import { configureStore, history } from './store/configureStore';
 import Root from './containers/Root';
 
 const store = configureStore();
 
-const render = Component => {
-  ReactDOM.render(
-    <>
-      <Component store={store} history={history} />
-    </>,
-    document.getElementById('root'),
-  )
-}
+const render = (Component) => {
+  const root = ReactDOM.createRoot(document.getElementById('root'));
+  root.render(
+    <React.StrictMode>
+      <Component store={store} />
+    </React.StrictMode>
+  );
+};
 
 window.addEventListener('load', () => {
   render(Root)
@@ -25,7 +25,7 @@ window.addEventListener('load', () => {
       } catch (error) {
       }
     } else if (e.which === 116) {
-      location.reload()
+      history.location.reload()
     }
   })
 

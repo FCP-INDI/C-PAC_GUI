@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
-import { withStyles } from '@material-ui/core';
-import Paper from '@material-ui/core/Paper';
-import Avatar from '@material-ui/core/Avatar';
-import Typography from '@material-ui/core/Typography';
+import { withStyles } from '@mui/styles';
+import Paper from '@mui/material/Paper';
+import Avatar from '@mui/material/Avatar';
+import Typography from '@mui/material/Typography';
 
 
 class Header extends Component {

@@ -1,6 +1,6 @@
 import React, { PureComponent, useState } from 'react';
 import PropTypes from 'prop-types';
-import TextField from '@material-ui/core/TextField';
+import TextField from '@mui/material/TextField';
 
 /** Text field that updates on exiting the field or on pressing `Enter` rather than on every keystroke. */
 class CustomTextField extends PureComponent {

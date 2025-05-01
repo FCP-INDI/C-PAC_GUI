@@ -1,26 +1,27 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { useParams } from 'react-router-dom';
 
 import {
   pipelineConfigUpdate,
   pipelineNameUpdate,
 } from '../actions/main'
 
-import { withStyles } from '@material-ui/core';
+import { withStyles } from '@mui/styles';
 
-import Grid from '@material-ui/core/Grid';
+import Grid from '@mui/material/Grid';
 import DatasetSettingsEditor from '../components/dataset/DatasetSettingsEditor';
 import Header, { HeaderText, HeaderAvatar, HeaderTools } from '../components/Header';
 import Content from '../components/Content';
 import Box from '../components/Box';
 import NotFound from 'components/404';
 
-import Tabs from '@material-ui/core/Tabs';
-import Tab from '@material-ui/core/Tab';
-import Paper from '@material-ui/core/Paper';
-import Button from '@material-ui/core/Button';
-import TextField from '@material-ui/core/TextField';
-import IconButton from '@material-ui/core/IconButton'
+import Tabs from '@mui/material/Tabs';
+import Tab from '@mui/material/Tab';
+import Paper from '@mui/material/Paper';
+import Button from '@mui/material/Button';
+import TextField from '@mui/material/TextField';
+import IconButton from '@mui/material/IconButton'
 
 import {
   DatasetIcon,
@@ -45,7 +46,7 @@ class DatasetPage extends Component {
 
   constructor(props) {
     super(props)
-    const dataset = this.props.dataset
+    const { dataset } = useParams();
     this.state = {
       settings: dataset.settings
     }
@@ -160,7 +161,6 @@ class DatasetPage extends Component {
 }
 
 const mapStateToProps = (state, props) => {
-  const { match: { params: { dataset } } } = props
 
   return {
     dataset: state.main.config.datasets.find((p) => p.id == dataset)

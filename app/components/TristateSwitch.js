@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import { withStyles } from '@material-ui/core'
-import IconButton from '@material-ui/core/IconButton'
+import { withStyles } from '@mui/styles'
+import IconButton from '@mui/material/IconButton'
 
 
 function capitalize(string) {
@@ -118,7 +118,7 @@ class TriSwitchBase extends React.Component {
 
     return (
       <IconButton
-        component="span"
+        element="span"
         className={classNames(
           classes.root,
           {

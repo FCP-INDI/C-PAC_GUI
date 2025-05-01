@@ -1,5 +1,6 @@
-import React, { Component } from 'react';
+import React, { Component, use } from 'react';
 import { connect } from 'react-redux';
+import { useParams } from 'react-router-dom';
 import memoizeOne from 'memoize-one';
 
 import {
@@ -10,23 +11,23 @@ import {
   pipelineDownload,
 } from 'actions/pipeline'
 
-import { withStyles } from '@material-ui/core';
+import { withStyles } from '@mui/styles';
 
-import Grid from '@material-ui/core/Grid';
-import PipelineEditor from 'containers/pipeline/PipelineEditor';
+import Grid from '@mui/material/Grid';
+import PipelineEditor from './pipeline/PipelineEditor';
 import Header, { HeaderText, HeaderAvatar, HeaderTools } from 'components/Header';
 import Content from 'components/Content';
 import Box from 'components/Box';
 import NotFound from 'components/404';
 
-import Tabs from '@material-ui/core/Tabs';
-import Tab from '@material-ui/core/Tab';
-import Paper from '@material-ui/core/Paper';
-import Button from '@material-ui/core/Button';
-import TextField from '@material-ui/core/TextField';
-import IconButton from '@material-ui/core/IconButton'
-import Tooltip from '@material-ui/core/Tooltip'
-import Drawer from '@material-ui/core/Drawer';
+import Tabs from '@mui/material/Tabs';
+import Tab from '@mui/material/Tab';
+import Paper from '@mui/material/Paper';
+import Button from '@mui/material/Button';
+import TextField from '@mui/material/TextField';
+import IconButton from '@mui/material/IconButton'
+import Tooltip from '@mui/material/Tooltip'
+import Drawer from '@mui/material/Drawer';
 
 import { fromJS, isImmutable } from 'immutable';
 
@@ -39,7 +40,9 @@ import {
   SaveIcon,
   RevertIcon,
   EditIcon,
-} from 'components/icons';
+} from '../components/icons';
+
+import withRouter from '../components/withRouter';
 
 import cpac from '@internal/c-pac';
 
@@ -58,31 +61,34 @@ class PipelinePage extends Component {
   constructor(props) {
     super(props)
 
-    const { pipeline, schema } = this.props;
-
-    if (!pipeline) {
-      return
-    }
-
-    const versions = pipeline.get('versions')
-
+    const { pipeline } = props;
     let dirty = false
     let version = null
+    let isDefault = false
+    let configuration = null
+    let isTitleEditing = false
+    if (pipeline) {
 
-    // @TODO move to saga or reducer
+      const versions = pipeline.get('versions')
 
-    if (versions.has("0")) {
-      dirty = true
-      version = "0"
-    } else {
-      version = versions.keySeq().max()
+      // @TODO move to saga or reducer
+
+      if (versions.has("0")) {
+        dirty = true
+        version = "0"
+      } else {
+        version = versions.keySeq().max()
+      }
+      isDefault = isADefault(pipeline.get('id'))
+      configuration = pipeline.getIn(['versions', version, 'configuration'])
     }
 
     this.state = {
       dirty,
       version,
-      isDefault: isADefault(pipeline.get('id')),
-      configuration: pipeline.getIn(['versions', version, 'configuration'])
+      isDefault: isDefault,
+      configuration: configuration,
+      isTitleEditing: isTitleEditing,
     }
   }
 
@@ -168,7 +174,7 @@ class PipelinePage extends Component {
   };
 
   handleDownload = () => {
-    const pipeline = this.props.pipeline;
+    const pipeline = this.props.thisPipeline;
     const configuration = this.state.configuration;
     const pipelineName = pipeline.get('name');
     const versions = pipeline.get('versions');
@@ -205,7 +211,7 @@ class PipelinePage extends Component {
 
   handleTitleSaveClick = () => {
     const name = this.title.value
-    this.props.pipelineNameUpdate(this.props.pipeline.get('id'), name)
+    this.props.pipelineNameUpdate(this.props.thisPipeline.get('id'), name)
     this.setState({
       isTitleEditing: false
     });
@@ -260,7 +266,7 @@ class PipelinePage extends Component {
   }
 
   render() {
-    const { classes, pipeline, schema } = this.props
+    const { classes, pipeline, schema } = this.props;
 
     if (!pipeline) {
       return <NotFound />
@@ -317,7 +323,7 @@ class PipelinePage extends Component {
 }
 
 const mapStateToProps = (state, props) => {
-  const { match: { params: { pipeline } } } = props;
+  const { pipeline } = props.params;
 
   return {
     pipeline: state.main.getIn(['config', 'pipelines']).find((p) => p.get('id') == pipeline),
@@ -347,4 +353,4 @@ export const isADefault = (pipelineId) => {
   return pipelineId.slice(0, 7) === 'default';
 }
 
-export default connect(mapStateToProps, mapDispatchToProps, null, { areStatesEqual })(withStyles(PipelinePage.styles)(PipelinePage));
+export default withRouter(connect(mapStateToProps, mapDispatchToProps, null, { areStatesEqual })(withStyles(PipelinePage.styles)(PipelinePage)));

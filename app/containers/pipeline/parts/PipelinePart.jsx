@@ -1,13 +1,14 @@
 import React, { PureComponent } from "react";
 import PropTypes from "prop-types";
 import Immutable from "immutable";
-import { withStyles, Typography } from "@material-ui/core";
-import Grid from "@material-ui/core/Grid";
+import { withStyles } from "@mui/styles";
+import Grid from "@mui/material/Grid";
+import Typography from '@mui/material/Typography';
 
-import Accordion from "@material-ui/core/Accordion";
-import AccordionDetails from "@material-ui/core/AccordionDetails";
-import AccordionSummary from "@material-ui/core/AccordionSummary";
-import FormGroup from "@material-ui/core/FormGroup";
+import Accordion from "@mui/material/Accordion";
+import AccordionDetails from "@mui/material/AccordionDetails";
+import AccordionSummary from "@mui/material/AccordionSummary";
+import FormGroup from "@mui/material/FormGroup";
 import PipelineStringPart from "components/StringPart";
 import PipelineTextField from "components/TextField";
 
@@ -79,7 +80,6 @@ class PipelinePart extends PureComponent {
     const {
       classes, configuration, isDefault, level, onChange, parents, schema
     } = this.props;
-
     switch (Immutable.Map.isMap(configuration)) {
       case true:
         return (
@@ -175,7 +175,7 @@ class PipelinePart extends PureComponent {
                                  />
                         case "number":
                           return (
-                            <Grid key={entry[0]} item xs={12}>
+                            <Grid key={entry[0]} size={{ xs: 12 }}>
                               <FormGroup row>
                                 <Help
                                   type="pipeline"
