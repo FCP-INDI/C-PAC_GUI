@@ -153,7 +153,7 @@ export default function main(state, action) {
       const { pipeline: id } = action
 
       const pipelines = state.getIn(['config', 'pipelines'])
-      const pipeline = pipelines.find((p) => p.get('id') == id)
+      const pipeline = pipelines.find((p) => p.get('id') == id) || pipelines.first();
       const versions = pipeline.get('versions')
 
       let oldVersion = null

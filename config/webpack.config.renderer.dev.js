@@ -168,7 +168,7 @@ const config = merge(baseConfig, {
       directory: path.join(__dirname, '..', 'app', 'dist')
     },
     watchFiles: {},
-    historyApiFallback: {}
+    historyApiFallback: true,
   },
 });
 

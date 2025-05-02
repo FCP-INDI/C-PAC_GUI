@@ -1,11 +1,11 @@
 import React, { PureComponent } from 'react'
 import PropTypes from 'prop-types'
-import { withStyles } from '@material-ui/core/styles'
-import Typography from '@material-ui/core/Typography'
-import Collapse from '@material-ui/core/Collapse'
-import IconButton from '@material-ui/core/IconButton'
-import Grid from '@material-ui/core/Grid'
-import Popover from '@material-ui/core/Popover'
+import { withStyles } from '@mui/styles'
+import Typography from '@mui/material/Typography'
+import Collapse from '@mui/material/Collapse'
+import IconButton from '@mui/material/IconButton'
+import Grid from '@mui/material/Grid'
+import Popover from '@mui/material/Popover'
 import SyntaxHighlighter from 'react-syntax-highlighter'
 import { darcula as highlightStyle } from 'react-syntax-highlighter/dist/esm/styles/hljs'
 
@@ -121,10 +121,10 @@ class Help extends PureComponent {
               </React.Fragment>
             :
             <Grid container spacing={0} wrap={`nowrap`} alignItems={`center`} style={style}>
-              <Grid item style={subStyle}>
+              <Grid style={subStyle}>
                 { this.props.children }
               </Grid>
-              <Grid item>
+              <Grid>
                 { button }
               </Grid>
             </Grid>
@@ -148,11 +148,11 @@ class Help extends PureComponent {
           style={{ maxWidth: width }}
         >
           <Grid container style={{ overflow: 'hidden' }}>
-            <Grid item sm={12} md={showCode ? 6 : 12} style={{ padding: 20 }}>
+            <Grid size={{ sm: 12, md: showCode ? 6 : 12 }} style={{ padding: 20 }}>
               { helper }
             </Grid>
             { showCode ?
-            <Grid item sm={12} md={6}>
+            <Grid size={{ sm: 12, md: 6 }}>
               <SyntaxHighlighter
                 wrapLines
                 showLineNumbers

@@ -2,16 +2,16 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Immutable from 'immutable';
 
-import { withStyles } from '@material-ui/core';
+import { withStyles } from '@mui/styles';
 
-import Content from '../../components/Content';
-import Header, { HeaderText, HeaderAvatar, HeaderTools } from '../../components/Header';
+import Content from 'components/Content';
+import Header, { HeaderText, HeaderAvatar, HeaderTools } from 'components/Header';
 
-import Grid from '@material-ui/core/Grid';
-import Tabs from '@material-ui/core/Tabs';
-import Tab from '@material-ui/core/Tab';
-import TabScrollButton from '@material-ui/core/TabScrollButton';
-import Paper from '@material-ui/core/Paper';
+import Grid from '@mui/material/Grid';
+import Tabs from '@mui/material/Tabs';
+import Tab from '@mui/material/Tab';
+import TabScrollButton from '@mui/material/TabScrollButton';
+import Paper from '@mui/material/Paper';
 
 import {
   DatasetIcon,
@@ -26,14 +26,14 @@ import {
   SubjectIcon,
 } from 'components/icons';
 
-import { formatLabel, PipelinePart } from 'containers/pipeline/parts';
+import PipelinePart, { formatLabel } from 'containers/pipeline/parts/PipelinePart';
 import { cardSteps } from 'components/PipelineCard';
 
-import Button from '@material-ui/core/Button';
-import IconButton from '@material-ui/core/IconButton'
-import Switch from '@material-ui/core/Switch';
+import Button from '@mui/material/Button';
+import IconButton from '@mui/material/IconButton'
+import Switch from '@mui/material/Switch';
 
-import Collapse from '@material-ui/core/Collapse';
+import Collapse from '@mui/material/Collapse';
 
 /** An interactive component to view/edit a pipeline configuration. */
 class PipelineEditor extends Component {

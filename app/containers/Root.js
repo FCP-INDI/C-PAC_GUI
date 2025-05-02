@@ -1,17 +1,18 @@
-import React, { Component } from 'react'
-import { Provider as ReduxProvider } from 'react-redux'
-import { ConnectedRouter } from 'connected-react-router'
-import Routes from '../routes'
+import React, { useEffect } from 'react';
+import { Provider as ReduxProvider } from 'react-redux';
+import { HashRouter } from 'react-router-dom';
 
+import RouterPage from '../routes';
 
-export default class Root extends Component {
-  render() {
-    return (
-      <ReduxProvider store={this.props.store}>
-        <ConnectedRouter history={this.props.history}>
-          <Routes store={this.props.store} history={this.props.history} />
-        </ConnectedRouter>
-      </ReduxProvider>
-    )
-  }
-}
+const Root = ({ store }) => {
+
+  return (
+    <ReduxProvider store={store}>
+      <HashRouter>
+        <RouterPage />
+      </HashRouter>
+    </ReduxProvider>
+  );
+};
+
+export default Root;

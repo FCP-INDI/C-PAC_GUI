@@ -1,37 +1,37 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import CustomPropTypes from 'components/PropTypes';
-import { withStyles, Typography } from '@material-ui/core';
-import Grid from '@material-ui/core/Grid'
+import { withStyles } from '@mui/styles';
+import { Grid, Typography } from '@mui/material';
 
-import Paper from '@material-ui/core/Paper';
-import MenuItem from '@material-ui/core/MenuItem';
+import Paper from '@mui/material/Paper';
+import MenuItem from '@mui/material/MenuItem';
 import { CustomTextField } from 'components/TextField';
-import TextField from '@material-ui/core/TextField';
-import Switch from '@material-ui/core/Switch';
-import Checkbox from '@material-ui/core/Checkbox';
-import InputAdornment from '@material-ui/core/InputAdornment';
+import TextField from '@mui/material/TextField';
+import Switch from '@mui/material/Switch';
+import Checkbox from '@mui/material/Checkbox';
+import InputAdornment from '@mui/material/InputAdornment';
 
-import FormGroup from '@material-ui/core/FormGroup';
-import FormLabel from '@material-ui/core/FormLabel';
-import FormControl from '@material-ui/core/FormControl';
-import FormHelperText from '@material-ui/core/FormHelperText';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import InputLabel from '@material-ui/core/InputLabel';
+import FormGroup from '@mui/material/FormGroup';
+import FormLabel from '@mui/material/FormLabel';
+import FormControl from '@mui/material/FormControl';
+import FormHelperText from '@mui/material/FormHelperText';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import InputLabel from '@mui/material/InputLabel';
 
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
-import TableFooter from '@material-ui/core/TableFooter';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+import TableFooter from '@mui/material/TableFooter';
 
 import Help from 'components/Help';
 import FormControlLabelled from 'components/FormControlLabelled';
-import Icon from '@material-ui/core/Icon';
-import IconButton from '@material-ui/core/IconButton';
-import Button from '@material-ui/core/Button';
-import Fab from '@material-ui/core/Fab';
+import Icon from '@mui/material/Icon';
+import IconButton from '@mui/material/IconButton';
+import Button from '@mui/material/Button';
+import Fab from '@mui/material/Fab';
 import Immutable from 'immutable';
 
 import { AddIcon, DeleteIcon } from 'components/icons';
@@ -282,7 +282,7 @@ class RoiPaths extends PureComponent {
     const fullKey = [...parents, configKey].join('.');
     return (
       <Grid container>
-        <Grid item sm={12}>
+        <Grid size={{ xs: 12 }}>
 
           <Paper className={classes.paper}>
             <Table className={classes.table}>

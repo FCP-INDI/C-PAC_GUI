@@ -1,12 +1,12 @@
 import React, { PureComponent } from "react";
 import PropTypes from "prop-types";
 import Immutable from "immutable";
-import { withStyles, Typography } from "@material-ui/core";
-import Grid from "@material-ui/core/Grid";
+import { withStyles, } from "@mui/styles";
+import { Grid, Typography } from "@mui/material";
 
-import FormGroup from "@material-ui/core/FormGroup";
-import MenuItem from "@material-ui/core/MenuItem";
-import TextField from "@material-ui/core/TextField";
+import FormGroup from "@mui/material/FormGroup";
+import MenuItem from "@mui/material/MenuItem";
+import TextField from "@mui/material/TextField";
 
 import Help from "components/Help";
 import PipelineTextField from "components/TextField";
@@ -49,7 +49,7 @@ class PipelineStringPart extends PureComponent {
     if (validOptions != undefined && Object.keys(validOptions)[0] == "In") {
       const options = Object.keys(validOptions.In)[0] == "set" ? validOptions.In.set : validOptions.In;
       return (
-        <Grid key={entry[0]} item xs={12}>
+        <Grid key={entry[0]} size={{ xs: 12 }}>
           <FormGroup row>
             <Help
               type="pipeline"
@@ -80,7 +80,7 @@ class PipelineStringPart extends PureComponent {
       )
     }
     return (
-      <Grid key={entry[0]} item xs={12}>
+      <Grid key={entry[0]} size={{ xs: 12 }}>
         <FormGroup row>
           <Help
             type="pipeline"

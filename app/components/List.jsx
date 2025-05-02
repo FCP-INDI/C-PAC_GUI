@@ -1,15 +1,15 @@
 import React, { PureComponent } from "react";
 import PropTypes, { object } from "prop-types";
-import Grid from "@material-ui/core/Grid";
+import Grid from "@mui/material/Grid";
 import Immutable, { fromJS } from "immutable";
 
-import Divider from "@material-ui/core/Divider";
-import FormGroup from "@material-ui/core/FormGroup";
-import FormLabel from "@material-ui/core/FormLabel";
-import IconButton from "@material-ui/core/IconButton";
-import List from "@material-ui/core/List";
-import ListItem from "@material-ui/core/ListItem";
-import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
+import Divider from "@mui/material/Divider";
+import FormGroup from "@mui/material/FormGroup";
+import FormLabel from "@mui/material/FormLabel";
+import IconButton from "@mui/material/IconButton";
+import List from "@mui/material/List";
+import ListItem from "@mui/material/ListItem";
+import ListItemSecondaryAction from "@mui/material/ListItemSecondaryAction";
 
 import Help from "components/Help";
 import {
@@ -379,7 +379,7 @@ class CpacList extends PureComponent {
     let [validOptions, allFull] = this.getValidOptions(chain, schema, entry[1]);
 
     return (
-      <Grid key={ entry[0] } item xs={ 12 } className={ classes.fullWidth }>
+      <Grid key={ entry[0] } size={{ xs: 12 }} className={ classes.fullWidth }>
       <FormGroup row>
       <Help
         type="pipeline"

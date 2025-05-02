@@ -1,12 +1,11 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import FormControl from '@material-ui/core/FormControl';
+import FormControl from '@mui/material/FormControl';
 import FormControlLabelled from 'components/FormControlLabelled';
-import FormGroup from '@material-ui/core/FormGroup';
-import Grid from '@material-ui/core/Grid';
+import FormGroup from '@mui/material/FormGroup';
+import Grid from '@mui/material/Grid';
 import Help from 'components/Help';
-import Switch from '@material-ui/core/Switch';
-import { withRouter } from 'react-router-dom';
+import Switch from '@mui/material/Switch';
 
 /** A Boolean toggle component. */
 class OnOffSwitch extends PureComponent {
@@ -29,7 +28,7 @@ class OnOffSwitch extends PureComponent {
     switch (regex) {
       case null:
         return (
-          <Grid item xs={12}>
+          <Grid size={{ xs: 12 }}>
             <FormGroup row>
               <FormControl>
                 <Switch
@@ -45,7 +44,7 @@ class OnOffSwitch extends PureComponent {
         )
       default:
         return (
-          <Grid item xs={12}>
+          <Grid size={{ xs: 12 }}>
             <FormGroup row>
               <Help
                 type="pipeline"
@@ -69,4 +68,4 @@ class OnOffSwitch extends PureComponent {
   }
 }
 
-export default withRouter(OnOffSwitch);
+export default OnOffSwitch;

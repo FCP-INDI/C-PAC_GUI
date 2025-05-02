@@ -1,14 +1,22 @@
 import { createStore, applyMiddleware, compose } from 'redux'
 import { createHashHistory } from 'history'
 import createSagaMiddleware from 'redux-saga'
-import { routerMiddleware } from 'connected-react-router'
 import { createLogger } from 'redux-logger'
 import rootReducer from '../reducers'
 import rootSaga from '../sagas'
 
 export const history = createHashHistory()
 
-const router = routerMiddleware(history)
+const navigationMiddleware = (history) => (store) => (next) => (action) => {
+  if (action.type === 'NAVIGATE') {
+    const { method, args } = action.payload
+    if (history[method]) {
+      history[method](...args)
+    }
+  }
+  return next(action)
+}
+const router = navigationMiddleware(history)
 const sagaMiddleware = createSagaMiddleware()
 const logger = createLogger({
   level: 'info',
