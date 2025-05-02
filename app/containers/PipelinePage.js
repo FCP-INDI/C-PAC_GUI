@@ -174,7 +174,7 @@ class PipelinePage extends Component {
   };
 
   handleDownload = () => {
-    const pipeline = this.props.thisPipeline;
+    const pipeline = this.props.pipeline;
     const configuration = this.state.configuration;
     const pipelineName = pipeline.get('name');
     const versions = pipeline.get('versions');
@@ -211,7 +211,7 @@ class PipelinePage extends Component {
 
   handleTitleSaveClick = () => {
     const name = this.title.value
-    this.props.pipelineNameUpdate(this.props.thisPipeline.get('id'), name)
+    this.props.pipelineNameUpdate(this.props.pipeline.get('id'), name)
     this.setState({
       isTitleEditing: false
     });
