@@ -93,9 +93,11 @@ class PipelineListTools extends Component {
           </IconButton>
         </Tooltip>
         <Tooltip title="Upload a pipeline">
-          <IconButton element="label" htmlFor="pipeline-upload">
-            <UploadIcon />
-          </IconButton>
+          <label for="pipeline-upload">
+            <IconButton onClick={() => document.getElementById('pipeline-upload').click()}>
+              <UploadIcon />
+            </IconButton>
+          </label>
         </Tooltip>
       </React.Fragment>
     )
